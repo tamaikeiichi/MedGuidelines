@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MedGuidelines</string>
+    <string name="index1">Child-Pugh</string>
+    <string name="index2">A-drop</string>
+</resources>
