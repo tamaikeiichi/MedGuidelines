@@ -2,4 +2,5 @@
     <string name="app_name">MedGuidelines</string>
     <string name="index1">Child-Pugh</string>
     <string name="index2">A-drop</string>
+    <string name="indexScreen_searchbar">Search</string>
 </resources>

@@ -20,7 +20,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MedGuidelinesTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier
+                    .fillMaxSize()
+                ) { innerPadding ->
                     IndexScreen()
                 }
             }
