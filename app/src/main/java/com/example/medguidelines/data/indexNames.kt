@@ -4,9 +4,10 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import com.example.medguidelines.R
 
-data class indexNames (val name: String)
+data class indexNames (val stringid: Int)
 
 val indexnames = listOf(
-    indexNames("Child-Pugh"),
-    indexNames("A-drop"),
+    indexNames(R.string.index1),
+    indexNames(R.string.index2),
+    indexNames(R.string.index1),
 )

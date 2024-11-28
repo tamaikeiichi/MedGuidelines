@@ -33,16 +33,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.example.medguidelines.data.indexNames
+import com.example.medguidelines.data.indexnames
 
 
 @Composable
-fun IndexScreen(indexnames: List<indexNames>) {
+fun IndexScreen(indexnames: List<indexNames>, navigateToChildPugh: () -> Unit) {
         SearchBar()
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth(),
             contentPadding = PaddingValues(10.dp)
         ) {
+            item {
+                listItem(name = stringResource(id = R.string.index1), onClick = {navigateToChildPugh()})
+            }
+
+
+
             item {
                 Text(text = stringResource(id = R.string.index1),
                     fontSize = 30.sp,
@@ -64,14 +71,15 @@ fun IndexScreen(indexnames: List<indexNames>) {
                 Row (
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {  }
+                        .clickable { navigateToChildPugh() }
                 ){
                     Text(
-                        text = indexname.name,
+                        text = stringResource(indexname.stringid),
                         fontSize = 20.sp,
                 )
             }
         }
+
     }
 }
 
@@ -99,5 +107,5 @@ fun SearchBar(
 @Preview
 @Composable
 fun IndexScreenPreview(){
-    IndexScreen()
+    IndexScreen(indexnames, navigateToChildPugh = {})
 }
