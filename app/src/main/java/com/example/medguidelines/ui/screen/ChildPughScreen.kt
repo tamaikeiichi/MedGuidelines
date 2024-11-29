@@ -1,15 +1,11 @@
 package com.example.medguidelines.ui.screen
 
-import android.provider.Settings.Global.getString
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.MaterialTheme
@@ -24,11 +20,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.res.TypedArrayUtils.getText
 import com.example.medguidelines.R
-import com.example.medguidelines.data.IndexNames
 import com.example.medguidelines.data.ascitesgrade
-import com.example.medguidelines.data.encephalophathygrade
+import com.example.medguidelines.data.encephalopathygrade
 import com.example.medguidelines.data.labDataNames
 
 
@@ -42,19 +36,38 @@ fun ChildPughScreen() {
             fontSize = 30.sp,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {  }
+                .clickable { }
         )
-        ThreeRadioButton(ascitesgrade, )
-        ThreeRadioButton(encephalophathygrade)
+        val radioOptionsAscitesgrade : List<labDataNames> = ascitesgrade
+        val (selectedOptionAscitesgrade, onOptionSelectedAscitesgrade) = remember { mutableStateOf(radioOptionsAscitesgrade[0]) }
+        ThreeRadioButton(ascitesgrade, selectedOptionAscitesgrade, onOptionSelectedAscitesgrade)
+
+        val ascitesgradeScore =
+            if (stringResource(id = selectedOptionAscitesgrade.stringid) == "absent") 1
+            else if (stringResource(id = selectedOptionAscitesgrade.stringid) == "slight") 2
+            else  3
+
+        val radioOptionsEncephalopathygrade : List<labDataNames> = encephalopathygrade
+        val (selectedOptionEncephalopathygrade, onOptionSelectedEncephalopathygrade) = remember { mutableStateOf(radioOptionsEncephalopathygrade[0]) }
+        ThreeRadioButton(encephalopathygrade, selectedOptionEncephalopathygrade, onOptionSelectedEncephalopathygrade)
+
+        val encephalopathygradeScore =
+            if (stringResource(id = selectedOptionEncephalopathygrade.stringid) == "none") 1
+            else if (stringResource(id = selectedOptionEncephalopathygrade.stringid) == "grade 1 or 2") 2
+            else  3
+
+        val totalScore = ascitesgradeScore + encephalopathygradeScore
+
+        Text(text=totalScore.toString())
+
     }
     }
 
 @Composable
-fun ThreeRadioButton(name: List<labDataNames>,
-                     //selectedOption: String
+fun ThreeRadioButton(radioOptions: List<labDataNames>,
+                     selectedOption: labDataNames,
+                     onOptionSelected : (selectedOption: labDataNames ) -> Unit,
     ){
-    val radioOptions = name
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
 // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
     Row(Modifier.selectableGroup()) {
         radioOptions.forEach { text ->
