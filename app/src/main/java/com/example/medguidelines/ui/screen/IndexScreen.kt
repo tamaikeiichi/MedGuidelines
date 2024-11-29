@@ -32,12 +32,16 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.example.medguidelines.data.indexNames
+import com.example.medguidelines.data.IndexNames
 import com.example.medguidelines.data.indexnames
 
 
 @Composable
-fun IndexScreen(indexnames: List<indexNames>, navigateToChildPugh: () -> Unit) {
+fun IndexScreen(indexnames: List<IndexNames>,
+                navigateToChildPugh: () -> Unit,
+                navigateToAdrop: () -> Unit,
+                ) {
+    Column(){
         SearchBar()
         LazyColumn(
             modifier = Modifier
@@ -47,39 +51,10 @@ fun IndexScreen(indexnames: List<indexNames>, navigateToChildPugh: () -> Unit) {
             item {
                 listItem(name = stringResource(id = R.string.index1), onClick = {navigateToChildPugh()})
             }
-
-
-
             item {
-                Text(text = stringResource(id = R.string.index1),
-                    fontSize = 30.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {  }
-                )
-            }
-            item {
-                Text(text = stringResource(id = R.string.index2),
-                        fontSize = 30.sp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {  }
-                )
-            }
-
-            items (indexnames) { indexname ->
-                Row (
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { navigateToChildPugh() }
-                ){
-                    Text(
-                        text = stringResource(indexname.stringid),
-                        fontSize = 20.sp,
-                )
+                listItem(name = stringResource(id = R.string.index2), onClick = {navigateToAdrop()})
             }
         }
-
     }
 }
 
@@ -107,5 +82,5 @@ fun SearchBar(
 @Preview
 @Composable
 fun IndexScreenPreview(){
-    IndexScreen(indexnames, navigateToChildPugh = {})
+    IndexScreen(indexnames, navigateToChildPugh = {}, navigateToAdrop = {})
 }

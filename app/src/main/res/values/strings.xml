@@ -3,6 +3,12 @@
     <string name="index1">Child-Pugh</string>
     <string name="index2">A-drop</string>
     <string name="indexScreen_searchbar">Search</string>
+    <string name="ascitesgrade1">absent</string>
+    <string name="ascitesgrade2">slight</string>
+    <string name="ascitesgrade3">moderate</string>
+    <string name="encephalopathygrade1">none</string>
+    <string name="encephalopathygrade2">grade 1 or 2</string>
+    <string name="encephalopathygrade3">grade 3 or 4</string>
     <string-array name="index_array">
         <item>Child-Pugh_array</item>
         <item>A-drop_array</item>

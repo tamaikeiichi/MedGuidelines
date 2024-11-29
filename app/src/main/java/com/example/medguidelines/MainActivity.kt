@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.medguidelines.data.indexnames
+import com.example.medguidelines.ui.screen.AdropScreen
 import com.example.medguidelines.ui.screen.ChildPughScreen
 import com.example.medguidelines.ui.screen.IndexScreen
 import com.example.medguidelines.ui.theme.MedGuidelinesTheme
@@ -34,15 +35,27 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .statusBarsPadding()
                         ) { innerPadding ->
-                            IndexScreen(indexnames, navigateToChildPugh = {controller.navigate("ChildPughScreen")})
+                            IndexScreen(indexnames,
+                                navigateToChildPugh = {controller.navigate("ChildPughScreen")},
+                                navigateToAdrop = {controller.navigate("AdropScreen")},
+                            )
                         }
                     }
                     composable("ChildPughScreen"){
                         Scaffold(modifier = Modifier
                             .fillMaxSize()
                             .statusBarsPadding()
-                        ) { innerPadding ->
+                        ) {
+                            innerPadding ->
                             ChildPughScreen()
+                        }
+                    }
+                    composable("AdropScreen"){
+                        Scaffold(modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding()
+                        ) { innerPadding ->
+                            AdropScreen()
                         }
                     }
                 }

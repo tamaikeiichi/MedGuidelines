@@ -8,14 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.example.medguidelines.R
-import com.example.medguidelines.data.IndexNames
 
 @Composable
-fun listItem (name: String, onClick: () -> Unit){
-    Text(text = name,
+fun AdropScreen() {
+    Text(text = stringResource(id = R.string.index2),
         fontSize = 30.sp,
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable {  }
     )
 }
