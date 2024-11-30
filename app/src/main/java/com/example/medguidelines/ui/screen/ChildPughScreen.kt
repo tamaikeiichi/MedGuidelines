@@ -1,6 +1,7 @@
 package com.example.medguidelines.ui.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -46,7 +48,28 @@ fun ChildPughScreen() {
                 ),
                 title = { Text(stringResource(id = R.string.childPughTitle)) }
             )
-        }) { innerPadding ->
+        },
+        bottomBar = {
+            BottomAppBar (
+                modifier = Modifier
+                    .padding(10.dp),
+
+            ) {
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    Text(
+                        text = "child A or B"
+                    )
+                    Text(
+                        text = "child A or B"
+                    )
+                }
+
+            }
+        }
+    )
+    { innerPadding ->
         Column(
             Modifier
                 .padding(innerPadding),

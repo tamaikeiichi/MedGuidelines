@@ -16,18 +16,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.compose.AppTheme
 import com.example.medguidelines.data.indexnames
 import com.example.medguidelines.ui.screen.AdropScreen
 import com.example.medguidelines.ui.screen.ChildPughScreen
 import com.example.medguidelines.ui.screen.IndexScreen
-import com.example.medguidelines.ui.theme.MedGuidelinesTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MedGuidelinesTheme {
+            AppTheme {
                 val controller = rememberNavController()
                 NavHost(controller, startDestination = "IndexScreen") {
                     composable("IndexScreen"){

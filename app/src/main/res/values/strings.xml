@@ -18,9 +18,9 @@
     <string name="encephalopathyGrade1">none</string>
     <string name="encephalopathyGrade2">grade 1 or 2</string>
     <string name="encephalopathyGrade3">grade 3 or 4</string>
-    <string name="bilirubinTitle">bilirubin (mg/dL)</string>
-    <string name="albuminTitle">albumin (g/dL)</string>
-    <string name="ptTitle">prothronbin (INR)</string>
-    <string name="ascitesTitle">ascites</string>
-    <string name="encephalopaphyTitle">encephalopathy grade</string>
+    <string name="bilirubinTitle">Bilirubin (mg/dL)</string>
+    <string name="albuminTitle">Albumin (g/dL)</string>
+    <string name="ptTitle">Prothronbin (INR)</string>
+    <string name="ascitesTitle">Ascites</string>
+    <string name="encephalopaphyTitle">Encephalopathy grade</string>
 </resources>
