@@ -1,16 +1,26 @@
 <resources>
     <string name="app_name">MedGuidelines</string>
-    <string name="index1">Child-Pugh</string>
-    <string name="index2">A-drop</string>
+    <string name="childPughTitle">Child-Pugh</string>
+    <string name="aDropTitle">A-drop</string>
     <string name="indexScreen_searchbar">Search</string>
-    <string name="ascitesgrade1">absent</string>
-    <string name="ascitesgrade2">slight</string>
-    <string name="ascitesgrade3">moderate</string>
-    <string name="encephalopathygrade1">none</string>
-    <string name="encephalopathygrade2">grade 1 or 2</string>
-    <string name="encephalopathygrade3">grade 3 or 4</string>
-    <string-array name="index_array">
-        <item>Child-Pugh_array</item>
-        <item>A-drop_array</item>
-    </string-array>
+    <string name="bilirubinGrade1">&lt; 2</string>
+    <string name="bilirubinGrade2">2 to 3</string>
+    <string name="bilirubinGrade3">&gt; 3</string>
+    <string name="albuminGrade1">&gt; 3.5</string>
+    <string name="albuminGrade2">2.8 to 3.5</string>
+    <string name="albuminGrade3">&lt; 2.8</string>
+    <string name="ptGrade1">&lt; 1.7</string>
+    <string name="ptGrade2">1.7 to 2.3</string>
+    <string name="ptGrade3">&gt; 2.3</string>
+    <string name="ascitesGrade1">absent</string>
+    <string name="ascitesGrade2">slight</string>
+    <string name="ascitesGrade3">moderate</string>
+    <string name="encephalopathyGrade1">none</string>
+    <string name="encephalopathyGrade2">grade 1 or 2</string>
+    <string name="encephalopathyGrade3">grade 3 or 4</string>
+    <string name="bilirubinTitle">bilirubin (mg/dL)</string>
+    <string name="albuminTitle">albumin (g/dL)</string>
+    <string name="ptTitle">prothronbin (INR)</string>
+    <string name="ascitesTitle">ascites</string>
+    <string name="encephalopaphyTitle">encephalopathy grade</string>
 </resources>

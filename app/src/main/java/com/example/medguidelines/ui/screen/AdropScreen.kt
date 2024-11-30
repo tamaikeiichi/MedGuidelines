@@ -11,7 +11,7 @@ import com.example.medguidelines.R
 
 @Composable
 fun AdropScreen() {
-    Text(text = stringResource(id = R.string.index2),
+    Text(text = stringResource(id = R.string.aDropTitle),
         fontSize = 30.sp,
         modifier = Modifier
             .fillMaxWidth()
