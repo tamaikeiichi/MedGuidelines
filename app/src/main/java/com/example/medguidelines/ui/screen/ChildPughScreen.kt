@@ -1,15 +1,16 @@
 package com.example.medguidelines.ui.screen
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -25,8 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.medguidelines.R
 import com.example.medguidelines.data.albuminGrade
 import com.example.medguidelines.data.ascitesGrade
@@ -35,66 +36,87 @@ import com.example.medguidelines.data.encephalopathyGrade
 import com.example.medguidelines.data.labDataNames
 import com.example.medguidelines.data.ptGrade
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChildPughScreen() {
-    Scaffold (
+    Scaffold(
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text(stringResource(id = R.string.childPughTitle)) }
+                title = {Text (text = stringResource(id = R.string.childPughTitle))}
             )
+            //Text (text = stringResource(id = R.string.childPughTitle))
         },
-        bottomBar = {
-            BottomAppBar (
-                modifier = Modifier
-                    .padding(10.dp),
-
-            ) {
-                Column (
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
-                    Text(
-                        text = "child A or B"
-                    )
-                    Text(
-                        text = "child A or B"
-                    )
-                }
-
-            }
-        }
+//        bottomBar = {
+//            BottomAppBar {
+//                Text (text = stringResource(id = R.string.childPughTitle))
+//                Text(text = childPughTotalScore().totalScoreValue.toString())
+//            }
+//        }
     )
     { innerPadding ->
         Column(
             Modifier
-                .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
+                .verticalScroll(rememberScrollState())
+                .padding(innerPadding)
+        ) {
+            val totalScore = childPughTotalScore()
 
-            val bilirubinScore = childPughButtonAndScore(bilirubinGrade, stringResource(id = R.string.bilirubinTitle))
-            val albuminScore = childPughButtonAndScore(albuminGrade, stringResource(id = R.string.albuminTitle))
-            val ptScore = childPughButtonAndScore(ptGrade, stringResource(id = R.string.ptTitle))
-            val ascitesScore = childPughButtonAndScore(ascitesGrade, stringResource(id = R.string.ascitesTitle))
-            val encephalopathyScore = childPughButtonAndScore(encephalopathyGrade, stringResource(id = R.string.encephalopaphyTitle))
 
-            val totalScore = bilirubinScore + albuminScore + ptScore + ascitesScore + encephalopathyScore
-
-            Text(text=totalScore.toString())
-            val childPughScoreABC = when (totalScore) {
+            Text(text = totalScore.toString())
+            val childPughScoreABC = when (totalScore.totalScoreValue) {
                 in 5..6 -> "A"
                 in 7..9 -> "B"
                 else -> "C"
             }
-            Text(text = childPughScoreABC)
-        }
-    }
+            Column  (
+                modifier = Modifier,
+                verticalArrangement = Arrangement.Bottom
 
+            ){ Text(text = childPughScoreABC) }
+
+        }
+
+    }
 }
+
+@Composable
+fun childPughTotalScore(): TotalScoreClass {
+    Column (
+        Modifier
+        //.verticalScroll(rememberScrollState()),
+        //horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+    }
+    val bilirubinScore = childPughButtonAndScore(
+        bilirubinGrade,
+        stringResource(id = R.string.bilirubinTitle)
+    )
+    val albuminScore =
+        childPughButtonAndScore(albuminGrade, stringResource(id = R.string.albuminTitle))
+    val ptScore = childPughButtonAndScore(ptGrade, stringResource(id = R.string.ptTitle))
+    val ascitesScore =
+        childPughButtonAndScore(ascitesGrade, stringResource(id = R.string.ascitesTitle))
+    val encephalopathyScore = childPughButtonAndScore(
+        encephalopathyGrade,
+        stringResource(id = R.string.encephalopaphyTitle)
+    )
+
+    val totalScore =
+        bilirubinScore + albuminScore + ptScore + ascitesScore + encephalopathyScore
+    Text(text = totalScore.toString())
+    return TotalScoreClass(
+        totalScoreValue = totalScore
+    )
+}
+
+data class TotalScoreClass (
+    val totalScoreValue : Int
+)
 
 @Composable
 fun childPughButtonAndScore(
@@ -160,3 +182,7 @@ fun ThreeRadioButton(radioOptions: List<labDataNames>,
     }
 
 }
+
+@Preview
+@Composable
+fun ChildPughScreen()
