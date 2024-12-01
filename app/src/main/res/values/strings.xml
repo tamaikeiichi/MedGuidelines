@@ -27,5 +27,5 @@
     <string name="ascitesTitle">Ascites</string>
     <string name="ascitesTitleNote">Ascites</string>
     <string name="encephalopaphyTitle">Encephalopathy grade</string>
-    <string name="encephalopaphyTitleNote">Encephalopathy grade</string>
+    <string name="encephalopaphyTitleNote">Grade 1: Trivial lack of awareness, Euphoria or anxiety, Shortened attention span, Impairment of addition or subtraction, Altered sleep rhythm. \nGrade 2: Lethargy or apathy, Disorientation for time, Obvious personality change, Inappropriate behavior, Dyspraxia, Asterixis. \nGrade 3: Somnolence to semistupor, Responsive to stimuli, Confused, Gross disorientation, Bizarre behavior. \nGrade 4: Coma</string>
 </resources>
