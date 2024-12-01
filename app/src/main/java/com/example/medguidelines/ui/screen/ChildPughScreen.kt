@@ -159,30 +159,34 @@ fun ThreeRadioButton(radioOptions: List<labDataNames>,
     Column(){
         Card(
             colors = CardDefaults.cardColors(
-                contentColor = Color.LightGray
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ),
             modifier = Modifier
                 .padding(vertical = 4.dp, horizontal = 8.dp)
         ){
             var expanded by remember { mutableStateOf(false)}
             Row(
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.padding(2.dp)
                     .animateContentSize ()
             ){
                 Column (
-                    modifier = Modifier.weight(1f).padding(12.dp)
+                    modifier = Modifier.weight(1f).padding(5.dp)
                 ){
                     Text(text = title,
                         Modifier
                             .padding(10.dp))
                     if (expanded) {
-                        Text (text = titleNote)
+                        Text (text = titleNote,
+                            Modifier
+                                .padding(2.dp))
                     }
                 }
                 IconButton(onClick = { expanded = !expanded}) {
                     Icon(
                         imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
                         else Icons.Filled.KeyboardArrowDown,
+
+                        contentDescription = if (expanded) "Collapse" else "Expand"
                     )
                 }
             }
