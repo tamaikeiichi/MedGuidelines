@@ -1,9 +1,11 @@
 package com.example.medguidelines.ui.screen
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,14 +30,15 @@ fun IndexScreen(indexnames: List<IndexNames>,
         SearchBar()
         LazyColumn(
             modifier = Modifier
+                .padding(2.dp)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(10.dp)
+            contentPadding = PaddingValues(10.dp),
         ) {
             item {
-                listItem(name = stringResource(id = R.string.childPughTitle), onClick = {navigateToChildPugh()})
+                ListItem(name = stringResource(id = R.string.childPughTitle), onClick = {navigateToChildPugh()})
             }
             item {
-                listItem(name = stringResource(id = R.string.aDropTitle), onClick = {navigateToAdrop()})
+                ListItem(name = stringResource(id = R.string.aDropTitle), onClick = {navigateToAdrop()})
             }
         }
     }
