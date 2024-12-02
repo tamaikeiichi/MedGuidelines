@@ -67,3 +67,4 @@ fun SearchBar(
 fun IndexScreenPreview(){
     IndexScreen(indexnames, navigateToChildPugh = {}, navigateToAdrop = {})
 }
+
