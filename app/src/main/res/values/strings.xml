@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">MedGuidelines</string>
-    <string name="childPughTitle">Child-Pugh</string>
+    <string name="childPughTitle">Child-Pugh Score</string>
     <string name="aDropTitle">A-drop</string>
     <string name="indexScreen_searchbar">Search</string>
     <string name="bilirubinGrade1">&lt; 2</string>

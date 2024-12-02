@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -40,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -71,25 +73,33 @@ fun ChildPughScreen() {
         },
         bottomBar = {
             BottomAppBar (){
-                Text(
-                    text = "Child-Pugh $childPughScoreABC ($totalScore)",
-                    fontSize = 20.sp
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    Text(
+                        text = "Child-Pugh $childPughScoreABC ($totalScore)",
+                        fontSize = 30.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
             }
         }
     ) { innerPadding ->
         Column(
             Modifier
-                .verticalScroll(rememberScrollState())
+                //.verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            totalScore = childPughTotalScore() // Assuming childPughTotalScore() returns an Int
-            //Text(text = totalScore.toString())
+                totalScore = childPughTotalScore() // Assuming childPughTotalScore() returns an Int
+                //Text(text = totalScore.toString())
 
-            childPughScoreABC = when (totalScore) {
-                in 5..6 -> "A"
-                in 7..9 -> "B"
-                else -> "C"
+                childPughScoreABC = when (totalScore) {
+                    in 5..6 -> "A"
+                    in 7..9 -> "B"
+                    else -> "C"
             }
         }
     }
