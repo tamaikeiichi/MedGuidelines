@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.datastore.core.jvm)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,4 +71,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     val nav_version = "2.8.4"
     implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }
