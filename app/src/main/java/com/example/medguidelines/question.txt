@@ -1,4 +1,58 @@
-データクラスからの読み込み方
-string-arrayからの読み込み方
-リストの作り方、リストからそれぞれ別の画面に遷移するやり方
-フリーズしたAVDの止め方
+Next, update the IndexList composable to use the DataStore:
+
+@Composable
+fun IndexList(
+    items: List<IndexItem>,
+    onItemClick: (IndexItem) -> Unit,
+    indexDataStore: IndexDataStore
+) {
+    val (currentItems, updateItems) = remember { mutableStateOf(items) }
+
+    LaunchedEffect(Unit) {
+        val savedOrder = indexDataStore.getItemOrder()
+        val orderedItems = items.sortedBy { savedOrder.indexOf(it.id) }
+        updateItems(orderedItems)
+    }
+
+    LazyColumn {
+        items(currentItems, key = { it.id }) { item ->
+            IndexListItem(item = item, onItemClick = { clickedItem ->
+                val updatedItems = currentItems.toMutableList()
+                updatedItems.remove(clickedItem)
+                updatedItems.add(0, clickedItem)
+                updateItems(updatedItems)
+
+                onItemClick(clickedItem)
+
+                // Save the new order
+                CoroutineScope(Dispatchers.IO).launch {
+                    indexDataStore.saveItemOrder(updatedItems.map { it.id })
+                }
+            })
+        }
+    }
+}
+
+Finally, in your IndexScreen composable, create an instance of IndexDataStore and pass it to IndexList:
+
+@Composable
+fun IndexScreen(
+    // ... other parameters
+) {
+    // ... other composables
+
+    val indexDataStore = remember { IndexDataStore(context) } // Assuming you have a context
+
+    val items = listOf(
+        IndexItem(1, stringResource(id = R.string.childPughTitle), "childPugh"),
+        IndexItem(2, stringResource(id = R.string.aDropTitle), "aDrop")
+    )
+
+    IndexList(items = items, indexDataStore = indexDataStore) { clickedItem ->
+        when (clickedItem.destination) {
+            "childPugh" -> navigateToChildPugh()
+            "aDrop" -> navigateToAdrop()
+            // ... other destinations
+        }
+    }
+}

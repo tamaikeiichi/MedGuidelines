@@ -33,6 +33,7 @@ fun ListItem (name: String, onClick: () -> Unit){
             modifier = Modifier.height(8.dp)
         )
     }
-
-
 }
+
+data class ListItemData (val name: String, val onClick: () -> Unit)
+val listItemData = ListItemData()
