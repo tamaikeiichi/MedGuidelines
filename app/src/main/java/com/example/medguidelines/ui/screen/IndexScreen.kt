@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.example.medguidelines.R
@@ -15,9 +16,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.medguidelines.data.IndexNames
 import com.example.medguidelines.data.indexNames
+
+data class ListItemData(val nameResId: Int, val onClick: () -> Unit)
 
 @Composable
 fun IndexScreen(indexnames: List<IndexNames>,
@@ -32,12 +36,13 @@ fun IndexScreen(indexnames: List<IndexNames>,
                 .fillMaxWidth(),
             contentPadding = PaddingValues(10.dp),
         ) {
-
-            item {
-                ListItem(name = stringResource(id = R.string.childPughTitle), onClick = {navigateToChildPugh()})
-            }
-            item {
-                ListItem(name = stringResource(id = R.string.aDropTitle), onClick = {navigateToAdrop()})
+            items(
+                items = listOf(
+                    ListItemData(R.string.childPughTitle, navigateToChildPugh),
+                    ListItemData(R.string.aDropTitle, navigateToAdrop)
+                )
+            ) { itemData ->
+                ListItem(name = stringResource(id = itemData.nameResId), onClick = itemData.onClick)
             }
         }
     }
