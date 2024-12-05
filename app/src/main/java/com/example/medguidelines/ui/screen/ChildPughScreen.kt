@@ -54,7 +54,6 @@ import com.example.medguidelines.data.encephalopathyGrade
 import com.example.medguidelines.data.labDataNames
 import com.example.medguidelines.data.ptGrade
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChildPughScreen() {
@@ -90,7 +89,7 @@ fun ChildPughScreen() {
     ) { innerPadding ->
         Column(
             Modifier
-                //.verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
                 totalScore = childPughTotalScore() // Assuming childPughTotalScore() returns an Int
