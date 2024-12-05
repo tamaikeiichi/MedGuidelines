@@ -5,19 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
-import com.example.medguidelines.data.indexnames
+import com.example.medguidelines.data.indexNames
 import com.example.medguidelines.ui.screen.AdropScreen
 import com.example.medguidelines.ui.screen.ChildPughScreen
 import com.example.medguidelines.ui.screen.IndexScreen
@@ -35,7 +30,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .statusBarsPadding()
                         ) { innerPadding ->
-                            IndexScreen(indexnames,
+                            IndexScreen(indexNames,
                                 navigateToChildPugh = {controller.navigate("ChildPughScreen")},
                                 navigateToAdrop = {controller.navigate("AdropScreen")},
                             )

@@ -1,6 +1,5 @@
 package com.example.medguidelines.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,8 +17,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.medguidelines.data.IndexNames
-import com.example.medguidelines.data.indexnames
-
+import com.example.medguidelines.data.indexNames
 
 @Composable
 fun IndexScreen(indexnames: List<IndexNames>,
@@ -34,6 +32,7 @@ fun IndexScreen(indexnames: List<IndexNames>,
                 .fillMaxWidth(),
             contentPadding = PaddingValues(10.dp),
         ) {
+
             item {
                 ListItem(name = stringResource(id = R.string.childPughTitle), onClick = {navigateToChildPugh()})
             }
@@ -68,6 +67,6 @@ fun SearchBar(
 @Preview
 @Composable
 fun IndexScreenPreview(){
-    IndexScreen(indexnames, navigateToChildPugh = {}, navigateToAdrop = {})
+    IndexScreen(indexNames, navigateToChildPugh = {}, navigateToAdrop = {})
 }
 
