@@ -35,5 +35,5 @@ fun ListItem (name: String, onClick: () -> Unit){
     }
 }
 
-data class ListItemData (val name: String, val onClick: () -> Unit)
-val listItemData = ListItemData()
+//data class ListItemData (val name: String, val onClick: () -> Unit)
+//val listItemData = ListItemData()
