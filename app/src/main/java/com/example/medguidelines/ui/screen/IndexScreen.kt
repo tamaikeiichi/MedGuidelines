@@ -1,7 +1,6 @@
 package com.example.medguidelines.ui.screen
 
-import android.content.Context
-import androidx.activity.result.launch
+import android.os.Parcelable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,29 +17,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.edit
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import com.example.medguidelines.data.IndexNames
-import com.example.medguidelines.data.indexNames
+import kotlinx.parcelize.Parcelize
 
-data class ListItemData(val nameResId: Int, val onClick: () -> Unit)
-
+@Parcelize
+data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
 
 @Composable
 fun IndexScreen(
-    indexnames: List<IndexNames>,
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
 ) {
-    val items = remember {
-        mutableStateListOf(
-            ListItemData(R.string.childPughTitle, navigateToChildPugh),
-            ListItemData(R.string.aDropTitle, navigateToAdrop)
+    val items = rememberSaveable {
+            mutableListOf(
+                ListItemData(R.string.childPughTitle, navigateToChildPugh),
+                ListItemData(R.string.aDropTitle, navigateToAdrop)
         )
     }
 
@@ -93,6 +85,6 @@ fun SearchBar(
 @Preview
 @Composable
 fun IndexScreenPreview(){
-    IndexScreen(indexNames, navigateToChildPugh = {}, navigateToAdrop = {})
+    IndexScreen(navigateToChildPugh = {}, navigateToAdrop = {})
 }
 
