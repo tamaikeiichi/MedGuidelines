@@ -24,6 +24,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
 
+
 @Composable
 fun IndexScreen(
     navigateToChildPugh: () -> Unit,
