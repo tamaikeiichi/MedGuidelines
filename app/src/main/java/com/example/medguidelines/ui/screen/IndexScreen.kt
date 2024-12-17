@@ -1,6 +1,8 @@
 package com.example.medguidelines.ui.screen
 
+import android.content.Context
 import android.os.Parcelable
+import android.provider.Settings.Global.putInt
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +25,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
-
 
 @Composable
 fun IndexScreen(
