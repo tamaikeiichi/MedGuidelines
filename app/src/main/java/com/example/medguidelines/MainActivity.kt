@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
-import com.example.medguidelines.data.indexNames
 import com.example.medguidelines.ui.screen.AdropScreen
 import com.example.medguidelines.ui.screen.ChildPughScreen
 import com.example.medguidelines.ui.screen.IndexScreen
@@ -30,7 +29,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .statusBarsPadding()
                         ) { innerPadding ->
-                            IndexScreen(indexNames,
+                            IndexScreen(
                                 navigateToChildPugh = {controller.navigate("ChildPughScreen")},
                                 navigateToAdrop = {controller.navigate("AdropScreen")},
                             )
