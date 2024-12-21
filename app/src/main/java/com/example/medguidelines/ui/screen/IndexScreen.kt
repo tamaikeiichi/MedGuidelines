@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.parcelize.Parcelize
@@ -27,19 +28,20 @@ import kotlinx.parcelize.Parcelize
 data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
 
 
+
 @Composable
 fun IndexScreen(
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
-) {
+) : MutableList<ListItemData> {
     val items = rememberSaveable {
-            mutableListOf(
-                ListItemData(R.string.childPughTitle, navigateToChildPugh),
-                ListItemData(R.string.aDropTitle, navigateToAdrop)
+        mutableListOf(
+            ListItemData(R.string.childPughTitle, navigateToChildPugh),
+            ListItemData(R.string.aDropTitle, navigateToAdrop)
         )
     }
 
-    Column(){
+    Column() {
         SearchBar()
         LazyColumn(
             modifier = Modifier
@@ -47,7 +49,7 @@ fun IndexScreen(
                 .fillMaxWidth(),
             contentPadding = PaddingValues(10.dp),
         ) {
-            items(items){ itemData ->
+            items(items) { itemData ->
                 ListItem(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
@@ -62,6 +64,7 @@ fun IndexScreen(
             }
         }
     }
+    return items
 }
 
 @Composable

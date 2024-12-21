@@ -29,10 +29,13 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .statusBarsPadding()
                         ) { innerPadding ->
-                            IndexScreen(
+                            val items = IndexScreen(
                                 navigateToChildPugh = {controller.navigate("ChildPughScreen")},
                                 navigateToAdrop = {controller.navigate("AdropScreen")},
                             )
+                            saveListItemData(items = items){
+
+                            }
                         }
                     }
                     composable("ChildPughScreen"){
