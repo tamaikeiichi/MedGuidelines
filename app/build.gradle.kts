@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences.v100)
     implementation(libs.androidx.datastore.preferences.core)
     implementation  (libs.protobuf.javalite)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 }
 
 protobuf {

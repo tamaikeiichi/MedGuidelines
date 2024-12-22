@@ -3,6 +3,7 @@ package com.example.medguidelines.ui.screen
 import android.content.Context
 import android.os.Parcelable
 import android.provider.Settings.Global.putInt
+import androidx.activity.result.launch
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +23,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.parcelize.Parcelize
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @Parcelize
 data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
@@ -30,11 +37,15 @@ data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelabl
 
 
 @Composable
-fun IndexScreen(
+fun indexScreen(
+    indexScreenViewModel: IndexScreenViewModel = viewModel(),
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
 ) : MutableList<ListItemData> {
-    val items = rememberSaveable {
+    val indexItemState: List<ListItemData> by indexScreenViewModel.savedItems.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+
+    var items = rememberSaveable {
         mutableListOf(
             ListItemData(R.string.childPughTitle, navigateToChildPugh),
             ListItemData(R.string.aDropTitle, navigateToAdrop)
@@ -54,9 +65,13 @@ fun IndexScreen(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
                         // Move clicked item to the top
-                        items.remove(itemData)
-                        items.add(0, itemData)
-
+                        val updatedItems = items
+                        updatedItems.remove(itemData)
+                        updatedItems.add(0, itemData)
+                        coroutineScope.launch {
+                            indexScreenViewModel.updateSavedItems(updatedItems)
+                        }
+                        items = updatedItems
                         // Execute the original onClick action
                         itemData.onClick()
                     }
@@ -91,6 +106,6 @@ fun SearchBar(
 @Preview
 @Composable
 fun IndexScreenPreview(){
-    IndexScreen(navigateToChildPugh = {}, navigateToAdrop = {})
+    indexScreen(navigateToChildPugh = {}, navigateToAdrop = {})
 }
 
