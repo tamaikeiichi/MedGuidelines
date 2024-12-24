@@ -1,5 +1,7 @@
 package com.example.medguidelines.ui.screen
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Parcelable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,17 +21,46 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
+import com.example.medguidelines.data.LAYOUT_PREFERENCES_NAME
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import androidx.preference.PreferenceManager
+import androidx.preference.PreferenceManager.getDefaultSharedPreferences
 
-@Parcelize
-data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
+//@Parcelize
+//data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
 
+@Serializable
+data class ListItemData(
+    @SerialName("nameResId")
+    val nameResId: Int,
+    @SerialName("onClick")
+    val onClick: () -> Unit
+)
+
+private const val LAYOUT_PREFERENCES_NAME = "layout_preferences"
+private val android.content.Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+    name = com.example.medguidelines.data.LAYOUT_PREFERENCES_NAME
+)
+
+val sharedPreferences: SharedPreferences = getDefaultSharedPreferences(Context)
 
 @Composable
 fun IndexScreen(
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
 ) {
+
+
+
     val items = rememberSaveable {
             mutableListOf(
                 ListItemData(R.string.childPughTitle, navigateToChildPugh),
@@ -53,12 +84,26 @@ fun IndexScreen(
                         items.remove(itemData)
                         items.add(0, itemData)
 
+                        val LAYOUT_PREFERENCES_NAME = "layout_preferences"
+                        val json = Json.encodeToString(items)
+                        // Save the updated list to SharedPreferences
+
+
+                        saveLayoutToPreferencesStore(json, requireContext())
+
                         // Execute the original onClick action
                         itemData.onClick()
                     }
                 )
             }
         }
+    }
+}
+
+
+suspend fun saveLayoutToPreferencesStore(isLinearLayoutManager: String, context: Context) {
+    context.dataStore.edit { preferences ->
+        preferences[LAYOUT_PREFERENCES_NAME] = isLinearLayoutManager
     }
 }
 

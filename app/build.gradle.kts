@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-parcelize")
     id("com.google.protobuf") version "0.9.3" // Or latest version
+
+    // For Serialization
+    kotlin("plugin.serialization") version "1.6.10"
 }
 
 android {
@@ -51,6 +54,7 @@ android {
     }
 }
 
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -62,6 +66,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.datastore.core.android)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,6 +78,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences.v100)
     implementation(libs.androidx.datastore.preferences.core)
     implementation  (libs.protobuf.javalite)
+    implementation ("androidx.preference:preference:1.0.0")
 }
 
 protobuf {

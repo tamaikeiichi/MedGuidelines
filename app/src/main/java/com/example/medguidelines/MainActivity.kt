@@ -14,7 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
 import com.example.medguidelines.ui.screen.AdropScreen
 import com.example.medguidelines.ui.screen.ChildPughScreen
-import com.example.medguidelines.ui.screen.indexScreen
+import com.example.medguidelines.ui.screen.IndexScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .statusBarsPadding()
                         ) { innerPadding ->
-                            val items = indexScreen(
+                            val items = IndexScreen(
                                 navigateToChildPugh = {controller.navigate("ChildPughScreen")},
                                 navigateToAdrop = {controller.navigate("AdropScreen")},
                             )
