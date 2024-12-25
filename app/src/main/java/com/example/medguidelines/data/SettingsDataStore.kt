@@ -20,9 +20,9 @@ const val LAYOUT_PREFERENCES_NAME = "layout_preferences"
 
 // Create a DataStore instance using the preferencesDataStore delegate, with the Context as
 // receiver.
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-    name = LAYOUT_PREFERENCES_NAME
-)
+//val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+//    name = LAYOUT_PREFERENCES_NAME
+//)
 
 class SettingsDataStore(preference_datastore: DataStore<Preferences>) {
     private val IS_LINEAR_LAYOUT_MANAGER = booleanPreferencesKey("is_linear_layout_manager")

@@ -25,15 +25,21 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.medguidelines.data.LAYOUT_PREFERENCES_NAME
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.internal.NopCollector.emit
+import kotlinx.coroutines.flow.map
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import androidx.preference.PreferenceManager
-import androidx.preference.PreferenceManager.getDefaultSharedPreferences
+import java.io.IOException
 
 //@Parcelize
 //data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
@@ -46,21 +52,27 @@ data class ListItemData(
     val onClick: () -> Unit
 )
 
-private const val LAYOUT_PREFERENCES_NAME = "layout_preferences"
-private val android.content.Context.dataStore: DataStore<Preferences> by preferencesDataStore(
-    name = com.example.medguidelines.data.LAYOUT_PREFERENCES_NAME
-)
 
-val sharedPreferences: SharedPreferences = getDefaultSharedPreferences(Context)
+//var dataStore : DataStore<Preferences> by preferencesDataStore(
+//    name = USER_PREFERENCES_NAME
+//)
+
+private object PreferencesKeys {
+    val SHOW_COMPLETED = stringPreferencesKey("show_completed")
+}
+
+//fun updateShowCompleted(showCompleted: String) {
+//    context.dataStore.edit { preferences ->
+//        preferences[PreferencesKeys.SHOW_COMPLETED] = showCompleted
+//    }
+//}
 
 @Composable
 fun IndexScreen(
+    viewModel: IndexScreenViewModel,
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
 ) {
-
-
-
     val items = rememberSaveable {
             mutableListOf(
                 ListItemData(R.string.childPughTitle, navigateToChildPugh),
@@ -81,11 +93,16 @@ fun IndexScreen(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
                         // Move clicked item to the top
+
                         items.remove(itemData)
                         items.add(0, itemData)
 
                         val LAYOUT_PREFERENCES_NAME = "layout_preferences"
                         val json = Json.encodeToString(items)
+                        val jsonPreferencesKey  = stringPreferencesKey(json)
+
+
+
                         // Save the updated list to SharedPreferences
 
 
@@ -101,11 +118,11 @@ fun IndexScreen(
 }
 
 
-suspend fun saveLayoutToPreferencesStore(isLinearLayoutManager: String, context: Context) {
-    context.dataStore.edit { preferences ->
-        preferences[LAYOUT_PREFERENCES_NAME] = isLinearLayoutManager
-    }
-}
+//suspend fun saveLayoutToPreferencesStore(isLinearLayoutManager: String, context: Context) {
+//    context.dataStore.edit { preferences ->
+//        preferences[LAYOUT_PREFERENCES_NAME] = isLinearLayoutManager
+//    }
+//}
 
 @Composable
 fun SearchBar(
