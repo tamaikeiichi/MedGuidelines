@@ -19,10 +19,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
@@ -34,9 +40,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.internal.NopCollector.emit
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.IOException
@@ -57,15 +65,17 @@ data class ListItemData(
 //    name = USER_PREFERENCES_NAME
 //)
 
-private object PreferencesKeys {
-    val SHOW_COMPLETED = stringPreferencesKey("show_completed")
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+val INDEX_SEQUENCE = stringPreferencesKey("index_sequence")
+
+
+suspend fun saveIsFirstDataStore(context: Context, itemSequence: String) {
+    context.dataStore.edit { settings ->
+        settings[INDEX_SEQUENCE] = itemSequence
+    }
 }
 
-//fun updateShowCompleted(showCompleted: String) {
-//    context.dataStore.edit { preferences ->
-//        preferences[PreferencesKeys.SHOW_COMPLETED] = showCompleted
-//    }
-//}
+
 
 @Composable
 fun IndexScreen(
@@ -73,11 +83,26 @@ fun IndexScreen(
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
     val items = rememberSaveable {
             mutableListOf(
                 ListItemData(R.string.childPughTitle, navigateToChildPugh),
                 ListItemData(R.string.aDropTitle, navigateToAdrop)
         )
+    }
+
+    var json = Json.encodeToString(items)
+
+    LaunchedEffect(Unit) {
+        context.dataStore.data
+            .map { preferences ->
+                preferences[INDEX_SEQUENCE] ?: json
+            }
+            .collect {
+                json = it
+            }
     }
 
     Column(){
@@ -93,20 +118,22 @@ fun IndexScreen(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
                         // Move clicked item to the top
+                        json = context.dataStore.map { preferences ->
+                            preferences[INDEX_SEQUENCE] ?: json
+                        }
+                        var items = Json.decodeFromString<ListItemData>(json)
 
                         items.remove(itemData)
                         items.add(0, itemData)
 
-                        val LAYOUT_PREFERENCES_NAME = "layout_preferences"
-                        val json = Json.encodeToString(items)
-                        val jsonPreferencesKey  = stringPreferencesKey(json)
+                        json = Json.encodeToString(items)
 
+                        scope.launch {
+                            saveIsFirstDataStore(context, json)
+                        }
 
 
                         // Save the updated list to SharedPreferences
-
-
-                        saveLayoutToPreferencesStore(json, requireContext())
 
                         // Execute the original onClick action
                         itemData.onClick()
