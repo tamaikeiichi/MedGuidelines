@@ -1,7 +1,6 @@
 package com.example.medguidelines.ui.screen
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Parcelable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,90 +18,73 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.medguidelines.data.LAYOUT_PREFERENCES_NAME
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.internal.NopCollector.emit
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.io.IOException
 
-//@Parcelize
-//data class ListItemData(val nameResId: Int, val onClick: () -> Unit) : Parcelable
-
-@Serializable
-data class ListItemData(
-    @SerialName("nameResId")
-    val nameResId: Int,
-    @SerialName("onClick")
-    val onClick: () -> Unit
-)
-
-
-//var dataStore : DataStore<Preferences> by preferencesDataStore(
-//    name = USER_PREFERENCES_NAME
-//)
-
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-val INDEX_SEQUENCE = stringPreferencesKey("index_sequence")
-
-
-suspend fun saveIsFirstDataStore(context: Context, itemSequence: String) {
-    context.dataStore.edit { settings ->
-        settings[INDEX_SEQUENCE] = itemSequence
-    }
+enum class ActionType {
+    NAVIGATE_TO_CHILD_PUGH,
+    NAVIGATE_TO_ADROP
 }
 
+@Parcelize
+@Serializable
+data class ListItemData(
+    val nameResId: Int,
+    val actionType: ActionType
+) : Parcelable
 
+val itemsList = listOf(
+    ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
+    ListItemData(R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP)
+)
+
+// Usage with DataStore:
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+val LIST_ITEM_DATA_KEY = stringPreferencesKey("list_item_data")
+
+//suspend fun saveListItemData(context: Context, item: ListItemData) {
+//    context.dataStore.edit { settings ->
+//        val jsonString = Json.encodeToString(item)
+//        settings[LIST_ITEM_DATA_KEY] = jsonString
+//    }
+//}
+//
+//fun loadListItemData(context: Context): Flow<ListItemData?> {
+//    return context.dataStore.data.map { preferences ->
+//        val jsonString = preferences[LIST_ITEM_DATA_KEY]
+//        if (jsonString != null) {
+//            Json.decodeFromString<ListItemData>(jsonString)
+//        } else {
+//            null
+//        }
+//    }
+//}
 
 @Composable
 fun IndexScreen(
-    viewModel: IndexScreenViewModel,
+    //viewModel: IndexScreenViewModel,
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
     val items = rememberSaveable {
-            mutableListOf(
-                ListItemData(R.string.childPughTitle, navigateToChildPugh),
-                ListItemData(R.string.aDropTitle, navigateToAdrop)
-        )
-    }
-
-    var json = Json.encodeToString(items)
-
-    LaunchedEffect(Unit) {
-        context.dataStore.data
-            .map { preferences ->
-                preferences[INDEX_SEQUENCE] ?: json
-            }
-            .collect {
-                json = it
-            }
+        itemsList.toMutableList()
     }
 
     Column(){
@@ -117,26 +99,22 @@ fun IndexScreen(
                 ListItem(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
-                        // Move clicked item to the top
-                        json = context.dataStore.map { preferences ->
-                            preferences[INDEX_SEQUENCE] ?: json
-                        }
-                        var items = Json.decodeFromString<ListItemData>(json)
-
+//                        scope.launch {
+//                            loadIsFirstDataStore(context, items)
+//                        }
+//
                         items.remove(itemData)
                         items.add(0, itemData)
-
-                        json = Json.encodeToString(items)
-
-                        scope.launch {
-                            saveIsFirstDataStore(context, json)
+//
+//                        scope.launch {
+//                            saveIsFirstDataStore(context, items)
+//                        }
+                        when (itemData.actionType) {
+                            ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()
+                            ActionType.NAVIGATE_TO_ADROP -> navigateToAdrop()
                         }
-
-
-                        // Save the updated list to SharedPreferences
-
                         // Execute the original onClick action
-                        itemData.onClick()
+                        //itemData.actionType()
                     }
                 )
             }
