@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 enum class ActionType {
@@ -57,23 +58,23 @@ val itemsList = listOf(
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 val LIST_ITEM_DATA_KEY = stringPreferencesKey("list_item_data")
 
-//suspend fun saveListItemData(context: Context, item: ListItemData) {
-//    context.dataStore.edit { settings ->
-//        val jsonString = Json.encodeToString(item)
-//        settings[LIST_ITEM_DATA_KEY] = jsonString
-//    }
-//}
+suspend fun saveListItemData(context: Context, item: MutableList<ListItemData>) {
+    context.dataStore.edit { settings ->
+        val jsonString = Json.encodeToString(item)
+        settings[LIST_ITEM_DATA_KEY] = jsonString
+    }
+}
 //
-//fun loadListItemData(context: Context): Flow<ListItemData?> {
-//    return context.dataStore.data.map { preferences ->
-//        val jsonString = preferences[LIST_ITEM_DATA_KEY]
-//        if (jsonString != null) {
-//            Json.decodeFromString<ListItemData>(jsonString)
-//        } else {
-//            null
-//        }
-//    }
-//}
+fun loadListItemData(context: Context): Flow<ListItemData?> {
+    return context.dataStore.data.map { preferences ->
+        val jsonString = preferences[LIST_ITEM_DATA_KEY]
+        if (jsonString != null) {
+            Json.decodeFromString<ListItemData>(jsonString)
+        } else {
+            null
+        }
+    }
+}
 
 @Composable
 fun IndexScreen(
@@ -99,22 +100,20 @@ fun IndexScreen(
                 ListItem(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
-//                        scope.launch {
-//                            loadIsFirstDataStore(context, items)
-//                        }
-//
+                        scope.launch {
+                            loadListItemData(context)
+                        }
+
                         items.remove(itemData)
                         items.add(0, itemData)
-//
-//                        scope.launch {
-//                            saveIsFirstDataStore(context, items)
-//                        }
+
+                        scope.launch {
+                            saveListItemData(context, items)
+                        }
                         when (itemData.actionType) {
                             ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()
                             ActionType.NAVIGATE_TO_ADROP -> navigateToAdrop()
                         }
-                        // Execute the original onClick action
-                        //itemData.actionType()
                     }
                 )
             }
