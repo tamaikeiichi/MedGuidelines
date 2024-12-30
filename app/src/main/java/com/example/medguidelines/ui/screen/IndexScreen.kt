@@ -1,7 +1,5 @@
 package com.example.medguidelines.ui.screen
 
-import android.content.Context
-import android.os.Parcelable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,78 +19,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import com.example.medguidelines.data.ActionType
+import com.example.medguidelines.data.ListItem
+import com.example.medguidelines.data.ListItemData
+import com.example.medguidelines.data.loadListItemData
+import com.example.medguidelines.data.saveListItemData
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
-@Serializable
-enum class ActionType {
-    NAVIGATE_TO_CHILD_PUGH,
-    NAVIGATE_TO_ADROP
-}
-
-@Parcelize
-@Serializable
-data class ListItemData(
-    val nameResId: Int,
-    val actionType: ActionType
-) : Parcelable
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
     ListItemData(R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP)
 )
 
-// Usage with DataStore:
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-val LIST_ITEM_DATA_KEY = stringPreferencesKey("list_item_data")
-
-suspend fun saveListItemData(context: Context, item: MutableList<ListItemData>) {
-    context.dataStore.edit { settings ->
-        val jsonString = Json.encodeToString(item)
-        settings[LIST_ITEM_DATA_KEY] = jsonString
-    }
-}
-
-fun loadListItemData(context: Context): Flow<List<ListItemData>> {
-    return context.dataStore.data.map { preferences ->
-        val jsonString = preferences[LIST_ITEM_DATA_KEY]
-        if (jsonString != null) {
-            Json.decodeFromString<List<ListItemData>>(jsonString)
-        } else {
-            itemsList
-        }
-    }
-}
 @Composable
 fun IndexScreen(
-    //viewModel: IndexScreenViewModel,
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-//    var items = rememberSaveable {
-//        itemsList.toMutableList()
-//        //mutableListOf<ListItemData>()
-//    }
-
-    //items = loadListItemData(context).collect
     var items = rememberSaveable(saver = listSaver(
         save = { it.map { item -> Json.encodeToString(item) } },
         restore = { it.map { item -> Json.decodeFromString<ListItemData>(item) }.toMutableStateList() }
