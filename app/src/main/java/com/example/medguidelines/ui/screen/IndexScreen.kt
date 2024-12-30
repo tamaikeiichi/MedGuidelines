@@ -18,10 +18,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.datastore.core.DataStore
@@ -37,6 +40,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+@Serializable
 enum class ActionType {
     NAVIGATE_TO_CHILD_PUGH,
     NAVIGATE_TO_ADROP
@@ -64,18 +68,17 @@ suspend fun saveListItemData(context: Context, item: MutableList<ListItemData>) 
         settings[LIST_ITEM_DATA_KEY] = jsonString
     }
 }
-//
-fun loadListItemData(context: Context): Flow<ListItemData?> {
+
+fun loadListItemData(context: Context): Flow<List<ListItemData>> {
     return context.dataStore.data.map { preferences ->
         val jsonString = preferences[LIST_ITEM_DATA_KEY]
         if (jsonString != null) {
-            Json.decodeFromString<ListItemData>(jsonString)
+            Json.decodeFromString<List<ListItemData>>(jsonString)
         } else {
-            null
+            itemsList
         }
     }
 }
-
 @Composable
 fun IndexScreen(
     //viewModel: IndexScreenViewModel,
@@ -84,8 +87,24 @@ fun IndexScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val items = rememberSaveable {
-        itemsList.toMutableList()
+//    var items = rememberSaveable {
+//        itemsList.toMutableList()
+//        //mutableListOf<ListItemData>()
+//    }
+
+    //items = loadListItemData(context).collect
+    var items = rememberSaveable(saver = listSaver(
+        save = { it.map { item -> Json.encodeToString(item) } },
+        restore = { it.map { item -> Json.decodeFromString<ListItemData>(item) }.toMutableStateList() }
+    )) {
+        mutableStateListOf<ListItemData>()
+    }
+
+    LaunchedEffect(Unit) {
+        loadListItemData(context).collect { loadedItems ->
+            items.clear()
+            items.addAll(loadedItems)
+        }
     }
 
     Column(){
@@ -96,19 +115,20 @@ fun IndexScreen(
                 .fillMaxWidth(),
             contentPadding = PaddingValues(10.dp),
         ) {
+//            if (items.isEmpty()) {
+//                items = rememberSaveable {
+//                    itemsList.toMutableList()
+//                }
+//            }
             items(items){ itemData ->
                 ListItem(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
+                        val updatedItems = items.toMutableList()
+                        updatedItems.remove(itemData)
+                        updatedItems.add(0, itemData)
                         scope.launch {
-                            loadListItemData(context)
-                        }
-
-                        items.remove(itemData)
-                        items.add(0, itemData)
-
-                        scope.launch {
-                            saveListItemData(context, items)
+                            saveListItemData(context, updatedItems)
                         }
                         when (itemData.actionType) {
                             ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()
@@ -120,13 +140,6 @@ fun IndexScreen(
         }
     }
 }
-
-
-//suspend fun saveLayoutToPreferencesStore(isLinearLayoutManager: String, context: Context) {
-//    context.dataStore.edit { preferences ->
-//        preferences[LAYOUT_PREFERENCES_NAME] = isLinearLayoutManager
-//    }
-//}
 
 @Composable
 fun SearchBar(
