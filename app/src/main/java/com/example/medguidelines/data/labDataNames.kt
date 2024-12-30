@@ -34,3 +34,24 @@ val encephalopathyGrade = listOf(
     labDataNames(R.string.encephalopathyGrade2),
     labDataNames(R.string.encephalopathyGrade3),
 )
+
+val ageGrade = listOf(
+    labDataNames(R.string.ageGrade1),
+    labDataNames(R.string.ageGrade2),
+)
+val dehydrationGrade = listOf(
+    labDataNames(R.string.dehydrationGrade1),
+    labDataNames(R.string.dehydrationGrade2),
+    )
+val respirationGrade = listOf(
+    labDataNames(R.string.respirationGrade1),
+    labDataNames(R.string.respirationGrade2),
+    )
+val orientationGrade = listOf(
+    labDataNames(R.string.orientationGrade1),
+    labDataNames(R.string.orientationGrade2)
+)
+val pressureGrade = listOf(
+    labDataNames(R.string.pressureGrade1),
+    labDataNames(R.string.pressureGrade2)
+)
