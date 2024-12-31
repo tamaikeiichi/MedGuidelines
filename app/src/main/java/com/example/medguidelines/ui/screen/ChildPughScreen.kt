@@ -1,50 +1,26 @@
 package com.example.medguidelines.ui.screen
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
+
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.medguidelines.R
 import com.example.medguidelines.data.albuminGrade
@@ -54,25 +30,19 @@ import com.example.medguidelines.data.encephalopathyGrade
 import com.example.medguidelines.data.labDataNames
 import com.example.medguidelines.data.ptGrade
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
+import com.example.medguidelines.ui.component.TitleTopAppBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChildPughScreen() {
-    var totalScore by remember { mutableStateOf(0) }
+    var totalScore by remember { mutableIntStateOf(0) }
     var childPughScoreABC by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = { Text(text = stringResource(id = R.string.childPughTitle)) }
-            )
+            TitleTopAppBar(title = stringResource(id = R.string.childPughTitle))
         },
         bottomBar = {
-            BottomAppBar (){
+            BottomAppBar {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -135,10 +105,6 @@ fun childPughTotalScore(): Int {
     return  totalScore
 }
 
-data class TotalScoreClass (
-    val totalScoreValue : Int
-)
-
 @Composable
 fun childPughButtonAndScore(
     factor : List<labDataNames>,
@@ -157,87 +123,6 @@ fun childPughButtonAndScore(
 
     return score
 }
-
-//
-//@Composable
-//fun ThreeRadioButton(radioOptions: List<labDataNames>,
-//                     selectedOption: labDataNames,
-//                     onOptionSelected : (selectedOption: labDataNames ) -> Unit,
-//                     title : String,
-//                     titleNote : Int,
-//){
-//    Column(){
-//        Card(
-//            colors = CardDefaults.cardColors(
-//                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-//            ),
-//            modifier = Modifier
-//                .padding(vertical = 4.dp, horizontal = 8.dp)
-//        ){
-//            var expanded by remember { mutableStateOf(false)}
-//            Row(
-//                modifier = Modifier.padding(2.dp)
-//                    .animateContentSize ()
-//            ){
-//                Column (
-//                    modifier = Modifier.weight(1f).padding(5.dp)
-//                ){
-//                    Text(text = title,
-//                        Modifier
-//                            .padding(10.dp))
-//                    if (expanded) {
-//                        Text (text = titleNote,
-//                            Modifier
-//                                .padding(2.dp))
-//                    }
-//                }
-//                IconButton(onClick = { expanded = !expanded}) {
-//                    Icon(
-//                        imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
-//                        else Icons.Filled.KeyboardArrowDown,
-//
-//                        contentDescription = if (expanded) "Collapse" else "Expand"
-//                    )
-//                }
-//            }
-//        }
-//
-//    }
-//
-//    // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
-//    Row(
-//        Modifier
-//            .selectableGroup()
-//            .fillMaxWidth(),
-//        horizontalArrangement = Arrangement.Start
-//    ) {
-//        radioOptions.forEach { text ->
-//            Row(
-//                Modifier//.fillMaxWidth()
-//                    .height(56.dp)
-//                    .selectable(
-//                        selected = (text == selectedOption),
-//                        onClick = { onOptionSelected(text) },
-//                        role = Role.RadioButton
-//                    )
-//                    .padding(horizontal = 16.dp),
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//                RadioButton(
-//                    selected = (text == selectedOption),
-//                    onClick = null // null recommended for accessibility with screenreaders
-//                )
-//                Text(
-//                    text = stringResource(id = text.stringid),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier.padding(start = 16.dp),
-//                    softWrap = true,
-//                )
-//            }
-//        }
-//    }
-//}
-
 
 @Preview
 @Composable

@@ -44,7 +44,7 @@
     <string name="ascitesTitle">Ascites</string>
     <string name="ascitesTitleNote">Ascites</string>
     <string name="encephalopaphyTitle">Encephalopathy grade</string>
-    <string name="encephalopaphyTitleNote">Grade 1: Trivial lack of awareness, Euphoria or anxiety, Shortened attention span, Impairment of addition or subtraction, Altered sleep rhythm. \nGrade 2: Lethargy or apathy, Disorientation for time, Obvious personality change, Inappropriate behavior, Dyspraxia, Asterixis. \nGrade 3: Somnolence to semistupor, Responsive to stimuli, Confused, Gross disorientation, Bizarre behavior. \nGrade 4: Coma</string>
+    <string name="encephalopaphyTitleNote">&lt;b>Grade 1&lt;/b>: Trivial lack of awareness, Euphoria or anxiety, Shortened attention span, Impairment of addition or subtraction, Altered sleep rhythm. \n&lt;b>Grade 2&lt;/b>: Lethargy or apathy, Disorientation for time, Obvious personality change, Inappropriate behavior, Dyspraxia, Asterixis. \n&lt;b>Grade 3&lt;/b>: Somnolence to semistupor, Responsive to stimuli, Confused, Gross disorientation, Bizarre behavior. \n&lt;b>Grade 4&lt;/b>: Coma</string>
     <string name="adropLiteralScoreMild">Mild, outpatient care</string>
     <string name="adropLiteralScoreModerate">Moderate, outpatient or hospital care</string>
     <string name="adropLiteralScoreSevere">Severe, hospital care</string>
@@ -68,7 +68,7 @@
     <string name="M1a">M1a</string>
     <string name="M1b">M1b</string>
     <string name="M1c">M1c</string>
-    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal, &lt;b>T1&lt;/b>: submucosa, &lt;b>T2&lt;/b>: muscularis propria, &lt;b>T3&lt;/b>: pericolorectal, &lt;b>T4a&lt;/b>: perforate cisceral peritoneum, &lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.  </string>
-    <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease, &lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
+    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal\n&lt;b>T1&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: pericolorectal\n&lt;b>T4a&lt;/b>: perforate cisceral peritoneum, &lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
+    <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
     <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases, &lt;b>M1b&lt;/b>: more than one organ, &lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
 </resources>

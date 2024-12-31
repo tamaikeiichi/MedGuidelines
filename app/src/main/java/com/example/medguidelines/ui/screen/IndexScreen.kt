@@ -61,10 +61,8 @@ fun IndexScreen(
         }
     }
 
-    Column(
-
-    ){
-        SearchBar()
+    Column{
+        //SearchBar()
         LazyColumn(
             modifier = Modifier
                 .padding(2.dp)
@@ -93,14 +91,16 @@ fun IndexScreen(
     }
 }
 
+
 @Composable
 fun SearchBar(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     TextField(
-        value = "",
-        onValueChange = {}
-    ,
+        value = searchQuery,
+        onValueChange = onSearchQueryChange,
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             focusedContainerColor = MaterialTheme.colorScheme.surface
@@ -119,4 +119,3 @@ fun SearchBar(
 fun IndexScreenPreview(){
     IndexScreen(navigateToChildPugh = {}, navigateToAdrop = {}, navigateToColorectalTNM = {})
 }
-

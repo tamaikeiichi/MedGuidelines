@@ -23,11 +23,9 @@ import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
 
-
-//@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ColorectalTNMScreen() {
-    var score by remember { mutableStateOf(listOf<Int>(0,0)) }
+    var score by remember { mutableStateOf(listOf(0,0)) }
     var literalScore by remember { mutableStateOf("") }
 
     // Build the display string here
@@ -46,40 +44,40 @@ fun ColorectalTNMScreen() {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            score = ColorectalTNMScore()
+            score = colorectalTNMScore()
             literalScore = colorectalCancerTNM[score.last()][score.first()]
         }
     }
 }
 
 @Composable
-fun ColorectalTNMScore(): List<Int> {
+fun colorectalTNMScore(): List<Int> {
     Column (
         Modifier
         //.verticalScroll(rememberScrollState()),
         //horizontalAlignment = Alignment.CenterHorizontally
     ) {
     }
-    val ScoreA = colorectalTNMButtonAndScore(
+    val scoreA = colorectalTNMButtonAndScore(
         Tfactor,
         stringResource(id = R.string.colorectalTTitle),
         R.string.TfactorTitleNote
     )
-    val ScoreB = colorectalTNMButtonAndScore(
+    val scoreB = colorectalTNMButtonAndScore(
         Nfactor,
         stringResource(id = R.string.colorectalNtitle),
         R.string.NfactorTitleNote
     )
-    val ScoreC = colorectalTNMButtonAndScore(
+    val scoreC = colorectalTNMButtonAndScore(
         Mfactor,
         stringResource(id = R.string.colorectalMtitle),
         R.string.MfactorTitleNote
     )
-    val score = if (ScoreC == 0) {
-        listOf(ScoreA, ScoreB)
+    val score = if (scoreC == 0) {
+        listOf(scoreA, scoreB)
     }
     else {
-        listOf(ScoreA, ScoreC + Nfactor.size - 1)
+        listOf(scoreA, scoreC + Nfactor.size - 1)
     }
     return  score
 }
@@ -98,7 +96,6 @@ fun colorectalTNMButtonAndScore(
         radioOptions.indexOf(selectedOption).coerceAtLeast(0)
     return score
 }
-
 
 @Preview
 @Composable

@@ -76,10 +76,10 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v284)
     implementation(libs.androidx.datastore.preferences.v100)
     implementation(libs.androidx.datastore.preferences.core)
-    implementation  (libs.protobuf.javalite)
-    implementation ("androidx.preference:preference:1.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
-    implementation (libs.accompanist.flowlayout)
+    implementation(libs.protobuf.javalite)
+    implementation(libs.androidx.preference)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.accompanist.flowlayout)
 }
 
 protobuf {
