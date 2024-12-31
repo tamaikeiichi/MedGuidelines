@@ -49,5 +49,25 @@
     <string name="adropLiteralScoreSevere">Severe, hospital care</string>
     <string name="adropLiteralScoreMostSevere">Most severe, ICU admission</string>
     <string name="colorectalTTitle">T factor</string>
-    <string name="colorectalNMtitle">N or M factor</string>
+    <string name="colorectalNtitle">N factor</string>
+    <string name="colorectalMtitle">M factor</string>
+    <string name="Tis">Tis</string>
+    <string name="T1">T1</string>
+    <string name="T2">T2</string>
+    <string name="T3">T3</string>
+    <string name="T4a">T4a</string>
+    <string name="T4b">T4b</string>
+    <string name="N0">N0</string>
+    <string name="N1a">N1a</string>
+    <string name="N1b">N1b</string>
+    <string name="N1c">N1c</string>
+    <string name="N2a">N2a</string>
+    <string name="N2b">N2b</string>
+    <string name="M0">M0</string>
+    <string name="M1a">M1a</string>
+    <string name="M1b">M1b</string>
+    <string name="M1c">M1c</string>
+    <string name="TfactorTitleNote">Tis: intramucosal, T1: submucosa, T2: muscularis propria, T3: pericolorectal, T4a: perforate cisceral peritoneum, T4b: invade or adherent to adjacent organs or structure.  </string>
+    <string name="NfactorTitleNote">N1a: 1, N1b: 2–3 regional nodes, N1c: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease, N2a: 4–6, N2b: 7 or more regional nodes.</string>
+    <string name="MfactorTitleNote">M1a: one organ without peritoneal metastases, M1b: more than one organ, M1c: to the peritoneum with or without other organ involvement.</string>
 </resources>

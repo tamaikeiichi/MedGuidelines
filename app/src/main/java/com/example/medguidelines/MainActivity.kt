@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.compose.AppTheme
 import com.example.medguidelines.ui.screen.AdropScreen
 import com.example.medguidelines.ui.screen.ChildPughScreen
+import com.example.medguidelines.ui.screen.ColorectalTNMScreen
 import com.example.medguidelines.ui.screen.IndexScreen
 
 class MainActivity : ComponentActivity() {
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
                             val items = IndexScreen(
                                 navigateToChildPugh = {controller.navigate("ChildPughScreen")},
                                 navigateToAdrop = {controller.navigate("AdropScreen")},
+                                navigateToColorectalTNM = {controller.navigate("ColorectalTNMScreen")}
                             )
                             //saveListItemData(items = items){
 
@@ -53,6 +55,15 @@ class MainActivity : ComponentActivity() {
                             .statusBarsPadding()
                         ) { innerPadding ->
                             AdropScreen()
+                        }
+                    }
+                    composable("ColorectalTNMScreen") {
+                        Scaffold(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .statusBarsPadding()
+                        ) { innerPadding ->
+                            ColorectalTNMScreen()
                         }
                     }
                 }

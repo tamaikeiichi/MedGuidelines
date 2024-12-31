@@ -35,17 +35,19 @@ import kotlinx.serialization.json.Json
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
-    ListItemData(R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP)
+    ListItemData(R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP),
+    ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM)
 )
 
 @Composable
 fun IndexScreen(
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
+    navigateToColorectalTNM: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var items = rememberSaveable(saver = listSaver(
+    val items = rememberSaveable(saver = listSaver(
         save = { it.map { item -> Json.encodeToString(item) } },
         restore = { it.map { item -> Json.decodeFromString<ListItemData>(item) }.toMutableStateList() }
     )) {
@@ -59,7 +61,9 @@ fun IndexScreen(
         }
     }
 
-    Column(){
+    Column(
+
+    ){
         SearchBar()
         LazyColumn(
             modifier = Modifier
@@ -67,11 +71,6 @@ fun IndexScreen(
                 .fillMaxWidth(),
             contentPadding = PaddingValues(10.dp),
         ) {
-//            if (items.isEmpty()) {
-//                items = rememberSaveable {
-//                    itemsList.toMutableList()
-//                }
-//            }
             items(items){ itemData ->
                 ListItem(
                     name = stringResource(id = itemData.nameResId),
@@ -85,6 +84,7 @@ fun IndexScreen(
                         when (itemData.actionType) {
                             ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()
                             ActionType.NAVIGATE_TO_ADROP -> navigateToAdrop()
+                            ActionType.NAVIGATE_TO_COLORECTAL_TNM -> navigateToColorectalTNM()
                         }
                     }
                 )
@@ -117,6 +117,6 @@ fun SearchBar(
 @Preview
 @Composable
 fun IndexScreenPreview(){
-    IndexScreen(navigateToChildPugh = {}, navigateToAdrop = {})
+    IndexScreen(navigateToChildPugh = {}, navigateToAdrop = {}, navigateToColorectalTNM = {})
 }
 

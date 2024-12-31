@@ -5,6 +5,8 @@ import android.text.Spanned
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import com.example.medguidelines.data.labDataNames
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RadioButtonAndExpand(
     radioOptions: List<labDataNames>,
@@ -45,9 +48,9 @@ fun RadioButtonAndExpand(
 ){
     Column(){
         Card(
-            colors = CardDefaults.cardColors(
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
+//            colors = CardDefaults.cardColors(
+//                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+    //        ),
             modifier = Modifier
                 .padding(vertical = 4.dp, horizontal = 8.dp)
         ){
@@ -88,14 +91,14 @@ fun RadioButtonAndExpand(
     }
 
     // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
-    Row(
+    FlowRow(
         Modifier
             .selectableGroup()
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
     ) {
         radioOptions.forEach { text ->
-            Row(
+            Row (
                 Modifier//.fillMaxWidth()
                     .height(56.dp)
                     .selectable(

@@ -79,6 +79,7 @@ dependencies {
     implementation  (libs.protobuf.javalite)
     implementation ("androidx.preference:preference:1.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
+    implementation (libs.accompanist.flowlayout)
 }
 
 protobuf {

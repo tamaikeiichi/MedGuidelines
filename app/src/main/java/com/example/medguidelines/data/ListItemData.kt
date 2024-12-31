@@ -7,7 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 enum class ActionType {
     NAVIGATE_TO_CHILD_PUGH,
-    NAVIGATE_TO_ADROP
+    NAVIGATE_TO_ADROP,
+    NAVIGATE_TO_COLORECTAL_TNM
 }
 
 @Parcelize

@@ -55,3 +55,29 @@ val pressureGrade = listOf(
     labDataNames(R.string.pressureGrade1),
     labDataNames(R.string.pressureGrade2)
 )
+
+val Tfactor = listOf(
+    labDataNames(R.string.Tis),
+    labDataNames(R.string.T1),
+    labDataNames(R.string.T2),
+    labDataNames(R.string.T3),
+    labDataNames(R.string.T4a),
+    labDataNames(R.string.T4b),
+)
+
+val Nfactor = listOf(
+    labDataNames(R.string.N0),
+    labDataNames(R.string.N1a),
+    labDataNames(R.string.N1b),
+    labDataNames(R.string.N1c),
+    labDataNames(R.string.N2a),
+    labDataNames(R.string.N2b),
+
+)
+
+val Mfactor = listOf(
+    labDataNames(R.string.M0),
+    labDataNames(R.string.M1a),
+    labDataNames(R.string.M1b),
+    labDataNames(R.string.M1c)
+)
