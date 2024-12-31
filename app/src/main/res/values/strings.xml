@@ -1,4 +1,5 @@
 <resources>
+    <string name="space"> </string>
     <string name="app_name">MedGuidelines</string>
     <string name="childPughTitle">Child-Pugh Score</string>
     <string name="aDropTitle">A-drop</string>
@@ -67,7 +68,7 @@
     <string name="M1a">M1a</string>
     <string name="M1b">M1b</string>
     <string name="M1c">M1c</string>
-    <string name="TfactorTitleNote">Tis: intramucosal, T1: submucosa, T2: muscularis propria, T3: pericolorectal, T4a: perforate cisceral peritoneum, T4b: invade or adherent to adjacent organs or structure.  </string>
-    <string name="NfactorTitleNote">N1a: 1, N1b: 2–3 regional nodes, N1c: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease, N2a: 4–6, N2b: 7 or more regional nodes.</string>
-    <string name="MfactorTitleNote">M1a: one organ without peritoneal metastases, M1b: more than one organ, M1c: to the peritoneum with or without other organ involvement.</string>
+    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal, &lt;b>T1&lt;/b>: submucosa, &lt;b>T2&lt;/b>: muscularis propria, &lt;b>T3&lt;/b>: pericolorectal, &lt;b>T4a&lt;/b>: perforate cisceral peritoneum, &lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.  </string>
+    <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease, &lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
+    <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases, &lt;b>M1b&lt;/b>: more than one organ, &lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
 </resources>

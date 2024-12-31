@@ -53,6 +53,7 @@ import com.example.medguidelines.data.bilirubinGrade
 import com.example.medguidelines.data.encephalopathyGrade
 import com.example.medguidelines.data.labDataNames
 import com.example.medguidelines.data.ptGrade
+import com.example.medguidelines.ui.component.RadioButtonAndExpand
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,17 +116,17 @@ fun childPughTotalScore(): Int {
     val bilirubinScore = childPughButtonAndScore(
         bilirubinGrade,
         stringResource(id = R.string.bilirubinTitle),
-        stringResource(id = R.string.bilirubinTitleNote)
+        R.string.bilirubinTitleNote
     )
     val albuminScore =
         childPughButtonAndScore(albuminGrade, stringResource(id = R.string.albuminTitle),
-            stringResource(id = R.string.albuminTitleNote))
-    val ptScore = childPughButtonAndScore(ptGrade, stringResource(id = R.string.ptTitle),stringResource(id = R.string.ptTitleNote))
+            R.string.albuminTitleNote)
+    val ptScore = childPughButtonAndScore(ptGrade, stringResource(id = R.string.ptTitle),R.string.ptTitleNote)
     val ascitesScore =
-        childPughButtonAndScore(ascitesGrade, stringResource(id = R.string.ascitesTitle), stringResource(id = R.string.ascitesTitleNote))
+        childPughButtonAndScore(ascitesGrade, stringResource(id = R.string.ascitesTitle), R.string.ascitesTitleNote)
     val encephalopathyScore = childPughButtonAndScore(
         encephalopathyGrade,
-        stringResource(id = R.string.encephalopaphyTitle),stringResource(id = R.string.encephalopaphyTitleNote)
+        stringResource(id = R.string.encephalopaphyTitle),R.string.encephalopaphyTitleNote
     )
 
     val totalScore =
@@ -142,12 +143,12 @@ data class TotalScoreClass (
 fun childPughButtonAndScore(
     factor : List<labDataNames>,
     title : String,
-    titleNote : String
+    titleNote : Int
 ): Int
 {
     val radioOptions : List<labDataNames> = factor
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-    ThreeRadioButton(factor, selectedOption, onOptionSelected, title, titleNote)
+    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
 
     val score: Int =
         if (stringResource(id = selectedOption.stringid) == stringResource(id =radioOptions[0].stringid)) 1
@@ -157,85 +158,85 @@ fun childPughButtonAndScore(
     return score
 }
 
-
-@Composable
-fun ThreeRadioButton(radioOptions: List<labDataNames>,
-                     selectedOption: labDataNames,
-                     onOptionSelected : (selectedOption: labDataNames ) -> Unit,
-                     title : String,
-                     titleNote : String,
-){
-    Column(){
-        Card(
-            colors = CardDefaults.cardColors(
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            ),
-            modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 8.dp)
-        ){
-            var expanded by remember { mutableStateOf(false)}
-            Row(
-                modifier = Modifier.padding(2.dp)
-                    .animateContentSize ()
-            ){
-                Column (
-                    modifier = Modifier.weight(1f).padding(5.dp)
-                ){
-                    Text(text = title,
-                        Modifier
-                            .padding(10.dp))
-                    if (expanded) {
-                        Text (text = titleNote,
-                            Modifier
-                                .padding(2.dp))
-                    }
-                }
-                IconButton(onClick = { expanded = !expanded}) {
-                    Icon(
-                        imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
-                        else Icons.Filled.KeyboardArrowDown,
-
-                        contentDescription = if (expanded) "Collapse" else "Expand"
-                    )
-                }
-            }
-        }
-
-    }
-
-    // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
-    Row(
-        Modifier
-            .selectableGroup()
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        radioOptions.forEach { text ->
-            Row(
-                Modifier//.fillMaxWidth()
-                    .height(56.dp)
-                    .selectable(
-                        selected = (text == selectedOption),
-                        onClick = { onOptionSelected(text) },
-                        role = Role.RadioButton
-                    )
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RadioButton(
-                    selected = (text == selectedOption),
-                    onClick = null // null recommended for accessibility with screenreaders
-                )
-                Text(
-                    text = stringResource(id = text.stringid),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp),
-                    softWrap = true,
-                )
-            }
-        }
-    }
-}
+//
+//@Composable
+//fun ThreeRadioButton(radioOptions: List<labDataNames>,
+//                     selectedOption: labDataNames,
+//                     onOptionSelected : (selectedOption: labDataNames ) -> Unit,
+//                     title : String,
+//                     titleNote : Int,
+//){
+//    Column(){
+//        Card(
+//            colors = CardDefaults.cardColors(
+//                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+//            ),
+//            modifier = Modifier
+//                .padding(vertical = 4.dp, horizontal = 8.dp)
+//        ){
+//            var expanded by remember { mutableStateOf(false)}
+//            Row(
+//                modifier = Modifier.padding(2.dp)
+//                    .animateContentSize ()
+//            ){
+//                Column (
+//                    modifier = Modifier.weight(1f).padding(5.dp)
+//                ){
+//                    Text(text = title,
+//                        Modifier
+//                            .padding(10.dp))
+//                    if (expanded) {
+//                        Text (text = titleNote,
+//                            Modifier
+//                                .padding(2.dp))
+//                    }
+//                }
+//                IconButton(onClick = { expanded = !expanded}) {
+//                    Icon(
+//                        imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
+//                        else Icons.Filled.KeyboardArrowDown,
+//
+//                        contentDescription = if (expanded) "Collapse" else "Expand"
+//                    )
+//                }
+//            }
+//        }
+//
+//    }
+//
+//    // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
+//    Row(
+//        Modifier
+//            .selectableGroup()
+//            .fillMaxWidth(),
+//        horizontalArrangement = Arrangement.Start
+//    ) {
+//        radioOptions.forEach { text ->
+//            Row(
+//                Modifier//.fillMaxWidth()
+//                    .height(56.dp)
+//                    .selectable(
+//                        selected = (text == selectedOption),
+//                        onClick = { onOptionSelected(text) },
+//                        role = Role.RadioButton
+//                    )
+//                    .padding(horizontal = 16.dp),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                RadioButton(
+//                    selected = (text == selectedOption),
+//                    onClick = null // null recommended for accessibility with screenreaders
+//                )
+//                Text(
+//                    text = stringResource(id = text.stringid),
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    modifier = Modifier.padding(start = 16.dp),
+//                    softWrap = true,
+//                )
+//            }
+//        }
+//    }
+//}
 
 
 @Preview

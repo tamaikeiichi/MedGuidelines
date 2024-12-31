@@ -103,27 +103,27 @@ fun adropTotalScore(): Int {
     val ScoreA = adropButtonAndScore(
         ageGrade,
         stringResource(id = R.string.ageTitle),
-        ""
+        R.string.space
     )
     val ScoreB = adropButtonAndScore(
         dehydrationGrade,
         stringResource(id = R.string.dehydrationTitle),
-        ""
+        R.string.space
     )
     val ScoreC = adropButtonAndScore(
         respirationGrade,
             stringResource(id = R.string.respirationTitle),
-        ""
+        R.string.space
     )
     val ScoreD = adropButtonAndScore(
         orientationGrade,
         stringResource(id = R.string.orientationTitle),
-        ""
+        R.string.space
     )
     val ScoreE = adropButtonAndScore(
         pressureGrade,
         stringResource(id = R.string.pressureTitle),
-        ""
+        R.string.space
     )
     val totalScore =
         ScoreA + ScoreB + ScoreC + ScoreD + ScoreE
@@ -138,7 +138,7 @@ fun adropTotalScore(): Int {
 fun adropButtonAndScore(
     factor : List<labDataNames>,
     title : String,
-    titleNote : String
+    titleNote : Int
 ): Int
 {
     val radioOptions : List<labDataNames> = factor

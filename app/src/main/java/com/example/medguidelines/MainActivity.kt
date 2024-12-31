@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
@@ -25,36 +27,52 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 val controller = rememberNavController()
                 NavHost(controller, startDestination = "IndexScreen") {
-                    composable("IndexScreen"){
-                        Scaffold(modifier = Modifier
-                            .fillMaxSize()
-                            .statusBarsPadding()
+                    composable("IndexScreen") {
+                        Scaffold(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .statusBarsPadding()
                         ) { innerPadding ->
-                            val items = IndexScreen(
-                                navigateToChildPugh = {controller.navigate("ChildPughScreen")},
-                                navigateToAdrop = {controller.navigate("AdropScreen")},
-                                navigateToColorectalTNM = {controller.navigate("ColorectalTNMScreen")}
-                            )
-                            //saveListItemData(items = items){
+                            Column(
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                            ) {
+                                val items = IndexScreen(
+                                    navigateToChildPugh = { controller.navigate("ChildPughScreen") },
+                                    navigateToAdrop = { controller.navigate("AdropScreen") },
+                                    navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") }
+                                )
+                            }
+                        }
+                    }
+                    composable("ChildPughScreen") {
+                        Scaffold(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .statusBarsPadding()
+                        ) { innerPadding ->
+                            Column(
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                            ) {
+                                ChildPughScreen()
+                            }
 
-                            //}
                         }
                     }
-                    composable("ChildPughScreen"){
-                        Scaffold(modifier = Modifier
-                            .fillMaxSize()
-                            .statusBarsPadding()
-                        ) {
-                            innerPadding ->
-                            ChildPughScreen()
-                        }
-                    }
-                    composable("AdropScreen"){
-                        Scaffold(modifier = Modifier
-                            .fillMaxSize()
-                            .statusBarsPadding()
+                    composable("AdropScreen") {
+                        Scaffold(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .statusBarsPadding()
                         ) { innerPadding ->
-                            AdropScreen()
+                            Column(
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                            ) {
+                                AdropScreen()
+                            }
+
                         }
                     }
                     composable("ColorectalTNMScreen") {
@@ -63,11 +81,16 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxSize()
                                 .statusBarsPadding()
                         ) { innerPadding ->
-                            ColorectalTNMScreen()
+                            Column(
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                            ) {
+                                ColorectalTNMScreen()
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
     }

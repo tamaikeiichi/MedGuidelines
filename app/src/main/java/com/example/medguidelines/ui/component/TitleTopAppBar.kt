@@ -11,10 +11,6 @@ import androidx.compose.runtime.Composable
 @Composable
 fun TitleTopAppBar (title: String,){
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
         title = { Text(text = title) }
     )
 }

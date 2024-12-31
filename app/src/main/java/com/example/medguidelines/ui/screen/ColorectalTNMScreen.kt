@@ -63,17 +63,17 @@ fun ColorectalTNMScore(): List<Int> {
     val ScoreA = colorectalTNMButtonAndScore(
         Tfactor,
         stringResource(id = R.string.colorectalTTitle),
-        stringResource(id = R.string.TfactorTitleNote)
+        R.string.TfactorTitleNote
     )
     val ScoreB = colorectalTNMButtonAndScore(
         Nfactor,
         stringResource(id = R.string.colorectalNtitle),
-        stringResource(id = R.string.NfactorTitleNote)
+        R.string.NfactorTitleNote
     )
     val ScoreC = colorectalTNMButtonAndScore(
         Mfactor,
         stringResource(id = R.string.colorectalMtitle),
-        stringResource(id = R.string.MfactorTitleNote)
+        R.string.MfactorTitleNote
     )
     val score = if (ScoreC == 0) {
         listOf(ScoreA, ScoreB)
@@ -88,7 +88,7 @@ fun ColorectalTNMScore(): List<Int> {
 fun colorectalTNMButtonAndScore(
     factor : List<labDataNames>,
     title : String,
-    titleNote : String
+    titleNote : Int
 ): Int
 {
     val radioOptions : List<labDataNames> = factor
