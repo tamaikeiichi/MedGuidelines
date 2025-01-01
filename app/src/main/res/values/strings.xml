@@ -4,7 +4,7 @@
     <string name="childPughTitle">Child-Pugh Score</string>
     <string name="aDropTitle">A-drop</string>
     <string name="colorectalTNMTitle">Colorectal cancer TNM classification (UICC 8th)</string>
-    <string name="acuteTonsillitisAlgorithmTitle">Acute tonsillitis/pharyngitis algorithm (Journal of the Japanese Association for Infectious Diseases, 2019; 93: 623–642.)</string>
+    <string name="acuteTonsillitisAlgorithmTitle">Acute tonsillitis/pharyngitis algorithm</string><!-- (Journal of the Japanese Association for Infectious Diseases, 2019; 93: 623–642.)-->
     <string name="indexScreen_searchbar">Search</string>
     <string name="bilirubinGrade1">&lt; 2</string>
     <string name="bilirubinGrade2">2 to 3</string>
@@ -72,4 +72,9 @@
     <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal\n&lt;b>T1&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: pericolorectal\n&lt;b>T4a&lt;/b>: perforate cisceral peritoneum, &lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
     <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
     <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases, &lt;b>M1b&lt;/b>: more than one organ, &lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
+    <string name="presence">Presence</string>
+    <string name="absence">Absence</string>
+    <string name="mclsaacFever1">&lt; 38°C</string>
+    <string name="mclsaacFever2">≥ 38°C</string>
+    <string name="temperatureTitle">Temperature >38°C</string>
 </resources>

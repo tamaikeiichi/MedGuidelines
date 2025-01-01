@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.medguidelines.R
 import com.example.medguidelines.data.ageGrade
 import com.example.medguidelines.data.dehydrationGrade
-import com.example.medguidelines.data.labDataNames
+import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.orientationGrade
 import com.example.medguidelines.data.pressureGrade
 import com.example.medguidelines.data.respirationGrade
@@ -61,35 +61,29 @@ fun AdropScreen() {
 
 @Composable
 fun adropTotalScore(): Int {
-    Column (
-        Modifier
-        //.verticalScroll(rememberScrollState()),
-        //horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-    }
     val scoreA = adropButtonAndScore(
         ageGrade,
-        stringResource(id = R.string.ageTitle),
+         R.string.ageTitle,
         R.string.space
     )
     val scoreB = adropButtonAndScore(
         dehydrationGrade,
-        stringResource(id = R.string.dehydrationTitle),
+         R.string.dehydrationTitle,
         R.string.space
     )
     val scoreC = adropButtonAndScore(
         respirationGrade,
-            stringResource(id = R.string.respirationTitle),
+         R.string.respirationTitle,
         R.string.space
     )
     val scoreD = adropButtonAndScore(
         orientationGrade,
-        stringResource(id = R.string.orientationTitle),
+         R.string.orientationTitle,
         R.string.space
     )
     val scoreE = adropButtonAndScore(
         pressureGrade,
-        stringResource(id = R.string.pressureTitle),
+         R.string.pressureTitle,
         R.string.space
     )
     val totalScore =
@@ -99,17 +93,17 @@ fun adropTotalScore(): Int {
 
 @Composable
 fun adropButtonAndScore(
-    factor : List<labDataNames>,
-    title : String,
+    factor : List<RadioButtonName>,
+    title : Int,
     titleNote : Int
 ): Int
 {
-    val radioOptions : List<labDataNames> = factor
+    val radioOptions : List<RadioButtonName> = factor
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
 
     val score: Int =
-        if (stringResource(id = selectedOption.stringid) == stringResource(id =radioOptions[0].stringid)) 0
+        if (stringResource(id = selectedOption.stringId) == stringResource(id =radioOptions[0].stringId)) 0
         else 1
 
     return score

@@ -33,15 +33,15 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
-import com.example.medguidelines.data.labDataNames
+import com.example.medguidelines.data.RadioButtonName
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RadioButtonAndExpand(
-    radioOptions: List<labDataNames>,
-    selectedOption: labDataNames,
-    onOptionSelected: (selectedOption: labDataNames) -> Unit,
-    title: String,
+    radioOptions: List<RadioButtonName>,
+    selectedOption: RadioButtonName,
+    onOptionSelected: (selectedOption: RadioButtonName) -> Unit,
+    title: Int,
     titleNote: Int,
 ) {
     Column() {
@@ -67,9 +67,7 @@ fun RadioButtonAndExpand(
                         .padding(5.dp)
                 ) {
                     Text(
-                        text = AnnotatedString(
-                            Html.fromHtml(title, FROM_HTML_MODE_LEGACY).toString()
-                        ),
+                        text = parseStyledString(title),
                         Modifier
                             .padding(10.dp)
                     )
@@ -117,7 +115,7 @@ fun RadioButtonAndExpand(
                     onClick = null // null recommended for accessibility with screenreaders
                 )
                 Text(
-                    text = stringResource(id = text.stringid),
+                    text = stringResource(id = text.stringId),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 16.dp),
                     softWrap = true,

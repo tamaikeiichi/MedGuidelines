@@ -27,7 +27,7 @@ import com.example.medguidelines.data.albuminGrade
 import com.example.medguidelines.data.ascitesGrade
 import com.example.medguidelines.data.bilirubinGrade
 import com.example.medguidelines.data.encephalopathyGrade
-import com.example.medguidelines.data.labDataNames
+import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.ptGrade
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
@@ -63,13 +63,13 @@ fun ChildPughScreen() {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-                totalScore = childPughTotalScore() // Assuming childPughTotalScore() returns an Int
-                //Text(text = totalScore.toString())
+            totalScore = childPughTotalScore() // Assuming childPughTotalScore() returns an Int
+            //Text(text = totalScore.toString())
 
-                childPughScoreABC = when (totalScore) {
-                    in 5..6 -> "A"
-                    in 7..9 -> "B"
-                    else -> "C"
+            childPughScoreABC = when (totalScore) {
+                in 5..6 -> "A"
+                in 7..9 -> "B"
+                else -> "C"
             }
         }
     }
@@ -77,26 +77,31 @@ fun ChildPughScreen() {
 
 @Composable
 fun childPughTotalScore(): Int {
-    Column (
-        Modifier
-        //.verticalScroll(rememberScrollState()),
-        //horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-    }
     val bilirubinScore = childPughButtonAndScore(
         bilirubinGrade,
-        stringResource(id = R.string.bilirubinTitle),
+        R.string.bilirubinTitle,
         R.string.bilirubinTitleNote
     )
     val albuminScore =
-        childPughButtonAndScore(albuminGrade, stringResource(id = R.string.albuminTitle),
-            R.string.albuminTitleNote)
-    val ptScore = childPughButtonAndScore(ptGrade, stringResource(id = R.string.ptTitle),R.string.ptTitleNote)
+        childPughButtonAndScore(
+            albuminGrade,
+            R.string.albuminTitle,
+            R.string.albuminTitleNote
+        )
+    val ptScore = childPughButtonAndScore(ptGrade,
+        R.string.ptTitle,
+        R.string.ptTitleNote
+    )
     val ascitesScore =
-        childPughButtonAndScore(ascitesGrade, stringResource(id = R.string.ascitesTitle), R.string.ascitesTitleNote)
+        childPughButtonAndScore(
+            ascitesGrade,
+            R.string.ascitesTitle,
+            R.string.ascitesTitleNote
+        )
     val encephalopathyScore = childPughButtonAndScore(
         encephalopathyGrade,
-        stringResource(id = R.string.encephalopaphyTitle),R.string.encephalopaphyTitleNote
+        R.string.encephalopaphyTitle,
+        R.string.encephalopaphyTitleNote
     )
 
     val totalScore =
@@ -107,18 +112,18 @@ fun childPughTotalScore(): Int {
 
 @Composable
 fun childPughButtonAndScore(
-    factor : List<labDataNames>,
-    title : String,
+    factor : List<RadioButtonName>,
+    title : Int,
     titleNote : Int
 ): Int
 {
-    val radioOptions : List<labDataNames> = factor
+    val radioOptions : List<RadioButtonName> = factor
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
 
     val score: Int =
-        if (stringResource(id = selectedOption.stringid) == stringResource(id =radioOptions[0].stringid)) 1
-        else if (stringResource(id = selectedOption.stringid) == stringResource(id =radioOptions[1].stringid)) 2
+        if (stringResource(id = selectedOption.stringId) == stringResource(id =radioOptions[0].stringId)) 1
+        else if (stringResource(id = selectedOption.stringId) == stringResource(id =radioOptions[1].stringId)) 2
         else  3
 
     return score
