@@ -87,6 +87,17 @@ val absencePresence = listOf(
     RadioButtonName(R.string.presence),
 )
 
-//val mclsaac = listOf(
-//
-//)
+val mclsaacAge = listOf(
+    RadioButtonName(R.string.mclsaacAge1),
+    RadioButtonName(R.string.mclsaacAge2),
+    RadioButtonName(R.string.mclsaacAge3),
+)
+
+val tonsillitisRedFlag = listOf(
+    RadioButtonName(R.string.none),
+    RadioButtonName(R.string.tonsillitisRedFlag1),
+    RadioButtonName(R.string.tonsillitisRedFlag2),
+    RadioButtonName(R.string.tonsillitisRedFlag3),
+    RadioButtonName(R.string.tonsillitisRedFlag4),
+    RadioButtonName(R.string.tonsillitisRedFlag5),
+    )

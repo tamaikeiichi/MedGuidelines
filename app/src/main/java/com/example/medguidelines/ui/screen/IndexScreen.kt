@@ -17,8 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +29,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.medguidelines.data.ActionType
-import com.example.medguidelines.data.ListItem
+import com.example.medguidelines.ui.component.IndexScreenListItem
 import com.example.medguidelines.data.ListItemData
 import com.example.medguidelines.data.loadListItemData
 import com.example.medguidelines.data.saveListItemData
@@ -44,14 +42,16 @@ import kotlin.text.isBlank
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
     ListItemData(R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP),
-    ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM)
+    ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM),
+    ListItemData(R.string.acuteTonsillitisAlgorithmTitle, ActionType.NAVIGATE_TO_ACUTE_TONSILLITIS_ALGORITHM),
 )
 
 @Composable
 fun IndexScreen(
     navigateToChildPugh: () -> Unit,
     navigateToAdrop: () -> Unit,
-    navigateToColorectalTNM: () -> Unit
+    navigateToColorectalTNM: () -> Unit,
+    navigateToAcuteTonsillitisAlgorithm: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -98,10 +98,10 @@ fun IndexScreen(
         ) {
             items(filteredItems//items
                     ){ itemData ->
-                ListItem(
+                IndexScreenListItem(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
-                        val updatedItems = filteredItems.toMutableList()//items.toMutableList()
+                        val updatedItems = originalItems.toMutableList()//items.toMutableList()
                         updatedItems.remove(itemData)
                         updatedItems.add(0, itemData)
                         scope.launch {
@@ -111,6 +111,7 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()
                             ActionType.NAVIGATE_TO_ADROP -> navigateToAdrop()
                             ActionType.NAVIGATE_TO_COLORECTAL_TNM -> navigateToColorectalTNM()
+                            ActionType.NAVIGATE_TO_ACUTE_TONSILLITIS_ALGORITHM -> navigateToAcuteTonsillitisAlgorithm()
                         }
                     }
                 )
@@ -144,5 +145,7 @@ fun SearchBar(
 @Preview
 @Composable
 fun IndexScreenPreview(){
-    IndexScreen(navigateToChildPugh = {}, navigateToAdrop = {}, navigateToColorectalTNM = {})
+    IndexScreen(
+        navigateToChildPugh = {}, navigateToAdrop = {}, navigateToColorectalTNM = {}, navigateToAcuteTonsillitisAlgorithm = {}
+    )
 }

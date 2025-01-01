@@ -49,11 +49,8 @@ fun RadioButtonAndExpand(
 //            colors = CardDefaults.cardColors(
 //                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             //        )
-
             modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 8.dp),
-
-
+                .padding(vertical = 4.dp, horizontal = 4.dp),
         ) {
             var expanded by remember { mutableStateOf(false) }
             Row(
@@ -64,18 +61,20 @@ fun RadioButtonAndExpand(
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(5.dp)
+                        .padding(3.dp)
                 ) {
                     Text(
                         text = parseStyledString(title),
                         Modifier
-                            .padding(10.dp)
+                            .padding(4.dp),
+                        style = MaterialTheme.typography.titleMedium
                     )
                     if (expanded) {
                         Text(
                             text = parseStyledString(titleNote),
                             Modifier
-                                .padding(2.dp)
+                                .padding(2.dp),
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
@@ -90,7 +89,6 @@ fun RadioButtonAndExpand(
         }
 
     }
-
     // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
     FlowRow(
         Modifier
@@ -101,13 +99,12 @@ fun RadioButtonAndExpand(
         radioOptions.forEach { text ->
             Row(
                 Modifier//.fillMaxWidth()
-                    .height(56.dp)
                     .selectable(
                         selected = (text == selectedOption),
                         onClick = { onOptionSelected(text) },
                         role = Role.RadioButton
                     )
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 4.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
@@ -116,8 +113,8 @@ fun RadioButtonAndExpand(
                 )
                 Text(
                     text = stringResource(id = text.stringId),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = 4.dp),
                     softWrap = true,
                 )
             }

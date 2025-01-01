@@ -1,4 +1,4 @@
-package com.example.medguidelines.data
+package com.example.medguidelines.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ListItem (name: String, onClick: () -> Unit){
+fun IndexScreenListItem (name: String, onClick: () -> Unit){
     Column {
         Card {
             Text(text = name,
@@ -30,6 +30,3 @@ fun ListItem (name: String, onClick: () -> Unit){
         )
     }
 }
-
-//data class ListItemData (val name: String, val onClick: () -> Unit)
-//val listItemData = ListItemData()

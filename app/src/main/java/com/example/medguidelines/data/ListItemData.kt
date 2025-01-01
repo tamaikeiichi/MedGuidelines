@@ -8,7 +8,8 @@ import kotlinx.serialization.Serializable
 enum class ActionType {
     NAVIGATE_TO_CHILD_PUGH,
     NAVIGATE_TO_ADROP,
-    NAVIGATE_TO_COLORECTAL_TNM
+    NAVIGATE_TO_COLORECTAL_TNM,
+    NAVIGATE_TO_ACUTE_TONSILLITIS_ALGORITHM
 }
 
 @Parcelize

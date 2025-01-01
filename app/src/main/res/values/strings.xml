@@ -77,4 +77,23 @@
     <string name="mclsaacFever1">&lt; 38°C</string>
     <string name="mclsaacFever2">≥ 38°C</string>
     <string name="temperatureTitle">Temperature >38°C</string>
+    <string name="coughTitle">Cough</string>
+    <string name="cervicalNodesTitle">Swollen, tender anterior cervical nodes</string>
+    <string name="tonsillarTitle">Tonsillar swelling or exudate</string>
+    <string name="mclsaacAge1">3–14 years</string>
+    <string name="mclsaacAge2">15–44 years</string>
+    <string name="mclsaacAge3">≥45 years</string>
+    <string name="mclsaacAgeTitle">Age</string>
+    <string name="tonsillitisRedFlag1">Airway obstruction</string>
+    <string name="tonsillitisRedFlag2">Difficulty swallowing/drooling</string>
+    <string name="tonsillitisRedFlag3">Muffled speach</string>
+    <string name="tonsillitisRedFlag4">Severe respiratory distress</string>
+    <string name="tonsillitisRedFlag5">Sepsis</string>
+    <string name="none">None</string>
+    <string name="tonsillitisRedFlagTitle">Red flag</string>
+    <string name="followup">Follow up</string>
+    <string name="antigenTest">Bacterial antigen or culture test</string>
+    <string name="antibioticsAMPC">Antibiotics (AMPC)</string>
+    <string name="hospitalCare">Hospital care</string>
+    <string name="needSpecialistExamination">Need specialist examination</string>
 </resources>

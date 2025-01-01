@@ -20,6 +20,7 @@ import com.example.medguidelines.ui.screen.ColorectalTNMScreen
 import com.example.medguidelines.ui.screen.IndexScreen
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
+import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +43,9 @@ class MainActivity : ComponentActivity() {
                                 val items = IndexScreen(
                                     navigateToChildPugh = { controller.navigate("ChildPughScreen") },
                                     navigateToAdrop = { controller.navigate("AdropScreen") },
-                                    navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") }
+                                    navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
+                                    navigateToAcuteTonsillitisAlgorithm = { controller.navigate("AcuteTonsillitisAlgorithmScreen")},
+
                                 )
                             }
                         }
@@ -91,7 +94,21 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+                    composable("AcuteTonsillitisAlgorithmScreen") {
+                        Scaffold(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .statusBarsPadding()
+                        ) { innerPadding ->
+                            Column(
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                            ) {
+                                AcuteTonsillitisAlgorithmScreen()
+                            }
 
+                        }
+                    }
                 }
             }
         }
