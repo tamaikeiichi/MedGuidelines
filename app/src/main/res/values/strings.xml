@@ -4,6 +4,7 @@
     <string name="childPughTitle">Child-Pugh Score</string>
     <string name="aDropTitle">A-drop</string>
     <string name="colorectalTNMTitle">Colorectal cancer TNM classification (UICC 8th)</string>
+    <string name="acuteTonsillitisAlgorithmTitle">Acute tonsillitis/pharyngitis algorithm (Journal of the Japanese Association for Infectious Diseases, 2019; 93: 623–642.)</string>
     <string name="indexScreen_searchbar">Search</string>
     <string name="bilirubinGrade1">&lt; 2</string>
     <string name="bilirubinGrade2">2 to 3</string>

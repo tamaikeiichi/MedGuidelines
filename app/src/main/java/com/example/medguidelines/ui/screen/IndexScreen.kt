@@ -17,10 +17,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +38,8 @@ import com.example.medguidelines.data.saveListItemData
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.text.contains
+import kotlin.text.isBlank
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
@@ -47,33 +55,53 @@ fun IndexScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val items = rememberSaveable(saver = listSaver(
+    var searchQuery by remember { mutableStateOf("") }
+
+    val originalItems = rememberSaveable(saver = listSaver(
         save = { it.map { item -> Json.encodeToString(item) } },
         restore = { it.map { item -> Json.decodeFromString<ListItemData>(item) }.toMutableStateList() }
     )) {
         mutableStateListOf<ListItemData>()
     }
+    val filteredItems = remember(searchQuery, originalItems) {
+        if (searchQuery.isBlank()) {
+            originalItems
+        } else {
+            originalItems.toList().filter {
+                //originalItems.toList().contains(searchQuery, ignoreCase = true)
+                itemData ->
+                val name = context.getString(itemData.nameResId)
+                name.contains(searchQuery.toString(), ignoreCase = true)
+            }
+        }
+        }
 
     LaunchedEffect(Unit) {
         loadListItemData(context).collect { loadedItems ->
-            items.clear()
-            items.addAll(loadedItems)
+            originalItems.clear()
+            originalItems.addAll(loadedItems)
         }
     }
 
     Column{
-        //SearchBar()
+        SearchBar(
+            searchQuery = searchQuery,
+            onSearchQueryChange = { newQuery ->
+                searchQuery = newQuery
+            }
+        )
         LazyColumn(
             modifier = Modifier
                 .padding(2.dp)
                 .fillMaxWidth(),
             contentPadding = PaddingValues(10.dp),
         ) {
-            items(items){ itemData ->
+            items(filteredItems//items
+                    ){ itemData ->
                 ListItem(
                     name = stringResource(id = itemData.nameResId),
                     onClick = {
-                        val updatedItems = items.toMutableList()
+                        val updatedItems = filteredItems.toMutableList()//items.toMutableList()
                         updatedItems.remove(itemData)
                         updatedItems.add(0, itemData)
                         scope.launch {
@@ -90,7 +118,6 @@ fun IndexScreen(
         }
     }
 }
-
 
 @Composable
 fun SearchBar(

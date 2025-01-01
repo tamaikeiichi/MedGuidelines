@@ -1,7 +1,6 @@
 package com.example.medguidelines.ui.component
 
 import android.text.Html
-import android.text.Spanned
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,13 +34,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import com.example.medguidelines.data.labDataNames
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -84,9 +75,6 @@ fun RadioButtonAndExpand(
                     )
                     if (expanded) {
                         Text(
-//                            text = AnnotatedString(
-//                                Html.fromHtml(titleNote, FROM_HTML_MODE_LEGACY).toString()
- //                           ),
                             text = parseStyledString(titleNote),
                             Modifier
                                 .padding(2.dp)
@@ -97,7 +85,6 @@ fun RadioButtonAndExpand(
                     Icon(
                         imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
                         else Icons.Filled.KeyboardArrowDown,
-
                         contentDescription = if (expanded) "Collapse" else "Expand"
                     )
                 }
