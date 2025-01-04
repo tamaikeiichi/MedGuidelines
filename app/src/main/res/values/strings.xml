@@ -1,5 +1,5 @@
 <resources>
-    <string name="space"> </string>
+    <string name="space" translatable="false"> </string>
     <string name="app_name">MedGuidelines</string>
     <string name="childPughTitle">Child-Pugh Score</string>
     <string name="aDropTitle">A-drop</string>
@@ -21,20 +21,10 @@
     <string name="encephalopathyGrade1">none</string>
     <string name="encephalopathyGrade2">grade 1 or 2</string>
     <string name="encephalopathyGrade3">grade 3 or 4</string>
-    <string name="ageGrade1">No</string>
-    <string name="ageGrade2">Yes</string>
     <string name="ageTitle">Age: Male &gt;= 70, Female &gt;= 75</string>
-    <string name="dehydrationGrade1">No</string>
-    <string name="dehydrationGrade2">Yes</string>
     <string name="dehydrationTitle">BUN &gt; 21 mg/dL or dehydration</string>
-    <string name="respirationGrade1">No</string>
-    <string name="respirationGrade2">Yes</string>
     <string name="respirationTitle">SpO&lt;sub>2&lt;/sub> &lt; 90% or PaO&lt;sub>2&lt;/sub> &lt; 60 mmHg</string>"
-    <string name="orientationGrade1">No</string>
-    <string name="orientationGrade2">Yes</string>
     <string name="orientationTitle">Consciousness disorder</string>
-    <string name="pressureGrade1">No</string>
-    <string name="pressureGrade2">Yes</string>
     <string name="pressureTitle">Systolic pressure &lt; 90 mmHg</string>"
     <string name="bilirubinTitle">Bilirubin (mg/dL)</string>
     <string name="bilirubinTitleNote">Serum total bilirubin</string>
@@ -53,29 +43,29 @@
     <string name="colorectalTTitle">T factor</string>
     <string name="colorectalNtitle">N factor</string>
     <string name="colorectalMtitle">M factor</string>
-    <string name="Tis">Tis</string>
-    <string name="T1">T1</string>
-    <string name="T2">T2</string>
-    <string name="T3">T3</string>
-    <string name="T4a">T4a</string>
-    <string name="T4b">T4b</string>
-    <string name="N0">N0</string>
-    <string name="N1a">N1a</string>
-    <string name="N1b">N1b</string>
-    <string name="N1c">N1c</string>
-    <string name="N2a">N2a</string>
-    <string name="N2b">N2b</string>
-    <string name="M0">M0</string>
-    <string name="M1a">M1a</string>
-    <string name="M1b">M1b</string>
-    <string name="M1c">M1c</string>
+    <string name="Tis" translatable="false">Tis</string>
+    <string name="T1" translatable="false">T1</string>
+    <string name="T2" translatable="false">T2</string>
+    <string name="T3" translatable="false">T3</string>
+    <string name="T4a" translatable="false">T4a</string>
+    <string name="T4b" translatable="false">T4b</string>
+    <string name="N0" translatable="false">N0</string>
+    <string name="N1a" translatable="false">N1a</string>
+    <string name="N1b" translatable="false">N1b</string>
+    <string name="N1c" translatable="false">N1c</string>
+    <string name="N2a" translatable="false">N2a</string>
+    <string name="N2b" translatable="false">N2b</string>
+    <string name="M0" translatable="false">M0</string>
+    <string name="M1a" translatable="false">M1a</string>
+    <string name="M1b" translatable="false">M1b</string>
+    <string name="M1c" translatable="false">M1c</string>
     <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal\n&lt;b>T1&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: pericolorectal\n&lt;b>T4a&lt;/b>: perforate cisceral peritoneum, &lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
     <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
     <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases, &lt;b>M1b&lt;/b>: more than one organ, &lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
     <string name="presence">Presence</string>
     <string name="absence">Absence</string>
     <string name="mclsaacFever1">&lt; 38°C</string>
-    <string name="mclsaacFever2">≥ 38°C</string>
+    <string name="mclsaacFever2" translatable="false">≥ 38°C</string>
     <string name="temperatureTitle">Temperature >38°C</string>
     <string name="coughTitle">Cough</string>
     <string name="cervicalNodesTitle">Swollen, tender anterior cervical nodes</string>
@@ -90,10 +80,12 @@
     <string name="tonsillitisRedFlag4">Severe respiratory distress</string>
     <string name="tonsillitisRedFlag5">Sepsis</string>
     <string name="none">None</string>
-    <string name="tonsillitisRedFlagTitle">Red flag</string>
+    <string name="tonsillitisRedFlagTitle" translatable="false">Red flag</string>
     <string name="followup">Follow up</string>
     <string name="antigenTest">Bacterial antigen or culture test</string>
     <string name="antibioticsAMPC">Antibiotics (AMPC)</string>
     <string name="hospitalCare">Hospital care</string>
     <string name="needSpecialistExamination">Need specialist examination</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

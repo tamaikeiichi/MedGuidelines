@@ -169,7 +169,7 @@ fun AcuteTonsillitisFollowupScore() {
             .padding(8.dp)
             .fillMaxWidth(),
     ){
-        Text(text = "Followup",
+        Text(text = stringResource(id = R.string.followup),
             modifier = Modifier.padding(8.dp))
     }
 }

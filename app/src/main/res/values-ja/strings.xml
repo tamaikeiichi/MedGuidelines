@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MedGuidelines</string>
+    <string name="colorectalTNMTitle">大腸癌TNM分類（UICC第8版）</string>
+    <string name="acuteTonsillitisAlgorithmTitle">急性扁桃炎治療アルゴリズム</string>
+    <string name="indexScreen_searchbar">検索</string>
+    <string name="ascitesGrade1">なし</string>
+    <string name="ascitesGrade2">少量</string>
+    <string name="ascitesGrade3">中等量</string>
+    <string name="orientationTitle">意識障害</string>
+    <string name="hospitalCare">入院加療</string>
+    <string name="needSpecialistExamination">専門医へ紹介</string>
+    <string name="bilirubinTitleNote">血清総ビリルビン</string>
+    <string name="albuminTitle">アルブミン (g/dL)</string>
+    <string name="ptTitleNote">あるいは40-70%</string>
+    <string name="ascitesTitle">腹水</string>
+    <string name="ascitesTitleNote">腹水</string>
+    <string name="encephalopaphyTitle">脳症</string>
+    <string name="adropLiteralScoreMild">軽症、外来加療</string>
+    <string name="adropLiteralScoreModerate">中等症、外来あるいは入院加療</string>
+    <string name="adropLiteralScoreSevere">重症、入院加療</string>
+    <string name="adropLiteralScoreMostSevere">最重症、ICU管理</string>
+    <string name="albuminTitleNote">アルブミン (g/dL)</string>
+    <string name="ptTitle">プロトロンビン（INR）</string>
+    <string name="bilirubinTitle">ビリルビン (mg/dL)</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="followup">経過観察</string>
+    <string name="temperatureTitle">体温 >38°C</string>
+    <string name="coughTitle">咳</string>
+    <string name="cervicalNodesTitle">頸部リンパ節腫脹・圧痛</string>
+    <string name="tonsillarTitle">扁桃腫脹・白苔</string>
+    <string name="mclsaacAgeTitle">年齢</string>
+    <string name="tonsillitisRedFlag1">気道閉塞</string>
+    <string name="tonsillitisRedFlag2">嚥下困難・流涎</string>
+    <string name="tonsillitisRedFlag3">こもった声</string>
+    <string name="tonsillitisRedFlag4">重度呼吸不全</string>
+    <string name="tonsillitisRedFlag5">敗血症</string>
+    <string name="none">なし</string>
+    <string name="presence">あり</string>
+    <string name="absence">なし</string>
+    <string name="colorectalTTitle">T因子</string>
+    <string name="colorectalNtitle">N因子</string>
+    <string name="colorectalMtitle">M因子</string>
+    <string name="encephalopaphyTitleNote">&lt;b>Grade 1&lt;/b>: 睡眠―覚醒リズムの逆転。多幸気分、ときに抑うつ状態だらしなく、気にもとめない態度。（retrospectiveにしか判定できない場合が多い）\n&lt;b>Grade 2&lt;/b>: 指南力（時・場所）障害、物を取り違える。異常行動。ときに傾眠状態（普通の呼びかけで開眼し、会話ができる）。無礼な言動があったりするが、医師の指示に従う態度をみせる。（羽ばたき振戦あり）\n&lt;b>Grade 3&lt;/b>: しばしば興奮状態または譫妄状態を伴い、反抗的態度をみせる。嗜眠状態（ほとんど眠っている）。外的刺激で開眼しうるが、医師の指示に従わない、または従えない（簡単な命令には応じうる）\n&lt;b>Grade 4&lt;/b>: 昏睡</string>
+</resources>

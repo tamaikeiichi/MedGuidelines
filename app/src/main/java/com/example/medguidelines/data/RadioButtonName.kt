@@ -36,24 +36,24 @@ val encephalopathyGrade = listOf(
 )
 
 val ageGrade = listOf(
-    RadioButtonName(R.string.ageGrade1),
-    RadioButtonName(R.string.ageGrade2),
+    RadioButtonName(R.string.no),
+    RadioButtonName(R.string.yes),
 )
 val dehydrationGrade = listOf(
-    RadioButtonName(R.string.dehydrationGrade1),
-    RadioButtonName(R.string.dehydrationGrade2),
+    RadioButtonName(R.string.no),
+    RadioButtonName(R.string.yes),
     )
 val respirationGrade = listOf(
-    RadioButtonName(R.string.respirationGrade1),
-    RadioButtonName(R.string.respirationGrade2),
+    RadioButtonName(R.string.no),
+    RadioButtonName(R.string.yes),
     )
 val orientationGrade = listOf(
-    RadioButtonName(R.string.orientationGrade1),
-    RadioButtonName(R.string.orientationGrade2)
+    RadioButtonName(R.string.no),
+    RadioButtonName(R.string.yes)
 )
 val pressureGrade = listOf(
-    RadioButtonName(R.string.pressureGrade1),
-    RadioButtonName(R.string.pressureGrade2)
+    RadioButtonName(R.string.no),
+    RadioButtonName(R.string.yes)
 )
 
 val Tfactor = listOf(
