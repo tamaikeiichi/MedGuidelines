@@ -20,6 +20,8 @@ import com.example.medguidelines.ui.screen.ColorectalTNMScreen
 import com.example.medguidelines.ui.screen.IndexScreen
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +42,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier
                                     .padding(innerPadding)
                             ) {
-                                val items = IndexScreen(
+                                IndexScreen(
                                     navigateToChildPugh = { controller.navigate("ChildPughScreen") },
                                     navigateToAdrop = { controller.navigate("AdropScreen") },
                                     navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
@@ -110,6 +112,34 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    AppTheme (darkTheme = false,
+        dynamicColor = true,
+        ){
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+        ){
+                innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+            )
+            {
+                IndexScreen(
+                    navigateToChildPugh = {},
+                    navigateToAdrop = {},
+                    navigateToColorectalTNM = {},
+                    navigateToAcuteTonsillitisAlgorithm = {},
+                    )
             }
         }
     }
