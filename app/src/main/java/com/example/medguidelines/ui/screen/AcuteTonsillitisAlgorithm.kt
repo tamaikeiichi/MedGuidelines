@@ -21,6 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.medguidelines.R
 import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.absencePresence
@@ -29,17 +33,19 @@ import com.example.medguidelines.data.tonsillitisRedFlag
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
 
+
 @Composable
-fun AcuteTonsillitisAlgorithmScreen() {
-    var totalscore by remember { mutableIntStateOf(0) }
+fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
     var redFlagScore by remember { mutableIntStateOf(0) }
     var score by remember { mutableIntStateOf(0) }
     val listState = rememberLazyListState()
-    //var literalScore by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.acuteTonsillitisAlgorithmTitle))
+            TitleTopAppBar(
+                title = stringResource(id = R.string.acuteTonsillitisAlgorithmTitle),
+                navController = navController
+            )
         },
     ) { innerPadding ->
         LazyColumn(
@@ -231,8 +237,8 @@ fun acuteTonsillitisAlgorithmButtonAndScore(
     return radioOptions.indexOf(selectedOption).coerceAtLeast(0)
 }
 
-@Preview
-@Composable
-fun AcuteTonsillitisAlgorithmScreenPreview() {
-    AcuteTonsillitisAlgorithmScreen()
-}
+//@Preview
+//@Composable
+//fun AcuteTonsillitisAlgorithmScreenPreview() {
+//    AcuteTonsillitisAlgorithmScreen()
+//}

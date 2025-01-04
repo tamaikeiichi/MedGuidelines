@@ -18,8 +18,6 @@ import com.example.medguidelines.ui.screen.AdropScreen
 import com.example.medguidelines.ui.screen.ChildPughScreen
 import com.example.medguidelines.ui.screen.ColorectalTNMScreen
 import com.example.medguidelines.ui.screen.IndexScreen
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
@@ -33,82 +31,32 @@ class MainActivity : ComponentActivity() {
                 val controller = rememberNavController()
                 NavHost(controller, startDestination = "IndexScreen") {
                     composable("IndexScreen") {
-                        Scaffold(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .statusBarsPadding()
-                        ) { innerPadding ->
-                            Column(
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                            ) {
-                                IndexScreen(
-                                    navigateToChildPugh = { controller.navigate("ChildPughScreen") },
-                                    navigateToAdrop = { controller.navigate("AdropScreen") },
-                                    navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
-                                    navigateToAcuteTonsillitisAlgorithm = { controller.navigate("AcuteTonsillitisAlgorithmScreen")},
-
-                                )
-                            }
+                        ChildComposable {
+                            IndexScreen(
+                                navigateToChildPugh = { controller.navigate("ChildPughScreen") },
+                                navigateToAdrop = { controller.navigate("AdropScreen") },
+                                navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
+                                navigateToAcuteTonsillitisAlgorithm = { controller.navigate("AcuteTonsillitisAlgorithmScreen")},)
                         }
                     }
                     composable("ChildPughScreen") {
-                        Scaffold(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .statusBarsPadding()
-                        ) { innerPadding ->
-                            Column(
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                            ) {
-                                ChildPughScreen()
-                            }
-
+                        ChildComposable {
+                            ChildPughScreen(controller)
                         }
                     }
                     composable("AdropScreen") {
-                        Scaffold(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .statusBarsPadding()
-                        ) { innerPadding ->
-                            Column(
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                            ) {
-                                AdropScreen()
-                            }
-
+                        ChildComposable {
+                            AdropScreen(controller)
                         }
                     }
                     composable("ColorectalTNMScreen") {
-                        Scaffold(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .statusBarsPadding()
-                        ) { innerPadding ->
-                            Column(
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                            ) {
-                                ColorectalTNMScreen()
-                            }
+                        ChildComposable {
+                            ColorectalTNMScreen(controller)
                         }
                     }
                     composable("AcuteTonsillitisAlgorithmScreen") {
-                        Scaffold(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .statusBarsPadding()
-                        ) { innerPadding ->
-                            Column(
-                                modifier = Modifier
-                                    .padding(innerPadding)
-                            ) {
-                                AcuteTonsillitisAlgorithmScreen()
-                            }
-
+                        ChildComposable {
+                            AcuteTonsillitisAlgorithmScreen(controller)
                         }
                     }
                 }
@@ -116,6 +64,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+@Composable
+fun ChildComposable(childScreen: @Composable () -> Unit) {
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+            ) {
+               childScreen()
+            }
+
+        }
+    }
 
 @Preview(showBackground = true)
 @Composable
@@ -127,13 +92,11 @@ fun Preview() {
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-        ){
-                innerPadding ->
+        ){ innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-            )
-            {
+            ) {
                 IndexScreen(
                     navigateToChildPugh = {},
                     navigateToAdrop = {},

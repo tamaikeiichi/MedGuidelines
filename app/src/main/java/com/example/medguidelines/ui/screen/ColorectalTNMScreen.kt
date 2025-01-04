@@ -11,8 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.data.Mfactor
 import com.example.medguidelines.data.Nfactor
@@ -24,7 +26,7 @@ import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
 
 @Composable
-fun ColorectalTNMScreen() {
+fun ColorectalTNMScreen(navController: NavController) {
     var score by remember { mutableStateOf(listOf(0,0)) }
     var literalScore by remember { mutableStateOf("") }
 
@@ -33,7 +35,8 @@ fun ColorectalTNMScreen() {
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.colorectalTNMTitle))
+            TitleTopAppBar(title = stringResource(id = R.string.colorectalTNMTitle),
+                navController = navController)
         },
         bottomBar = {
             ScoreBottomAppBar(displayText = displayString)
@@ -94,5 +97,5 @@ fun colorectalTNMButtonAndScore(
 @Preview
 @Composable
 fun ColorectalTNMScreenPreview(){
-    ColorectalTNMScreen()
+    ColorectalTNMScreen(navController = NavController(LocalContext.current))
 }

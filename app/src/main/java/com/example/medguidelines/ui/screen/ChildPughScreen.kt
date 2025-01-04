@@ -18,10 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.data.albuminGrade
 import com.example.medguidelines.data.ascitesGrade
@@ -33,13 +35,14 @@ import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
 
 @Composable
-fun ChildPughScreen() {
+fun ChildPughScreen(navController: NavController) {
     var totalScore by remember { mutableIntStateOf(0) }
     var childPughScoreABC by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.childPughTitle))
+            TitleTopAppBar(title = stringResource(id = R.string.childPughTitle),
+                navController = navController)
         },
         bottomBar = {
             BottomAppBar {
@@ -132,5 +135,5 @@ fun childPughButtonAndScore(
 @Preview
 @Composable
 fun ChildPughScreenPreview(){
-    ChildPughScreen()
+    ChildPughScreen(navController = NavController(LocalContext.current))
 }

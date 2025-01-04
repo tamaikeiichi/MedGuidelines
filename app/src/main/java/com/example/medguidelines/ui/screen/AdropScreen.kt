@@ -12,8 +12,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.data.ageGrade
 import com.example.medguidelines.data.dehydrationGrade
@@ -26,7 +28,7 @@ import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
 
 @Composable
-fun AdropScreen() {
+fun AdropScreen(navController: NavController) {
     var totalScore by remember { mutableIntStateOf(0) }
     var literalScore by remember { mutableStateOf("") }
 
@@ -35,7 +37,8 @@ fun AdropScreen() {
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.aDropTitle))
+            TitleTopAppBar(title = stringResource(id = R.string.aDropTitle),
+                navController = navController)
         },
         bottomBar = {
             ScoreBottomAppBar(displayText = displayString)
@@ -113,5 +116,5 @@ fun adropButtonAndScore(
 @Preview
 @Composable
 fun AdropPreview(){
-    AdropScreen()
+    AdropScreen(navController = NavController(LocalContext.current))
 }
