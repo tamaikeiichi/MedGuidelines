@@ -7,78 +7,64 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun parseStyledString(stringResId: Int): AnnotatedString {
     val fullString = stringResource(id = stringResId)
     return buildAnnotatedString {
-        val boldRegex = Regex("<b>(.*?)</b>")
-        val underlineRegex = Regex("<u>(.*?)</u>")
-        val customBoldRegex = Regex("<bold>(.*?)</bold>")
-        val customBoldRegex2 = Regex("\\*\\*(.*?)\\*\\*")
-        val customItalicRegex = Regex("\\*(.*?)\\*")
+        val tagRegexes = listOf(
+            TagRegex("<b>", "</b>", SpanStyle(fontWeight = FontWeight.Bold)),
+            TagRegex("<sub>", "</sub>", SpanStyle(fontSize = 12.sp, baselineShift = BaselineShift(-0.3F))),
+            TagRegex("<u>", "</u>", SpanStyle(textDecoration = TextDecoration.Underline)),
+            TagRegex("<bold>", "</bold>", SpanStyle(fontWeight = FontWeight.Bold)),
+            TagRegex("\\*\\*", "\\*\\*", SpanStyle(fontWeight = FontWeight.Bold)),
+            TagRegex("\\*", "\\*", SpanStyle(fontStyle = FontStyle.Italic))
+        )
 
-        val tagRanges = mutableListOf<Pair<IntRange, SpanStyle>>()
+        val tagRanges = mutableListOf<TagRange>()
         val processedRanges = mutableListOf<IntRange>()
 
         // Find all tag ranges and their styles
-        boldRegex.findAll(fullString).forEach { matchResult ->
-            tagRanges.add(matchResult.range to SpanStyle(fontWeight = FontWeight.Bold))
-        }
-        underlineRegex.findAll(fullString).forEach { matchResult ->
-            tagRanges.add(matchResult.range to SpanStyle(textDecoration = TextDecoration.Underline))
-        }
-        customBoldRegex.findAll(fullString).forEach { matchResult ->
-            tagRanges.add(matchResult.range to SpanStyle(fontWeight = FontWeight.Bold))
-        }
-        customBoldRegex2.findAll(fullString).forEach { matchResult ->
-            tagRanges.add(matchResult.range to SpanStyle(fontWeight = FontWeight.Bold))
-        }
-        customItalicRegex.findAll(fullString).forEach { matchResult ->
-            tagRanges.add(matchResult.range to SpanStyle(fontStyle = FontStyle.Italic))
+        for (tagRegex in tagRegexes) {
+            val regex = Regex(Regex.escape(tagRegex.openingTag) + "(.*?)" + Regex.escape(tagRegex.closingTag))
+            regex.findAll(fullString).forEach { matchResult ->
+                tagRanges.add(
+                    TagRange(
+                        matchResult.range,
+                        tagRegex.openingTag.length,
+                        tagRegex.closingTag.length,
+                        tagRegex.style
+                    )
+                )
+            }
         }
 
         // Sort tag ranges by their starting position
-        tagRanges.sortBy { it.first.first }
+        tagRanges.sortBy { it.range.first }
 
         var currentIndex = 0
-        for ((range, style) in tagRanges) {
+        for (tagRange in tagRanges) {
             // Append the text before the tag
-            if (range.first > currentIndex) {
-                val textBeforeTag = fullString.substring(currentIndex, range.first)
-                var isProcessed = false
-                for (processedRange in processedRanges) {
-                    if (processedRange.contains(range.first)) {
-                        isProcessed = true
-                        break
-                    }
-                }
-                if (!isProcessed) {
-                    append(textBeforeTag)
-                }
+            if (tagRange.range.first > currentIndex) {
+                val textBeforeTag = fullString.substring(currentIndex, tagRange.range.first)
+                append(textBeforeTag)
             }
 
             // Append the styled text
-            val tagContent = fullString.substring(range.first + 3, range.last - 3)
-            var isProcessed = false
-            for (processedRange in processedRanges) {
-                if (processedRange.contains(range.first)) {
-                    isProcessed = true
-                    break
-                }
-            }
-            if (!isProcessed) {
-                withStyle(style = style) {
-                    append(tagContent)
-                }
+            val tagContent = fullString.substring(
+                tagRange.range.first + tagRange.openingTagLength,
+                tagRange.range.last - tagRange.closingTagLength + 1
+            )
+            withStyle(style = tagRange.style) {
+                append(tagContent)
             }
 
             // Update the current index
-            currentIndex = range.last + 1
-            processedRanges.add(range)
+            currentIndex = tagRange.range.last + 1
         }
 
         // Append the remaining text
@@ -87,3 +73,16 @@ fun parseStyledString(stringResId: Int): AnnotatedString {
         }
     }
 }
+
+data class TagRegex(
+    val openingTag: String,
+    val closingTag: String,
+    val style: SpanStyle
+)
+
+data class TagRange(
+    val range: IntRange,
+    val openingTagLength: Int,
+    val closingTagLength: Int,
+    val style: SpanStyle
+)

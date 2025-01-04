@@ -29,7 +29,7 @@
     <string name="dehydrationTitle">BUN &gt; 21 mg/dL or dehydration</string>
     <string name="respirationGrade1">No</string>
     <string name="respirationGrade2">Yes</string>
-    <string name="respirationTitle"><![CDATA[SpO<sub>2</sub> < 90% or PaO<sub>2</sub> < 60 mmHg]]></string>"
+    <string name="respirationTitle">SpO&lt;sub>2&lt;/sub> &lt; 90% or PaO&lt;sub>2&lt;/sub> &lt; 60 mmHg</string>"
     <string name="orientationGrade1">No</string>
     <string name="orientationGrade2">Yes</string>
     <string name="orientationTitle">Consciousness disorder</string>
@@ -86,7 +86,7 @@
     <string name="mclsaacAgeTitle">Age</string>
     <string name="tonsillitisRedFlag1">Airway obstruction</string>
     <string name="tonsillitisRedFlag2">Difficulty swallowing/drooling</string>
-    <string name="tonsillitisRedFlag3">Muffled speach</string>
+    <string name="tonsillitisRedFlag3">Muffled speech</string>
     <string name="tonsillitisRedFlag4">Severe respiratory distress</string>
     <string name="tonsillitisRedFlag5">Sepsis</string>
     <string name="none">None</string>
