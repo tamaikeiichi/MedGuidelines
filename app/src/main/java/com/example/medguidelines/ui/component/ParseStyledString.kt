@@ -18,7 +18,7 @@ fun parseStyledString(stringResId: Int): AnnotatedString {
     return buildAnnotatedString {
         val tagRegexes = listOf(
             TagRegex("<b>", "</b>", SpanStyle(fontWeight = FontWeight.Bold)),
-            TagRegex("<sub>", "</sub>", SpanStyle(fontSize = 12.sp, baselineShift = BaselineShift(-0.3F))),
+            TagRegex("<sub>", "</sub>", SpanStyle(fontSize = 12.sp, baselineShift = BaselineShift(-0.2F))),
             TagRegex("<u>", "</u>", SpanStyle(textDecoration = TextDecoration.Underline)),
             TagRegex("<bold>", "</bold>", SpanStyle(fontWeight = FontWeight.Bold)),
             TagRegex("\\*\\*", "\\*\\*", SpanStyle(fontWeight = FontWeight.Bold)),
