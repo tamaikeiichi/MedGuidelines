@@ -8,6 +8,7 @@
     <string name="ascitesGrade2">少量</string>
     <string name="ascitesGrade3">中等量</string>
     <string name="orientationTitle">意識障害</string>
+    <string name="antibioticsAMPC">抗生剤投与（AMPC）</string>
     <string name="hospitalCare">入院加療</string>
     <string name="needSpecialistExamination">専門医へ紹介</string>
     <string name="bilirubinTitleNote">血清総ビリルビン</string>
@@ -22,6 +23,7 @@
     <string name="adropLiteralScoreMostSevere">最重症、ICU管理</string>
     <string name="albuminTitleNote">アルブミン (g/dL)</string>
     <string name="ptTitle">プロトロンビン（INR）</string>
+    <string name="pressureTitle">収縮期血圧 &lt; 90 mmHg</string>
     <string name="bilirubinTitle">ビリルビン (mg/dL)</string>
     <string name="yes">はい</string>
     <string name="no">いいえ</string>
@@ -43,4 +45,8 @@
     <string name="colorectalNtitle">N因子</string>
     <string name="colorectalMtitle">M因子</string>
     <string name="encephalopaphyTitleNote">&lt;b>Grade 1&lt;/b>: 睡眠―覚醒リズムの逆転。多幸気分、ときに抑うつ状態だらしなく、気にもとめない態度。（retrospectiveにしか判定できない場合が多い）\n&lt;b>Grade 2&lt;/b>: 指南力（時・場所）障害、物を取り違える。異常行動。ときに傾眠状態（普通の呼びかけで開眼し、会話ができる）。無礼な言動があったりするが、医師の指示に従う態度をみせる。（羽ばたき振戦あり）\n&lt;b>Grade 3&lt;/b>: しばしば興奮状態または譫妄状態を伴い、反抗的態度をみせる。嗜眠状態（ほとんど眠っている）。外的刺激で開眼しうるが、医師の指示に従わない、または従えない（簡単な命令には応じうる）\n&lt;b>Grade 4&lt;/b>: 昏睡</string>
+    <string name="ageTitle">年齢: 男 &gt;= 70, 女 &gt;= 75</string>
+    <string name="dehydrationTitle">BUN &gt; 21 mg/dL あるいは脱水</string>
+    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: 粘膜内 &lt;b>T1&lt;/b>: 粘膜下 &lt;b>T2&lt;/b>: 固有筋層 &lt;b>T3&lt;/b>: 大腸周囲 &lt;b>T4a&lt;/b>: 臓側腹膜に浸潤, &lt;b>T4b&lt;/b>: 隣接臓器に浸潤あるいは付着.</string>
+    <string name="antigenTest">細菌培養あるいは抗原テスト</string>
 </resources>

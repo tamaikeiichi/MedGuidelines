@@ -6,21 +6,21 @@
     <string name="colorectalTNMTitle">Colorectal cancer TNM classification (UICC 8th)</string>
     <string name="acuteTonsillitisAlgorithmTitle">Acute tonsillitis/pharyngitis algorithm</string><!-- (Journal of the Japanese Association for Infectious Diseases, 2019; 93: 623–642.)-->
     <string name="indexScreen_searchbar">Search</string>
-    <string name="bilirubinGrade1">&lt; 2</string>
-    <string name="bilirubinGrade2">2 to 3</string>
-    <string name="bilirubinGrade3">&gt; 3</string>
-    <string name="albuminGrade1">&gt; 3.5</string>
-    <string name="albuminGrade2">2.8 to 3.5</string>
-    <string name="albuminGrade3">&lt; 2.8</string>
-    <string name="ptGrade1">&lt; 1.7</string>
-    <string name="ptGrade2">1.7 to 2.3</string>
-    <string name="ptGrade3">&gt; 2.3</string>
+    <string name="bilirubinGrade1" translatable="false">&lt; 2</string>
+    <string name="bilirubinGrade2" translatable="false">2–3</string>
+    <string name="bilirubinGrade3" translatable="false">&gt; 3</string>
+    <string name="albuminGrade1" translatable="false">&gt; 3.5</string>
+    <string name="albuminGrade2" translatable="false">2.8–3.5</string>
+    <string name="albuminGrade3" translatable="false">&lt; 2.8</string>
+    <string name="ptGrade1" translatable="false">&lt; 1.7</string>
+    <string name="ptGrade2" translatable="false">1.7–2.3</string>
+    <string name="ptGrade3" translatable="false">&gt; 2.3</string>
     <string name="ascitesGrade1">absent</string>
     <string name="ascitesGrade2">slight</string>
     <string name="ascitesGrade3">moderate</string>
     <string name="encephalopathyGrade1">none</string>
-    <string name="encephalopathyGrade2">grade 1 or 2</string>
-    <string name="encephalopathyGrade3">grade 3 or 4</string>
+    <string name="encephalopathyGrade2">grade 1–2</string>
+    <string name="encephalopathyGrade3">grade 3–4</string>
     <string name="ageTitle">Age: Male &gt;= 70, Female &gt;= 75</string>
     <string name="dehydrationTitle">BUN &gt; 21 mg/dL or dehydration</string>
     <string name="respirationTitle">SpO&lt;sub>2&lt;/sub> &lt; 90% or PaO&lt;sub>2&lt;/sub> &lt; 60 mmHg</string>"
@@ -59,7 +59,7 @@
     <string name="M1a" translatable="false">M1a</string>
     <string name="M1b" translatable="false">M1b</string>
     <string name="M1c" translatable="false">M1c</string>
-    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal\n&lt;b>T1&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: pericolorectal\n&lt;b>T4a&lt;/b>: perforate cisceral peritoneum, &lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
+    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal &lt;b>T1&lt;/b>: submucosa &lt;b>T2&lt;/b>: muscularis propria &lt;b>T3&lt;/b>: pericolorectal &lt;b>T4a&lt;/b>: perforate visceral peritoneum, &lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
     <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
     <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases, &lt;b>M1b&lt;/b>: more than one organ, &lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
     <string name="presence">Presence</string>
