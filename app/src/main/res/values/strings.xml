@@ -88,4 +88,12 @@
     <string name="needSpecialistExamination">Need specialist examination</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="bloodGasAnalysisTitle">Blood Gas Analysis</string>
+    <string name="ph">pH</string>
+    <string name="po2">pO&lt;sub>2&lt;/sub> &lt;small>(mmHg)&lt;/small></string>
+    <string name="pco2">pCO&lt;sub>2&lt;/sub> &lt;small>(mmHg)&lt;/small></string>
+    <string name="hco3">HCO&lt;sub>3&lt;/sub> &lt;small>(mEq/L)&lt;/small></string>
+    <string name="na">Na&lt;sup>+&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
+    <string name="cl">Cl&lt;sup>-&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
+    <string name="k">K&lt;sup>+&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
 </resources>

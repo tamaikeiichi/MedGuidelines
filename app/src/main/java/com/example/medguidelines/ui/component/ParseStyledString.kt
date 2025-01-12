@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
 @Composable
@@ -18,9 +19,11 @@ fun parseStyledString(stringResId: Int): AnnotatedString {
     return buildAnnotatedString {
         val tagRegexes = listOf(
             TagRegex("<b>", "</b>", SpanStyle(fontWeight = FontWeight.Bold)),
-            TagRegex("<sub>", "</sub>", SpanStyle(fontSize = 12.sp, baselineShift = BaselineShift(-0.2F))),
+            TagRegex("<sub>", "</sub>", SpanStyle(fontSize = 0.8.em, baselineShift = BaselineShift(-0.2F))),
+            TagRegex("<sup>", "</sup>", SpanStyle(fontSize = 0.8.em, baselineShift = BaselineShift(0.2F))),
             TagRegex("<u>", "</u>", SpanStyle(textDecoration = TextDecoration.Underline)),
             TagRegex("<bold>", "</bold>", SpanStyle(fontWeight = FontWeight.Bold)),
+            TagRegex("<small>", "</small>", SpanStyle(fontSize = 0.7.em)),
             TagRegex("\\*\\*", "\\*\\*", SpanStyle(fontWeight = FontWeight.Bold)),
             TagRegex("\\*", "\\*", SpanStyle(fontStyle = FontStyle.Italic))
         )
