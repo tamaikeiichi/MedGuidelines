@@ -19,7 +19,7 @@ import com.example.medguidelines.ui.screen.ColorectalTNMScreen
 import com.example.medguidelines.ui.screen.IndexScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.compose.ContrastAwareReplyTheme
+import com.example.compose.ContrastAwareMedguidelinesTheme
 import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 
 class MainActivity : ComponentActivity() {
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ContrastAwareReplyTheme {
+            ContrastAwareMedguidelinesTheme {
                 val controller = rememberNavController()
                 NavHost(controller, startDestination = "IndexScreen") {
                     composable("IndexScreen") {
@@ -85,7 +85,7 @@ fun ChildComposable(childScreen: @Composable () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun Preview() {
-    ContrastAwareReplyTheme (darkTheme = false,
+    ContrastAwareMedguidelinesTheme (darkTheme = false,
         dynamicColor = true,
         ){
         Scaffold(
