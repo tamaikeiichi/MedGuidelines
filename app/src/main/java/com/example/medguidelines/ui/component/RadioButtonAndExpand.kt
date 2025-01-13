@@ -2,6 +2,7 @@ package com.example.medguidelines.ui.component
 
 import android.text.Html
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -65,9 +66,10 @@ fun RadioButtonAndExpand(
                 ) {
                     Text(
                         text = parseStyledString(title),
-                        Modifier
-                            .padding(4.dp),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .clickable { expanded = !expanded },
                     )
                     if (expanded) {
                         Text(

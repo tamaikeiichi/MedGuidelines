@@ -2,7 +2,7 @@
     <string name="space" translatable="false"> </string>
     <string name="app_name">MedGuidelines</string>
     <string name="childPughTitle">Child-Pugh Score</string>
-    <string name="aDropTitle">A-drop</string>
+    <string name="aDropTitle" translatable="false">A-drop</string>
     <string name="colorectalTNMTitle">Colorectal cancer TNM classification (UICC 8th)</string>
     <string name="acuteTonsillitisAlgorithmTitle">Acute tonsillitis/pharyngitis algorithm</string><!-- (Journal of the Japanese Association for Infectious Diseases, 2019; 93: 623–642.)-->
     <string name="indexScreen_searchbar">Search</string>
@@ -59,12 +59,12 @@
     <string name="M1a" translatable="false">M1a</string>
     <string name="M1b" translatable="false">M1b</string>
     <string name="M1c" translatable="false">M1c</string>
-    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal &lt;b>T1&lt;/b>: submucosa &lt;b>T2&lt;/b>: muscularis propria &lt;b>T3&lt;/b>: pericolorectal &lt;b>T4a&lt;/b>: perforate visceral peritoneum, &lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
+    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal\n&lt;b>T1&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: pericolorectal\n&lt;b>T4a&lt;/b>: perforate visceral peritoneum\n&lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
     <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
-    <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases, &lt;b>M1b&lt;/b>: more than one organ, &lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
+    <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases\n&lt;b>M1b&lt;/b>: more than one organ\n&lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
     <string name="presence">Presence</string>
     <string name="absence">Absence</string>
-    <string name="mclsaacFever1">&lt; 38°C</string>
+    <string name="mclsaacFever1" translatable="false">&lt; 38°C</string>
     <string name="mclsaacFever2" translatable="false">≥ 38°C</string>
     <string name="temperatureTitle">Temperature >38°C</string>
     <string name="coughTitle">Cough</string>
@@ -89,13 +89,13 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="bloodGasAnalysisTitle">Blood Gas Analysis</string>
-    <string name="ph">pH</string>
-    <string name="po2">pO&lt;sub>2&lt;/sub> &lt;small>(mmHg)&lt;/small></string>
-    <string name="pco2">pCO&lt;sub>2&lt;/sub> &lt;small>(mmHg)&lt;/small></string>
-    <string name="hco3">HCO&lt;sub>3&lt;/sub> &lt;small>(mEq/L)&lt;/small></string>
-    <string name="na">Na&lt;sup>+&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
-    <string name="cl">Cl&lt;sup>-&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
-    <string name="k">K&lt;sup>+&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
+    <string name="ph" translatable="false">pH</string>
+    <string name="po2" translatable="false">pO&lt;sub>2&lt;/sub> &lt;small>(mmHg)&lt;/small></string>
+    <string name="pco2" translatable="false">pCO&lt;sub>2&lt;/sub> &lt;small>(mmHg)&lt;/small></string>
+    <string name="hco3" translatable="false">HCO&lt;sub>3&lt;/sub> &lt;small>(mEq/L)&lt;/small></string>
+    <string name="na" translatable="false">Na&lt;sup>+&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
+    <string name="cl" translatable="false">Cl&lt;sup>-&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
+    <string name="k" translatable="false">K&lt;sup>+&lt;/sup> &lt;small>(mEq/L)&lt;/small></string>
     <string name="acidemia">Acidemia</string>
     <string name="alkalemia">Alkalemia</string>
     <string name="metabolicAcidosis">Metabolic Acidosis</string>
@@ -124,6 +124,6 @@
     <string name="respiratoryAlkalosis">Respiratory alkalosis</string>
     <string name="metabolicAlkalosisAndRespiratoryAcidosis">Metabolic alkalosis and respiratory acidosis</string>
     <string name="metabolicAcidosisAndRespiratoryAlkalosis">Metabolic acidosis and respiratory alkalosis</string>
-    <string name="bloodGasAnalysisRef">Physiological Approach to Assessment of Acid–Base Disturbances\nN Engl J Med 2014;371:1434-45.</string>
-    <string name="bloodGasAnalysisUrl">https://www.nejm.org/doi/full/10.1056/NEJMra1003327</string>
+    <string name="bloodGasAnalysisRef" translatable="false">Physiological Approach to Assessment of Acid–Base Disturbances\nN Engl J Med 2014;371:1434-45.</string>
+    <string name="bloodGasAnalysisUrl" translatable="false">https://www.nejm.org/doi/full/10.1056/NEJMra1003327</string>
 </resources>
