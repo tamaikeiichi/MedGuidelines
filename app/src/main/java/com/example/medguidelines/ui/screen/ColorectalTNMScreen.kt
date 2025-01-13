@@ -36,7 +36,10 @@ fun ColorectalTNMScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TitleTopAppBar(title = stringResource(id = R.string.colorectalTNMTitle),
-                navController = navController)
+                navController = navController,
+                referenceText = R.string.space,
+                referenceUrl = R.string.space
+            )
         },
         bottomBar = {
             ScoreBottomAppBar(displayText = displayString)

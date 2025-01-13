@@ -48,7 +48,9 @@ fun BloodGasAnalysisScreen(navController: NavController) {
         topBar = {
             TitleTopAppBar(
                 title = stringResource(id = R.string.bloodGasAnalysisTitle),
-                navController = navController
+                navController = navController,
+                referenceText = R.string.bloodGasAnalysisRef,
+                referenceUrl = R.string.bloodGasAnalysisUrl
             )
         },
     ) { innerPadding ->
@@ -255,14 +257,12 @@ fun BloodGasAnalysisInput() {
                 bloodGasAnalysisContent = {
                     BloodGasAnalysisTextField(
                         label = R.string.age, value = age, width = 120,
-
                         )
-
                 }
             )
             val aaDifference = 150 - paO2.doubleValue - 1.25 * paCo2.doubleValue
             var correctedAaDifference = aaDifference
-            if (age.doubleValue >= 65.0) {
+            if (age.doubleValue >= 65) {
                 correctedAaDifference = aaDifference / 2
             }
             if (correctedAaDifference <= 10) {
@@ -285,91 +285,105 @@ fun BloodGasAnalysisInput() {
                 BloodGasAnalysisText(R.string.alkalemia)
             }
         )
-     if (hco3.doubleValue > 26 && paCo2.doubleValue >= 38) {
-         BloodGasAnalysisCard(
-             bloodGasAnalysisContent = {
-                 BloodGasAnalysisText(R.string.metabolicAlkalosis)
-             }
-         )
-         val calculateExpectedPaco2 = 0.7 * (hco3.doubleValue - 24) + 40
-         if (paCo2.doubleValue < calculateExpectedPaco2) {
+        if (hco3.doubleValue > 26 && paCo2.doubleValue >= 38) {
             BloodGasAnalysisCard(
                 bloodGasAnalysisContent = {
-                    BloodGasAnalysisText(R.string.additionalRespiratoryAlkalosis)
+                    BloodGasAnalysisText(R.string.metabolicAlkalosis)
                 }
             )
-         } else if (paCo2.doubleValue > calculateExpectedPaco2) {
-             BloodGasAnalysisCard(
-                 bloodGasAnalysisContent = {
-                     BloodGasAnalysisText(R.string.additionalRespiratoryAcidosis)
-                 }
-             )
-         }
-     } else if (hco3.doubleValue < 26 && paCo2.doubleValue < 38) {
-         BloodGasAnalysisCard(
-             bloodGasAnalysisContent = {
-                 BloodGasAnalysisText(R.string.respiratoryAlkalosis)
-             }
-         )
-        val hco3Change = (hco3.doubleValue - normalHco3) / (paCo2.doubleValue - normalPaCo2)/10
-         if (0.0 < hco3Change && hco3Change < 2.0) {
-             BloodGasAnalysisCard(
-                 bloodGasAnalysisContent = {
-                     BloodGasAnalysisText(R.string.additionalMetabolicAlkalosis)
-                 }
-             )
-         } else if (2.0 <= hco3Change && hco3Change < 4.0) {
-             BloodGasAnalysisCard(
-                 bloodGasAnalysisContent = {
-                     BloodGasAnalysisText(R.string.acuteRespiratoryAlkalosis)
-                 }
-             )
-         } else if (hco3Change in 4.0..5.0) {
-             BloodGasAnalysisCard(
-                 bloodGasAnalysisContent = {
-                     BloodGasAnalysisText(R.string.chronicRespiratoryAlkalosis)
-                 }
-             )
-         } else if (hco3Change > 5.0) {
-             BloodGasAnalysisCard(
-                 bloodGasAnalysisContent = {
-                     BloodGasAnalysisText(R.string.additionalMetabolicAcidosis)
-                 }
-             )
-         }
-         val age = remember { mutableDoubleStateOf(65.0) }
-         BloodGasAnalysisCard(
-             bloodGasAnalysisContent = {
-                 FlowRow (
-                     modifier = Modifier
-                         .padding(4.dp)
-                 ) {
-                     BloodGasAnalysisTextField(
-                         label = R.string.age, value = age, width = 120,
-                     )
-                 }
+            val calculateExpectedPaco2 = 0.7 * (hco3.doubleValue - 24) + 40
+            if (paCo2.doubleValue < calculateExpectedPaco2) {
+                BloodGasAnalysisCard(
+                    bloodGasAnalysisContent = {
+                        BloodGasAnalysisText(R.string.additionalRespiratoryAlkalosis)
+                    }
+                )
+            } else if (paCo2.doubleValue > calculateExpectedPaco2) {
+                BloodGasAnalysisCard(
+                    bloodGasAnalysisContent = {
+                        BloodGasAnalysisText(R.string.additionalRespiratoryAcidosis)
+                    }
+                )
+            }
+        } else if (hco3.doubleValue < 26 && paCo2.doubleValue < 38) {
+            BloodGasAnalysisCard(
+                bloodGasAnalysisContent = {
+                    BloodGasAnalysisText(R.string.respiratoryAlkalosis)
+                }
+            )
+            val hco3Change = (hco3.doubleValue - normalHco3) / (paCo2.doubleValue - normalPaCo2)/10
+            if (0.0 < hco3Change && hco3Change < 2.0) {
+                BloodGasAnalysisCard(
+                    bloodGasAnalysisContent = {
+                        BloodGasAnalysisText(R.string.additionalMetabolicAlkalosis)
+                    }
+                )
+            } else if (2.0 <= hco3Change && hco3Change < 4.0) {
+                BloodGasAnalysisCard(
+                    bloodGasAnalysisContent = {
+                        BloodGasAnalysisText(R.string.acuteRespiratoryAlkalosis)
+                    }
+                )
+            } else if (hco3Change in 4.0..5.0) {
+                BloodGasAnalysisCard(
+                    bloodGasAnalysisContent = {
+                        BloodGasAnalysisText(R.string.chronicRespiratoryAlkalosis)
+                    }
+                )
+            } else if (hco3Change > 5.0) {
+                BloodGasAnalysisCard(
+                    bloodGasAnalysisContent = {
+                        BloodGasAnalysisText(R.string.additionalMetabolicAcidosis)
+                    }
+                )
+            }
+            val age = remember { mutableDoubleStateOf(65.0) }
+            BloodGasAnalysisCard(
+                bloodGasAnalysisContent = {
+                    FlowRow (
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
+                        BloodGasAnalysisTextField(
+                            label = R.string.age, value = age, width = 120,
+                        )
+                    }
 
-             }
-         )
-         val aaDifference = 150 - paO2.doubleValue - 1.25 * paCo2.doubleValue
-         var correctedAaDifference = aaDifference
-        if (age.doubleValue >= 65.0) {
-            correctedAaDifference = aaDifference / 2
+                }
+            )
+            val aaDifference = 150 - paO2.doubleValue - 1.25 * paCo2.doubleValue
+            var correctedAaDifference = aaDifference
+            if (age.doubleValue >= 65) {
+                correctedAaDifference = aaDifference / 2
+            }
+            if (correctedAaDifference <= 10) {
+                BloodGasAnalysisCard(
+                    bloodGasAnalysisContent = {
+                        BloodGasAnalysisText(R.string.HypoventilationWithoutIntrinsicLungDisease)
+                    }
+                )
+            } else if (correctedAaDifference > 10) {
+                BloodGasAnalysisCard(
+                    bloodGasAnalysisContent = {
+                        BloodGasAnalysisText(R.string.HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
+                    }
+                )
+            }
         }
-         if (correctedAaDifference <= 10) {
-             BloodGasAnalysisCard(
-                 bloodGasAnalysisContent = {
-                     BloodGasAnalysisText(R.string.HypoventilationWithoutIntrinsicLungDisease)
-                 }
-             )
-         } else if (correctedAaDifference > 10) {
-             BloodGasAnalysisCard(
-                 bloodGasAnalysisContent = {
-                     BloodGasAnalysisText(R.string.HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
-                 }
-             )
-         }
-     }
+    } else {
+        if (hco3.doubleValue > (normalHco3 + 3) && paCo2.doubleValue > (normalPaCo2 + 5)) {
+            BloodGasAnalysisCard(
+                bloodGasAnalysisContent = {
+                    BloodGasAnalysisText(R.string.metabolicAlkalosisAndRespiratoryAcidosis)
+                }
+            )
+        } else if (hco3.doubleValue < (normalHco3 - 3) && paCo2.doubleValue < (normalPaCo2 - 5)) {
+            BloodGasAnalysisCard(
+                bloodGasAnalysisContent = {
+                    BloodGasAnalysisText(R.string.metabolicAcidosisAndRespiratoryAlkalosis)
+                }
+            )
+        }
     }
 }
 
@@ -389,7 +403,7 @@ fun BloodGasAnalysisCard(bloodGasAnalysisContent: @Composable ()-> Unit) {
             .padding(4.dp)
             .fillMaxWidth(),
     ) {
-         bloodGasAnalysisContent()
+        bloodGasAnalysisContent()
 
     }
 }
