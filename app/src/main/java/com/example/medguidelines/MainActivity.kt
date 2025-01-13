@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.compose.ContrastAwareMedguidelinesTheme
 import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
+import com.example.medguidelines.ui.screen.BloodGasAnalysisScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +37,8 @@ class MainActivity : ComponentActivity() {
                                 navigateToChildPugh = { controller.navigate("ChildPughScreen") },
                                 navigateToAdrop = { controller.navigate("AdropScreen") },
                                 navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
-                                navigateToAcuteTonsillitisAlgorithm = { controller.navigate("AcuteTonsillitisAlgorithmScreen")},)
+                                navigateToAcuteTonsillitisAlgorithm = { controller.navigate("AcuteTonsillitisAlgorithmScreen")},
+                                navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen")})
                         }
                     }
                     composable("ChildPughScreen") {
@@ -57,6 +59,11 @@ class MainActivity : ComponentActivity() {
                     composable("AcuteTonsillitisAlgorithmScreen") {
                         ChildComposable {
                             AcuteTonsillitisAlgorithmScreen(controller)
+                        }
+                    }
+                    composable("BloodGasAnalysisScreen") {
+                        ChildComposable {
+                            BloodGasAnalysisScreen(controller)
                         }
                     }
                 }
@@ -102,6 +109,7 @@ fun Preview() {
                     navigateToAdrop = {},
                     navigateToColorectalTNM = {},
                     navigateToAcuteTonsillitisAlgorithm = {},
+                    navigateToBloodGasAnalysis = {},
                     )
             }
         }
