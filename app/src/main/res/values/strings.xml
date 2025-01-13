@@ -124,7 +124,6 @@
     <string name="respiratoryAlkalosis">Respiratory alkalosis</string>
     <string name="metabolicAlkalosisAndRespiratoryAcidosis">Metabolic alkalosis and respiratory acidosis</string>
     <string name="metabolicAcidosisAndRespiratoryAlkalosis">Metabolic acidosis and respiratory alkalosis</string>
-    <string name="bloodGasAnalysisRef">Physiological Approach to Assessment of Acid–Base Disturbances
- N Engl J Med 2014;371:1434-45.</string>
+    <string name="bloodGasAnalysisRef">Physiological Approach to Assessment of Acid–Base Disturbances\nN Engl J Med 2014;371:1434-45.</string>
     <string name="bloodGasAnalysisUrl">https://www.nejm.org/doi/full/10.1056/NEJMra1003327</string>
 </resources>
