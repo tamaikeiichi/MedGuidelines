@@ -35,27 +35,6 @@ val encephalopathyGrade = listOf(
     RadioButtonName(R.string.encephalopathyGrade3),
 )
 
-val ageGrade = listOf(
-    RadioButtonName(R.string.no),
-    RadioButtonName(R.string.yes),
-)
-val dehydrationGrade = listOf(
-    RadioButtonName(R.string.no),
-    RadioButtonName(R.string.yes),
-    )
-val respirationGrade = listOf(
-    RadioButtonName(R.string.no),
-    RadioButtonName(R.string.yes),
-    )
-val orientationGrade = listOf(
-    RadioButtonName(R.string.no),
-    RadioButtonName(R.string.yes)
-)
-val pressureGrade = listOf(
-    RadioButtonName(R.string.no),
-    RadioButtonName(R.string.yes)
-)
-
 val Tfactor = listOf(
     RadioButtonName(R.string.Tis),
     RadioButtonName(R.string.T1),
@@ -101,3 +80,8 @@ val tonsillitisRedFlag = listOf(
     RadioButtonName(R.string.tonsillitisRedFlag4),
     RadioButtonName(R.string.tonsillitisRedFlag5),
     )
+
+val noYes = listOf(
+    RadioButtonName(R.string.no),
+    RadioButtonName(R.string.yes),
+)

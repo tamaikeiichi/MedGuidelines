@@ -126,4 +126,15 @@
     <string name="metabolicAcidosisAndRespiratoryAlkalosis">Metabolic acidosis and respiratory alkalosis</string>
     <string name="bloodGasAnalysisRef" translatable="false">Physiological Approach to Assessment of Acid–Base Disturbances\nN Engl J Med 2014;371:1434-45.</string>
     <string name="bloodGasAnalysisUrl" translatable="false">https://www.nejm.org/doi/full/10.1056/NEJMra1003327</string>
+    <string name="acutePancreatitisBaseExcessTitle">Base Excess　≤　-3 mEq/L, or shock (systolic blood pressure ≤ 80 mmHg)</string>
+    <string name="acutePancreatitisPaO2Title">pO&lt;sub>2&lt;/sub> ≤ 60 mmHg, or respiratory failure (respirator needed)</string>
+    <string name="acutePancreatitisBUNTitle">BUN ≤ 40 mg/dL (or Cr ≥ 2 mg/dL)</string>
+    <string name="acutePancreatitisLDHTitle">LDH ≥ upper limit x 2</string>
+    <string name="acutePancreatitisPltTitle">Platelet ≤ 100,000/ mm&lt;sup>3&lt;/sup></string>
+    <string name="acutePancreatitisCaTitle">Total Ca ≤ 7.5 mg/dL</string>
+    <string name="acutePancreatitisCRPTitle">CRP ≥ 15 mg/dL</string>
+    <string name="acutePancreatitisSIRSTitle">No. of positive items ≥ 3</string>
+    <string name="acutePancreatitisSIRSnote">(1) Body temperature > 38°C or &lt; 36°C\n(2) Pulse > 90/ min\n(3) Respiratory rate > 20/min or paCO&lt;sub>2&lt;/sub> &lt; 32 toll\n(4) WBC > 12,000 or &lt; 4000/ mm&lt;sup>3&lt;/sup> or 10% blastcytes</string>
+    <string name="acutePancreatitisAgeTitle">Age ≥ 70</string>
+    <string name="acutePancreatitisCTTitle">Enhanced CT grade</string>
 </resources>

@@ -20,6 +20,7 @@ import com.example.medguidelines.R
 import com.example.medguidelines.data.ageGrade
 import com.example.medguidelines.data.dehydrationGrade
 import com.example.medguidelines.data.RadioButtonName
+import com.example.medguidelines.data.noYes
 import com.example.medguidelines.data.orientationGrade
 import com.example.medguidelines.data.pressureGrade
 import com.example.medguidelines.data.respirationGrade
@@ -68,27 +69,27 @@ fun AdropScreen(navController: NavController) {
 @Composable
 fun adropTotalScore(): Int {
     val scoreA = adropButtonAndScore(
-        ageGrade,
+        noYes,
          R.string.ageTitle,
         R.string.space
     )
     val scoreB = adropButtonAndScore(
-        dehydrationGrade,
+        noYes,
          R.string.dehydrationTitle,
         R.string.space
     )
     val scoreC = adropButtonAndScore(
-        respirationGrade,
+        noYes,
          R.string.respirationTitle,
         R.string.space
     )
     val scoreD = adropButtonAndScore(
-        orientationGrade,
+        noYes,
          R.string.orientationTitle,
         R.string.space
     )
     val scoreE = adropButtonAndScore(
-        pressureGrade,
+        noYes,
          R.string.pressureTitle,
         R.string.space
     )
