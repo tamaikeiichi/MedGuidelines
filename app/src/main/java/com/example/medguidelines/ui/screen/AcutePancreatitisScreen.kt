@@ -82,69 +82,38 @@ fun AcutePancreatitisScreen(navController: NavController) {
     }
 }
 
+data class acutePancreatitisData(
+    val radioOptions: List<RadioButtonName>, val title: Int, val titleNote: Int
+)
+
+val acutePancreatitisRadioButtonAndTitleAndNote = listOf(
+    acutePancreatitisData(noYes, R.string.acutePancreatitisBaseExcessTitle, R.string.space),
+    acutePancreatitisData(noYes, R.string.acutePancreatitisPaO2Title, R.string.space),
+    acutePancreatitisData(noYes, R.string.acutePancreatitisBUNTitle, R.string.space),
+    acutePancreatitisData(noYes, R.string.acutePancreatitisLDHTitle, R.string.space),
+    acutePancreatitisData(noYes, R.string.acutePancreatitisPltTitle, R.string.space),
+    acutePancreatitisData(noYes, R.string.acutePancreatitisCaTitle, R.string.space),
+    acutePancreatitisData(noYes, R.string.acutePancreatitisSIRSTitle, R.string.space),
+)
+
 @Composable
-fun childPughTotalScore(): Int {
-    val scoreA = acutePancreatitisButtonAndScore(
-        noYes,
-        R.string.acutePancreatitisBaseExcessTitle,
-        R.string.space
-    )
+fun acutePancreatitisTotalScore(): Int {
+    val scores = remember { mutableListOf<Int>() }
+    for (title in acutePancreatitisRadioButtonAndTitleAndNote) {
+        scores.add(acutePancreatitisButtonAndScore(title))
+    }
 
-    val scoreB = acutePancreatitisButtonAndScore(
-        noYes,
-        R.string.acutePancreatitisPaO2Title,
-        R.string.space
-    )
-
-    val scoreC = acutePancreatitisButtonAndScore(
-        noYes,
-        R.string.acutePancreatitisBUNTitle,
-        R.string.space
-    )
-
-    val scoreD = acutePancreatitisButtonAndScore(
-        noYes,
-        R.string.acutePancreatitisLDHTitle,
-        R.string.space
-    )
-
-    val scoreE = acutePancreatitisButtonAndScore(
-        noYes,
-        R.string.acutePancreatitisPltTitle,
-        R.string.space
-    )
-
-    val scoreF = acutePancreatitisButtonAndScore(
-        noYes,
-        R.string.acutePancreatitisCaTitle,
-        R.string.space
-    )
-
-    val scoreG = acutePancreatitisButtonAndScore(
-        noYes,
-        R.string.acutePancreatitisSIRSTitle,
-        R.string.space
-    )
-
-
-
-
-    val totalScore =
-        bilirubinScore + albuminScore + ptScore + ascitesScore + encephalopathyScore
-    //Text(text = totalScore.toString())
-    return  totalScore
+    return  scores.sum()
 }
 
 @Composable
 fun acutePancreatitisButtonAndScore(
-    factor : List<RadioButtonName>,
-    title : Int,
-    titleNote : Int
+    data: acutePancreatitisData
 ): Int
 {
-    val radioOptions : List<RadioButtonName> = factor
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
+    val radioOptions : List<RadioButtonName> = data.radioOptions
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(data.radioOptions[0]) }
+    RadioButtonAndExpand(data.radioOptions, selectedOption, onOptionSelected, data.title, data.titleNote)
 
     val score: Int =
         if (stringResource(id = selectedOption.stringId) == stringResource(id =radioOptions[0].stringId)) 0

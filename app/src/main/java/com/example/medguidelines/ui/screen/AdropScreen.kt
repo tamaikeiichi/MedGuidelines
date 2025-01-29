@@ -17,13 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.medguidelines.R
-import com.example.medguidelines.data.ageGrade
-import com.example.medguidelines.data.dehydrationGrade
 import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.noYes
-import com.example.medguidelines.data.orientationGrade
-import com.example.medguidelines.data.pressureGrade
-import com.example.medguidelines.data.respirationGrade
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar

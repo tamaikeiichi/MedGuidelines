@@ -89,6 +89,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="bloodGasAnalysisTitle">Blood Gas Analysis</string>
+    <string name="acutePancreatitisTitle">Severity of Acute Pancreatitis</string>
     <string name="ph" translatable="false">pH</string>
     <string name="po2" translatable="false">pO&lt;sub>2&lt;/sub> &lt;small>(mmHg)&lt;/small></string>
     <string name="pco2" translatable="false">pCO&lt;sub>2&lt;/sub> &lt;small>(mmHg)&lt;/small></string>

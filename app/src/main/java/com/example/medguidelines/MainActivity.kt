@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
                                 navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
                                 navigateToAcuteTonsillitisAlgorithm = { controller.navigate("AcuteTonsillitisAlgorithmScreen")},
                                 navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen")})
+                                navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen")}
                         }
                     }
                     composable("ChildPughScreen") {
@@ -64,6 +65,11 @@ class MainActivity : ComponentActivity() {
                     composable("BloodGasAnalysisScreen") {
                         ChildComposable {
                             BloodGasAnalysisScreen(controller)
+                        }
+                    }
+                    composable("AcutePancreatitisScreen") {
+                        ChildComposable {
+                            AcutePancreatitisScreen(controller)
                         }
                     }
                 }
@@ -110,6 +116,7 @@ fun Preview() {
                     navigateToColorectalTNM = {},
                     navigateToAcuteTonsillitisAlgorithm = {},
                     navigateToBloodGasAnalysis = {},
+                    navigateToAcutePancreatitis = {}
                     )
             }
         }
