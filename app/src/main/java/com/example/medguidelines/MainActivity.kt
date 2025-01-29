@@ -20,6 +20,7 @@ import com.example.medguidelines.ui.screen.IndexScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.compose.ContrastAwareMedguidelinesTheme
+import com.example.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.example.medguidelines.ui.screen.BloodGasAnalysisScreen
 
@@ -38,8 +39,9 @@ class MainActivity : ComponentActivity() {
                                 navigateToAdrop = { controller.navigate("AdropScreen") },
                                 navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
                                 navigateToAcuteTonsillitisAlgorithm = { controller.navigate("AcuteTonsillitisAlgorithmScreen")},
-                                navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen")})
+                                navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen")},
                                 navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen")}
+                            )
                         }
                     }
                     composable("ChildPughScreen") {

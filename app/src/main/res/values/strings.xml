@@ -138,4 +138,5 @@
     <string name="acutePancreatitisSIRSnote">(1) Body temperature > 38°C or &lt; 36°C\n(2) Pulse > 90/ min\n(3) Respiratory rate > 20/min or paCO&lt;sub>2&lt;/sub> &lt; 32 toll\n(4) WBC > 12,000 or &lt; 4000/ mm&lt;sup>3&lt;/sup> or 10% blastcytes</string>
     <string name="acutePancreatitisAgeTitle">Age ≥ 70</string>
     <string name="acutePancreatitisCTTitle">Enhanced CT grade</string>
+    <string name="severe">Severe</string>
 </resources>

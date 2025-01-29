@@ -25,20 +25,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.medguidelines.R
-import com.example.medguidelines.data.albuminGrade
-import com.example.medguidelines.data.ascitesGrade
-import com.example.medguidelines.data.bilirubinGrade
-import com.example.medguidelines.data.encephalopathyGrade
 import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.noYes
-import com.example.medguidelines.data.ptGrade
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
 
 @Composable
 fun AcutePancreatitisScreen(navController: NavController) {
     var totalScore by remember { mutableIntStateOf(0) }
-    var childPughScoreABC by remember { mutableStateOf("") }
+    var gradeByScore by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -56,7 +51,7 @@ fun AcutePancreatitisScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.Center
                 ){
                     Text(
-                        text = "Child-Pugh $childPughScoreABC ($totalScore)",
+                        text = "$gradeByScore ($totalScore)",
                         fontSize = 30.sp,
                         textAlign = TextAlign.Center
                     )
@@ -70,20 +65,19 @@ fun AcutePancreatitisScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            totalScore = childPughTotalScore() // Assuming childPughTotalScore() returns an Int
+            totalScore = acutePancreatitisTotalScore() // Assuming childPughTotalScore() returns an Int
             //Text(text = totalScore.toString())
 
-            childPughScoreABC = when (totalScore) {
-                in 5..6 -> "A"
-                in 7..9 -> "B"
-                else -> "C"
+            gradeByScore = when (totalScore) {
+                in 0..2 -> ""
+                else -> stringResource(R.string.severe)
             }
         }
     }
 }
 
 data class acutePancreatitisData(
-    val radioOptions: List<RadioButtonName>, val title: Int, val titleNote: Int
+    val radioOptions: List<RadioButtonName>, val title: Int, val titleNote: Int, var score: Int = 0
 )
 
 val acutePancreatitisRadioButtonAndTitleAndNote = listOf(
@@ -98,29 +92,30 @@ val acutePancreatitisRadioButtonAndTitleAndNote = listOf(
 
 @Composable
 fun acutePancreatitisTotalScore(): Int {
-    val scores = remember { mutableListOf<Int>() }
-    for (title in acutePancreatitisRadioButtonAndTitleAndNote) {
-        scores.add(acutePancreatitisButtonAndScore(title))
+    var totalScore = 0
+    for (data in acutePancreatitisRadioButtonAndTitleAndNote) {
+        acutePancreatitisButtonAndScore(data)
+        totalScore += data.score
     }
-
-    return  scores.sum()
+    return totalScore
 }
 
 @Composable
 fun acutePancreatitisButtonAndScore(
     data: acutePancreatitisData
-): Int
+): acutePancreatitisData
 {
     val radioOptions : List<RadioButtonName> = data.radioOptions
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(data.radioOptions[0]) }
-    RadioButtonAndExpand(data.radioOptions, selectedOption, onOptionSelected, data.title, data.titleNote)
-
-    val score: Int =
-        if (stringResource(id = selectedOption.stringId) == stringResource(id =radioOptions[0].stringId)) 0
-        else if (stringResource(id = selectedOption.stringId) == stringResource(id =radioOptions[1].stringId)) 1
-        else  2
-
-    return score
+    var selectedOption by remember { mutableStateOf(radioOptions[0]) }
+    RadioButtonAndExpand(
+        radioOptions,
+        selectedOption,
+        { selectedOption = it },
+        data.title,
+        data.titleNote
+    )
+    data.score = radioOptions.indexOf(selectedOption).coerceAtLeast(0)
+    return data
 }
 
 @Preview
