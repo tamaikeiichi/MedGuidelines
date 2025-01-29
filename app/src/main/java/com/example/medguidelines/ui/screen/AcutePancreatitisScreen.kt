@@ -25,6 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.medguidelines.R
+import com.example.medguidelines.data.CTGradeInflammation
+import com.example.medguidelines.data.CTGradePoorContrast
 import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.noYes
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
@@ -32,12 +34,11 @@ import com.example.medguidelines.ui.component.TitleTopAppBar
 
 @Composable
 fun AcutePancreatitisScreen(navController: NavController) {
-    var totalScore by remember { mutableIntStateOf(0) }
     var gradeByScore by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.childPughTitle),
+            TitleTopAppBar(title = stringResource(id = R.string.acutePancreatitisTitle),
                 navController = navController,
                 referenceText = R.string.space,
                 referenceUrl = R.string.space
@@ -51,7 +52,7 @@ fun AcutePancreatitisScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.Center
                 ){
                     Text(
-                        text = "$gradeByScore ($totalScore)",
+                        text = "$gradeByScore ${stringResource(id = R.string.acutePancreatitis)}",
                         fontSize = 30.sp,
                         textAlign = TextAlign.Center
                     )
@@ -65,45 +66,50 @@ fun AcutePancreatitisScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            totalScore = acutePancreatitisTotalScore() // Assuming childPughTotalScore() returns an Int
-            //Text(text = totalScore.toString())
+            var prognosticFactor = 0
+            for (data in acutePancreatitisPrognosticFactorRadioButtonAndTitleAndNote) {
+                acutePancreatitisButtonAndScore(data)
+                prognosticFactor += data.score
+            }
 
-            gradeByScore = when (totalScore) {
-                in 0..2 -> ""
-                else -> stringResource(R.string.severe)
+            var CTGrade = 0
+            for (data in acutePancreatitisCTGradeRadioButtonAndTitleAndNote) {
+                acutePancreatitisButtonAndScore(data)
+                CTGrade += data.score
+            }
+
+            gradeByScore = if (prognosticFactor >= 3 || CTGrade >= 2) {
+                stringResource(R.string.severe)
+            } else {
+                stringResource(R.string.mild)
             }
         }
     }
 }
 
-data class acutePancreatitisData(
+data class AcutePancreatitisData(
     val radioOptions: List<RadioButtonName>, val title: Int, val titleNote: Int, var score: Int = 0
 )
 
-val acutePancreatitisRadioButtonAndTitleAndNote = listOf(
-    acutePancreatitisData(noYes, R.string.acutePancreatitisBaseExcessTitle, R.string.space),
-    acutePancreatitisData(noYes, R.string.acutePancreatitisPaO2Title, R.string.space),
-    acutePancreatitisData(noYes, R.string.acutePancreatitisBUNTitle, R.string.space),
-    acutePancreatitisData(noYes, R.string.acutePancreatitisLDHTitle, R.string.space),
-    acutePancreatitisData(noYes, R.string.acutePancreatitisPltTitle, R.string.space),
-    acutePancreatitisData(noYes, R.string.acutePancreatitisCaTitle, R.string.space),
-    acutePancreatitisData(noYes, R.string.acutePancreatitisSIRSTitle, R.string.space),
+val acutePancreatitisPrognosticFactorRadioButtonAndTitleAndNote = listOf(
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisBaseExcessTitle, R.string.space),
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisPaO2Title, R.string.space),
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisBUNTitle, R.string.space),
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisLDHTitle, R.string.space),
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisPltTitle, R.string.space),
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisCaTitle, R.string.space),
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisSIRSTitle, R.string.acutePancreatitisSIRSTitleNote),
+)
+
+val acutePancreatitisCTGradeRadioButtonAndTitleAndNote = listOf(
+    AcutePancreatitisData(CTGradeInflammation, R.string.acutePancreatitisCTGradeInflammationTitle, R.string.space),
+    AcutePancreatitisData(CTGradePoorContrast, R.string.acutePancreatitisCTGradePoorContrastTitle, R.string.acutePancreatitisCTGradePoorContrastTitleNote),
 )
 
 @Composable
-fun acutePancreatitisTotalScore(): Int {
-    var totalScore = 0
-    for (data in acutePancreatitisRadioButtonAndTitleAndNote) {
-        acutePancreatitisButtonAndScore(data)
-        totalScore += data.score
-    }
-    return totalScore
-}
-
-@Composable
 fun acutePancreatitisButtonAndScore(
-    data: acutePancreatitisData
-): acutePancreatitisData
+    data: AcutePancreatitisData
+): AcutePancreatitisData
 {
     val radioOptions : List<RadioButtonName> = data.radioOptions
     var selectedOption by remember { mutableStateOf(radioOptions[0]) }

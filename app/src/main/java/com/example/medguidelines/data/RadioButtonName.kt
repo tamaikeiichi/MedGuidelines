@@ -86,4 +86,14 @@ val noYes = listOf(
     RadioButtonName(R.string.yes),
 )
 
-val
+val CTGradeInflammation = listOf(
+    RadioButtonName(R.string.anteriorPararenalSpace),
+    RadioButtonName(R.string.rootOfMesocolon),
+    RadioButtonName(R.string.beyondTheInferiorRootOfKidney),
+)
+
+val CTGradePoorContrast = listOf(
+    RadioButtonName(R.string.localizedToOneSegmentOrOnlyPeripancrease),
+    RadioButtonName(R.string.lessThanTwoSegments),
+    RadioButtonName(R.string.twoSengemtsOrMore),
+)
