@@ -90,7 +90,6 @@
     <string name="childPughTitle">Child-Pugh分類</string>
     <string name="acutePancreatitisSIRSTitle">陽性項目数 ≥ 3</string>
     <string name="acutePancreatitisSIRSnote">(1) 体温 > 38°C あるいは &lt; 36°C (2) 脈拍 > 90/ min (3) 呼吸数 > 20/min あるいは PaCO&lt;sub>2&lt;/sub> &lt; 32 toll (4)  白血球数 > 12,000 or &lt; 4000/ mm&lt;sup>3&lt;/sup> あるいは10% 幼若球</string>
-    <string name="acutePancreatitisSIRSnote">(1) Body temperature > 38°C or &lt; 36°C (2) Pulse > 90/ min (3) Respiratory rate > 20/min or paCO&lt;sub>2&lt;/sub> &lt; 32 toll (4) WBC > 12,000 or &lt; 4000/ mm&lt;sup>3&lt;/sup> or 10% blastcytes</string>
     <string name="acutePancreatitisAgeTitle">年齢 ≥ 70</string>
     <string name="acutePancreatitisCTTitle">造影CTグレード</string>
     <string name="severe">重症</string>
