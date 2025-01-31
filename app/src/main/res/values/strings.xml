@@ -149,5 +149,5 @@
     <string name="mild">Mild</string>
     <string name="acutePancreatitisCTGradePoorContrastTitleNote">Three segments (head, body, tail)</string>
     <string name="acutePancreatitis">Acute Pancreatitis</string>
-    <string name="acutePancreatitisCTGradePoorContrastTitle">CE-CT grade</string>
+    <string name="acutePancreatitisCTGradePoorContrastTitle">CE-CT grade: poor contrast region</string>
 </resources>

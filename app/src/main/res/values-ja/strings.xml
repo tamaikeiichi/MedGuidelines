@@ -88,7 +88,7 @@
     <string name="metabolicAcidosisAndRespiratoryAlkalosis">代謝性アシドーシスと呼吸性アルカローシス</string>
     <string name="bloodGasAnalysisTitle">動脈血ガス分析</string>
     <string name="childPughTitle">Child-Pugh分類</string>
-    <string name="acutePancreatitisSIRSTitle">陽性項目数 ≥ 3</string>
+    <string name="acutePancreatitisSIRSTitle">SIRS診断基準における陽性項目数 ≥ 3</string>
     <string name="acutePancreatitisSIRSTitleNote">(1) 体温 > 38°C あるいは &lt; 36°C (2) 脈拍 > 90/ min (3) 呼吸数 > 20/min あるいは PaCO&lt;sub>2&lt;/sub> &lt; 32 toll (4)  白血球数 > 12,000 or &lt; 4000/ mm&lt;sup>3&lt;/sup> あるいは10% 幼若球</string>
     <string name="acutePancreatitisAgeTitle">年齢 ≥ 70</string>
     <string name="acutePancreatitisCTTitle">造影CTグレード</string>
@@ -98,7 +98,7 @@
     <string name="acutePancreatitisBUNTitle">BUN ≥ 40 mg/dL (or Cr ≥ 2 mg/dL)または乏尿（輸液後も1日尿量が400 mL以下）</string>
     <string name="acutePancreatitisLDHTitle">LDH ≥ 基準値上限 x 2</string>
     <string name="acutePancreatitisTitle">急性膵炎重症度判定基準</string>
-    <string name="acutePancreatitisCTGradeInflammationTitle">炎症の膵外進展度</string>
+    <string name="acutePancreatitisCTGradeInflammationTitle">造影CT grade: 炎症の膵外進展度</string>
     <string name="mild">軽症</string>
     <string name="acutePancreatitisCTGradePoorContrastTitleNote">膵を便宜的に3つの区域（膵頭部、膵体部、膵尾部）に分け判定する</string>
     <string name="anteriorPararenalSpace">前腎傍腔</string>
@@ -108,7 +108,7 @@
     <string name="lessThanTwoSegments">2つの区域にかかる場合</string>
     <string name="twoSengemtsOrMore">2つの区域全体を占める、またはそれ以上の場合</string>
     <string name="acutePancreatitis">急性膵炎</string>
-    <string name="acutePancreatitisCTGradePoorContrastTitle">造影CT Grade</string>
+    <string name="acutePancreatitisCTGradePoorContrastTitle">造影CT Grade: 膵の造影不良域</string>
     <string name="acutePancreatitisBaseExcessTitle">Base Excess　≤　-3 mEq/L, or shock (収縮期血圧 ≤ 80 mmHg)</string>
     <string name="acutePancreatitisPaO2Title">PaO&lt;sub>2&lt;/sub> ≤ 60 mmHg、または呼吸不全（人工呼吸管理が必要）</string>
 </resources>
