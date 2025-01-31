@@ -138,7 +138,7 @@
     <string name="acutePancreatitisSIRSTitleNote">(1) Body temperature > 38°C or &lt; 36°C\n(2) Pulse > 90/ min\n(3) Respiratory rate > 20/min or paCO&lt;sub>2&lt;/sub> &lt; 32 toll\n(4) WBC > 12,000 or &lt; 4000/ mm&lt;sup>3&lt;/sup> or 10% blastcytes</string>
     <string name="acutePancreatitisAgeTitle">Age ≥ 70</string>
     <string name="acutePancreatitisCTTitle">Enhanced CT grade</string>
-    <string name="severe">Severe</string>
+    <string name="severe">Severe&#xA0;</string>
     <string name="anteriorPararenalSpace">Anterior Pararenal space</string>
     <string name="rootOfMesocolon">Root of Mesocolon</string>
     <string name="beyondTheInferiorRootOfKidney">Beyond the inferior root of kidney</string>
@@ -146,7 +146,7 @@
     <string name="lessThanTwoSegments">Less than two segments</string>
     <string name="twoSengemtsOrMore">Two segements or more</string>
     <string name="acutePancreatitisCTGradeInflammationTitle">Extrapancreatic extension of inflammation</string>
-    <string name="mild">Mild</string>
+    <string name="mild">Mild&#xA0;</string>
     <string name="acutePancreatitisCTGradePoorContrastTitleNote">Three segments (head, body, tail)</string>
     <string name="acutePancreatitis">Acute Pancreatitis</string>
     <string name="acutePancreatitisCTGradePoorContrastTitle">CE-CT grade: poor contrast region</string>

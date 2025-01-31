@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,7 +27,6 @@ import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.data.CTGradeInflammation
 import com.example.medguidelines.data.CTGradePoorContrast
-import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.noYes
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
@@ -34,6 +34,7 @@ import com.example.medguidelines.ui.component.TitleTopAppBar
 @Composable
 fun AcutePancreatitisScreen(navController: NavController) {
     var gradeByScore by remember { mutableStateOf("") }
+    var cTGradeNumeric by remember { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -51,7 +52,7 @@ fun AcutePancreatitisScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.Center
                 ){
                     Text(
-                        text = "$gradeByScore ${stringResource(id = R.string.acutePancreatitis)}",
+                        text = "$gradeByScore${stringResource(id = R.string.acutePancreatitis)}, CT Grade $cTGradeNumeric",
                         fontSize = 30.sp,
                         textAlign = TextAlign.Center
                     )
@@ -81,6 +82,13 @@ fun AcutePancreatitisScreen(navController: NavController) {
                 stringResource(R.string.severe)
             } else {
                 stringResource(R.string.mild)
+            }
+
+            cTGradeNumeric = when (CTGrade) {
+                in 0..1 -> 1
+                in 2..2 -> 2
+                else -> 3
+
             }
         }
     }
