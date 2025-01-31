@@ -97,30 +97,3 @@ fun ChildComposable(childScreen: @Composable () -> Unit) {
         }
     }
 
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    ContrastAwareMedguidelinesTheme (darkTheme = false,
-        dynamicColor = true,
-        ){
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-        ){ innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-            ) {
-                IndexScreen(
-                    navigateToChildPugh = {},
-                    navigateToAdrop = {},
-                    navigateToColorectalTNM = {},
-                    navigateToAcuteTonsillitisAlgorithm = {},
-                    navigateToBloodGasAnalysis = {},
-                    navigateToAcutePancreatitis = {}
-                    )
-            }
-        }
-    }
-}

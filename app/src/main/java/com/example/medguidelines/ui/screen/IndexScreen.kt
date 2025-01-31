@@ -72,13 +72,12 @@ fun IndexScreen(
             originalItems
         } else {
             originalItems.toList().filter {
-                //originalItems.toList().contains(searchQuery, ignoreCase = true)
                 itemData ->
                 val name = context.getString(itemData.nameResId)
-                name.contains(searchQuery.toString(), ignoreCase = true)
+                name.contains(searchQuery, ignoreCase = true)
             }
         }
-        }
+    }
 
     LaunchedEffect(Unit) {
         loadListItemData(context).collect { loadedItems ->
