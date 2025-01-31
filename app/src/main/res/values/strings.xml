@@ -150,4 +150,5 @@
     <string name="acutePancreatitisCTGradePoorContrastTitleNote">Three segments (head, body, tail)</string>
     <string name="acutePancreatitis">Acute Pancreatitis</string>
     <string name="acutePancreatitisCTGradePoorContrastTitle">CE-CT grade: poor contrast region</string>
+    <string name="netakiridoTitle">日常生活自立度</string>
 </resources>
