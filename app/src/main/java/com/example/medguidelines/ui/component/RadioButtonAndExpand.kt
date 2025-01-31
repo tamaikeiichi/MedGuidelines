@@ -39,9 +39,9 @@ import com.example.medguidelines.data.RadioButtonName
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RadioButtonAndExpand(
-    radioOptions: List<RadioButtonName>,
-    selectedOption: RadioButtonName,
-    onOptionSelected: (selectedOption: RadioButtonName) -> Unit,
+    radioOptions: List<Int>,
+    selectedOption: Int,
+    onOptionSelected: (selectedOption: Int) -> Unit,
     title: Int,
     titleNote: Int,
 ) {
@@ -114,7 +114,7 @@ fun RadioButtonAndExpand(
                     onClick = null // null recommended for accessibility with screenreaders
                 )
                 Text(
-                    text = stringResource(id = text.stringId),
+                    text = stringResource(id = text),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(start = 4.dp),
                     softWrap = true,

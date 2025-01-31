@@ -24,6 +24,7 @@ import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
+import com.example.medguidelines.ui.component.buttonAndScore
 
 @Composable
 fun ColorectalTNMScreen(navController: NavController) {
@@ -58,17 +59,17 @@ fun ColorectalTNMScreen(navController: NavController) {
 
 @Composable
 fun colorectalTNMScore(): List<Int> {
-    val scoreA = colorectalTNMButtonAndScore(
+    val scoreA = buttonAndScore(
         Tfactor,
         R.string.colorectalTTitle,
         R.string.TfactorTitleNote
     )
-    val scoreB = colorectalTNMButtonAndScore(
+    val scoreB = buttonAndScore(
         Nfactor,
         R.string.colorectalNtitle,
         R.string.NfactorTitleNote
     )
-    val scoreC = colorectalTNMButtonAndScore(
+    val scoreC = buttonAndScore(
         Mfactor,
         R.string.colorectalMtitle,
         R.string.MfactorTitleNote
@@ -80,21 +81,6 @@ fun colorectalTNMScore(): List<Int> {
         listOf(scoreA, scoreC + Nfactor.size - 1)
     }
     return  score
-}
-
-@Composable
-fun colorectalTNMButtonAndScore(
-    factor : List<RadioButtonName>,
-    title : Int,
-    titleNote : Int
-): Int
-{
-    val radioOptions : List<RadioButtonName> = factor
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
-    val score: Int =
-        radioOptions.indexOf(selectedOption).coerceAtLeast(0)
-    return score
 }
 
 @Preview

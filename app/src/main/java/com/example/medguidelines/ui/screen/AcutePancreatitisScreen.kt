@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -88,7 +87,7 @@ fun AcutePancreatitisScreen(navController: NavController) {
 }
 
 data class AcutePancreatitisData(
-    val radioOptions: List<RadioButtonName>, val title: Int, val titleNote: Int, var score: Int = 0
+    val radioOptions: List<Int>, val title: Int, val titleNote: Int, var score: Int = 0
 )
 
 val acutePancreatitisPrognosticFactorRadioButtonAndTitleAndNote = listOf(
@@ -111,7 +110,7 @@ fun acutePancreatitisButtonAndScore(
     data: AcutePancreatitisData
 ): AcutePancreatitisData
 {
-    val radioOptions : List<RadioButtonName> = data.radioOptions
+    val radioOptions : List<Int> = data.radioOptions
     var selectedOption by remember { mutableStateOf(radioOptions[0]) }
     RadioButtonAndExpand(
         radioOptions,

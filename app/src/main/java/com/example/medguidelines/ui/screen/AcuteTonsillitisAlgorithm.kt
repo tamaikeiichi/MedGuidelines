@@ -28,6 +28,7 @@ import com.example.medguidelines.data.mclsaacAge
 import com.example.medguidelines.data.tonsillitisRedFlag
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
+import com.example.medguidelines.ui.component.buttonAndScore
 
 
 @Composable
@@ -150,7 +151,7 @@ fun acuteTonsillitisRedFlagScore():Int {
         Column (
             modifier = Modifier.padding(8.dp)
         ) {
-            score = acuteTonsillitisAlgorithmButtonAndScore(
+            score = buttonAndScore(
                 tonsillitisRedFlag,
                 R.string.tonsillitisRedFlagTitle,
                 R.string.space
@@ -188,27 +189,27 @@ fun acuteTonsillitisMclsaacScore(): Int {
         ),
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            scoreA = acuteTonsillitisAlgorithmButtonAndScore(
+            scoreA = buttonAndScore(
                 absencePresence,
                 R.string.temperatureTitle,
                 R.string.space
             )
-            scoreB = acuteTonsillitisAlgorithmButtonAndScore(
+            scoreB = buttonAndScore(
                 absencePresence,
                 R.string.coughTitle,
                 R.string.space
             )
-            scoreC = acuteTonsillitisAlgorithmButtonAndScore(
+            scoreC = buttonAndScore(
                 absencePresence,
                 R.string.cervicalNodesTitle,
                 R.string.space
             )
-            scoreD = acuteTonsillitisAlgorithmButtonAndScore(
+            scoreD = buttonAndScore(
                 absencePresence,
                 R.string.tonsillarTitle,
                 R.string.space
             )
-            scoreE = acuteTonsillitisAlgorithmButtonAndScore(
+            scoreE = buttonAndScore(
                 mclsaacAge,
                 R.string.mclsaacAgeTitle,
                 R.string.space
@@ -221,19 +222,19 @@ fun acuteTonsillitisMclsaacScore(): Int {
     return totalScore
 }
 
-@Composable
-fun acuteTonsillitisAlgorithmButtonAndScore(
-    factor : List<RadioButtonName>,
-    title : Int,
-    titleNote : Int
-): Int
-{
-    val radioOptions : List<RadioButtonName> = factor
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
-
-    return radioOptions.indexOf(selectedOption).coerceAtLeast(0)
-}
+//@Composable
+//fun acuteTonsillitisAlgorithmButtonAndScore(
+//    factor : List<Int>,
+//    title : Int,
+//    titleNote : Int
+//): Int
+//{
+//    val radioOptions : List<Int> = factor
+//    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+//    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
+//
+//    return radioOptions.indexOf(selectedOption).coerceAtLeast(0)
+//}
 
 //@Preview
 //@Composable

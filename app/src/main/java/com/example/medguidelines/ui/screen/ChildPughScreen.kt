@@ -33,6 +33,7 @@ import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.ptGrade
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
+import com.example.medguidelines.ui.component.buttonAndScore
 
 @Composable
 fun ChildPughScreen(navController: NavController) {
@@ -83,32 +84,32 @@ fun ChildPughScreen(navController: NavController) {
 
 @Composable
 fun childPughTotalScore(): Int {
-    val bilirubinScore = childPughButtonAndScore(
+    val bilirubinScore = buttonAndScore(
         bilirubinGrade,
         R.string.bilirubinTitle,
         R.string.bilirubinTitleNote
-    )
+    ) + 1
     val albuminScore =
-        childPughButtonAndScore(
+        buttonAndScore(
             albuminGrade,
             R.string.albuminTitle,
             R.string.albuminTitleNote
-        )
-    val ptScore = childPughButtonAndScore(ptGrade,
+        ) + 1
+    val ptScore = buttonAndScore(ptGrade,
         R.string.ptTitle,
         R.string.ptTitleNote
-    )
+    ) + 1
     val ascitesScore =
-        childPughButtonAndScore(
+        buttonAndScore(
             ascitesGrade,
             R.string.ascitesTitle,
             R.string.ascitesTitleNote
-        )
-    val encephalopathyScore = childPughButtonAndScore(
+        ) + 1
+    val encephalopathyScore = buttonAndScore(
         encephalopathyGrade,
         R.string.encephalopaphyTitle,
         R.string.encephalopaphyTitleNote
-    )
+    ) + 1
 
     val totalScore =
         bilirubinScore + albuminScore + ptScore + ascitesScore + encephalopathyScore
@@ -116,24 +117,24 @@ fun childPughTotalScore(): Int {
     return  totalScore
 }
 
-@Composable
-fun childPughButtonAndScore(
-    factor : List<RadioButtonName>,
-    title : Int,
-    titleNote : Int
-): Int
-{
-    val radioOptions : List<RadioButtonName> = factor
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
-
-    val score: Int =
-        if (stringResource(id = selectedOption.stringId) == stringResource(id =radioOptions[0].stringId)) 1
-        else if (stringResource(id = selectedOption.stringId) == stringResource(id =radioOptions[1].stringId)) 2
-        else  3
-
-    return score
-}
+//@Composable
+//fun childPughButtonAndScore(
+//    factor : List<Int>,
+//    title : Int,
+//    titleNote : Int
+//): Int
+//{
+//    val radioOptions : List<Int> = factor
+//    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+//    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
+//
+//    val score: Int =
+//        if (stringResource(id = selectedOption) == stringResource(id =radioOptions[0])) 1
+//        else if (stringResource(id = selectedOption) == stringResource(id =radioOptions[1])) 2
+//        else  3
+//
+//    return score
+//}
 
 @Preview
 @Composable
