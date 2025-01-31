@@ -34,6 +34,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
+import com.example.medguidelines.R
 import com.example.medguidelines.data.RadioButtonName
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -46,14 +47,19 @@ fun RadioButtonAndExpand(
     titleNote: Int,
 ) {
     Column() {
+        var expanded by remember { mutableStateOf(false) }
+        val cardModifier = Modifier
+            .padding(vertical = 4.dp, horizontal = 4.dp)
+            .then(
+                if (titleNote != R.string.space) {
+                    Modifier.clickable { expanded = !expanded }
+                } else {
+                    Modifier
+                }
+            )
         Card(
-//            colors = CardDefaults.cardColors(
-//                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-            //        )
-            modifier = Modifier
-                .padding(vertical = 4.dp, horizontal = 4.dp),
+            modifier = cardModifier
         ) {
-            var expanded by remember { mutableStateOf(false) }
             Row(
                 modifier = Modifier
                     .padding(2.dp)
@@ -69,7 +75,6 @@ fun RadioButtonAndExpand(
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier
                             .padding(4.dp)
-                            .clickable { expanded = !expanded },
                     )
                     if (expanded) {
                         Text(
@@ -80,13 +85,16 @@ fun RadioButtonAndExpand(
                         )
                     }
                 }
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
-                        else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = if (expanded) "Collapse" else "Expand"
-                    )
+                if (titleNote != R.string.space){
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(
+                            imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
+                            else Icons.Filled.KeyboardArrowDown,
+                            contentDescription = if (expanded) "Collapse" else "Expand"
+                        )
+                    }
                 }
+
             }
         }
 

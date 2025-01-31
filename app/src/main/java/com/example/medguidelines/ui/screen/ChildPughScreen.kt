@@ -87,13 +87,13 @@ fun childPughTotalScore(): Int {
     val bilirubinScore = buttonAndScore(
         bilirubinGrade,
         R.string.bilirubinTitle,
-        R.string.bilirubinTitleNote
+        R.string.space
     ) + 1
     val albuminScore =
         buttonAndScore(
             albuminGrade,
             R.string.albuminTitle,
-            R.string.albuminTitleNote
+            R.string.space
         ) + 1
     val ptScore = buttonAndScore(ptGrade,
         R.string.ptTitle,
@@ -103,7 +103,7 @@ fun childPughTotalScore(): Int {
         buttonAndScore(
             ascitesGrade,
             R.string.ascitesTitle,
-            R.string.ascitesTitleNote
+            R.string.space
         ) + 1
     val encephalopathyScore = buttonAndScore(
         encephalopathyGrade,
@@ -113,28 +113,8 @@ fun childPughTotalScore(): Int {
 
     val totalScore =
         bilirubinScore + albuminScore + ptScore + ascitesScore + encephalopathyScore
-    //Text(text = totalScore.toString())
     return  totalScore
 }
-
-//@Composable
-//fun childPughButtonAndScore(
-//    factor : List<Int>,
-//    title : Int,
-//    titleNote : Int
-//): Int
-//{
-//    val radioOptions : List<Int> = factor
-//    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-//    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
-//
-//    val score: Int =
-//        if (stringResource(id = selectedOption) == stringResource(id =radioOptions[0])) 1
-//        else if (stringResource(id = selectedOption) == stringResource(id =radioOptions[1])) 2
-//        else  3
-//
-//    return score
-//}
 
 @Preview
 @Composable
