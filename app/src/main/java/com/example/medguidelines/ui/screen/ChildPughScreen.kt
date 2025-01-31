@@ -29,9 +29,7 @@ import com.example.medguidelines.data.albuminGrade
 import com.example.medguidelines.data.ascitesGrade
 import com.example.medguidelines.data.bilirubinGrade
 import com.example.medguidelines.data.encephalopathyGrade
-import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.ptGrade
-import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
 
