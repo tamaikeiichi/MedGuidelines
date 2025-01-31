@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.medguidelines.R
@@ -52,9 +53,10 @@ fun AcutePancreatitisScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.Center
                 ){
                     Text(
-                        text = "$gradeByScore${stringResource(id = R.string.acutePancreatitis)}, CT Grade $cTGradeNumeric",
+                        text = "$gradeByScore${stringResource(id = R.string.acutePancreatitis)}\nCT Grade $cTGradeNumeric",
                         fontSize = 30.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        lineHeight = 1.2.em,
                     )
                 }
 
