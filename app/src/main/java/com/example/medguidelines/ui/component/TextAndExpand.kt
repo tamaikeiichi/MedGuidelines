@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.medguidelines.R
@@ -138,8 +139,9 @@ fun TextAndExpandTest(
     ) {
         Row(
             modifier = Modifier
-                //.padding(2.dp)
-                .animateContentSize()
+                .padding(2.dp)
+                .animateContentSize(),
+            //verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier
