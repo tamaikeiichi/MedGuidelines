@@ -1,12 +1,11 @@
 package com.example.medguidelines.ui.component
 
-package com.example.medguidelines.ui.component
-
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -32,13 +31,20 @@ fun TextAndExpand(
     secondTitle: Int,
     thirdTitle: Int,
 ) {
-    Column() {
-        var expanded by remember { mutableStateOf(false) }
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
+        var expandedFirst by remember { mutableStateOf(false) }
+        var expandedSecond by remember { mutableStateOf(false) }
+        var expandedThird by remember { mutableStateOf(false) }
         val cardModifier = Modifier
             .padding(vertical = 4.dp, horizontal = 4.dp)
+            .fillMaxWidth()
             .then(
                 if (secondTitle != R.string.space) {
-                    Modifier.clickable { expanded = !expanded }
+                    Modifier.clickable { expandedFirst = !expandedFirst }
                 } else {
                     Modifier
                 }
@@ -51,34 +57,61 @@ fun TextAndExpand(
                     .padding(2.dp)
                     .animateContentSize()
             ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(3.dp)
-                ) {
+                Column(){
                     TextInCard(firstTitle)
-                    if (expanded) {
-                        TextInCard(secondTitle)
-                        if(expanded) {
-                            TextInCard(thirdTitle)
+                    if (expandedFirst) {
+                        Card(){
+                            Row(
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .animateContentSize()
+                            ) {
+                                Column(){
+                                    TextInCard(secondTitle)
+                                    if (expandedSecond) {
+                                        Card(){
+                                            Row(
+                                                modifier = Modifier
+                                                    .padding(2.dp)
+                                                    .animateContentSize()
+                                            ) {
+                                                TextInCard(thirdTitle)
+                                            }
+                                        }
+
+                                    }
+                                }
+                                if (thirdTitle != R.string.space) {
+                                    IconButtonInCard(
+                                        expanded = expandedSecond,
+                                        onExpandChange = { expandedSecond = it }
+                                    )
+                                }
+                            }
                         }
+
+
+
                     }
                 }
-                if (secondTitle != R.string.space){
-                    IconButton(onClick = { expanded = !expanded }) {
-                        Icon(
-                            imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
-                            else Icons.Filled.KeyboardArrowDown,
-                            contentDescription = if (expanded) "Collapse" else "Expand"
-                        )
-                    }
+                if (secondTitle != R.string.space) {
+                    IconButtonInCard(
+                        expanded = expandedFirst,
+                        onExpandChange = { expandedFirst = it }
+                    )
                 }
+                }
+
+
+            }
+
 
             }
         }
 
-    }
-}
+
+
+
 
 @Composable
 fun TextInCard(
