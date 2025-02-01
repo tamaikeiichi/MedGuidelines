@@ -4,9 +4,11 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -100,16 +102,64 @@ fun TextAndExpand(
                         onExpandChange = { expandedFirst = it }
                     )
                 }
-                }
-
-
             }
 
 
-            }
         }
 
 
+    }
+}
+
+@Composable
+fun TextAndExpandTest(
+    firstTitle: Int,
+    secondTitle: Int? = null,
+    nextCard: @Composable (() -> Unit)? = null,
+    )
+{
+    Column(){
+
+
+    var expanded by remember { mutableStateOf(false) }
+    val cardModifier = Modifier
+        .padding(vertical = 4.dp, horizontal = 4.dp)
+        .fillMaxWidth()
+        .width(IntrinsicSize.Max)
+        .then(
+            if (secondTitle != R.string.space) {
+                Modifier.clickable { expanded = !expanded }
+            } else {
+                Modifier
+            }
+        )
+    Card(
+        modifier = cardModifier
+    ) {
+        Row(
+            modifier = Modifier
+                //.padding(2.dp)
+                .animateContentSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    //.padding(3.dp)
+            ) {
+                TextInCard(firstTitle)
+                if (expanded && nextCard != null) {
+                    nextCard()
+                }
+            }
+            if (secondTitle != R.string.space) {
+                IconButtonInCard(
+                    expanded = expanded,
+                    onExpandChange = { expanded = it }
+                )
+            }
+        }
+    }
+}}
 
 
 
