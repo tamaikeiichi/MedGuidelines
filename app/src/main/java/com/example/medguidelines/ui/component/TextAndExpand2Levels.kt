@@ -22,7 +22,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.CardDefaults
 import com.example.medguidelines.R
 
 @Composable
@@ -74,8 +76,9 @@ fun TextAndExpandTest(
     }}
 
 @Composable
-fun textAndExpand1Levels(
+fun textAndExpand1Level(
     firstTitle: Int,
+    cardColor: Color = MaterialTheme.colorScheme.surfaceVariant
 ):Boolean
 {
     var expanded by remember { mutableStateOf(false) }
@@ -86,7 +89,11 @@ fun textAndExpand1Levels(
             .width(IntrinsicSize.Max)
             .clickable { expanded = !expanded }
         Card(
-            modifier = cardModifier
+            modifier = cardModifier,
+            colors = CardDefaults.cardColors(
+                containerColor = cardColor // Set the card color here
+            )
+
         ) {
             Row(
                 modifier = Modifier
@@ -108,6 +115,36 @@ fun textAndExpand1Levels(
         }
     }
     return expanded
+}
+
+@Composable
+fun Text1Level(
+    firstTitle: Int,
+)
+{
+    Column(){
+        val cardModifier = Modifier
+            .padding(vertical = 4.dp, horizontal = 4.dp)
+            .fillMaxWidth()
+            .width(IntrinsicSize.Max)
+        Card(
+            modifier = cardModifier
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .animateContentSize(),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(4.dp)
+                ) {
+                    TextInCard(firstTitle)
+                }
+            }
+        }
+    }
 }
 
 @Composable

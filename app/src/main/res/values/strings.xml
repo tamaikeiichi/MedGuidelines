@@ -160,4 +160,15 @@
     <string name="rankBNoteSubCategory" translatable="false">1. 車いすに移乗し、食事、排泄はベッドから離れて行う\n2. 介助により車いすに移乗する</string>
     <string name="rankCNote" translatable="false">ランクC\n1日中ベッド上で過ごし、排泄、食事、着替において介助を要する</string>
     <string name="rankCNoteSubCategory" translatable="false">1. 自力で寝返りをうつ\n2. 自力では寝返りもうてない </string>
+    <string name="shougaiKoureisha" translatable="false">障害高齢者の日常生活自立度</string>
+    <string name="ninchishoKoureisha" translatable="false">認知症高齢者の日常生活自立度</string>
+    <string name="ninchiI" translatable="false">ランクI\n何らかの認知症を有するが、日常生活は家庭内及び社会的にほぼ自立している。</string>
+    <string name="ninchiII" translatable="false">ランクII\n日常生活に支障を来たすような症状・行動や意思疎通の困難さが多少見られても、誰かが注意していれば自立できる。</string>
+    <string name="ninchiIINote" translatable="false">IIa: 家庭外で上記Ⅱの状態がみられる。\nIIb: 家庭内でも上記Ⅱの状態が見られる。</string>
+    <string name="ninchiIII" translatable="false">ランクIII\n日常生活に支障を来たすような症状・行動や意思疎通の困難さが見られ、介護を必要とする。 "</string>
+    <string name="ninchiIIINote" translatable="false">IIIa: 日中を中心として上記Ⅲの状態が見られる。 IIIb: 夜間を中心として上記Ⅲの状態が見られる。</string>
+    <string name="ninchiIV" translatable="false">"ランクIV: 日常生活に支障を来たすような症状・行動や意思疎通の困難さが頻繁に見られ、常に介護を必要とする。 "</string>
+    <string name="ninchiV" translatable="false">"ランクV: 著しい精神症状や問題行動あるいは重篤な身体疾患が見られ、専門医療を必要とする。 "</string>
+    <string name="netakiridoUrl" translatable="false">https://www.mhlw.go.jp/file/06-Seisakujouhou-12300000-Roukenkyoku/0000077382.pdf</string>
+    <string name="netakiridoRefTitle" translatable="false">厚生労働省HP (PDF)</string>
 </resources>
