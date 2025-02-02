@@ -101,23 +101,21 @@ fun textAndExpand1Levels(
                 ) {
                     TextInCard(firstTitle)
                 }
-                    IconButtonInCard(
-                        expanded = expanded,
-                        onExpandChange = { expanded = it }
-                    )
-                }
+                IconButtonInCard(
+                    expanded = expanded,
+                    onExpandChange = { expanded = it }
+                )
             }
         }
-    return expanded
     }
-
+    return expanded
+}
 
 @Composable
 fun TextAndExpand2Levels(
     firstTitle: Int,
     secondTitle: Int,
-)
-{
+) {
     Column(){
         var expanded by remember { mutableStateOf(false) }
         val cardModifier = Modifier
@@ -129,6 +127,8 @@ fun TextAndExpand2Levels(
                     Modifier.clickable { expanded = !expanded }
                 } else {
                     Modifier
+                        .padding(4.dp)
+                        .animateContentSize()
                 }
             )
         Card(
@@ -136,24 +136,29 @@ fun TextAndExpand2Levels(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(2.dp)
+                    .padding(4.dp)
                     .animateContentSize(),
             ) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                    //.padding(3.dp)
+                        .padding(4.dp)
                 ) {
                     TextInCard(firstTitle)
-                    if (expanded) {
-                        TextInCard(secondTitle)
-                    }
                 }
                 if (secondTitle != R.string.space) {
                     IconButtonInCard(
                         expanded = expanded,
                         onExpandChange = { expanded = it }
                     )
+                }
+            }
+            if (expanded) {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                ) {
+                    TextInCard(secondTitle)
                 }
             }
         }
@@ -210,10 +215,10 @@ fun TextAndExpand3Levels(
                         ){
                             TextInCard(secondTitle1)
                         }
-                            IconButtonInCard(
-                                expanded = expanded2,
-                                onExpandChange = { expanded2 = it }
-                            )
+                        IconButtonInCard(
+                            expanded = expanded2,
+                            onExpandChange = { expanded2 = it }
+                        )
                     }
                 }
                 Row(
@@ -232,10 +237,10 @@ fun TextAndExpand3Levels(
                         ){
                             TextInCard(secondTitle2)
                         }
-                            IconButtonInCard(
-                                expanded = expanded3,
-                                onExpandChange = { expanded3 = it }
-                            )
+                        IconButtonInCard(
+                            expanded = expanded3,
+                            onExpandChange = { expanded3 = it }
+                        )
                     }
                 }
                 Row(
@@ -250,9 +255,6 @@ fun TextAndExpand3Levels(
         }
     }
 }
-
-
-
 
 @Composable
 fun TextInCard(
