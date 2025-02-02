@@ -150,5 +150,14 @@
     <string name="acutePancreatitisCTGradePoorContrastTitleNote">Three segments (head, body, tail)</string>
     <string name="acutePancreatitis">Acute Pancreatitis</string>
     <string name="acutePancreatitisCTGradePoorContrastTitle">CE-CT grade: poor contrast region</string>
-    <string name="netakiridoTitle">日常生活自立度</string>
+    <string name="netakiridoTitle">日常生活自立度&lt;small>（Japanese Only）&lt;/small></string>
+    <string name="rankJ">生活自立\nランクJ</string>
+    <string name="rankJNote">何らかの障害等を有するが、日常生活はほぼ自立しており独力で外出する\n1.　交通機関等を利用して外出する\n2.　隣近所へなら外出する</string>
+    <string name="rankA">準寝たきり\nランクA</string>
+    <string name="rankANote">屋内での生活は概ね自立しているが、介助なしには外出しない \n1.　介助により外出し、日中はほとんどベッドから離れて生活する \n2.　外出の頻度が少なく、日中も寝たり起きたりの生活をしている</string>
+    <string name="netakiri">寝たきり</string>
+    <string name="rankBNote">ランクB\n屋内での生活は何らかの介助を要し、日中もベッド上での生活が主体であるが、座位を保つ</string>
+    <string name="rankBNoteSubCategory">1. 車いすに移乗し、食事、排泄はベッドから離れて行う\n2. 介助により車いすに移乗する</string>
+    <string name="rankCNote">ランクC\n1日中ベッド上で過ごし、排泄、食事、着替において介助を要する</string>
+    <string name="rankCNoteSubCategory">1. 自力で寝返りをうつ\n2. 自力では寝返りもうてない </string>
 </resources>

@@ -14,10 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun IndexScreenListItem (name: String, onClick: () -> Unit){
+fun IndexScreenListItem (name: Int, onClick: () -> Unit){
     Column {
         Card {
-            Text(text = name,
+            Text(text = parseStyledString(name),
                 fontSize = 25.sp,
                 modifier = Modifier
                     .padding(8.dp)

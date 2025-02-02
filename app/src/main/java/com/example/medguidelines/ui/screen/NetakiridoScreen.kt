@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.medguidelines.R
-import com.example.medguidelines.ui.component.TextAndExpand
-import com.example.medguidelines.ui.component.TextAndExpandTest
+import com.example.medguidelines.ui.component.TextAndExpand2Levels
+import com.example.medguidelines.ui.component.TextAndExpand3Levels
 import com.example.medguidelines.ui.component.TitleTopAppBar
 
 
@@ -35,34 +35,21 @@ fun NetakiridoScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth()
                 .padding(innerPadding)
-
         ) {
-//            TextAndExpand(
-//                R.string.ageTitle,
-//                R.string.ptTitle,
-//                R.string.dehydrationTitle
-//            )
-            TextAndExpandTest(
-                firstTitle = R.string.ageTitle,
-                secondTitle = R.string.ptTitle,
-                nextCard = {
-                    TextAndExpandTest(
-                        firstTitle = R.string.ptTitle,
-                        secondTitle = R.string.albuminTitle,
-                        nextCard = {
-                            TextAndExpandTest(
-                                firstTitle = R.string.albuminTitle,
-                                secondTitle = R.string.bloodGasAnalysisTitle,
-                                nextCard = {
-                                    TextAndExpandTest(
-                                        firstTitle = R.string.bloodGasAnalysisTitle,
-                                        secondTitle = R.string.space,
-                                    )
-                                }
-                            )
-                        },
-                    )
-                },
+            TextAndExpand2Levels(
+                R.string.rankJ,
+                R.string.rankJNote,
+            )
+            TextAndExpand2Levels(
+                R.string.rankA,
+                R.string.rankANote
+            )
+            TextAndExpand3Levels(
+                firstTitle = R.string.netakiri,
+                secondTitle1 = R.string.rankBNote,
+                secondTitle2 = R.string.rankCNote,
+                thirdTitle11 = R.string.rankBNoteSubCategory,
+                thirdTitle21 = R.string.rankCNoteSubCategory
             )
         }
     }

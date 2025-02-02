@@ -104,7 +104,7 @@ fun IndexScreen(
             items(filteredItems//items
                     ){ itemData ->
                 IndexScreenListItem(
-                    name = stringResource(id = itemData.nameResId),
+                    name = itemData.nameResId,
                     onClick = {
                         val updatedItems = originalItems.toMutableList()//items.toMutableList()
                         updatedItems.remove(itemData)
