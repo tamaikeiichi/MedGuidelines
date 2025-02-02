@@ -53,7 +53,6 @@ fun TextAndExpandTest(
                 modifier = Modifier
                     .padding(2.dp)
                     .animateContentSize(),
-                //verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
                     modifier = Modifier
@@ -120,7 +119,8 @@ fun TextAndExpand2Levels(
                 }
             }
         }
-    }}
+    }
+}
 
 @Composable
 fun TextAndExpand3Levels(
@@ -139,69 +139,81 @@ fun TextAndExpand3Levels(
             .padding(vertical = 4.dp, horizontal = 4.dp)
             .fillMaxWidth()
             .width(IntrinsicSize.Max)
-            .clickable { expanded1 = !expanded1 }
+        //.clickable { expanded1 = !expanded1 }
+        val rowModifier = Modifier
+            .padding(2.dp)
+            .animateContentSize()
         Card(
             modifier = cardModifier
         ) {
-            Row(
+            Column(
                 modifier = Modifier
-                    .padding(2.dp)
-                    .animateContentSize(),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
+                    .fillMaxWidth()
+            ){
+                Row(
+                    modifier = rowModifier
                 ) {
-                    TextInCard(firstTitle)
+                    Column (
+                        modifier = Modifier.weight(1f)
+                    ){
+                        TextInCard(firstTitle)
+                    }
+                    IconButtonInCard(
+                        expanded = expanded1,
+                        onExpandChange = { expanded1 = it }
+                    )
+                }
+                Row(
+                    modifier = rowModifier
+                ) {
                     if (expanded1) {
-                        Row(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .animateContentSize(),
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                            ) {
-                                TextInCard(secondTitle1)
-                                if (expanded2) {
-                                    TextInCard(thirdTitle11)
-                                }
-                            }
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ){
+                            TextInCard(secondTitle1)
+                        }
                             IconButtonInCard(
                                 expanded = expanded2,
                                 onExpandChange = { expanded2 = it }
                             )
+                    }
+                }
+                Row(
+                    modifier = rowModifier
+                ) {
+                    if (expanded2) {
+                        TextInCard(thirdTitle11)
+                    }
+                }
+                Row(
+                    modifier = rowModifier
+                ) {
+                    if (expanded1) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ){
+                            TextInCard(secondTitle2)
                         }
-                        Row(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .animateContentSize(),
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                            ){
-                                TextInCard(secondTitle2)
-                                if (expanded3) {
-                                    TextInCard(thirdTitle21)
-                                }
-                            }
                             IconButtonInCard(
                                 expanded = expanded3,
                                 onExpandChange = { expanded3 = it }
                             )
-                        }
                     }
                 }
-                IconButtonInCard(
-                    expanded = expanded1,
-                    onExpandChange = { expanded1 = it }
+                Row(
+                    modifier = rowModifier
                 )
+                {
+                    if (expanded3) {
+                        TextInCard(thirdTitle21)
+                    }
+                }
             }
         }
     }
 }
+
+
 
 
 @Composable
