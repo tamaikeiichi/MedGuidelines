@@ -80,7 +80,6 @@ fun textAndExpand1Levels(
 {
     var expanded by remember { mutableStateOf(false) }
     Column(){
-
         val cardModifier = Modifier
             .padding(vertical = 4.dp, horizontal = 4.dp)
             .fillMaxWidth()
@@ -91,13 +90,13 @@ fun textAndExpand1Levels(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(2.dp)
+                    .padding(4.dp)
                     .animateContentSize(),
             ) {
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                    //.padding(3.dp)
+                        .padding(4.dp)
                 ) {
                     TextInCard(firstTitle)
                 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.textAndExpand1Levels
@@ -44,7 +45,10 @@ fun NetakiridoScreen(navController: NavController) {
                 R.string.rankA,
                 R.string.rankANote
             )
-            Column(){
+            Column(
+//                modifier = Modifier
+//                    .padding(8.dp)
+            ){
                 val expanded = textAndExpand1Levels(
                     firstTitle = R.string.rankBorC
                 )
