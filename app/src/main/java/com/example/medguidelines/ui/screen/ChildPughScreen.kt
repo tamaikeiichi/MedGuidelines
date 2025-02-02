@@ -40,7 +40,7 @@ fun ChildPughScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.childPughTitle),
+            TitleTopAppBar(title =  R.string.childPughTitle,
                 navController = navController,
                 referenceText = R.string.space,
                 referenceUrl = R.string.space

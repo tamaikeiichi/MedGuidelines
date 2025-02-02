@@ -38,7 +38,7 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TitleTopAppBar(
-                title = stringResource(id = R.string.acuteTonsillitisAlgorithmTitle),
+                title = R.string.acuteTonsillitisAlgorithmTitle,
                 navController = navController,
                 referenceText = R.string.space,
                 referenceUrl = R.string.space

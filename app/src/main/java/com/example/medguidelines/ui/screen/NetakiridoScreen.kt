@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.medguidelines.R
+import com.example.medguidelines.ui.component.textAndExpand1Levels
 import com.example.medguidelines.ui.component.TextAndExpand2Levels
-import com.example.medguidelines.ui.component.TextAndExpand3Levels
 import com.example.medguidelines.ui.component.TitleTopAppBar
 
 
@@ -23,7 +23,7 @@ fun NetakiridoScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TitleTopAppBar(
-                title = stringResource(id = R.string.netakiridoTitle),
+                title = R.string.netakiridoTitle,
                 navController = navController,
                 referenceText = R.string.space,
                 referenceUrl = R.string.space
@@ -44,13 +44,33 @@ fun NetakiridoScreen(navController: NavController) {
                 R.string.rankA,
                 R.string.rankANote
             )
-            TextAndExpand3Levels(
-                firstTitle = R.string.netakiri,
-                secondTitle1 = R.string.rankBNote,
-                secondTitle2 = R.string.rankCNote,
-                thirdTitle11 = R.string.rankBNoteSubCategory,
-                thirdTitle21 = R.string.rankCNoteSubCategory
-            )
+            Column(){
+                val expanded = textAndExpand1Levels(
+                    firstTitle = R.string.rankBorC
+                )
+                if (expanded) {
+                    Column(
+
+                    )
+                    {
+                        TextAndExpand2Levels(
+                            firstTitle = R.string.rankBNote,
+                            secondTitle = R.string.rankBNoteSubCategory
+                        )
+                        TextAndExpand2Levels(
+                            firstTitle = R.string.rankCNote,
+                            secondTitle = R.string.rankCNoteSubCategory
+                        )
+                    }
+                }
+            }
+//            TextAndExpand3Levels(
+//                firstTitle = R.string.netakiri,
+//                secondTitle1 = R.string.rankBNote,
+//                secondTitle2 = R.string.rankCNote,
+//                thirdTitle11 = R.string.rankBNoteSubCategory,
+//                thirdTitle21 = R.string.rankCNoteSubCategory
+//            )
         }
     }
 }

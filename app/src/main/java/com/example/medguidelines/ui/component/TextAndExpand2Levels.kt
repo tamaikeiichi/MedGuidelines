@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.medguidelines.R
@@ -73,6 +72,45 @@ fun TextAndExpandTest(
             }
         }
     }}
+
+@Composable
+fun textAndExpand1Levels(
+    firstTitle: Int,
+):Boolean
+{
+    var expanded by remember { mutableStateOf(false) }
+    Column(){
+
+        val cardModifier = Modifier
+            .padding(vertical = 4.dp, horizontal = 4.dp)
+            .fillMaxWidth()
+            .width(IntrinsicSize.Max)
+            .clickable { expanded = !expanded }
+        Card(
+            modifier = cardModifier
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(2.dp)
+                    .animateContentSize(),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                    //.padding(3.dp)
+                ) {
+                    TextInCard(firstTitle)
+                }
+                    IconButtonInCard(
+                        expanded = expanded,
+                        onExpandChange = { expanded = it }
+                    )
+                }
+            }
+        }
+    return expanded
+    }
+
 
 @Composable
 fun TextAndExpand2Levels(
@@ -139,7 +177,7 @@ fun TextAndExpand3Levels(
             .padding(vertical = 4.dp, horizontal = 4.dp)
             .fillMaxWidth()
             .width(IntrinsicSize.Max)
-        //.clickable { expanded1 = !expanded1 }
+            .clickable { expanded1 = !expanded1 }
         val rowModifier = Modifier
             .padding(2.dp)
             .animateContentSize()

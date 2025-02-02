@@ -34,7 +34,7 @@ fun AdropScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.aDropTitle),
+            TitleTopAppBar(title =  R.string.aDropTitle,
                 navController = navController,
                 referenceText = R.string.space,
                 referenceUrl = R.string.space

@@ -47,7 +47,7 @@ fun BloodGasAnalysisScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TitleTopAppBar(
-                title = stringResource(id = R.string.bloodGasAnalysisTitle),
+                title = R.string.bloodGasAnalysisTitle,
                 navController = navController,
                 referenceText = R.string.bloodGasAnalysisRef,
                 referenceUrl = R.string.bloodGasAnalysisUrl

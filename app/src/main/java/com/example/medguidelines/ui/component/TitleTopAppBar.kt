@@ -26,14 +26,14 @@ import com.example.medguidelines.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TitleTopAppBar (
-    title: String,
+    title: Int,
     navController: NavController,
     referenceUrl: Int,
     referenceText: Int
 ){
     var expanded by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
-        title = { Text(text = title) },
+        title = { Text(text = parseStyledString(title)) },
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()
@@ -70,7 +70,7 @@ fun TitleTopAppBar (
 @Composable
 fun TitleTopAppBarPreview(){
     TitleTopAppBar(
-        title = "Title",
+        title = R.string.space,
         navController = NavController(LocalContext.current),
         referenceUrl = R.string.space,
         referenceText = R.string.space

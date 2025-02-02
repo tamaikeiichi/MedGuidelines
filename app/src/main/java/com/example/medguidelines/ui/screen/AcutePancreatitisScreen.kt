@@ -39,7 +39,7 @@ fun AcutePancreatitisScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.acutePancreatitisTitle),
+            TitleTopAppBar(title = R.string.acutePancreatitisTitle,
                 navController = navController,
                 referenceText = R.string.space,
                 referenceUrl = R.string.space

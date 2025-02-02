@@ -36,7 +36,7 @@ fun ColorectalTNMScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title = stringResource(id = R.string.colorectalTNMTitle),
+            TitleTopAppBar(title =  R.string.colorectalTNMTitle,
                 navController = navController,
                 referenceText = R.string.space,
                 referenceUrl = R.string.space
