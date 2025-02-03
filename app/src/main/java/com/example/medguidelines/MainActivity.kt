@@ -24,6 +24,7 @@ import com.example.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.example.medguidelines.ui.screen.BloodGasAnalysisScreen
 import com.example.medguidelines.ui.screen.NetakiridoScreen
+import com.example.medguidelines.ui.screen.PancreaticTNMScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
                                 navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen")},
                                 navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen")},
                                 navigateToNetakirido = { controller.navigate("NetakiridoScreen")},
+                                navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen")}
                             )
                         }
                     }
@@ -79,6 +81,11 @@ class MainActivity : ComponentActivity() {
                     composable("NetakiridoScreen") {
                         ChildComposable {
                             NetakiridoScreen(controller)
+                        }
+                    }
+                    composable("PancreaticTNMScreen") {
+                        ChildComposable {
+                            PancreaticTNMScreen(controller)
                         }
                     }
                 }

@@ -16,15 +16,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.data.MfactorColorectal
+import com.example.medguidelines.data.MfactorPancreatic
 import com.example.medguidelines.data.NfactorColorectal
+import com.example.medguidelines.data.NfactorPancreatic
 import com.example.medguidelines.data.TfactorColorectal
-import com.example.medguidelines.data.colorectalCancerTNM
+import com.example.medguidelines.data.TfactorPancreatic
+import com.example.medguidelines.data.pancreaticCancerTNM
 import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
 
 @Composable
-fun ColorectalTNMScreen(navController: NavController) {
+fun PancreaticTNMScreen(navController: NavController) {
     var score by remember { mutableStateOf(listOf(0,0)) }
     var literalScore by remember { mutableStateOf("") }
 
@@ -33,7 +36,7 @@ fun ColorectalTNMScreen(navController: NavController) {
 
     Scaffold(
         topBar = {
-            TitleTopAppBar(title =  R.string.colorectalTNMTitle,
+            TitleTopAppBar(title =  R.string.pancreaticTNMTitle,
                 navController = navController,
                 referenceText = R.string.space,
                 referenceUrl = R.string.space
@@ -48,40 +51,40 @@ fun ColorectalTNMScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            score = colorectalTNMScore()
-            literalScore = colorectalCancerTNM[score.last()][score.first()]
+            score = TNMScore()
+            literalScore = pancreaticCancerTNM[score.last()][score.first()]
         }
     }
 }
 
 @Composable
-fun colorectalTNMScore(): List<Int> {
+fun TNMScore(): List<Int> {
     val scoreA = buttonAndScore(
-        TfactorColorectal,
+        TfactorPancreatic,
         R.string.TFactorTitle,
-        R.string.TfactorTitleNoteColorectalCancer
+        R.string.TfactorTitleNotePancreaticCancer
     )
     val scoreB = buttonAndScore(
-        NfactorColorectal,
+        NfactorPancreatic,
         R.string.NFactorTitle,
-        R.string.NfactorTitleNoteColorectalCancer
+        R.string.NfactorTitleNotePancreaticCancer
     )
     val scoreC = buttonAndScore(
-        MfactorColorectal,
+        MfactorPancreatic,
         R.string.MFactorTitle,
-        R.string.MfactorTitleNoteColorectalCancer
+        R.string.MfactorTitleNotePancreaticCancer
     )
     val score = if (scoreC == 0) {
         listOf(scoreA, scoreB)
     }
     else {
-        listOf(scoreA, scoreC + NfactorColorectal.size - 1)
+        listOf(scoreA, scoreC + NfactorPancreatic.size - 1)
     }
     return  score
 }
 
 @Preview
 @Composable
-fun ColorectalTNMScreenPreview(){
-    ColorectalTNMScreen(navController = NavController(LocalContext.current))
+fun PnacreaticTNMScreenPreview(){
+    PancreaticTNMScreen(navController = NavController(LocalContext.current))
 }

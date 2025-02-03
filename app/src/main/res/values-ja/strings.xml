@@ -45,6 +45,8 @@
     <string name="none">なし</string>
     <string name="NfactorTitleNoteColorectalCancer">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3所属リンパ節, &lt;b>N1c&lt;/b>: 漿膜下に癌病巣（サテライト病巣）がある、あるいは所属リンパ節転移はないが腹膜に達しない大腸周囲の軟部組織に病巣がある\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7個以上の所属リンパ節転移</string>
     <string name="MfactorTitleNoteColorectalCancer">&lt;b>M1a&lt;/b>: 1臓器転移、腹膜浸潤を伴わない\n&lt;b>M1b&lt;/b>: 2臓器以上の転移\n&lt;b>M1c&lt;/b>: 腹膜浸潤あり、多臓器転移を問わない</string>
+    <string name="NfactorTitleNotePancreaticCancer">い</string>
+    <string name="MfactorTitleNotePancreaticCancer">&lt;b>M1&lt;/b>: 遠隔転移</string>
     <string name="presence">あり</string>
     <string name="absence">なし</string>
     <string name="TFactorTitle">T因子</string>
@@ -111,4 +113,6 @@
     <string name="acutePancreatitisCTGradePoorContrastTitle">造影CT Grade: 膵の造影不良域</string>
     <string name="acutePancreatitisBaseExcessTitle">Base Excess　≤　-3 mEq/L, or shock (収縮期血圧 ≤ 80 mmHg)</string>
     <string name="acutePancreatitisPaO2Title">PaO&lt;sub>2&lt;/sub> ≤ 60 mmHg、または呼吸不全（人工呼吸管理が必要）</string>
+    <string name="pancreaticTNMTitle">膵癌TNM分類 (UICC 8th)</string>
+    <string name="TfactorTitleNotePancreaticCancer">&lt;b>Tis&lt;/b>:Carcinoma in situ: 高異型度膵上皮内腫瘍性病変 (PanIn-3)、高度異形成を伴う膵管内乳頭粘液性腫瘍、高度異形成を伴うintraductal tubulopapillary neoplasm、高度異形成を伴う膵粘液性嚢胞腫瘍を含む。\n&lt;b>T1a&lt;/b>: 膵に限局する, ≤0.5 cm\n&lt;b>T1b&lt;/b>: >0.5 cm and &lt; 1 cm\n&lt;b>T1c&lt;/b>: 1–2 cm\n&lt;b>T2&lt;/b>: >2 cm and ≤4 cm\n&lt;b>T3&lt;/b>: >4 cm\n&lt;b>T4&lt;/b>: 腫瘍は腹腔動脈・上腸間膜脈動脈・総肝動脈のいずれか一つ以上に浸潤する, 大きさを問わない</string>
 </resources>

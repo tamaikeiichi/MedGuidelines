@@ -40,7 +40,7 @@ val encephalopathyGrade = listOf(
     R.string.encephalopathyGrade3,
 )
 
-val Tfactor = listOf(
+val TfactorColorectal = listOf(
     R.string.Tis,
     R.string.T1,
     R.string.T2,
@@ -49,7 +49,7 @@ val Tfactor = listOf(
     R.string.T4b,
 )
 
-val Nfactor = listOf(
+val NfactorColorectal = listOf(
     R.string.N0,
     R.string.N1a,
     R.string.N1b,
@@ -59,11 +59,32 @@ val Nfactor = listOf(
 
 )
 
-val Mfactor = listOf(
+val MfactorColorectal = listOf(
     R.string.M0,
     R.string.M1a,
     R.string.M1b,
     R.string.M1c,
+)
+
+val TfactorPancreatic = listOf(
+    R.string.Tis,
+    R.string.T1a,
+    R.string.T1b,
+    R.string.T1c,
+    R.string.T2,
+    R.string.T3,
+    R.string.T4,
+)
+
+val NfactorPancreatic = listOf(
+    R.string.N0,
+    R.string.N1,
+    R.string.N2,
+    )
+
+val MfactorPancreatic = listOf(
+    R.string.M0,
+    R.string.M1,
 )
 
 val absencePresence = listOf(
