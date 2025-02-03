@@ -16,9 +16,9 @@ val colorectalCancerTNM = listOf(
     )
 
 val pancreaticCancerTNM = listOf(
-    //Tis, T1a, T1b, T1c, T2, T3, T4
-    listOf("0", "I", "I", "IIA", "IIB", "IIC"), //N0
-    listOf("N/A", "IIIA", "IIIA", "IIIB", "IIIB", "IIIC"),//N1
-    listOf("N/A", "IIIA", "IIIA", "IIIB", "IIIB", "IIIC"),//N2
-    listOf("N/A", "IVA", "IVA", "IVA", "IVA", "IVA"),//M1
+    //      Tis,     T1a,   T1b,     T1c    , T2,    T3,    T4
+    listOf("0",     "IA",   "IA",    "IA",  "IB",   "IIA",  "III"), //N0
+    listOf("N/A",   "IIB",  "IIB",  "IIB",  "IIB", "IIB", "III"),//N1
+    listOf("N/A",   "III",  "III",  "III",  "III", "III", "III"),//N2
+    listOf("N/A",   "IV",   "IV",   "IV",   "IV",  "IV",    "IV"),//M1
 )
