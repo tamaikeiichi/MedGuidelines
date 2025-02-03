@@ -43,18 +43,18 @@
     <string name="tonsillitisRedFlag4">重度呼吸不全</string>
     <string name="tonsillitisRedFlag5">敗血症</string>
     <string name="none">なし</string>
-    <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3所属リンパ節, &lt;b>N1c&lt;/b>: 漿膜下に癌病巣（サテライト病巣）がある、あるいは所属リンパ節転移はないが腹膜に達しない大腸周囲の軟部組織に病巣がある\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7個以上の所属リンパ節転移</string>
-    <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: 1臓器転移、腹膜浸潤を伴わない\n&lt;b>M1b&lt;/b>: 2臓器以上の転移\n&lt;b>M1c&lt;/b>: 腹膜浸潤あり、多臓器転移を問わない</string>
+    <string name="NfactorTitleNoteColorectalCancer">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3所属リンパ節, &lt;b>N1c&lt;/b>: 漿膜下に癌病巣（サテライト病巣）がある、あるいは所属リンパ節転移はないが腹膜に達しない大腸周囲の軟部組織に病巣がある\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7個以上の所属リンパ節転移</string>
+    <string name="MfactorTitleNoteColorectalCancer">&lt;b>M1a&lt;/b>: 1臓器転移、腹膜浸潤を伴わない\n&lt;b>M1b&lt;/b>: 2臓器以上の転移\n&lt;b>M1c&lt;/b>: 腹膜浸潤あり、多臓器転移を問わない</string>
     <string name="presence">あり</string>
     <string name="absence">なし</string>
-    <string name="colorectalTTitle">T因子</string>
-    <string name="colorectalNtitle">N因子</string>
-    <string name="colorectalMtitle">M因子</string>
+    <string name="TFactorTitle">T因子</string>
+    <string name="NFactorTitle">N因子</string>
+    <string name="MFactorTitle">M因子</string>
     <string name="encephalopaphyTitleNote">&lt;b>Grade 1&lt;/b>: 睡眠―覚醒リズムの逆転。多幸気分、ときに抑うつ状態だらしなく、気にもとめない態度。（retrospectiveにしか判定できない場合が多い）\n&lt;b>Grade 2&lt;/b>: 指南力（時・場所）障害、物を取り違える。異常行動。ときに傾眠状態（普通の呼びかけで開眼し、会話ができる）。無礼な言動があったりするが、医師の指示に従う態度をみせる。（羽ばたき振戦あり）\n&lt;b>Grade 3&lt;/b>: しばしば興奮状態または譫妄状態を伴い、反抗的態度をみせる。嗜眠状態（ほとんど眠っている）。外的刺激で開眼しうるが、医師の指示に従わない、または従えない（簡単な命令には応じうる）\n&lt;b>Grade 4&lt;/b>: 昏睡</string>
     <string name="encephalopathyGrade3">グレード3-4</string>
     <string name="ageTitle">年齢: 男 &gt;= 70, 女 &gt;= 75</string>
     <string name="dehydrationTitle">BUN &gt; 21 mg/dL あるいは脱水</string>
-    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: 粘膜内\n&lt;b>T1&lt;/b>: 粘膜下\n&lt;b>T2&lt;/b>: 固有筋層\n&lt;b>T3&lt;/b>: 大腸周囲\n&lt;b>T4a&lt;/b>: 臓側腹膜に浸潤\n&lt;b>T4b&lt;/b>: 隣接臓器に浸潤あるいは付着</string>
+    <string name="TfactorTitleNoteColorectalCancer">&lt;b>Tis&lt;/b>: 粘膜内\n&lt;b>T1&lt;/b>: 粘膜下\n&lt;b>T2&lt;/b>: 固有筋層\n&lt;b>T3&lt;/b>: 大腸周囲\n&lt;b>T4a&lt;/b>: 臓側腹膜に浸潤\n&lt;b>T4b&lt;/b>: 隣接臓器に浸潤あるいは付着</string>
     <string name="antigenTest">細菌培養あるいは抗原テスト</string>
     <string name="encephalopathyGrade1">なし</string>
     <string name="encephalopathyGrade2">グレード1-2</string>

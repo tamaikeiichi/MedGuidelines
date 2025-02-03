@@ -40,11 +40,14 @@
     <string name="adropLiteralScoreModerate">Moderate, outpatient or hospital care</string>
     <string name="adropLiteralScoreSevere">Severe, hospital care</string>
     <string name="adropLiteralScoreMostSevere">Most severe, ICU admission</string>
-    <string name="colorectalTTitle">T factor</string>
-    <string name="colorectalNtitle">N factor</string>
-    <string name="colorectalMtitle">M factor</string>
+    <string name="TFactorTitle">T factor</string>
+    <string name="NFactorTitle">N factor</string>
+    <string name="MFactorTitle">M factor</string>
     <string name="Tis" translatable="false">Tis</string>
     <string name="T1" translatable="false">T1</string>
+    <string name="T1a">T1a</string>
+    <string name="T1b">T1b</string>
+    <string name="T1c">T1c</string>
     <string name="T2" translatable="false">T2</string>
     <string name="T3" translatable="false">T3</string>
     <string name="T4a" translatable="false">T4a</string>
@@ -59,9 +62,12 @@
     <string name="M1a" translatable="false">M1a</string>
     <string name="M1b" translatable="false">M1b</string>
     <string name="M1c" translatable="false">M1c</string>
-    <string name="TfactorTitleNote">&lt;b>Tis&lt;/b>: intramucosal\n&lt;b>T1&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: pericolorectal\n&lt;b>T4a&lt;/b>: perforate visceral peritoneum\n&lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
-    <string name="NfactorTitleNote">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
-    <string name="MfactorTitleNote">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases\n&lt;b>M1b&lt;/b>: more than one organ\n&lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
+    <string name="TfactorTitleNoteColorectalCancer">&lt;b>Tis&lt;/b>: intramucosal\n&lt;b>T1&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: pericolorectal\n&lt;b>T4a&lt;/b>: perforate visceral peritoneum\n&lt;b>T4b&lt;/b>: invade or adherent to adjacent organs or structure.</string>
+    <string name="NfactorTitleNoteColorectalCancer">&lt;b>N1a&lt;/b>: 1, &lt;b>N1b&lt;/b>: 2–3 regional nodes, &lt;b>N1c&lt;/b>: Tumour deposit(s), i.e. satellites,* in the subserosa, or in non‐peritonealised pericolic or perirectal soft tissue without regional lymph node metastatic disease\n&lt;b>N2a&lt;/b>: 4–6, &lt;b>N2b&lt;/b>: 7 or more regional nodes.</string>
+    <string name="MfactorTitleNoteColorectalCancer">&lt;b>M1a&lt;/b>: one organ without peritoneal metastases\n&lt;b>M1b&lt;/b>: more than one organ\n&lt;b>M1c&lt;/b>: to the peritoneum with or without other organ involvement.</string>
+    <string name="TfactorTitleNotePancreaticCancer">&lt;b>Tis&lt;/b>:Carcinoma in situ: includes high-grade pancreatic intraepithelial neoplasia (PanIn-3), intraductal papillary mucinous neoplasm with high-grade dysplasia, intraductal tubulopapillary neoplasm with high-grade dysplasia, and mucinous cystic neoplasm with high-grade dysplasia\n&lt;b>T1a&lt;/b>: ≤0.5 cm\n&lt;b>T1b&lt;/b>: >0.5 cm and &lt; 1 cm\n &lt;b>T1c&lt;/b>: 1–2 cm\n&lt;b>T2&lt;/b>: Tumor limited to the pancreas, >2 cm and ≤4 cm\n&lt;b>T3&lt;/b>: >4 cm\n&lt;b>T4&lt;/b>: Tumor involves the celiac axis, superior mesenteric artery, and/or common hepatic artery, regardless of size</string>
+    <string name="NfactorTitleNotePancreaticCancer">&lt;b>N1&lt;/b>: 1-3 regional lymph nodes\n&lt;b>N2&lt;/b>: ≥4 regional lymph nodes</string>
+    <string name="MfactorTitleNotePancreaticCancer">&lt;b>M1&lt;/b>: Distant metastasis</string>
     <string name="presence">Presence</string>
     <string name="absence">Absence</string>
     <string name="mclsaacFever1" translatable="false">&lt; 38°C</string>
@@ -162,8 +168,8 @@
     <string name="rankCNoteSubCategory" translatable="false">1. 自力で寝返りをうつ\n2. 自力では寝返りもうてない </string>
     <string name="shougaiKoureisha" translatable="false">障害高齢者の日常生活自立度</string>
     <string name="ninchishoKoureisha" translatable="false">認知症高齢者の日常生活自立度</string>
-    <string name="ninchiI" translatable="false">ランクI\n何らかの認知症を有するが、日常生活は家庭内及び社会的にほぼ自立している。</string>
-    <string name="ninchiII" translatable="false">ランクII\n日常生活に支障を来たすような症状・行動や意思疎通の困難さが多少見られても、誰かが注意していれば自立できる。</string>
+    <string name="ninchiI" translatable="false">ランクI: 何らかの認知症を有するが、日常生活は家庭内及び社会的にほぼ自立している。</string>
+    <string name="ninchiII" translatable="false">ランクII: 日常生活に支障を来たすような症状・行動や意思疎通の困難さが多少見られても、誰かが注意していれば自立できる。</string>
     <string name="ninchiIINote" translatable="false">IIa: 家庭外で上記Ⅱの状態がみられる。\nIIb: 家庭内でも上記Ⅱの状態が見られる。</string>
     <string name="ninchiIII" translatable="false">ランクIII\n日常生活に支障を来たすような症状・行動や意思疎通の困難さが見られ、介護を必要とする。 "</string>
     <string name="ninchiIIINote" translatable="false">IIIa: 日中を中心として上記Ⅲの状態が見られる。 IIIb: 夜間を中心として上記Ⅲの状態が見られる。</string>

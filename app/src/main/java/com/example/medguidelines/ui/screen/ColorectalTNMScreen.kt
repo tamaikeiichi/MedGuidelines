@@ -12,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.medguidelines.R
@@ -20,8 +19,6 @@ import com.example.medguidelines.data.Mfactor
 import com.example.medguidelines.data.Nfactor
 import com.example.medguidelines.data.Tfactor
 import com.example.medguidelines.data.colorectalCancerTNM
-import com.example.medguidelines.data.RadioButtonName
-import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
@@ -61,18 +58,18 @@ fun ColorectalTNMScreen(navController: NavController) {
 fun colorectalTNMScore(): List<Int> {
     val scoreA = buttonAndScore(
         Tfactor,
-        R.string.colorectalTTitle,
-        R.string.TfactorTitleNote
+        R.string.TFactorTitle,
+        R.string.TfactorTitleNoteColorectalCancer
     )
     val scoreB = buttonAndScore(
         Nfactor,
-        R.string.colorectalNtitle,
-        R.string.NfactorTitleNote
+        R.string.NFactorTitle,
+        R.string.NfactorTitleNoteColorectalCancer
     )
     val scoreC = buttonAndScore(
         Mfactor,
-        R.string.colorectalMtitle,
-        R.string.MfactorTitleNote
+        R.string.MFactorTitle,
+        R.string.MfactorTitleNoteColorectalCancer
     )
     val score = if (scoreC == 0) {
         listOf(scoreA, scoreB)

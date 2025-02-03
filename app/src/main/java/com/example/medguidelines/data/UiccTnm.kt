@@ -14,3 +14,11 @@ val colorectalCancerTNM = listOf(
     listOf("N/A", "IVB", "IVB", "IVB", "IVB", "IVB"),//M1b
     listOf("N/A", "IVC", "IVC", "IVC", "IVC", "IVC"),//M1c
     )
+
+val pancreaticCancerTNM = listOf(
+    //Tis, T1a, T1b, T1c, T2, T3, T4
+    listOf("0", "I", "I", "IIA", "IIB", "IIC"), //N0
+    listOf("N/A", "IIIA", "IIIA", "IIIB", "IIIB", "IIIC"),//N1
+    listOf("N/A", "IIIA", "IIIA", "IIIB", "IIIB", "IIIC"),//N2
+    listOf("N/A", "IVA", "IVA", "IVA", "IVA", "IVA"),//M1
+)
