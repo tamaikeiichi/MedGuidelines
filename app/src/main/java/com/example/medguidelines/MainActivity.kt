@@ -23,6 +23,7 @@ import com.example.compose.ContrastAwareMedguidelinesTheme
 import com.example.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.example.medguidelines.ui.screen.BloodGasAnalysisScreen
+import com.example.medguidelines.ui.screen.EsophagealTNMScreen
 import com.example.medguidelines.ui.screen.NetakiridoScreen
 import com.example.medguidelines.ui.screen.PancreaticTNMScreen
 
@@ -44,7 +45,8 @@ class MainActivity : ComponentActivity() {
                                 navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen")},
                                 navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen")},
                                 navigateToNetakirido = { controller.navigate("NetakiridoScreen")},
-                                navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen")}
+                                navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen")},
+                                navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen")}
                             )
                         }
                     }
@@ -88,6 +90,11 @@ class MainActivity : ComponentActivity() {
                             PancreaticTNMScreen(controller)
                         }
                     }
+                    composable("EsophagealTNMScreen") {
+                        ChildComposable {
+                            EsophagealTNMScreen(controller)
+                        }
+                    }
                 }
             }
         }
@@ -96,18 +103,16 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ChildComposable(childScreen: @Composable () -> Unit) {
-        Scaffold(
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-            ) {
-               childScreen()
-            }
-
+                .padding(innerPadding)
+        ) {
+            childScreen()
         }
     }
-
+}

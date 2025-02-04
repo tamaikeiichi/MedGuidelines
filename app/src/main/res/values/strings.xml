@@ -182,4 +182,9 @@
     <string name="N1" translatable="false">N1</string>
     <string name="N2" translatable="false">N2</string>
     <string name="M1" translatable="false">M1</string>
+    <string name="esophagealTNMTitle">Esophageal Cancer TNM classification (UICC 8th)</string>
+    <string name="N3">N3</string>
+    <string name="TfactorTitleNoteEsophagealCancer">&lt;b>Tis&lt;/b>: high grade dysplasia\n&lt;b>T1a&lt;/b>: lamina propria or musclaris mucosase\n&lt;b>T1b&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: adventitia\n&lt;b>T4a&lt;/b>: pleura, pericardium, azygos vein, diaphragm, or peritoneum\n&lt;b>T4b&lt;/b>: other adjacent structures, such as aorta, vertebral body, or trachea</string>
+    <string name="NfactorTitleNoteEsophagealCancer">&lt;b>N1&lt;/b>: 1–2 regional lymph nodes\n&lt;b>N2&lt;/b>: 3–6\n&lt;b>N3&lt;/b>: 7 or more</string>
+    <string name="MfactorTitleNoteEsophagealCancer">&lt;b>M1&lt;/b>: distant metastasis</string>
 </resources>

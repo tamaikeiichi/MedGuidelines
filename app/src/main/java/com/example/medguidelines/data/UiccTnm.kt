@@ -22,3 +22,12 @@ val pancreaticCancerTNM = listOf(
     listOf("N/A",   "III",  "III",  "III",  "III", "III", "III"),//N2
     listOf("N/A",   "IV",   "IV",   "IV",   "IV",  "IV",    "IV"),//M1
 )
+
+val esophagealCancerTNM = listOf(
+    //      Tis,     T1a,   T1b,   T2,     T3    , T4a,    T4b
+    listOf("0",     "I",   "I",   "II",    "II",  "IVA",   "IVA"), //N0
+    listOf("N/A",   "I",  "I",  "II",     "III",  "IVA", "IVA"),//N1
+    listOf("N/A",   "III",  "III","III",  "III",  "IVA", "IVA"),//N2
+    listOf("N/A",   "IVA",   "IVA","IVA",   "IVA",   "IVA",  "IVA"),//N3
+    listOf("N/A",   "IVB",  "IVB",  "IVB",   "IVB",   "IVB",  "IVB"),//M1
+)
