@@ -156,7 +156,7 @@
     <string name="acutePancreatitisCTGradePoorContrastTitleNote">Three segments (head, body, tail)</string>
     <string name="acutePancreatitis">Acute Pancreatitis</string>
     <string name="acutePancreatitisCTGradePoorContrastTitle">CE-CT grade: poor contrast region</string>
-    <string name="netakiridoTitle" translatable="false">日常生活自立度&lt;small>（Japanese Only）&lt;/small></string>
+    <string name="netakiridoTitle">日常生活自立度&lt;small>（Japanese Only）&lt;/small></string>
     <string name="rankJ" translatable="false">生活自立\nランクJ</string>
     <string name="rankJNote" translatable="false">何らかの障害等を有するが、日常生活はほぼ自立しており独力で外出する\n1.　交通機関等を利用して外出する\n2.　隣近所へなら外出する</string>
     <string name="rankA" translatable="false">準寝たきり\nランクA</string>
