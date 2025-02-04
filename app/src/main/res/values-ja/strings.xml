@@ -117,6 +117,7 @@
     <string name="TfactorTitleNotePancreaticCancer">&lt;b>Tis&lt;/b>:Carcinoma in situ: 高異型度膵上皮内腫瘍性病変 (PanIn-3)、高度異形成を伴う膵管内乳頭粘液性腫瘍、高度異形成を伴うintraductal tubulopapillary neoplasm、高度異形成を伴う膵粘液性嚢胞腫瘍を含む。\n&lt;b>T1a&lt;/b>: 膵に限局する, ≤0.5 cm\n&lt;b>T1b&lt;/b>: >0.5 cm and &lt; 1 cm\n&lt;b>T1c&lt;/b>: 1–2 cm\n&lt;b>T2&lt;/b>: >2 cm and ≤4 cm\n&lt;b>T3&lt;/b>: >4 cm\n&lt;b>T4&lt;/b>: 腫瘍は腹腔動脈・上腸間膜脈動脈・総肝動脈のいずれか一つ以上に浸潤する, 大きさを問わない</string>
     <string name="netakiridoTitle">日常生活自立度</string>
     <string name="TfactorTitleNoteEsophagealCancer">&lt;b>Tis&lt;/b>: 高度異形成\n&lt;b>T1a&lt;/b>: 粘膜固有層あるいは粘膜筋板\n&lt;b>T1b&lt;/b>: 粘膜下層\n&lt;b>T2&lt;/b>: 固有筋層\n&lt;b>T3&lt;/b>: 漿膜\n&lt;b>T4a&lt;/b>: 胸膜, 心外膜, 奇静脈, 横隔膜, あるいは腹膜\n&lt;b>T4b&lt;/b>: それ以外の隣接臓器（例えば大動脈, 椎体, 気管）</string>
-    <string name="NfactorTitleNoteEsophagealCancer">&lt;b>N1&lt;/b>: 1–2個の所属リンパ節\n&lt;b>N2&lt;/b>: 3–6\n&lt;b>N3&lt;/b>: 7以上</string>
+    <string name="NfactorTitleNoteEsophagealCancer">&lt;b>N1&lt;/b>: 1–2個の所属リンパ節\n&lt;b>N2&lt;/b>: 3–6個\n&lt;b>N3&lt;/b>: 7個以上</string>
     <string name="MfactorTitleNoteEsophagealCancer">&lt;b>M1&lt;/b>: 遠隔転移</string>
+    <string name="esophagealTNMTitle">食道癌TNM分類（UICC第8版）</string>
 </resources>
