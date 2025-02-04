@@ -62,7 +62,7 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
                     } else {
                         score = acuteTonsillitisMclsaacScore()
                         when (score) {
-                            0,1 -> AcuteTonsillitisFollowupScore()
+                            -1,0,1 -> AcuteTonsillitisFollowupScore()
                             2,3 -> {
                                 LaunchedEffect(key1 = score) {
                                     listState.animateScrollToItem(1)
@@ -87,20 +87,10 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
 
 @Composable
 fun AcuteTonsillitisCard(title: Int) {
-//    var visible by remember {
-//        mutableStateOf(true)
-//    }
-//    val animatedAlpha by animateFloatAsState(
-//        targetValue = if (visible) 1.0f else 0f,
-//        label = "alpha"
-//    )
     Card (
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-//            .graphicsLayer {
-//                alpha = animatedAlpha
-//            }
     ){
         Text(text = stringResource(id = title),
             modifier = Modifier.padding(8.dp),

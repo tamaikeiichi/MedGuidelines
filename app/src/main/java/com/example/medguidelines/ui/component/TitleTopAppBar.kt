@@ -51,15 +51,17 @@ fun TitleTopAppBar (
             actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
         ),
         actions = {
-            IconButton(onClick = { expanded = !expanded }) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id= R.drawable.quick_reference_all_24px) ,
-                    contentDescription = "Reference",
-                )
-                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    DropdownMenuItem(text = { UrlLinkText(referenceUrl, referenceText) }, onClick = {
-                        expanded = false
-                    })
+            if (referenceUrl != R.string.space && referenceText != R.string.space){
+                IconButton(onClick = { expanded = !expanded }) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id= R.drawable.quick_reference_all_24px) ,
+                        contentDescription = "Reference",
+                    )
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        DropdownMenuItem(text = { UrlLinkText(referenceUrl, referenceText) }, onClick = {
+                            expanded = false
+                        })
+                    }
                 }
             }
         }

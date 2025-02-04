@@ -60,7 +60,7 @@ fun TextAndExpandTest(
                         .weight(1f)
                     //.padding(3.dp)
                 ) {
-                    TextInCard(firstTitle)
+                    TextInCardTitleMedium(firstTitle)
                     if (expanded && nextCard != null) {
                         nextCard()
                     }
@@ -105,7 +105,7 @@ fun textAndExpand1Level(
                         .weight(1f)
                         .padding(4.dp)
                 ) {
-                    TextInCard(firstTitle)
+                    TextInCardTitleMedium(firstTitle)
                 }
                 IconButtonInCard(
                     expanded = expanded,
@@ -140,7 +140,7 @@ fun Text1Level(
                         .weight(1f)
                         .padding(4.dp)
                 ) {
-                    TextInCard(firstTitle)
+                    TextInCardTitleMedium(firstTitle)
                 }
             }
         }
@@ -180,7 +180,7 @@ fun TextAndExpand2Levels(
                         .weight(1f)
                         .padding(4.dp)
                 ) {
-                    TextInCard(firstTitle)
+                    TextInCardTitleMedium(firstTitle)
                 }
                 if (secondTitle != R.string.space) {
                     IconButtonInCard(
@@ -194,7 +194,7 @@ fun TextAndExpand2Levels(
                     modifier = Modifier
                         .padding(8.dp)
                 ) {
-                    TextInCard(secondTitle)
+                    TextInCardTitleMedium(secondTitle)
                 }
             }
         }
@@ -235,7 +235,7 @@ fun TextAndExpand3Levels(
                     Column (
                         modifier = Modifier.weight(1f)
                     ){
-                        TextInCard(firstTitle)
+                        TextInCardTitleMedium(firstTitle)
                     }
                     IconButtonInCard(
                         expanded = expanded1,
@@ -249,7 +249,7 @@ fun TextAndExpand3Levels(
                         Column(
                             modifier = Modifier.weight(1f)
                         ){
-                            TextInCard(secondTitle1)
+                            TextInCardTitleMedium(secondTitle1)
                         }
                         IconButtonInCard(
                             expanded = expanded2,
@@ -261,7 +261,7 @@ fun TextAndExpand3Levels(
                     modifier = rowModifier
                 ) {
                     if (expanded2) {
-                        TextInCard(thirdTitle11)
+                        TextInCardTitleMedium(thirdTitle11)
                     }
                 }
                 Row(
@@ -271,7 +271,7 @@ fun TextAndExpand3Levels(
                         Column(
                             modifier = Modifier.weight(1f)
                         ){
-                            TextInCard(secondTitle2)
+                            TextInCardTitleMedium(secondTitle2)
                         }
                         IconButtonInCard(
                             expanded = expanded3,
@@ -284,7 +284,7 @@ fun TextAndExpand3Levels(
                 )
                 {
                     if (expanded3) {
-                        TextInCard(thirdTitle21)
+                        TextInCardTitleMedium(thirdTitle21)
                     }
                 }
             }
@@ -293,7 +293,7 @@ fun TextAndExpand3Levels(
 }
 
 @Composable
-fun TextInCard(
+private fun TextInCardTitleMedium(
     text: Int
 ) {
     Text(

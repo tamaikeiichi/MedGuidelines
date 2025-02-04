@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.medguidelines.R
+import com.example.medguidelines.ui.component.NumberInTextField
+import com.example.medguidelines.ui.component.TextInCard
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 
@@ -64,7 +66,6 @@ fun BloodGasAnalysisScreen(navController: NavController) {
             item {
                 BloodGasAnalysisInput()
             }
-
         }
     }
 }
@@ -91,84 +92,50 @@ fun BloodGasAnalysisInput() {
                 modifier = Modifier
                     .padding(4.dp)
             ) {
-                BloodGasAnalysisTextField(
+                NumberInTextField(
                     label = R.string.ph, value = ph, width = 100,
-
-                    )
-                BloodGasAnalysisTextField(
+                )
+                NumberInTextField(
                     label = R.string.po2, value = paO2, width = 110,
-
-                    )
-                BloodGasAnalysisTextField(
+                )
+                NumberInTextField(
                     label = R.string.pco2, value = paCo2, width = 120,
-
-                    )
-                BloodGasAnalysisTextField(
+                )
+                NumberInTextField(
                     label = R.string.hco3, value = hco3, width = 120,
-
-                    )
-                BloodGasAnalysisTextField(
+                )
+                NumberInTextField(
                     label = R.string.na, value = na, width = 110,
-
-
-                    )
-                BloodGasAnalysisTextField(
+                )
+                NumberInTextField(
                     label = R.string.k, value = k, width = 100,
-
-
-                    )
-                BloodGasAnalysisTextField(
+                )
+                NumberInTextField(
                     label = R.string.cl, value = cl, width = 110,
-
-
-                    )
-                BloodGasAnalysisTextField(
+                )
+                NumberInTextField(
                     label = R.string.albumin, value = albumin, width = 120,
-
-                    )
-
+                )
             }
-
         }
     )
     if (ph.doubleValue < 7.38) {
-        BloodGasAnalysisCard(
-            bloodGasAnalysisContent = {
-                BloodGasAnalysisText(R.string.acidemia)
-            }
-        )
+        TextInCard(R.string.acidemia)
         if (hco3.doubleValue < 22 && paCo2.doubleValue < 42) {
-            BloodGasAnalysisCard(
-                bloodGasAnalysisContent = {
-                    BloodGasAnalysisText(R.string.metabolicAcidosis)
-                }
-            )
+            TextInCard(R.string.metabolicAcidosis)
             val calculateExpectedPaco2 = 1.5 * hco3.doubleValue + 8
             if (paO2.doubleValue > calculateExpectedPaco2) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.additionalRespiratoryAcidosis)
-                    }
-                )
+                TextInCard(R.string.additionalRespiratoryAcidosis)
             } else if (paO2.doubleValue < calculateExpectedPaco2) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.additionalRespiratoryAlkalosis)
-                    }
-                )
+                TextInCard(R.string.additionalRespiratoryAlkalosis)
             }
-
             val anionGap = na.doubleValue - cl.doubleValue - hco3.doubleValue
             var correctedAnionGap = anionGap
             if (albumin.doubleValue < 3.9) {
                 correctedAnionGap = anionGap + 2.5 * (3.9 - albumin.doubleValue)
             }
             if (correctedAnionGap in 8.0..12.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.normalAnionGap)
-                    }
-                )
+                TextInCard(R.string.normalAnionGap)
                 val urineNa = remember { mutableDoubleStateOf(20.0) }
                 val urineK = remember { mutableDoubleStateOf(4.0) }
                 val urineCl = remember { mutableDoubleStateOf(90.0) }
@@ -178,37 +145,23 @@ fun BloodGasAnalysisInput() {
                             modifier = Modifier
                                 .padding(4.dp)
                         ) {
-                            BloodGasAnalysisTextField(
+                            NumberInTextField(
                                 label = R.string.urineNa, value = urineNa, width = 120,
-
-
-                                )
-                            BloodGasAnalysisTextField(
+                            )
+                            NumberInTextField(
                                 label = R.string.urineK, value = urineK, width = 120,
-
-
-                                )
-                            BloodGasAnalysisTextField(
+                            )
+                            NumberInTextField(
                                 label = R.string.urineCl, value = urineCl, width = 120,
-
-
-                                )
+                            )
                         }
                     }
                 )
                 val urineAnionGap = urineNa.doubleValue - urineCl.doubleValue + urineK.doubleValue
                 if (urineAnionGap >= 0) {
-                    BloodGasAnalysisCard(
-                        bloodGasAnalysisContent = {
-                            BloodGasAnalysisText(R.string.rta)
-                        }
-                    )
+                    TextInCard(R.string.rta)
                 } else {
-                    BloodGasAnalysisCard(
-                        bloodGasAnalysisContent = {
-                            BloodGasAnalysisText(R.string.urinaryAnionGapNegativeDDx)
-                        }
-                    )
+                    TextInCard(R.string.urinaryAnionGapNegativeDDx)
                 }
             } else if (correctedAnionGap >= 12) {
                 BloodGasAnalysisCard(
@@ -221,43 +174,23 @@ fun BloodGasAnalysisInput() {
                 )
             }
         } else if (paCo2.doubleValue > 42 && hco3.doubleValue > 22) {
-            BloodGasAnalysisCard(
-                bloodGasAnalysisContent = {
-                    BloodGasAnalysisText(R.string.respiratoryAcidosis)
-                }
-            )
+            TextInCard(R.string.respiratoryAcidosis)
             val hco3change = (hco3.doubleValue - 23) / ((paCo2.doubleValue - 40)/10)
             if (0.0 < hco3change && hco3change < 1.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.additionalMetabolicAcidosis)
-                    }
-                )
+                TextInCard(R.string.additionalMetabolicAcidosis)
             } else if (1.0 <= hco3change && hco3change < 4.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.acuteRespiratoryAcidosis)
-                    }
-                )
+                TextInCard(R.string.acuteRespiratoryAcidosis)
             } else if (hco3change in 4.0..5.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.chronicRespiratoryAcidosis)
-                    }
-                )
+                TextInCard(R.string.chronicRespiratoryAcidosis)
             } else if (hco3change > 5.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.additionalMetabolicAlkalosis)
-                    }
-                )
+                TextInCard(R.string.additionalMetabolicAlkalosis)
             }
             val age = remember { mutableDoubleStateOf(65.0) }
             BloodGasAnalysisCard(
                 bloodGasAnalysisContent = {
-                    BloodGasAnalysisTextField(
+                    NumberInTextField(
                         label = R.string.age, value = age, width = 120,
-                        )
+                    )
                 }
             )
             val aaDifference = 150 - paO2.doubleValue - 1.25 * paCo2.doubleValue
@@ -266,76 +199,32 @@ fun BloodGasAnalysisInput() {
                 correctedAaDifference = aaDifference / 2
             }
             if (correctedAaDifference <= 10) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.HypoventilationWithoutIntrinsicLungDisease)
-                    }
-                )
+                TextInCard(R.string.HypoventilationWithoutIntrinsicLungDisease)
             } else if (correctedAaDifference > 10) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
-                    }
-                )
+                TextInCard(R.string.HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
             }
         }
     } else if (ph.doubleValue > 7.42) {
-        BloodGasAnalysisCard (
-            bloodGasAnalysisContent = {
-                BloodGasAnalysisText(R.string.alkalemia)
-            }
-        )
+        TextInCard(R.string.alkalemia)
         if (hco3.doubleValue > 26 && paCo2.doubleValue >= 38) {
-            BloodGasAnalysisCard(
-                bloodGasAnalysisContent = {
-                    BloodGasAnalysisText(R.string.metabolicAlkalosis)
-                }
-            )
+            TextInCard(R.string.metabolicAlkalosis)
             val calculateExpectedPaco2 = 0.7 * (hco3.doubleValue - 24) + 40
             if (paCo2.doubleValue < calculateExpectedPaco2) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.additionalRespiratoryAlkalosis)
-                    }
-                )
+                TextInCard(R.string.additionalRespiratoryAlkalosis)
             } else if (paCo2.doubleValue > calculateExpectedPaco2) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.additionalRespiratoryAcidosis)
-                    }
-                )
+                TextInCard(R.string.additionalRespiratoryAcidosis)
             }
         } else if (hco3.doubleValue < 26 && paCo2.doubleValue < 38) {
-            BloodGasAnalysisCard(
-                bloodGasAnalysisContent = {
-                    BloodGasAnalysisText(R.string.respiratoryAlkalosis)
-                }
-            )
+            TextInCard(R.string.respiratoryAlkalosis)
             val hco3Change = (hco3.doubleValue - normalHco3) / (paCo2.doubleValue - normalPaCo2)/10
             if (0.0 < hco3Change && hco3Change < 2.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.additionalMetabolicAlkalosis)
-                    }
-                )
+                TextInCard(R.string.additionalMetabolicAlkalosis)
             } else if (2.0 <= hco3Change && hco3Change < 4.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.acuteRespiratoryAlkalosis)
-                    }
-                )
+                TextInCard(R.string.acuteRespiratoryAlkalosis)
             } else if (hco3Change in 4.0..5.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.chronicRespiratoryAlkalosis)
-                    }
-                )
+                TextInCard(R.string.chronicRespiratoryAlkalosis)
             } else if (hco3Change > 5.0) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.additionalMetabolicAcidosis)
-                    }
-                )
+                TextInCard(R.string.additionalMetabolicAcidosis)
             }
             val age = remember { mutableDoubleStateOf(65.0) }
             BloodGasAnalysisCard(
@@ -344,11 +233,10 @@ fun BloodGasAnalysisInput() {
                         modifier = Modifier
                             .padding(4.dp)
                     ) {
-                        BloodGasAnalysisTextField(
+                        NumberInTextField(
                             label = R.string.age, value = age, width = 120,
                         )
                     }
-
                 }
             )
             val aaDifference = 150 - paO2.doubleValue - 1.25 * paCo2.doubleValue
@@ -357,32 +245,16 @@ fun BloodGasAnalysisInput() {
                 correctedAaDifference = aaDifference / 2
             }
             if (correctedAaDifference <= 10) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.HypoventilationWithoutIntrinsicLungDisease)
-                    }
-                )
+                TextInCard(R.string.HypoventilationWithoutIntrinsicLungDisease)
             } else if (correctedAaDifference > 10) {
-                BloodGasAnalysisCard(
-                    bloodGasAnalysisContent = {
-                        BloodGasAnalysisText(R.string.HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
-                    }
-                )
+                TextInCard(R.string.HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
             }
         }
     } else {
         if (hco3.doubleValue > (normalHco3 + 3) && paCo2.doubleValue > (normalPaCo2 + 5)) {
-            BloodGasAnalysisCard(
-                bloodGasAnalysisContent = {
-                    BloodGasAnalysisText(R.string.metabolicAlkalosisAndRespiratoryAcidosis)
-                }
-            )
+            TextInCard(R.string.metabolicAlkalosisAndRespiratoryAcidosis)
         } else if (hco3.doubleValue < (normalHco3 - 3) && paCo2.doubleValue < (normalPaCo2 - 5)) {
-            BloodGasAnalysisCard(
-                bloodGasAnalysisContent = {
-                    BloodGasAnalysisText(R.string.metabolicAcidosisAndRespiratoryAlkalosis)
-                }
-            )
+            TextInCard(R.string.metabolicAcidosisAndRespiratoryAlkalosis)
         }
     }
 }
@@ -404,68 +276,9 @@ fun BloodGasAnalysisCard(bloodGasAnalysisContent: @Composable ()-> Unit) {
             .fillMaxWidth(),
     ) {
         bloodGasAnalysisContent()
-
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BloodGasAnalysisTextField(label: Int, value: MutableDoubleState, width: Int,
-    //keyboardOptions: KeyboardOptions
-) {
-    var text by remember { mutableStateOf(value.doubleValue.toString()) }
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-
-    LaunchedEffect(isFocused) {
-        if (isFocused) {
-            text = ""
-        }
-    }
-    val fontSize = calculateFontSize(text)
-
-    TextField(
-        label = { Text(parseStyledString(label)) },
-        value = text,
-        onValueChange = {newText ->
-            if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
-                text = newText
-                value.doubleValue = newText.toDoubleOrNull() ?: 0.0
-            }},
-        modifier = Modifier
-            .padding(5.dp)
-            .width(width.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
-        ),
-        textStyle = TextStyle.Default.copy(
-            fontSize = fontSize,
-            textAlign = TextAlign
-                .Right,
-            lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Bottom,
-                trim = LineHeightStyle.Trim.Both
-            )
-        ),
-        maxLines = 1,
-        interactionSource = interactionSource
-        //TextFieldColors =
-    )
-}
-
-fun calculateFontSize(text: String): TextUnit {
-    val baseSize = 28.sp
-    val minSize = 12.sp
-    val maxLength = 5
-
-    return when {
-        text.length <= maxLength / 2 -> baseSize
-        text.length <= maxLength -> (baseSize.value - (text.length - maxLength / 2) * 2).sp
-        else -> minSize
-    }
-}
 
 @Preview
 @Composable
