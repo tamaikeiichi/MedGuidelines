@@ -191,10 +191,12 @@
     <string name="mALBIRef">Liver cancer vol. 6,4 (2017): 325-336.</string>
     <string name="mALBIUrl">https://pubmed.ncbi.nlm.nih.gov/29234636/</string>
     <string name="totalBilirubin">Total bilirubin</string>
-    <string name="mgdl">mg/dl</string>
-    <string name="gdl">g/dl</string>
+    <string name="mgdl">mg/dL</string>
+    <string name="gdl">g/dL</string>
     <string name="num1">1</string>
     <string name="num2a">2a</string>
     <string name="num2b">2b</string>
     <string name="num3">3</string>
+    <string name="umolL">μmol/L</string>
+    <string name="gL">g/L</string>
 </resources>
