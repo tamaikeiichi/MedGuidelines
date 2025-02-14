@@ -120,4 +120,5 @@
     <string name="NfactorTitleNoteEsophagealCancer">&lt;b>N1&lt;/b>: 1–2個の所属リンパ節\n&lt;b>N2&lt;/b>: 3–6個\n&lt;b>N3&lt;/b>: 7個以上</string>
     <string name="MfactorTitleNoteEsophagealCancer">&lt;b>M1&lt;/b>: 遠隔転移</string>
     <string name="esophagealTNMTitle">食道癌TNM分類（UICC第8版）</string>
+    <string name="totalBilirubin">総ビリルビン</string>
 </resources>

@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -35,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -45,7 +43,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -53,8 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.compose.inverseOnSurfaceLight
-import com.example.compose.onPrimaryLight
-import com.example.compose.outlineLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
@@ -142,7 +137,7 @@ fun mALBIInput(): Double {
                     .align(Alignment.Bottom),
                 verticalAlignment = Alignment.Bottom
             ) {
-                NumberInTextFieldTest(
+                NumberInTextField(
                     label = R.string.totalBilirubin, value = totalBilirubin , width = 100,
                     multiplier = if (changedBilirubinUnit) 1.0 else 17.1
                 )
@@ -163,7 +158,7 @@ fun mALBIInput(): Double {
                     .align(Alignment.Bottom),
                 verticalAlignment = Alignment.Bottom
             ) {
-                NumberInTextFieldTest(
+                NumberInTextField(
                     label = R.string.albumin, value = albumin, width = 100,
                     multiplier = if (changedAlbuminUnit) 1.0 else 10.0
                 )
@@ -205,7 +200,7 @@ fun ClickableText(
 }
 
 @Composable
-fun NumberInTextFieldTest(
+private fun NumberInTextField(
     label: Int,
     value: MutableDoubleState,
     width: Int,
