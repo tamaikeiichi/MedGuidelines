@@ -15,3 +15,4 @@ Severity of Acute Pancreatitis
 
 ## Welcom to your requests! 
 
+<img src="https://github.com/user-attachments/assets/817f883b-8120-4245-a0b5-03f14c5f4bca" width="200">
