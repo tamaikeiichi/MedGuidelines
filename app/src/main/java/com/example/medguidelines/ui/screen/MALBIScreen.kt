@@ -1,6 +1,5 @@
 package com.example.medguidelines.ui.screen
 
-import androidx.compose.animation.core.copy
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
@@ -48,7 +48,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.compose.secondaryContainerLight
+import com.example.compose.inverseOnSurfaceLight
+import com.example.compose.onPrimaryLight
+import com.example.compose.outlineLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
@@ -109,7 +111,7 @@ fun MALBIScreen(navController: NavController) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun mALBIInput(): Double {
-    var totalBilirubin = remember { mutableDoubleStateOf(1.0) }
+    val totalBilirubin = remember { mutableDoubleStateOf(1.0) }
     val albumin = remember { mutableDoubleStateOf(4.1) }
     var changedBilirubinUnit by remember { mutableStateOf(true) }
     var changedAlbuminUnit by remember { mutableStateOf(true) }
@@ -130,40 +132,17 @@ fun mALBIInput(): Double {
                 verticalAlignment = Alignment.Bottom
             ) {
                 NumberInTextFieldTest(
-                    label = R.string.totalBilirubin, value = totalBilirubin , width = 80,
+                    label = R.string.totalBilirubin, value = totalBilirubin , width = 100,
                     multiplier = if (changedBilirubinUnit) 1.0 else 17.1
                 )
                 Column(
                     verticalArrangement = Arrangement.Bottom
                 ) {
-                    if (changedBilirubinUnit){
-                        Text(
-                            text = parseStyledString(R.string.mgdl),
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .clickable {
-                                    changedBilirubinUnit = !changedBilirubinUnit
-                                },
-                            style = LocalTextStyle.current.copy(
-                                color = Color.Blue,
-                                textDecoration = TextDecoration.Underline
-                            )
-                        )
-                    } else {
-                        Text(
-                            text = parseStyledString(R.string.umolL),
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .clickable {
-                                    changedBilirubinUnit = !changedBilirubinUnit
-                                },
-                            //.background(color = secondaryContainerLight),
-                            style = LocalTextStyle.current.copy(
-                                color = Color.Blue,
-                                textDecoration = TextDecoration.Underline
-                            )
-                        )
-                    }
+                    ClickableText(
+                        text = if (changedBilirubinUnit) R.string.mgdl else R.string.umolL,
+                        onChanged = { changedBilirubinUnit = !changedBilirubinUnit },
+                        changed = changedBilirubinUnit
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
@@ -174,40 +153,17 @@ fun mALBIInput(): Double {
                 verticalAlignment = Alignment.Bottom
             ) {
                 NumberInTextFieldTest(
-                    label = R.string.albumin, value = albumin, width = 80,
+                    label = R.string.albumin, value = albumin, width = 100,
                     multiplier = if (changedAlbuminUnit) 1.0 else 10.0
                 )
                 Column(
                     verticalArrangement = Arrangement.Bottom
                 ) {
-                    if (changedAlbuminUnit){
-                        Text(
-                            text = parseStyledString(R.string.gdl),
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .clickable {
-                                    changedAlbuminUnit = !changedAlbuminUnit
-                                },
-                            style = LocalTextStyle.current.copy(
-                                color = Color.Blue,
-                                textDecoration = TextDecoration.Underline
-                            )
-                        )
-                    } else {
-                        Text(
-                            text = parseStyledString(R.string.gL),
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .clickable {
-                                    changedAlbuminUnit = !changedAlbuminUnit
-
-                                },
-                            style = LocalTextStyle.current.copy(
-                                color = Color.Blue,
-                                textDecoration = TextDecoration.Underline
-                            )
-                        )
-                    }
+                    ClickableText(
+                        text = if (changedAlbuminUnit) R.string.gdL else R.string.gL,
+                        onChanged = { changedAlbuminUnit = !changedAlbuminUnit },
+                        changed = changedAlbuminUnit
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
@@ -215,6 +171,26 @@ fun mALBIInput(): Double {
     }
     val score = (log10(17.1 * totalBilirubin.doubleValue)) * 0.66 + (10 * albumin.doubleValue * (-0.085))
     return score
+}
+
+@Composable
+fun ClickableText(
+    text: Int,
+    onChanged: (Boolean) -> Unit,
+    changed: Boolean
+){
+    Text(
+        text = parseStyledString(text),
+        modifier = Modifier
+            .padding(5.dp)
+            .clickable {
+                onChanged(changed)
+            }
+            .background(
+                color = inverseOnSurfaceLight,
+                shape = RoundedCornerShape(16.dp)
+            ).padding(5.dp),
+    )
 }
 
 @Composable

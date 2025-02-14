@@ -192,7 +192,7 @@
     <string name="mALBIUrl">https://pubmed.ncbi.nlm.nih.gov/29234636/</string>
     <string name="totalBilirubin">Total bilirubin</string>
     <string name="mgdl">mg/dL</string>
-    <string name="gdl">g/dL</string>
+    <string name="gdL">g/dL</string>
     <string name="num1">1</string>
     <string name="num2a">2a</string>
     <string name="num2b">2b</string>
