@@ -11,5 +11,6 @@ Esophageal Cancer TNM classification
 mALBI  
 Acute tonsillitis/pharyngitis algorithm  
 Blood Gas Analysis  
+Severity of Acute Pancreatitis  
 
 ## Welcom to your requests! 
