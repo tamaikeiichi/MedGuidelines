@@ -102,9 +102,9 @@ fun MALBIScreen(navController: NavController) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun mALBIInput(): Double {
-    val totalBilirubin = remember { mutableDoubleStateOf(1.0) }
-    val albumin = remember { mutableDoubleStateOf(4.1) }
-    var changed = remember { mutableStateOf(false) }
+    var totalBilirubin by remember { mutableDoubleStateOf(1.0) }
+    var albumin by remember { mutableDoubleStateOf(4.1) }
+    var changed by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -159,18 +159,17 @@ fun mALBIInput(): Double {
             }
         }
     }
-    val score = (log10(17.1 * totalBilirubin.doubleValue)) * 0.66 + (10 * albumin.doubleValue * (-0.085))
+    val score = (log10(17.1 * totalBilirubin)) * 0.66 + (10 * albumin * (-0.085))
 
     return score
-
 }
 
 
 
 @Composable
-fun NumberInTextFieldTest(label: Int, value: MutableDoubleState, width: Int,
+fun NumberInTextFieldTest(label: Int, value: Double, width: Int,
 ) {
-    var text by remember { mutableStateOf(value.doubleValue.toString()) }
+    var text by remember { mutableStateOf(value.toString()) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
@@ -187,7 +186,7 @@ fun NumberInTextFieldTest(label: Int, value: MutableDoubleState, width: Int,
         onValueChange = {newText ->
             if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
                 text = newText
-                value.doubleValue = newText.toDoubleOrNull() ?: 0.0
+                value = newText.toDoubleOrNull() ?: 0.0
             }},
         modifier = Modifier
             .padding(5.dp)
