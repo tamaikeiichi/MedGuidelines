@@ -46,6 +46,7 @@ import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
+import kotlin.math.absoluteValue
 import kotlin.math.log10
 
 @Composable
@@ -102,8 +103,8 @@ fun MALBIScreen(navController: NavController) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun mALBIInput(): Double {
-    var totalBilirubin by remember { mutableDoubleStateOf(1.0) }
-    var albumin by remember { mutableDoubleStateOf(4.1) }
+    val totalBilirubin by remember { mutableDoubleStateOf(1.0) }
+    val albumin by remember { mutableDoubleStateOf(4.1) }
     var changed by remember { mutableStateOf(false) }
 
     Card(
@@ -123,7 +124,7 @@ fun mALBIInput(): Double {
                 verticalAlignment = Alignment.Bottom
             ) {
                 NumberInTextFieldTest(
-                    label = R.string.totalBilirubin, value = totalBilirubin, width = 80,
+                    label = R.string.totalBilirubin, value = totalBilirubin , width = 80,
                 )
                 Column(
                     verticalArrangement = Arrangement.Bottom
@@ -167,7 +168,10 @@ fun mALBIInput(): Double {
 
 
 @Composable
-fun NumberInTextFieldTest(label: Int, value: Double, width: Int,
+fun NumberInTextFieldTest(
+    label: Int,
+    value: MutableDoubleState,
+    width: Int,
 ) {
     var text by remember { mutableStateOf(value.toString()) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -186,7 +190,7 @@ fun NumberInTextFieldTest(label: Int, value: Double, width: Int,
         onValueChange = {newText ->
             if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
                 text = newText
-                value = newText.toDoubleOrNull() ?: 0.0
+                value.doubleValue = newText.toDoubleOrNull() ?: 0.0
             }},
         modifier = Modifier
             .padding(5.dp)

@@ -49,6 +49,7 @@ val itemsList = listOf(
     ListItemData(R.string.netakiridoTitle, ActionType.NAVIGATE_TO_NETAKIRIDO),
     ListItemData(R.string.pancreaticTNMTitle, ActionType.NAVIGATE_TO_PANCREATITIS_TNM),
     ListItemData(R.string.esophagealTNMTitle, ActionType.NAVIGATE_TO_ESOPAGEAL_TNM),
+    ListItemData(R.string.mALBITitle, ActionType.NAVIGATE_TO_MALBI),
 )
 
 @Composable
@@ -61,7 +62,8 @@ fun IndexScreen(
     navigateToAcutePancreatitis: () -> Unit,
     navigateToNetakirido: () -> Unit,
     navigateToPancreaticTNM: () -> Unit,
-    navigateToEsophagealTNM: () -> Unit
+    navigateToEsophagealTNM: () -> Unit,
+    navigateToMALBI: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -126,6 +128,7 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_NETAKIRIDO -> navigateToNetakirido()
                             ActionType.NAVIGATE_TO_PANCREATITIS_TNM -> navigateToPancreaticTNM()
                             ActionType.NAVIGATE_TO_ESOPAGEAL_TNM -> navigateToEsophagealTNM()
+                            ActionType.NAVIGATE_TO_MALBI -> navigateToMALBI()
                         }
                     }
                 )
@@ -168,6 +171,7 @@ fun IndexScreenPreview(){
         navigateToAcutePancreatitis = {},
         navigateToNetakirido = {},
         navigateToPancreaticTNM = {},
-        navigateToEsophagealTNM = {}
+        navigateToEsophagealTNM = {},
+        navigateToMALBI = {},
     )
 }
