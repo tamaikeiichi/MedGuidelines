@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -63,16 +65,16 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
     var score by remember { mutableDoubleStateOf(0.0) }
     var scoreRound by remember { mutableDoubleStateOf(0.0) }
     Scaffold(
-    topBar = {
-        TitleTopAppBar(
-            title = R.string.mALBITitle,
-            navController = navController,
-            referenceText = R.string.mALBIRef,
-            referenceUrl = R.string.mALBIUrl
-        )
-    },
+        topBar = {
+            TitleTopAppBar(
+                title = R.string.mALBITitle,
+                navController = navController,
+                referenceText = R.string.mALBIRef,
+                referenceUrl = R.string.mALBIUrl
+            )
+        },
 
-    ) { innerPadding ->
+        ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
@@ -116,7 +118,9 @@ fun Fib4Calculator(): Double {
         FlowRow(
             modifier = Modifier
                 .padding(4.dp)
-                .align(Alignment.CenterHorizontally),
+                //.align(Alignment.Bottom)
+                .wrapContentHeight(align = Alignment.Bottom
+                ),
             //verticalArrangement = Arrangement.Bottom,
         ) {
             InputValue(
@@ -151,11 +155,12 @@ fun InputValue(
     changeUnit: Boolean,
     changedValueRate: Double
 ){
+
     Row(
         modifier = Modifier
             .padding(4.dp),
-            //.align(Alignment.Bottom),
-         verticalAlignment = Alignment.Bottom,
+        //.align(Alignment.Bottom),
+        verticalAlignment = Alignment.Bottom,
     ) {
         NumberInTextField(
             label = label, value = value, width = width,
@@ -173,8 +178,6 @@ fun InputValue(
         }
     }
 }
-
-
 
 @Composable
 private fun ClickableText(
