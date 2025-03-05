@@ -27,6 +27,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,9 +55,13 @@ import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import kotlin.math.log10
+import kotlin.math.sqrt
 
 @Composable
 fun LiverFibrosisScoreSystemScreen(navController: NavController) {
+    var grade by remember { mutableStateOf("") }
+    var score by remember { mutableDoubleStateOf(0.0) }
+    var scoreRound by remember { mutableDoubleStateOf(0.0) }
     Scaffold(
     topBar = {
         TitleTopAppBar(
@@ -76,7 +81,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
             state = rememberLazyListState()
         ) {
             item {
-                score = mALBIInput()
+                score = Fib4Calculator()
                 grade = when {
                     score <= -2.6 -> "1"
                     score < -2.27 -> "2a"
@@ -90,72 +95,18 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
 }
 
 
-@Composable
-fun MALBIScreen(navController: NavController) {
-    var grade by remember { mutableStateOf("") }
-    var score by remember { mutableDoubleStateOf(0.0) }
-    var scoreRound by remember { mutableDoubleStateOf(0.0) }
-    Scaffold(
-        topBar = {
-            TitleTopAppBar(
-                title = R.string.mALBITitle,
-                navController = navController,
-                referenceText = R.string.mALBIRef,
-                referenceUrl = R.string.mALBIUrl
-            )
-        },
-        bottomBar = {
-            BottomAppBar {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    Text(
-                        buildAnnotatedString {
-                            append("mALBI ")
-                            withStyle(
-                                style = SpanStyle(fontWeight = FontWeight.Bold)
-                            ){
-                                append(" $grade ")
-                            }
-                            append(" ($scoreRound)")
-                        },
-                        fontSize = 30.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxWidth(),
-            contentPadding = PaddingValues(10.dp),
-            state = rememberLazyListState()
-        ) {
-            item {
-                score = mALBIInput()
-                grade = when {
-                    score <= -2.6 -> "1"
-                    score < -2.27 -> "2a"
-                    score <= -1.39 -> "2b"
-                    else -> "3"
-                }
-                scoreRound = Math.round(score * 100.0)/100.0
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun mALBIInput(): Double {
-    val totalBilirubin = remember { mutableDoubleStateOf(1.0) }
-    val albumin = remember { mutableDoubleStateOf(4.1) }
-    var changedBilirubinUnit by remember { mutableStateOf(true) }
-    var changedAlbuminUnit by remember { mutableStateOf(true) }
+fun Fib4Calculator(): Double {
+    val factor1 = remember { mutableDoubleStateOf(40.0) }
+    val factor2 = remember { mutableDoubleStateOf(30.0) }
+    val factor3 = remember { mutableDoubleStateOf(15.0) }
+    val factor4 = remember { mutableDoubleStateOf(30.0) }
+    var changedFactor1Unit by remember { mutableStateOf(true) }
+    var changedFactor2Unit by remember { mutableStateOf(true) }
+    var changedFactor3Unit by remember { mutableStateOf(true) }
+    var changedFactor4Unit by remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier
@@ -164,58 +115,69 @@ fun mALBIInput(): Double {
     ) {
         FlowRow(
             modifier = Modifier
-                .padding(4.dp),
+                .padding(4.dp)
+                .align(Alignment.CenterHorizontally),
+            //verticalArrangement = Arrangement.Bottom,
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.Bottom),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                NumberInTextField(
-                    label = R.string.totalBilirubin, value = totalBilirubin , width = 100,
-                    multiplier = if (changedBilirubinUnit) 1.0 else 17.1
-                )
-                Column(
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    ClickableText(
-                        text = if (changedBilirubinUnit) R.string.mgdl else R.string.umolL,
-                        onChanged = { changedBilirubinUnit = !changedBilirubinUnit },
-                        changed = changedBilirubinUnit
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.Bottom),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                NumberInTextField(
-                    label = R.string.albumin, value = albumin, width = 100,
-                    multiplier = if (changedAlbuminUnit) 1.0 else 10.0
-                )
-                Column(
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    ClickableText(
-                        text = if (changedAlbuminUnit) R.string.gdL else R.string.gL,
-                        onChanged = { changedAlbuminUnit = !changedAlbuminUnit },
-                        changed = changedAlbuminUnit
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
+            InputValue(
+                label = R.string.age, value = factor1, width = 100,
+                unit = R.string.years, changeUnit = changedFactor1Unit, changedValueRate = 1.0
+            )
+            InputValue(
+                label = R.string.ast, value = factor2, width = 100,
+                unit = R.string.iul, changeUnit = changedFactor2Unit, changedValueRate = 1.0
+            )
+            InputValue(
+                label = R.string.plateletCount, value = factor3, width = 100,
+                unit = R.string.unit109L, changeUnit = changedFactor3Unit, changedValueRate = 1.0
+            )
+            InputValue(
+                label = R.string.alt, value = factor4, width = 100,
+                unit = R.string.iul, changeUnit = changedFactor4Unit, changedValueRate = 1.0
+            )
         }
     }
-    val score = (log10(17.1 * totalBilirubin.doubleValue)) * 0.66 + (10 * albumin.doubleValue * (-0.085))
+    val score = (factor1.doubleValue * factor2.doubleValue) /
+            (factor3.doubleValue * sqrt(factor4.doubleValue))
     return score
 }
 
 @Composable
-fun ClickableText(
+fun InputValue(
+    label: Int,
+    value: MutableDoubleState,
+    width: Int,
+    unit: Int,
+    changeUnit: Boolean,
+    changedValueRate: Double
+){
+    Row(
+        modifier = Modifier
+            .padding(4.dp),
+            //.align(Alignment.Bottom),
+         verticalAlignment = Alignment.Bottom,
+    ) {
+        NumberInTextField(
+            label = label, value = value, width = width,
+            multiplier = if (changeUnit) 1.0 else changedValueRate
+        )
+        Column(
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Text(
+                text = parseStyledString(unit),
+                //onChanged = { changedBilirubinUnit = !changedBilirubinUnit },
+                //changed = changedBilirubinUnit
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+}
+
+
+
+@Composable
+private fun ClickableText(
     text: Int,
     onChanged: (Boolean) -> Unit,
     changed: Boolean
@@ -299,6 +261,6 @@ private fun calculateFontSize(text: String): TextUnit {
 
 @Preview
 @Composable
-fun MALBIScreenPreview(){
-    MALBIScreen(navController = NavController(LocalContext.current))
+fun LiverFibrosisScoreSystemScreenPreview(){
+    LiverFibrosisScoreSystemScreen(navController = NavController(LocalContext.current))
 }

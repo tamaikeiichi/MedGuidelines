@@ -180,7 +180,7 @@ fun mALBIInput(): Double {
 }
 
 @Composable
-fun ClickableText(
+private fun ClickableText(
     text: Int,
     onChanged: (Boolean) -> Unit,
     changed: Boolean

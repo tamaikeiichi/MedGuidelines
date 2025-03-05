@@ -199,4 +199,10 @@
     <string name="num3" translatable="false">3</string>
     <string name="umolL" translatable="false">μmol/L</string>
     <string name="gL" translatable="false">g/L</string>
+    <string name="years">years</string>
+    <string name="ast">AST</string>
+    <string name="iul">IU/L</string>
+    <string name="plateletCount">platelet count</string>
+    <string name="unit109L"><![CDATA[10<sup>9</sup>/L]]></string>
+    <string name="alt">ALT</string>
 </resources>
