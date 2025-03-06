@@ -27,6 +27,7 @@ import com.example.medguidelines.data.mclsaacAge
 import com.example.medguidelines.data.tonsillitisRedFlag
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
+import com.example.medguidelines.ui.component.textAndUrl
 
 
 @Composable
@@ -40,8 +41,9 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
             TitleTopAppBar(
                 title = R.string.acuteTonsillitisAlgorithmTitle,
                 navController = navController,
-                referenceText = R.string.space,
-                referenceUrl = R.string.space
+                references = listOf(
+                    textAndUrl(R.string.space, R.string.space)
+                )
             )
         },
     ) { innerPadding ->

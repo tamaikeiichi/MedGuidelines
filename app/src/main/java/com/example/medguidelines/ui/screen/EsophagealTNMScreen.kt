@@ -22,6 +22,7 @@ import com.example.medguidelines.data.esophagealCancerTNM
 import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
+import com.example.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun EsophagealTNMScreen(navController: NavController) {
@@ -32,8 +33,9 @@ fun EsophagealTNMScreen(navController: NavController) {
         topBar = {
             TitleTopAppBar(title =  R.string.esophagealTNMTitle,
                 navController = navController,
-                referenceText = R.string.space,
-                referenceUrl = R.string.space
+                references = listOf(
+                    textAndUrl(R.string.space, R.string.space)
+                )
             )
         },
         bottomBar = {

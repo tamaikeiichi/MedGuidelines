@@ -22,6 +22,7 @@ import com.example.medguidelines.data.colorectalCancerTNM
 import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
+import com.example.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun ColorectalTNMScreen(navController: NavController) {
@@ -35,8 +36,9 @@ fun ColorectalTNMScreen(navController: NavController) {
         topBar = {
             TitleTopAppBar(title =  R.string.colorectalTNMTitle,
                 navController = navController,
-                referenceText = R.string.space,
-                referenceUrl = R.string.space
+                references = listOf(
+                    textAndUrl(R.string.space, R.string.space)
+                )
             )
         },
         bottomBar = {

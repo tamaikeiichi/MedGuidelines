@@ -2,8 +2,6 @@ package com.example.medguidelines.data
 
 import com.example.medguidelines.R
 
-data class RadioButtonName(val stringId: Int)
-
 val test = listOf(
     R.string.bilirubinGrade1,
     R.string.bilirubinGrade2,

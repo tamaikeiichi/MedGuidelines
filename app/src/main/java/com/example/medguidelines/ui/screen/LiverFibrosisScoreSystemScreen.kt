@@ -56,8 +56,14 @@ import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
+import com.example.medguidelines.ui.component.textAndUrl
 import kotlin.math.log10
 import kotlin.math.sqrt
+
+val reference = listOf(
+    textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
+    textAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
+)
 
 @Composable
 fun LiverFibrosisScoreSystemScreen(navController: NavController) {
@@ -69,8 +75,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
             TitleTopAppBar(
                 title = R.string.mALBITitle,
                 navController = navController,
-                referenceText = R.string.mALBIRef,
-                referenceUrl = R.string.mALBIUrl
+                references = reference,
             )
         },
 

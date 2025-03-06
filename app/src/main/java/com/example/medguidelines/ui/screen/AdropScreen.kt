@@ -17,12 +17,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.medguidelines.R
-import com.example.medguidelines.data.RadioButtonName
 import com.example.medguidelines.data.noYes
-import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.ScoreBottomAppBar
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
+import com.example.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun AdropScreen(navController: NavController) {
@@ -36,8 +35,9 @@ fun AdropScreen(navController: NavController) {
         topBar = {
             TitleTopAppBar(title =  R.string.aDropTitle,
                 navController = navController,
-                referenceText = R.string.space,
-                referenceUrl = R.string.space
+                references = listOf(
+                    textAndUrl(R.string.space, R.string.space)
+                )
             )
         },
         bottomBar = {

@@ -53,6 +53,7 @@ import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
+import com.example.medguidelines.ui.component.textAndUrl
 import kotlin.math.log10
 
 @Composable
@@ -65,8 +66,9 @@ fun MALBIScreen(navController: NavController) {
             TitleTopAppBar(
                 title = R.string.mALBITitle,
                 navController = navController,
-                referenceText = R.string.mALBIRef,
-                referenceUrl = R.string.mALBIUrl
+                references = listOf(
+                    textAndUrl(R.string.mALBIRef, R.string.mALBIUrl)
+                )
             )
         },
         bottomBar = {

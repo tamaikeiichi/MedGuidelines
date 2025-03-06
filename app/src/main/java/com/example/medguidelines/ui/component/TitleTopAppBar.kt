@@ -1,5 +1,6 @@
 package com.example.medguidelines.ui.component
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -28,8 +29,7 @@ import com.example.medguidelines.R
 fun TitleTopAppBar (
     title: Int,
     navController: NavController,
-    referenceUrl: Int,
-    referenceText: Int
+    references: List<textAndUrl>
 ){
     var expanded by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
@@ -51,14 +51,22 @@ fun TitleTopAppBar (
             actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
         ),
         actions = {
-            if (referenceUrl != R.string.space && referenceText != R.string.space){
+            if (references[0].Url != R.string.space && references[0].Text != R.string.space){
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id= R.drawable.quick_reference_all_24px) ,
                         contentDescription = "Reference",
                     )
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        DropdownMenuItem(text = { UrlLinkText(referenceUrl, referenceText) }, onClick = {
+                        DropdownMenuItem(text = {
+                            Column(){
+                                for (reference in references){
+                                    UrlLinkText(reference)
+                                }
+                            }
+
+                        },
+                            onClick = {
                             expanded = false
                         })
                     }
@@ -74,7 +82,9 @@ fun TitleTopAppBarPreview(){
     TitleTopAppBar(
         title = R.string.space,
         navController = NavController(LocalContext.current),
-        referenceUrl = R.string.space,
-        referenceText = R.string.space
+        references = listOf(
+            textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
+            textAndUrl(R.string.space, R.string.space)
+        )
     )
 }

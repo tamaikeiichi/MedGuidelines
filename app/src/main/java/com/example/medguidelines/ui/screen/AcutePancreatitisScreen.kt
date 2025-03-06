@@ -31,6 +31,7 @@ import com.example.medguidelines.data.CTGradePoorContrast
 import com.example.medguidelines.data.noYes
 import com.example.medguidelines.ui.component.RadioButtonAndExpand
 import com.example.medguidelines.ui.component.TitleTopAppBar
+import com.example.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun AcutePancreatitisScreen(navController: NavController) {
@@ -41,8 +42,9 @@ fun AcutePancreatitisScreen(navController: NavController) {
         topBar = {
             TitleTopAppBar(title = R.string.acutePancreatitisTitle,
                 navController = navController,
-                referenceText = R.string.space,
-                referenceUrl = R.string.space
+                references = listOf(
+                    textAndUrl(R.string.space, R.string.space)
+                )
             )
         },
         bottomBar = {

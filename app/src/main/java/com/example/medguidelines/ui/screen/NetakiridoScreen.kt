@@ -22,6 +22,7 @@ import com.example.medguidelines.ui.component.textAndExpand1Level
 import com.example.medguidelines.ui.component.TextAndExpand2Levels
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.Text1Level
+import com.example.medguidelines.ui.component.textAndUrl
 
 
 @Composable
@@ -32,8 +33,9 @@ fun NetakiridoScreen(navController: NavController) {
             TitleTopAppBar(
                 title = R.string.netakiridoTitle,
                 navController = navController,
-                referenceText = R.string.netakiridoRefTitle,
-                referenceUrl = R.string.netakiridoUrl
+                references = listOf(
+                    textAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
+                )
             )
         },
     ) { innerPadding ->

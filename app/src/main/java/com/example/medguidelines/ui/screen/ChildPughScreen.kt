@@ -32,6 +32,7 @@ import com.example.medguidelines.data.encephalopathyGrade
 import com.example.medguidelines.data.ptGrade
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
+import com.example.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun ChildPughScreen(navController: NavController) {
@@ -42,8 +43,9 @@ fun ChildPughScreen(navController: NavController) {
         topBar = {
             TitleTopAppBar(title =  R.string.childPughTitle,
                 navController = navController,
-                referenceText = R.string.space,
-                referenceUrl = R.string.space
+                references = listOf(
+                    textAndUrl(R.string.space, R.string.space)
+                )
             )
         },
         bottomBar = {

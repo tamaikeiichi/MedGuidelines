@@ -1,7 +1,5 @@
 package com.example.medguidelines.data
 
-data class UiccTnm(val stage: String)
-
 val colorectalCancerTNM = listOf(
     //Tis, T1, T2, T3, T4a, T4b
     listOf("0", "I", "I", "IIA", "IIB", "IIC"), //N0

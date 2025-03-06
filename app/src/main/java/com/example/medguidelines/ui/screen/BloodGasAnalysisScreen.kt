@@ -24,6 +24,7 @@ import com.example.medguidelines.ui.component.NumberInTextField
 import com.example.medguidelines.ui.component.TextInCard
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
+import com.example.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun BloodGasAnalysisScreen(navController: NavController) {
@@ -32,8 +33,9 @@ fun BloodGasAnalysisScreen(navController: NavController) {
             TitleTopAppBar(
                 title = R.string.bloodGasAnalysisTitle,
                 navController = navController,
-                referenceText = R.string.bloodGasAnalysisRef,
-                referenceUrl = R.string.bloodGasAnalysisUrl
+                references = listOf(
+                    textAndUrl(R.string.bloodGasAnalysisRef, R.string.bloodGasAnalysisUrl)
+                )
             )
         },
     ) { innerPadding ->

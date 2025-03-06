@@ -205,4 +205,5 @@
     <string name="plateletCount">platelet count</string>
     <string name="unit109L"><![CDATA[10<sup>9</sup>/L]]></string>
     <string name="alt">ALT</string>
+    <string name="liverFibrosisScoreSystemTitle">Liver Fibrosis Score System</string>
 </resources>
