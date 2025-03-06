@@ -64,7 +64,6 @@ fun TitleTopAppBar (
                                     UrlLinkText(reference)
                                 }
                             }
-
                         },
                             onClick = {
                             expanded = false
