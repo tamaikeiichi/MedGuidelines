@@ -39,8 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -50,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.compose.inverseOnSurfaceLight
@@ -57,6 +60,7 @@ import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 val references = listOf(
@@ -82,7 +86,8 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth()
-                .fillMaxSize(),
+                //.fillMaxSize()
+            ,
             contentPadding = PaddingValues(10.dp),
             state = rememberLazyListState()
         ) {
@@ -90,7 +95,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                 score = Fib4Calculator()
                 Column(
                     modifier = Modifier
-                        //.fillMaxWidth()
+                        .fillMaxWidth()
                         .padding(horizontal = 10.dp)
                 ){
                     GraphFibrosis()
@@ -111,30 +116,28 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
 }
 
 @Composable
-fun GraphFibrosis(modifier: Modifier = Modifier,
-                  color: Color = Color.Blue,
-                  isFilled: Boolean = true,
-                  strokeWidth: Float = 5f
-) {
+fun GraphFibrosis() {
+    val screenHeight = LocalConfiguration.current.screenHeightDp
     Canvas(
     modifier = Modifier
         .fillMaxWidth()//.padding(10.dp)
+        .height(screenHeight.dp / 3)
+        .padding(10.dp)
     ) {
-        val canvasWidth = size.width
         val canvasHeight = size.height
-        val squareSize = minOf(canvasWidth, canvasHeight)
-        val topLeft = Offset(
-            x = 0f, // Start at the left edge
-            y = (canvasHeight - squareSize) / 2 // Center vertically
+        val canvasWidth = size.width
+
+        val colors = listOf(Color.rgb(198, 40, 40), Color.rgb(0, 255, 0)) // Correct: Int values
+
+        val gradient = Brush.verticalGradient(
+            colors = colors,
+            startY = 0f,
+            endY = canvasHeight
         )
-        val square = Size(squareSize, squareSize)
-
             drawRect(
-                color = color,
-                topLeft = topLeft,
-                size = square
+                brush = gradient,
+                size = Size(canvasWidth, canvasHeight)
             )
-
     }
 }
 
