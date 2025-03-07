@@ -1,27 +1,28 @@
 package com.example.medguidelines.ui.screen
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,7 +30,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,16 +37,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -57,10 +57,9 @@ import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
-import kotlin.math.log10
 import kotlin.math.sqrt
 
-val reference = listOf(
+val references = listOf(
     textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
     textAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
 )
@@ -75,32 +74,69 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
             TitleTopAppBar(
                 title = R.string.mALBITitle,
                 navController = navController,
-                references = reference,
+                references = references,
             )
         },
-
         ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .fillMaxSize(),
             contentPadding = PaddingValues(10.dp),
             state = rememberLazyListState()
         ) {
             item {
                 score = Fib4Calculator()
-                grade = when {
-                    score <= -2.6 -> "1"
-                    score < -2.27 -> "2a"
-                    score <= -1.39 -> "2b"
-                    else -> "3"
+                Column(
+                    modifier = Modifier
+                        //.fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                ){
+                    GraphFibrosis()
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
-                scoreRound = Math.round(score * 100.0)/100.0
+
+//                grade = when {
+//                    score <= -2.6 -> "1"
+//                    score < -2.27 -> "2a"
+//                    score <= -1.39 -> "2b"
+//                    else -> "3"
+//                }
+                //scoreRound = Math.round(score * 100.0)/100.0
             }
         }
+        //GraphFibrosis()
     }
 }
 
+@Composable
+fun GraphFibrosis(modifier: Modifier = Modifier,
+                  color: Color = Color.Blue,
+                  isFilled: Boolean = true,
+                  strokeWidth: Float = 5f
+) {
+    Canvas(
+    modifier = Modifier
+        .fillMaxWidth()//.padding(10.dp)
+    ) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+        val squareSize = minOf(canvasWidth, canvasHeight)
+        val topLeft = Offset(
+            x = 0f, // Start at the left edge
+            y = (canvasHeight - squareSize) / 2 // Center vertically
+        )
+        val square = Size(squareSize, squareSize)
+
+            drawRect(
+                color = color,
+                topLeft = topLeft,
+                size = square
+            )
+
+    }
+}
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -124,7 +160,8 @@ fun Fib4Calculator(): Double {
             modifier = Modifier
                 .padding(4.dp)
                 //.align(Alignment.Bottom)
-                .wrapContentHeight(align = Alignment.Bottom
+                .wrapContentHeight(
+                    align = Alignment.Bottom
                 ),
             //verticalArrangement = Arrangement.Bottom,
         ) {
@@ -200,7 +237,8 @@ private fun ClickableText(
             .background(
                 color = inverseOnSurfaceLight,
                 shape = RoundedCornerShape(16.dp)
-            ).padding(5.dp),
+            )
+            .padding(5.dp),
     )
 }
 
