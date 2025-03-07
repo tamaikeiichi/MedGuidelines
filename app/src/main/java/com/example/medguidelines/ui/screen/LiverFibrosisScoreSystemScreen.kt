@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -37,11 +38,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -54,14 +59,19 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.graphics.shapes.CornerRounding
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.toPath
 import androidx.navigation.NavController
 import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
+import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.sqrt
+import kotlin.text.toFloat
 
 val references = listOf(
     textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
@@ -81,12 +91,12 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                 references = references,
             )
         },
-        ) { innerPadding ->
+    ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth()
-                //.fillMaxSize()
+            //.fillMaxSize()
             ,
             contentPadding = PaddingValues(10.dp),
             state = rememberLazyListState()
@@ -99,7 +109,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         .padding(horizontal = 10.dp)
                 ){
                     GraphFibrosis()
-                    Spacer(modifier = Modifier.height(10.dp))
+                    //Spacer(modifier = Modifier.height(10.dp))
                 }
 
 //                grade = when {
@@ -118,27 +128,67 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
 @Composable
 fun GraphFibrosis() {
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    Canvas(
-    modifier = Modifier
-        .fillMaxWidth()//.padding(10.dp)
-        .height(screenHeight.dp / 3)
-        .padding(10.dp)
-    ) {
-        val canvasHeight = size.height
-        val canvasWidth = size.width
+//    Canvas(
+//    modifier = Modifier
+//        .fillMaxWidth()//.padding(10.dp)
+//        .height(screenHeight.dp / 3)
+//        .padding(10.dp)
+//    ) {
+//        val canvasHeight = size.height
+//        val canvasWidth = size.width
+//
+//        val colors = listOf(Color(0xff8C031C), Color(0xff082359)) // Correct: Int values
+//
+//        val gradient = Brush.verticalGradient(
+//            colors = colors,
+//            startY = 0f,
+//            endY = canvasHeight
+//        )
+//            drawRect(
+//                brush = gradient,
+//                size = Size(canvasWidth, canvasHeight)
+//            )
+//
+//    }
+    Box(
+        modifier = Modifier
+            .drawWithCache {
+                val roundedPolygon = RoundedPolygon(
+                    numVertices = 4,
+                    radius = size.minDimension / 2,
+                    centerX = size.width / 2,
+                    centerY = size.height / 2,
+                    rounding = CornerRounding(
+                        size.minDimension / 10f,
+                        smoothing = 0.1f
+                    )
+                )
+                val roundedPolygonPath = roundedPolygon.toPath().asComposePath()
+                onDrawBehind {
+                    val rotationDegrees = 45f
+                    val canvasHeight = size.height
+                    val rotationRadians = rotationDegrees * PI.toFloat() / 180f
+                    val colors = listOf(Color(0xff8C031C), Color(0xff1975d2)) // Correct: Int values
 
-        val colors = listOf(Color.rgb(198, 40, 40), Color.rgb(0, 255, 0)) // Correct: Int values
+                    val gradient = Brush.linearGradient(
+                        colors = colors,
+                        start = Offset(0f, 0f),
+                        end = Offset(size.width, size.height)
+                    )
+                    rotate(
+                        degrees = rotationDegrees,
+                        pivot = Offset(size.width / 2, size.height / 2)
+                    ) {
+                        drawPath(roundedPolygonPath,
+                            //color = Color.Blue,
+                            brush = gradient)
+                    }
+                }
+            }
+            //.rotate(15f)
+            .fillMaxSize()
 
-        val gradient = Brush.verticalGradient(
-            colors = colors,
-            startY = 0f,
-            endY = canvasHeight
-        )
-            drawRect(
-                brush = gradient,
-                size = Size(canvasWidth, canvasHeight)
-            )
-    }
+    )
 }
 
 
@@ -312,4 +362,10 @@ private fun calculateFontSize(text: String): TextUnit {
 @Composable
 fun LiverFibrosisScoreSystemScreenPreview(){
     LiverFibrosisScoreSystemScreen(navController = NavController(LocalContext.current))
+}
+
+@Preview
+@Composable
+fun GraphFibrosisPreview(){
+    GraphFibrosis()
 }
