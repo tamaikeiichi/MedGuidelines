@@ -72,7 +72,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TitleTopAppBar(
-                title = R.string.mALBITitle,
+                title = R.string.liverFibrosisScoreSystemTitle,
                 navController = navController,
                 references = references,
             )
@@ -88,36 +88,75 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
         ) {
             item {
                 score = Fib4Calculator()
-                GraphFibrosis(
-                    width = 200F,
-                    circleHeight = 100F
-                )
+                val mediumColorValue = CalculateGradientProportion(
+                    maxValue = 5F,
+                    minValue = 0.1F,
+                    firstThreshold = 1.3F,
+                    secondThreshold = 2.67F,
+                    fibrosisScore = score.toFloat())
+//                GraphFibrosis(
+//                    width = 200F,
+//                    fibrosisScore = 100F,
+//                    mediumColorValue = mediumColorValue
+//                )
             }
         }
     }
 }
 
 @Composable
+private fun CalculateGradientProportion(
+    maxValue: Float,
+    minValue: Float,
+    firstThreshold: Float,
+    secondThreshold: Float,
+    fibrosisScore: Float
+)//: Float
+{
+val mediumColorValue =
+    1 - (secondThreshold - firstThreshold) / (maxValue - minValue)
+    //return mediumColorValue
+    GraphFibrosis(
+        width = 200F,
+        fibrosisScore = fibrosisScore,
+        mediumColorValue = mediumColorValue,
+        maxValue = maxValue,
+        minValue = minValue
+    )
+}
+
+@Composable
 fun GraphFibrosis(
     width: Float,
-    circleHeight: Float,
+    fibrosisScore: Float,
+    mediumColorValue: Float,
+    maxValue: Float,
+    minValue: Float
 ) {
-    val canvasHeight = 200.dp
+    val canvasHeightValue = 200
+    val canvasHeight = canvasHeightValue.dp
     Canvas(
         modifier = Modifier
             .size(canvasHeight)
     )
     {
-        val colors =
-            listOf(Color(0xFFFF0180), Color(0xFF0B7CFF))
-        val gradient = Brush.linearGradient(
-            colors = colors,
-            start = Offset(width * (1F / 2F), size.height * (0)),
-            end = Offset(width * (1F / 2F), size.height * (1F / 1F))
+        val rectColorStops = arrayOf(
+            0.0f to Color(0xFFFF0180),
+            mediumColorValue to Color(0xFFFFE30B),
+            1.0f to Color(0xFF0B7CFF))
+        val rectGradient = Brush.verticalGradient(
+            //colors = rectColors,
+            colorStops = rectColorStops,
+            startY = size.height * (0),
+            endY = size.height * (1F / 1F)
         )
         val rectCornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
         val circleSize = 20F
         val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
+        val circleHeight =
+            if (fibrosisScore > maxValue) 0F
+            else if (fibrosisScore < minValue) size.height
+            else  (fibrosisScore/ (maxValue-minValue)) * size.height
         val circleGradient = Brush.radialGradient(
             colors = circleColors,
             center = Offset(x = width / 2, y = circleHeight),
@@ -125,7 +164,7 @@ fun GraphFibrosis(
         )
         drawRoundRect(
             size = Size(width = width, height = size.height),
-            brush = gradient,
+            brush = rectGradient,
             cornerRadius = rectCornerRadius
         )
         drawCircle(
@@ -141,7 +180,7 @@ fun GraphFibrosis(
 fun Fib4Calculator(): Double {
     val factor1 = remember { mutableDoubleStateOf(40.0) }
     val factor2 = remember { mutableDoubleStateOf(30.0) }
-    val factor3 = remember { mutableDoubleStateOf(15.0) }
+    val factor3 = remember { mutableDoubleStateOf(15074.0) }
     val factor4 = remember { mutableDoubleStateOf(30.0) }
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
@@ -308,8 +347,3 @@ fun LiverFibrosisScoreSystemScreenPreview(){
     LiverFibrosisScoreSystemScreen(navController = NavController(LocalContext.current))
 }
 
-//@Preview
-//@Composable
-//fun GraphFibrosisPreview(){
-//    GraphFibrosis()
-//}
