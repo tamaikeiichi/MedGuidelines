@@ -121,7 +121,9 @@ val mediumColorValue =
         fibrosisScore = fibrosisScore,
         mediumColorValue = mediumColorValue,
         maxValue = maxValue,
-        minValue = minValue
+        minValue = minValue,
+        firstThreshold = firstThreshold,
+        secondThreshold = secondThreshold,
     )
 }
 
@@ -131,7 +133,9 @@ fun GraphFibrosis(
     fibrosisScore: Float,
     mediumColorValue: Float,
     maxValue: Float,
-    minValue: Float
+    minValue: Float,
+    firstThreshold: Float,
+    secondThreshold: Float,
 ) {
     val canvasHeightValue = 200
     val canvasHeight = canvasHeightValue.dp
@@ -172,6 +176,12 @@ fun GraphFibrosis(
             radius = circleSize,
             center = Offset(x = width / 2, y = circleHeight),
         )
+        drawLine(
+            color = Color.Black,
+            start = Offset(x = 0F, y = circleHeight),
+            end = Offset(x = width, y = circleHeight),
+            strokeWidth = 2F
+        )
     }
 }
 
@@ -180,7 +190,7 @@ fun GraphFibrosis(
 fun Fib4Calculator(): Double {
     val factor1 = remember { mutableDoubleStateOf(40.0) }
     val factor2 = remember { mutableDoubleStateOf(30.0) }
-    val factor3 = remember { mutableDoubleStateOf(15074.0) }
+    val factor3 = remember { mutableDoubleStateOf(150.0) }
     val factor4 = remember { mutableDoubleStateOf(30.0) }
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
