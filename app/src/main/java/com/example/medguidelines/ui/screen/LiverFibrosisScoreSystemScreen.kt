@@ -147,7 +147,8 @@ fun GraphFibrosis(
         val rectColorStops = arrayOf(
             0.0f to Color(0xFFFF0180),
             mediumColorValue to Color(0xFFFFE30B),
-            1.0f to Color(0xFF0B7CFF))
+            1.0f to Color(0xFF1BFF0B)
+        )
         val rectGradient = Brush.verticalGradient(
             //colors = rectColors,
             colorStops = rectColorStops,
