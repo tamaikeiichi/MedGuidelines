@@ -41,16 +41,21 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
 import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
@@ -139,50 +144,78 @@ fun GraphFibrosis(
 ) {
     val canvasHeightValue = 200
     val canvasHeight = canvasHeightValue.dp
+    val textMeasurer = rememberTextMeasurer()
+    val context = LocalContext.current
+    val lowRiskText = context.getString(R.string.lowRisk)
+    val intermediateRiskText = context.getString(R.string.intermediateRisk)
+    val highRiskText = context.getString(R.string.highRisk)
     Canvas(
         modifier = Modifier
             .size(canvasHeight)
     )
     {
-        val rectColorStops = arrayOf(
-            0.0f to Color(0xFFFF0180),
-            mediumColorValue to Color(0xFFFFE30B),
-            1.0f to Color(0xFF1BFF0B)
-        )
-        val rectGradient = Brush.verticalGradient(
-            //colors = rectColors,
-            colorStops = rectColorStops,
-            startY = size.height * (0),
-            endY = size.height * (1F / 1F)
-        )
-        val rectCornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
-        val circleSize = 20F
-        val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
-        val circleHeight =
-            if (fibrosisScore > maxValue) 0F
-            else if (fibrosisScore < minValue) size.height
-            else  (fibrosisScore/ (maxValue-minValue)) * size.height
-        val circleGradient = Brush.radialGradient(
-            colors = circleColors,
-            center = Offset(x = width / 2, y = circleHeight),
-            radius = circleSize * 1.1F
-        )
-        drawRoundRect(
-            size = Size(width = width, height = size.height),
-            brush = rectGradient,
-            cornerRadius = rectCornerRadius
-        )
-        drawCircle(
-            brush = circleGradient,
-            radius = circleSize,
-            center = Offset(x = width / 2, y = circleHeight),
-        )
-        drawLine(
-            color = Color.Black,
-            start = Offset(x = 0F, y = circleHeight),
-            end = Offset(x = width, y = circleHeight),
-            strokeWidth = 2F
-        )
+        drawIntoCanvas { canvas ->
+            val rectColorStops = arrayOf(
+                0.0f to Color(0xFFFF0180),
+                mediumColorValue to Color(0xFFFFE30B),
+                1.0f to Color(0xFF1BFF0B)
+            )
+            val rectGradient = Brush.verticalGradient(
+                //colors = rectColors,
+                colorStops = rectColorStops,
+                startY = size.height * (0),
+                endY = size.height * (1F / 1F)
+            )
+            val rectCornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
+            val circleSize = 20F
+            val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
+            val circleHeight =
+                if (fibrosisScore > maxValue) 0F
+                else if (fibrosisScore < minValue) size.height
+                else  (1-(fibrosisScore/ (maxValue-minValue))) * size.height
+            val circleGradient = Brush.radialGradient(
+                colors = circleColors,
+                center = Offset(x = width / 2, y = circleHeight),
+                radius = circleSize * 1.1F
+            )
+            drawRoundRect(
+                size = Size(width = width, height = size.height),
+                brush = rectGradient,
+                cornerRadius = rectCornerRadius
+            )
+            drawLine(
+                color = Color.Black,
+                start = Offset(x = 0F, y = (1-(firstThreshold/ (maxValue-minValue))) * size.height),
+                end = Offset(x = width, y = (1-(firstThreshold/ (maxValue-minValue))) * size.height),
+                strokeWidth = 3F
+            )
+            drawLine(
+                color = Color.Black,
+                start = Offset(x = 0F, y = (1-(secondThreshold/ (maxValue-minValue))) * size.height),
+                end = Offset(x = width, y = (1-(secondThreshold/ (maxValue-minValue))) * size.height),
+                strokeWidth = 3F
+            )
+            drawText(
+                textMeasurer = textMeasurer,
+                text = lowRiskText,
+                topLeft = Offset(10F,(1-((firstThreshold + minValue)/2/ (maxValue-minValue))) * size.height)
+            )
+            drawText(
+                textMeasurer = textMeasurer,
+                text = intermediateRiskText,
+                topLeft = Offset(10F,(1-((secondThreshold + firstThreshold)/2/ (maxValue-minValue))) * size.height)
+            )
+            drawText(
+                textMeasurer = textMeasurer,
+                text = highRiskText,
+                topLeft = Offset(10F,(1-((maxValue + secondThreshold)/2/ (maxValue-minValue))) * size.height)
+            )
+            drawCircle(
+                brush = circleGradient,
+                radius = circleSize,
+                center = Offset(x = width / 2, y = circleHeight),
+            )
+        }
     }
 }
 

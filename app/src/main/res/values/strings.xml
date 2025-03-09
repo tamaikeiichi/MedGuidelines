@@ -206,4 +206,7 @@
     <string name="unit109L"><![CDATA[10<sup>9</sup>/L]]></string>
     <string name="alt">ALT</string>
     <string name="liverFibrosisScoreSystemTitle">Liver Fibrosis Score System</string>
+    <string name="lowRisk">Low Risk</string>
+    <string name="intermediateRisk">Intermediate</string>
+    <string name="highRisk">High Risk</string>
 </resources>
