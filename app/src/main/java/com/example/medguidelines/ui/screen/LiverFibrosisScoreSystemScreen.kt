@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -56,7 +55,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavController
 import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
@@ -144,7 +142,7 @@ private fun CalculateGradientProportion(
 )//: Float
 {
     val mediumColorValue =
-        1 - (secondThreshold - firstThreshold) / (maxValue - minValue)
+        (secondThreshold - firstThreshold) / (maxValue - minValue)
     GraphFibrosis(
         canvasWidth = 200F,
         fibrosisScore = fibrosisScore,
@@ -175,7 +173,6 @@ fun GraphFibrosis(
     val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
-    val context = LocalContext.current
     Canvas(
         modifier = Modifier
             .height(canvasHeight)//, canvasWidth.dp)
@@ -184,26 +181,26 @@ fun GraphFibrosis(
     {
         drawIntoCanvas { canvas ->
             val rectColorStops = arrayOf(
-                0.0f to Color(0xFFFF0180),
+                0.0f to Color(0xFF1BFF0B),
                 mediumColorValue to Color(0xFFFFE30B),
-                1.0f to Color(0xFF1BFF0B)
+                1.0f to Color(0xFFFF0180)
             )
-            val rectGradient = Brush.verticalGradient(
+            val rectGradient = Brush.horizontalGradient(
                 //colors = rectColors,
                 colorStops = rectColorStops,
-                startY = size.height * (0),
-                endY = size.height * (1F / 1F)
+                startX = size.width * (0),
+                endX = size.width * (1F / 1F)
             )
             val rectCornerRadius = CornerRadius(10.dp.toPx(), 10.dp.toPx())
             val circleSize = 20F
             val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
-            val circleHeight =
+            val circleWidth =
                 if (fibrosisScore > maxValue) 0F
-                else if (fibrosisScore < minValue) size.height
-                else  (1-(fibrosisScore/ (maxValue-minValue))) * size.height
+                else if (fibrosisScore < minValue) size.width
+                else  (fibrosisScore/ (maxValue-minValue)) * size.width
             val circleGradient = Brush.radialGradient(
                 colors = circleColors,
-                center = Offset(x = size.width / 2, y = circleHeight),
+                center = Offset(x = circleWidth, y = size.height / 2),
                 radius = circleSize * 1.1F
             )
             drawRoundRect(
@@ -224,31 +221,30 @@ fun GraphFibrosis(
             drawText(
                 textMeasurer = textMeasurer,
                 text = firstLabel,
-                topLeft = Offset((((firstThreshold + minValue)/2/ (maxValue-minValue))) * size.width,10F)
+                topLeft = Offset(10F+0F * size.width,10F)
             )
             if (secondThreshold != 0F){
                 drawText(
                     textMeasurer = textMeasurer,
                     text = secondLabel,
-                    topLeft = Offset((((secondThreshold + firstThreshold)/2/ (maxValue-minValue))) * size.width,10F)
+                    topLeft = Offset(10F+(firstThreshold/ (maxValue-minValue)) * size.width,10F)
                 )
                 drawText(
                     textMeasurer = textMeasurer,
                     text = thirdLabel,
-                    topLeft = Offset((((maxValue + secondThreshold)/2/ (maxValue-minValue))) * size.width,10F)
+                    topLeft = Offset(10F+(secondThreshold/ (maxValue-minValue)) * size.width,10F)
                 )
             } else {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = secondLabel,
-                    topLeft = Offset((((maxValue + firstThreshold)/2/ (maxValue-minValue))) * size.width,10F)
+                    topLeft = Offset(10F+(firstThreshold/ (maxValue-minValue)) * size.width,10F)
                 )
             }
-
             drawCircle(
                 brush = circleGradient,
                 radius = circleSize,
-                center = Offset(x = size.width / 2, y = circleHeight),
+                center = Offset(x = circleWidth, y = size.height/2),
             )
         }
     }
