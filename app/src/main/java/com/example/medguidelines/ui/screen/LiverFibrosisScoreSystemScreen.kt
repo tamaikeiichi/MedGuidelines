@@ -41,11 +41,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -64,16 +65,22 @@ import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
 import kotlin.math.sqrt
 
+//regarding APRI:
+//Diagnostic Accuracy of Noninvasive Fibrosis Models to Detect Change in Fibrosis Stage
+//Siddiqui, Mohammad ShadabAllende, Daniela et al.
+//Clinical Gastroenterology and Hepatology, Volume 17, Issue 9, 1877 - 1885.e5
+
 val references = listOf(
     textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
     textAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
 )
-
+data class scores(
+    val fib4score: Double,
+    val apri: Double
+)
 @Composable
 fun LiverFibrosisScoreSystemScreen(navController: NavController) {
-    var grade by remember { mutableStateOf("") }
-    var score by remember { mutableDoubleStateOf(0.0) }
-    var scoreRound by remember { mutableDoubleStateOf(0.0) }
+    var allScores by remember { mutableStateOf(scores(0.0,0.0)) }
     Scaffold(
         topBar = {
             TitleTopAppBar(
@@ -92,18 +99,33 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
             state = rememberLazyListState()
         ) {
             item {
-                score = Fib4Calculator()
-                val mediumColorValue = CalculateGradientProportion(
+                allScores = inputAndCalculate()
+                CalculateGradientProportion(
                     maxValue = 5F,
                     minValue = 0.1F,
                     firstThreshold = 1.3F,
                     secondThreshold = 2.67F,
-                    fibrosisScore = score.toFloat())
-//                GraphFibrosis(
-//                    width = 200F,
-//                    fibrosisScore = 100F,
-//                    mediumColorValue = mediumColorValue
-//                )
+                    fibrosisScore = allScores.fib4score.toFloat(),
+                    firstLabel = stringResource(R.string.lowRisk),
+                    secondLabel = stringResource(R.string.intermediateRisk),
+                    thirdLabel = stringResource(R.string.highRisk)
+                )
+                Text(
+                    text = "${stringResource(R.string.fib4score)} ${allScores.fib4score}",
+                    modifier = Modifier
+                        .padding(10.dp)
+
+                )
+                CalculateGradientProportion(
+                    maxValue = 10F,
+                    minValue = 0.01F,
+                    firstThreshold = 1.34F,
+                    secondThreshold = 0F,
+                    fibrosisScore = allScores.apri.toFloat(),
+                    firstLabel = stringResource(R.string.fibrosisStage02),
+                    secondLabel = stringResource(R.string.fibrosisStage34),
+                    thirdLabel = ""
+                )
             }
         }
     }
@@ -115,43 +137,49 @@ private fun CalculateGradientProportion(
     minValue: Float,
     firstThreshold: Float,
     secondThreshold: Float,
-    fibrosisScore: Float
+    fibrosisScore: Float,
+    firstLabel: String,
+    secondLabel: String,
+    thirdLabel: String
 )//: Float
 {
-val mediumColorValue =
-    1 - (secondThreshold - firstThreshold) / (maxValue - minValue)
-    //return mediumColorValue
+    val mediumColorValue =
+        1 - (secondThreshold - firstThreshold) / (maxValue - minValue)
     GraphFibrosis(
-        width = 200F,
+        canvasWidth = 200F,
         fibrosisScore = fibrosisScore,
         mediumColorValue = mediumColorValue,
         maxValue = maxValue,
         minValue = minValue,
         firstThreshold = firstThreshold,
         secondThreshold = secondThreshold,
+        firstLabel = firstLabel,
+        secondLabel = secondLabel,
+        thirdLabel = thirdLabel
     )
 }
 
 @Composable
 fun GraphFibrosis(
-    width: Float,
+    canvasWidth: Float,
     fibrosisScore: Float,
     mediumColorValue: Float,
     maxValue: Float,
     minValue: Float,
     firstThreshold: Float,
     secondThreshold: Float,
+    firstLabel: String,
+    secondLabel: String,
+    thirdLabel: String
 ) {
-    val canvasHeightValue = 200
+    val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
     val context = LocalContext.current
-    val lowRiskText = context.getString(R.string.lowRisk)
-    val intermediateRiskText = context.getString(R.string.intermediateRisk)
-    val highRiskText = context.getString(R.string.highRisk)
     Canvas(
         modifier = Modifier
-            .size(canvasHeight)
+            .height(canvasHeight)//, canvasWidth.dp)
+            .fillMaxWidth()
     )
     {
         drawIntoCanvas { canvas ->
@@ -166,7 +194,7 @@ fun GraphFibrosis(
                 startY = size.height * (0),
                 endY = size.height * (1F / 1F)
             )
-            val rectCornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
+            val rectCornerRadius = CornerRadius(10.dp.toPx(), 10.dp.toPx())
             val circleSize = 20F
             val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
             val circleHeight =
@@ -175,57 +203,76 @@ fun GraphFibrosis(
                 else  (1-(fibrosisScore/ (maxValue-minValue))) * size.height
             val circleGradient = Brush.radialGradient(
                 colors = circleColors,
-                center = Offset(x = width / 2, y = circleHeight),
+                center = Offset(x = size.width / 2, y = circleHeight),
                 radius = circleSize * 1.1F
             )
             drawRoundRect(
-                size = Size(width = width, height = size.height),
+                size = Size(width = size.width, height = size.height),
                 brush = rectGradient,
                 cornerRadius = rectCornerRadius
             )
-            drawLine(
-                color = Color.Black,
-                start = Offset(x = 0F, y = (1-(firstThreshold/ (maxValue-minValue))) * size.height),
-                end = Offset(x = width, y = (1-(firstThreshold/ (maxValue-minValue))) * size.height),
-                strokeWidth = 3F
+            drawThresholdLine(
+                height = size.height,
+                xPosition = ((firstThreshold/ (maxValue-minValue))) * size.width
             )
-            drawLine(
-                color = Color.Black,
-                start = Offset(x = 0F, y = (1-(secondThreshold/ (maxValue-minValue))) * size.height),
-                end = Offset(x = width, y = (1-(secondThreshold/ (maxValue-minValue))) * size.height),
-                strokeWidth = 3F
-            )
+            if (secondThreshold != 0F) {
+                drawThresholdLine(
+                    height = size.height,
+                    xPosition = ((secondThreshold / (maxValue - minValue))) * size.width
+                )
+            }
             drawText(
                 textMeasurer = textMeasurer,
-                text = lowRiskText,
-                topLeft = Offset(10F,(1-((firstThreshold + minValue)/2/ (maxValue-minValue))) * size.height)
+                text = firstLabel,
+                topLeft = Offset((((firstThreshold + minValue)/2/ (maxValue-minValue))) * size.width,10F)
             )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = intermediateRiskText,
-                topLeft = Offset(10F,(1-((secondThreshold + firstThreshold)/2/ (maxValue-minValue))) * size.height)
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = highRiskText,
-                topLeft = Offset(10F,(1-((maxValue + secondThreshold)/2/ (maxValue-minValue))) * size.height)
-            )
+            if (secondThreshold != 0F){
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = secondLabel,
+                    topLeft = Offset((((secondThreshold + firstThreshold)/2/ (maxValue-minValue))) * size.width,10F)
+                )
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = thirdLabel,
+                    topLeft = Offset((((maxValue + secondThreshold)/2/ (maxValue-minValue))) * size.width,10F)
+                )
+            } else {
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = secondLabel,
+                    topLeft = Offset((((maxValue + firstThreshold)/2/ (maxValue-minValue))) * size.width,10F)
+                )
+            }
+
             drawCircle(
                 brush = circleGradient,
                 radius = circleSize,
-                center = Offset(x = width / 2, y = circleHeight),
+                center = Offset(x = size.width / 2, y = circleHeight),
             )
         }
     }
 }
 
+fun DrawScope.drawThresholdLine(
+    height: Float,
+    xPosition: Float
+) {
+    drawLine(
+        color = Color.Black,
+        start = Offset(x = xPosition, y = 0F),
+        end = Offset(x = xPosition, y = height),
+        strokeWidth = 3F
+    )
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun Fib4Calculator(): Double {
-    val factor1 = remember { mutableDoubleStateOf(40.0) }
-    val factor2 = remember { mutableDoubleStateOf(30.0) }
-    val factor3 = remember { mutableDoubleStateOf(150.0) }
-    val factor4 = remember { mutableDoubleStateOf(30.0) }
+fun inputAndCalculate(): scores {
+    val age = remember { mutableDoubleStateOf(40.0) }
+    val ast = remember { mutableDoubleStateOf(35.0) }
+    val platelet = remember { mutableDoubleStateOf(150.0) }
+    val alt = remember { mutableDoubleStateOf(30.0) }
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
     var changedFactor3Unit by remember { mutableStateOf(true) }
@@ -239,33 +286,37 @@ fun Fib4Calculator(): Double {
         FlowRow(
             modifier = Modifier
                 .padding(4.dp)
-                //.align(Alignment.Bottom)
                 .wrapContentHeight(
                     align = Alignment.Bottom
                 ),
-            //verticalArrangement = Arrangement.Bottom,
         ) {
             InputValue(
-                label = R.string.age, value = factor1, width = 100,
+                label = R.string.age, value = age, width = 100,
                 unit = R.string.years, changeUnit = changedFactor1Unit, changedValueRate = 1.0
             )
             InputValue(
-                label = R.string.ast, value = factor2, width = 100,
+                label = R.string.ast, value = ast, width = 100,
                 unit = R.string.iul, changeUnit = changedFactor2Unit, changedValueRate = 1.0
             )
             InputValue(
-                label = R.string.plateletCount, value = factor3, width = 100,
+                label = R.string.plateletCount, value = platelet, width = 100,
                 unit = R.string.unit109L, changeUnit = changedFactor3Unit, changedValueRate = 1.0
             )
             InputValue(
-                label = R.string.alt, value = factor4, width = 100,
+                label = R.string.alt, value = alt, width = 100,
                 unit = R.string.iul, changeUnit = changedFactor4Unit, changedValueRate = 1.0
             )
         }
     }
-    val score = (factor1.doubleValue * factor2.doubleValue) /
-            (factor3.doubleValue * sqrt(factor4.doubleValue))
-    return score
+
+    val fib4score = (age.doubleValue * ast.doubleValue) /
+            (platelet.doubleValue * sqrt(alt.doubleValue))
+
+    val apri = ast.doubleValue / 30 / platelet.doubleValue
+
+    val allScores = scores(fib4score, apri)
+
+    return allScores
 }
 
 @Composable
@@ -281,7 +332,6 @@ fun InputValue(
     Row(
         modifier = Modifier
             .padding(4.dp),
-        //.align(Alignment.Bottom),
         verticalAlignment = Alignment.Bottom,
     ) {
         NumberInTextField(
@@ -293,8 +343,6 @@ fun InputValue(
         ) {
             Text(
                 text = parseStyledString(unit),
-                //onChanged = { changedBilirubinUnit = !changedBilirubinUnit },
-                //changed = changedBilirubinUnit
             )
             Spacer(modifier = Modifier.height(10.dp))
         }
