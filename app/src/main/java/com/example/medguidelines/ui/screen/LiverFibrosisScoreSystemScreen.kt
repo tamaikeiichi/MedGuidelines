@@ -98,6 +98,12 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
         ) {
             item {
                 allScores = inputAndCalculate()
+                allScoresRounded = Math.round(allScores * 100.0) / 100.0)
+                Text(
+                    text = "${stringResource(R.string.fib4)}",
+                    modifier = Modifier
+                        .padding(10.dp)
+                )
                 CalculateGradientProportion(
                     maxValue = 5F,
                     minValue = 0.1F,
@@ -112,7 +118,6 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                     text = "${stringResource(R.string.fib4score)} ${allScores.fib4score}",
                     modifier = Modifier
                         .padding(10.dp)
-
                 )
                 CalculateGradientProportion(
                     maxValue = 10F,
@@ -123,6 +128,11 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                     firstLabel = stringResource(R.string.fibrosisStage02),
                     secondLabel = stringResource(R.string.fibrosisStage34),
                     thirdLabel = ""
+                )
+                Text(
+                    text = "${stringResource(R.string.apriScore)} ${allScores.apri}",
+                    modifier = Modifier
+                        .padding(10.dp)
                 )
             }
         }
@@ -144,7 +154,6 @@ private fun CalculateGradientProportion(
     val mediumColorValue =
         (secondThreshold - firstThreshold) / (maxValue - minValue)
     GraphFibrosis(
-        canvasWidth = 200F,
         fibrosisScore = fibrosisScore,
         mediumColorValue = mediumColorValue,
         maxValue = maxValue,
@@ -159,7 +168,6 @@ private fun CalculateGradientProportion(
 
 @Composable
 fun GraphFibrosis(
-    canvasWidth: Float,
     fibrosisScore: Float,
     mediumColorValue: Float,
     maxValue: Float,
@@ -186,7 +194,6 @@ fun GraphFibrosis(
                 1.0f to Color(0xFFFF0180)
             )
             val rectGradient = Brush.horizontalGradient(
-                //colors = rectColors,
                 colorStops = rectColorStops,
                 startX = size.width * (0),
                 endX = size.width * (1F / 1F)
@@ -194,27 +201,29 @@ fun GraphFibrosis(
             val rectCornerRadius = CornerRadius(10.dp.toPx(), 10.dp.toPx())
             val circleSize = 20F
             val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
-            val circleWidth =
-                if (fibrosisScore > maxValue) 0F
-                else if (fibrosisScore < minValue) size.width
+            val circleXOffset =
+                if (fibrosisScore > maxValue) size.width
+                else if (fibrosisScore < minValue) 0F
                 else  (fibrosisScore/ (maxValue-minValue)) * size.width
+            val circleYOffset = size.height * 0.75F
             val circleGradient = Brush.radialGradient(
                 colors = circleColors,
-                center = Offset(x = circleWidth, y = size.height / 2),
+                center = Offset(x = circleXOffset, y = circleYOffset),
                 radius = circleSize * 1.1F
             )
             drawRoundRect(
-                size = Size(width = size.width, height = size.height),
+                size = Size(width = size.width, height = size.height/2),
                 brush = rectGradient,
+                topLeft = Offset(x = 0F, y = size.height/2),
                 cornerRadius = rectCornerRadius
             )
             drawThresholdLine(
-                height = size.height,
+                height = size.height/2,
                 xPosition = ((firstThreshold/ (maxValue-minValue))) * size.width
             )
             if (secondThreshold != 0F) {
                 drawThresholdLine(
-                    height = size.height,
+                    height = size.height/2,
                     xPosition = ((secondThreshold / (maxValue - minValue))) * size.width
                 )
             }
@@ -244,7 +253,7 @@ fun GraphFibrosis(
             drawCircle(
                 brush = circleGradient,
                 radius = circleSize,
-                center = Offset(x = circleWidth, y = size.height/2),
+                center = Offset(x = circleXOffset, y = circleYOffset),
             )
         }
     }
@@ -256,8 +265,8 @@ fun DrawScope.drawThresholdLine(
 ) {
     drawLine(
         color = Color.Black,
-        start = Offset(x = xPosition, y = 0F),
-        end = Offset(x = xPosition, y = height),
+        start = Offset(x = xPosition, y = height),
+        end = Offset(x = xPosition, y = height *2),
         strokeWidth = 3F
     )
 }
@@ -324,7 +333,6 @@ fun InputValue(
     changeUnit: Boolean,
     changedValueRate: Double
 ){
-
     Row(
         modifier = Modifier
             .padding(4.dp),
