@@ -62,6 +62,8 @@ import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
 import kotlin.math.sqrt
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.memberProperties
 
 //regarding APRI:
 //Diagnostic Accuracy of Noninvasive Fibrosis Models to Detect Change in Fibrosis Stage
@@ -72,13 +74,27 @@ val references = listOf(
     textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
     textAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
 )
-data class scores(
+
+data class Scores(
     val fib4score: Double,
-    val apri: Double
-)
+    val apri: Double,
+){
+    fun multiplyAll(multiplier: Double) {
+
+        this::class.memberProperties.forEach { property ->
+            if (property is KMutableProperty<*>) {
+                val currentValue = property.getter.call(this)
+                if (currentValue is Double) {
+                    // Use the setter to modify the property directly
+                    property.setter.call(this, currentValue * multiplier)
+                }
+            }
+        }
+    }
+}
 @Composable
 fun LiverFibrosisScoreSystemScreen(navController: NavController) {
-    var allScores by remember { mutableStateOf(scores(0.0,0.0)) }
+    var allScores by remember { mutableStateOf(Scores(0.0,0.0)) }
     Scaffold(
         topBar = {
             TitleTopAppBar(
@@ -104,7 +120,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                     modifier = Modifier
                         .padding(10.dp)
                 )
-                CalculateGradientProportion(
+                GraphAndThreshold(
                     maxValue = 5F,
                     minValue = 0.1F,
                     firstThreshold = 1.3F,
@@ -119,14 +135,14 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                     modifier = Modifier
                         .padding(10.dp)
                 )
-                CalculateGradientProportion(
-                    maxValue = 10F,
+                GraphAndThreshold(
+                    maxValue = 3F,
                     minValue = 0.01F,
                     firstThreshold = 1.34F,
                     secondThreshold = 0F,
                     fibrosisScore = allScores.apri.toFloat(),
                     firstLabel = stringResource(R.string.fibrosisStage02),
-                    secondLabel = stringResource(R.string.fibrosisStage34),
+                    secondLabel = stringResource(R.string.stage34),
                     thirdLabel = ""
                 )
                 Text(
@@ -139,37 +155,11 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
     }
 }
 
-@Composable
-private fun CalculateGradientProportion(
-    maxValue: Float,
-    minValue: Float,
-    firstThreshold: Float,
-    secondThreshold: Float,
-    fibrosisScore: Float,
-    firstLabel: String,
-    secondLabel: String,
-    thirdLabel: String
-)//: Float
-{
-    val mediumColorValue =
-        (secondThreshold - firstThreshold) / (maxValue - minValue)
-    GraphFibrosis(
-        fibrosisScore = fibrosisScore,
-        mediumColorValue = mediumColorValue,
-        maxValue = maxValue,
-        minValue = minValue,
-        firstThreshold = firstThreshold,
-        secondThreshold = secondThreshold,
-        firstLabel = firstLabel,
-        secondLabel = secondLabel,
-        thirdLabel = thirdLabel
-    )
-}
+
 
 @Composable
-fun GraphFibrosis(
+fun GraphAndThreshold(
     fibrosisScore: Float,
-    mediumColorValue: Float,
     maxValue: Float,
     minValue: Float,
     firstThreshold: Float,
@@ -178,6 +168,8 @@ fun GraphFibrosis(
     secondLabel: String,
     thirdLabel: String
 ) {
+    val mediumColorValue =
+        (secondThreshold - firstThreshold) / (maxValue - minValue)
     val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
@@ -188,11 +180,19 @@ fun GraphFibrosis(
     )
     {
         drawIntoCanvas { canvas ->
-            val rectColorStops = arrayOf(
-                0.0f to Color(0xFF1BFF0B),
-                mediumColorValue to Color(0xFFFFE30B),
-                1.0f to Color(0xFFFF0180)
-            )
+            val rectColorStops =
+                if (secondThreshold == 0F) {
+                    arrayOf(
+                    0.0f to Color(0xFF1BFF0B),
+                    1.0f to Color(0xFFFF0180)
+                    )
+                } else {
+                    arrayOf(
+                    0.0f to Color(0xFF1BFF0B),
+                    mediumColorValue to Color(0xFFFFE30B),
+                    1.0f to Color(0xFFFF0180)
+                    )
+                }
             val rectGradient = Brush.horizontalGradient(
                 colorStops = rectColorStops,
                 startX = size.width * (0),
@@ -273,7 +273,7 @@ fun DrawScope.drawThresholdLine(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun inputAndCalculate(): scores {
+fun inputAndCalculate(): Scores {
     val age = remember { mutableDoubleStateOf(40.0) }
     val ast = remember { mutableDoubleStateOf(35.0) }
     val platelet = remember { mutableDoubleStateOf(150.0) }
@@ -319,7 +319,7 @@ fun inputAndCalculate(): scores {
 
     val apri = ast.doubleValue / 30 / platelet.doubleValue
 
-    val allScores = scores(fib4score, apri)
+    val allScores = Scores(fib4score, apri)
 
     return allScores
 }
