@@ -23,6 +23,7 @@ protobufJavalite = "3.21.9"
 uiTestAndroid = "1.7.2"
 tvMaterial = "1.0.0"
 graphicsShapesAndroid = "1.0.1"
+roomCompilerProcessingTesting = "2.6.1"
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
@@ -52,6 +53,7 @@ protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.
 androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
 androidx-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "tvMaterial" }
 androidx-graphics-shapes-android = { group = "androidx.graphics", name = "graphics-shapes-android", version.ref = "graphicsShapesAndroid" }
+androidx-room-compiler-processing-testing = { group = "androidx.room", name = "room-compiler-processing-testing", version.ref = "roomCompilerProcessingTesting" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

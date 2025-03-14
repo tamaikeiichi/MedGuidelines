@@ -1,5 +1,6 @@
 package com.example.medguidelines.ui.screen
 
+import android.icu.text.DecimalFormat
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,9 +62,9 @@ import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
+import java.math.BigDecimal
 import kotlin.math.sqrt
 import kotlin.reflect.KMutableProperty
-import kotlin.reflect.full.memberProperties
 
 //regarding APRI:
 //Diagnostic Accuracy of Noninvasive Fibrosis Models to Detect Change in Fibrosis Stage
@@ -76,22 +77,31 @@ val references = listOf(
 )
 
 data class Scores(
-    val fib4score: Double,
-    val apri: Double,
+    var fib4score: BigDecimal,
+    var apri: BigDecimal,
 ){
-    fun multiplyAll(multiplier: Double) {
+    // ... (other functions like multiplyAll)
 
-        this::class.memberProperties.forEach { property ->
-            if (property is KMutableProperty<*>) {
-                val currentValue = property.getter.call(this)
-                if (currentValue is Double) {
-                    // Use the setter to modify the property directly
-                    property.setter.call(this, currentValue * multiplier)
-                }
-            }
-        }
+    /**
+     * Rounds the 'fib4score' and 'apri' properties of the Scores object to two decimal places.
+     * This method modifies the Scores object in place.
+     */
+    fun roundToTwoDecimals() {
+        fib4score = roundDouble(fib4score)
+        apri = roundDouble(apri)
+    }
+
+//    private fun roundDouble(value: BigDecimal): BigDecimal {
+//        val formatter = DecimalFormat("#.00")
+//        return formatter.format(value)
+//    }
+
+    private fun roundDouble(value: BigDecimal): BigDecimal {
+        return (Math.round(value * 100.0.toBigDecimal()) / 100.0.toBigDecimal())
     }
 }
+
+
 @Composable
 fun LiverFibrosisScoreSystemScreen(navController: NavController) {
     var allScores by remember { mutableStateOf(Scores(0.0,0.0)) }
@@ -114,7 +124,13 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
         ) {
             item {
                 allScores = inputAndCalculate()
-                allScoresRounded = Math.round(allScores * 100.0) / 100.0)
+                allScores.roundToTwoDecimals()
+//                val allScoresRounded =
+//                    Scores(Math.round(allScores.component1() * 100.0 / 100.0).toDouble(),
+//                        Math.round(allScores.component2() * 100.0 / 100.0).toDouble()
+//                            )
+//
+//                allScores = allScoresRounded
                 Text(
                     text = "${stringResource(R.string.fib4)}",
                     modifier = Modifier

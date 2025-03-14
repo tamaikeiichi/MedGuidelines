@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -69,6 +70,7 @@ dependencies {
     implementation(libs.androidx.ui.test.android)
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.graphics.shapes.android)
+    implementation(libs.androidx.room.compiler.processing.testing)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
