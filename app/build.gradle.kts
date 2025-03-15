@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.example.medguidelines"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.medguidelines"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = 26
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.accompanist.flowlayout)
+
 }
 
 protobuf {
@@ -102,3 +103,10 @@ protobuf {
         }
     }
 }
+
+configurations.implementation{
+    exclude(group = "com.intellij", module = "annotations")
+    exclude(group = "com.google.auto.value", module = "auto-value")
+    exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
+}
+

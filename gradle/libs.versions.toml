@@ -1,10 +1,10 @@
 [versions]
-accompanistFlowlayout = "0.24.2-alpha"
+accompanistFlowlayout = "0.36.0"
 agp = "8.9.0"
 androidxDatastorePreferences = "1.0.0"
 datastorePreferencesVersion = "1.1.1"
 kotlin = "1.9.0"
-coreKtx = "1.13.1"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
