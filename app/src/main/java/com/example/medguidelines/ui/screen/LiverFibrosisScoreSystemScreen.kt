@@ -63,6 +63,7 @@ import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
 import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.math.sqrt
 import kotlin.reflect.KMutableProperty
 
@@ -77,8 +78,8 @@ val references = listOf(
 )
 
 data class Scores(
-    var fib4score: BigDecimal,
-    var apri: BigDecimal,
+    var fib4score: Double,
+    var apri: Double,
 ){
     // ... (other functions like multiplyAll)
 
@@ -96,8 +97,8 @@ data class Scores(
 //        return formatter.format(value)
 //    }
 
-    private fun roundDouble(value: BigDecimal): BigDecimal {
-        return (Math.round(value * 100.0.toBigDecimal()) / 100.0.toBigDecimal())
+    private fun roundDouble(value: Double): Double {
+        return Math.round(value * 10.0) / 10.0
     }
 }
 
