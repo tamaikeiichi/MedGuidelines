@@ -81,24 +81,12 @@ data class Scores(
     var fib4score: Double,
     var apri: Double,
 ){
-    // ... (other functions like multiplyAll)
-
-    /**
-     * Rounds the 'fib4score' and 'apri' properties of the Scores object to two decimal places.
-     * This method modifies the Scores object in place.
-     */
     fun roundToTwoDecimals() {
         fib4score = roundDouble(fib4score)
         apri = roundDouble(apri)
     }
-
-//    private fun roundDouble(value: BigDecimal): BigDecimal {
-//        val formatter = DecimalFormat("#.00")
-//        return formatter.format(value)
-//    }
-
     private fun roundDouble(value: Double): Double {
-        return Math.round(value * 10.0) / 10.0
+        return Math.round(value * 100.0) / 100.0
     }
 }
 
@@ -126,47 +114,50 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
             item {
                 allScores = inputAndCalculate()
                 allScores.roundToTwoDecimals()
-//                val allScoresRounded =
-//                    Scores(Math.round(allScores.component1() * 100.0 / 100.0).toDouble(),
-//                        Math.round(allScores.component2() * 100.0 / 100.0).toDouble()
-//                            )
-//
-//                allScores = allScoresRounded
-                Text(
-                    text = "${stringResource(R.string.fib4)}",
+                Card(
                     modifier = Modifier
-                        .padding(10.dp)
-                )
-                GraphAndThreshold(
-                    maxValue = 5F,
-                    minValue = 0.1F,
-                    firstThreshold = 1.3F,
-                    secondThreshold = 2.67F,
-                    fibrosisScore = allScores.fib4score.toFloat(),
-                    firstLabel = stringResource(R.string.lowRisk),
-                    secondLabel = stringResource(R.string.intermediateRisk),
-                    thirdLabel = stringResource(R.string.highRisk)
-                )
-                Text(
-                    text = "${stringResource(R.string.fib4score)} ${allScores.fib4score}",
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "${stringResource(R.string.fib4)}",
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                    GraphAndThreshold(
+                        maxValue = 5F,
+                        minValue = 0.1F,
+                        firstThreshold = 1.3F,
+                        secondThreshold = 2.67F,
+                        fibrosisScore = allScores.fib4score.toFloat(),
+                        firstLabel = stringResource(R.string.lowRisk),
+                        secondLabel = stringResource(R.string.intermediateRisk),
+                        thirdLabel = stringResource(R.string.highRisk),
+                        score = allScores.fib4score
+                    )
+                }
+                Card(
                     modifier = Modifier
-                        .padding(10.dp)
-                )
-                GraphAndThreshold(
-                    maxValue = 3F,
-                    minValue = 0.01F,
-                    firstThreshold = 1.34F,
-                    secondThreshold = 0F,
-                    fibrosisScore = allScores.apri.toFloat(),
-                    firstLabel = stringResource(R.string.fibrosisStage02),
-                    secondLabel = stringResource(R.string.stage34),
-                    thirdLabel = ""
-                )
-                Text(
-                    text = "${stringResource(R.string.apriScore)} ${allScores.apri}",
-                    modifier = Modifier
-                        .padding(10.dp)
-                )
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "${stringResource(R.string.apri)}",
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                    GraphAndThreshold(
+                        maxValue = 3F,
+                        minValue = 0.01F,
+                        firstThreshold = 1.34F,
+                        secondThreshold = 0F,
+                        fibrosisScore = allScores.apri.toFloat(),
+                        firstLabel = stringResource(R.string.fibrosisStage02),
+                        secondLabel = stringResource(R.string.stage34),
+                        thirdLabel = "",
+                        score = allScores.apri
+                    )
+                }
             }
         }
     }
@@ -183,7 +174,8 @@ fun GraphAndThreshold(
     secondThreshold: Float,
     firstLabel: String,
     secondLabel: String,
-    thirdLabel: String
+    thirdLabel: String,
+    score: Double
 ) {
     val mediumColorValue =
         (secondThreshold - firstThreshold) / (maxValue - minValue)
@@ -272,6 +264,25 @@ fun GraphAndThreshold(
                 radius = circleSize,
                 center = Offset(x = circleXOffset, y = circleYOffset),
             )
+            if (circleXOffset <= size.width/2) {
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = score.toString(),
+                    topLeft = Offset(
+                        x = circleXOffset + circleSize * 1.5F,
+                        y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
+                    )
+                )
+            } else {
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = score.toString(),
+                    topLeft = Offset(
+                        x = circleXOffset - circleSize * 1.5F - textMeasurer.measure(text = score.toString()).size.width,
+                        y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
+                    )
+                )
+            }
         }
     }
 }
