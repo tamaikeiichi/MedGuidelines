@@ -207,7 +207,7 @@ fun GraphAndThreshold(
                 startX = size.width * (0),
                 endX = size.width * (1F / 1F)
             )
-            val rectCornerRadius = CornerRadius(10.dp.toPx(), 10.dp.toPx())
+            val rectCornerRadius = CornerRadius(0.dp.toPx(), 10.dp.toPx())
             val circleSize = 20F
             val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
             val circleXOffset =
