@@ -345,7 +345,7 @@ fun inputAndCalculate(): Scores {
     val fib4score = (age.doubleValue * ast.doubleValue) /
             (platelet.doubleValue * sqrt(alt.doubleValue))
 
-    val apri = ast.doubleValue / 30 / platelet.doubleValue
+    val apri = (ast.doubleValue / 30 / platelet.doubleValue) *100
 
     val allScores = Scores(fib4score, apri)
 
