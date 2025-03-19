@@ -215,4 +215,8 @@
     <string name="apriScore">APRI score</string>
     <string name="fib4">FIB4</string>
     <string name="apri">APRI (AST to Platelet Ratio Index)</string>
+    <string name="shearWaveElastography">Shear Wave Elastography</string>
+    <string name="ms">m/s</string>
+    <string name="normal">Normal\n</string>
+    <string name="compensatedAdvancedChronicLiverDisease">Compensated Advanced Chronic Liver Disease</string>
 </resources>

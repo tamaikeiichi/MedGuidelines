@@ -72,6 +72,9 @@ import kotlin.reflect.KMutableProperty
 //Siddiqui, Mohammad ShadabAllende, Daniela et al.
 //Clinical Gastroenterology and Hepatology, Volume 17, Issue 9, 1877 - 1885.e5
 
+//regarding shear wave elastography:
+//https://doi.org/10.1148/radiol.2020192437
+
 val references = listOf(
     textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
     textAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
@@ -80,10 +83,12 @@ val references = listOf(
 data class Scores(
     var fib4score: Double,
     var apri: Double,
+    var swe: Double
 ){
     fun roundToTwoDecimals() {
         fib4score = roundDouble(fib4score)
         apri = roundDouble(apri)
+        swe = roundDouble(swe)
     }
     private fun roundDouble(value: Double): Double {
         return Math.round(value * 100.0) / 100.0
@@ -93,7 +98,7 @@ data class Scores(
 
 @Composable
 fun LiverFibrosisScoreSystemScreen(navController: NavController) {
-    var allScores by remember { mutableStateOf(Scores(0.0,0.0)) }
+    var allScores by remember { mutableStateOf(Scores(0.0,0.0, 0.0)) }
     Scaffold(
         topBar = {
             TitleTopAppBar(
@@ -120,7 +125,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         .fillMaxWidth(),
                 ) {
                     Text(
-                        text = "${stringResource(R.string.fib4)}",
+                        text = stringResource(R.string.fib4),
                         modifier = Modifier
                             .padding(5.dp)
                     )
@@ -129,7 +134,6 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         minValue = 0.1F,
                         firstThreshold = 1.3F,
                         secondThreshold = 2.67F,
-                        fibrosisScore = allScores.fib4score.toFloat(),
                         firstLabel = stringResource(R.string.lowRisk),
                         secondLabel = stringResource(R.string.intermediateRisk),
                         thirdLabel = stringResource(R.string.highRisk),
@@ -142,7 +146,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         .fillMaxWidth(),
                 ) {
                     Text(
-                        text = "${stringResource(R.string.apri)}",
+                        text = stringResource(R.string.apri),
                         modifier = Modifier
                             .padding(5.dp)
                     )
@@ -151,11 +155,31 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         minValue = 0.01F,
                         firstThreshold = 1.34F,
                         secondThreshold = 0F,
-                        fibrosisScore = allScores.apri.toFloat(),
                         firstLabel = stringResource(R.string.fibrosisStage02),
                         secondLabel = stringResource(R.string.stage34),
                         thirdLabel = "",
                         score = allScores.apri
+                    )
+                }
+                Card(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(R.string.shearWaveElastography),
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                    GraphAndThreshold(
+                        maxValue = 3F,
+                        minValue = 0.01F,
+                        firstThreshold = 1.3F,
+                        secondThreshold = 2.1F,
+                        firstLabel = stringResource(R.string.normal),
+                        secondLabel = "",
+                        thirdLabel = stringResource(R.string.compensatedAdvancedChronicLiverDisease),
+                        score = allScores.swe
                     )
                 }
             }
@@ -167,7 +191,6 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
 
 @Composable
 fun GraphAndThreshold(
-    fibrosisScore: Float,
     maxValue: Float,
     minValue: Float,
     firstThreshold: Float,
@@ -211,9 +234,9 @@ fun GraphAndThreshold(
             val circleSize = 20F
             val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
             val circleXOffset =
-                if (fibrosisScore > maxValue) size.width
-                else if (fibrosisScore < minValue) 0F
-                else  (fibrosisScore/ (maxValue-minValue)) * size.width
+                if (score > maxValue) size.width
+                else if (score < minValue) 0F
+                else  (score.toFloat()/ (maxValue-minValue)) * size.width
             val circleYOffset = size.height * 0.75F
             val circleGradient = Brush.radialGradient(
                 colors = circleColors,
@@ -306,10 +329,12 @@ fun inputAndCalculate(): Scores {
     val ast = remember { mutableDoubleStateOf(35.0) }
     val platelet = remember { mutableDoubleStateOf(150.0) }
     val alt = remember { mutableDoubleStateOf(30.0) }
+    val swe = remember { mutableDoubleStateOf(1.0) }
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
     var changedFactor3Unit by remember { mutableStateOf(true) }
     var changedFactor4Unit by remember { mutableStateOf(true) }
+    var changeFactor5Unit by remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier
@@ -339,6 +364,10 @@ fun inputAndCalculate(): Scores {
                 label = R.string.alt, value = alt, width = 100,
                 unit = R.string.iul, changeUnit = changedFactor4Unit, changedValueRate = 1.0
             )
+            InputValue(
+                label = R.string.shearWaveElastography, value = swe, width = 100,
+                unit = R.string.ms, changeUnit = changeFactor5Unit, changedValueRate = 1.0
+            )
         }
     }
 
@@ -347,7 +376,7 @@ fun inputAndCalculate(): Scores {
 
     val apri = ((ast.doubleValue / 30) / platelet.doubleValue) * 100
 
-    val allScores = Scores(fib4score, apri)
+    val allScores = Scores(fib4score, apri, swe.doubleValue)
 
     return allScores
 }
