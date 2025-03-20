@@ -1,8 +1,8 @@
 package com.example.medguidelines.ui.screen
 
-import android.icu.text.DecimalFormat
+import android.R.attr.onClick
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -22,8 +22,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -31,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,8 +44,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalContext
@@ -53,24 +62,29 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavController
-import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
+import com.example.medguidelines.ui.component.tapOrPress
 import com.example.medguidelines.ui.component.textAndUrl
-import java.math.BigDecimal
-import java.math.RoundingMode
+import kotlin.math.round
 import kotlin.math.sqrt
-import kotlin.reflect.KMutableProperty
 
 //regarding APRI:
 //Diagnostic Accuracy of Noninvasive Fibrosis Models to Detect Change in Fibrosis Stage
 //Siddiqui, Mohammad ShadabAllende, Daniela et al.
 //Clinical Gastroenterology and Hepatology, Volume 17, Issue 9, 1877 - 1885.e5
+
+//regarding shear wave elastography:
+//https://doi.org/10.1148/radiol.2020192437
 
 val references = listOf(
     textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
@@ -80,10 +94,12 @@ val references = listOf(
 data class Scores(
     var fib4score: Double,
     var apri: Double,
+    var swe: Double
 ){
     fun roundToTwoDecimals() {
         fib4score = roundDouble(fib4score)
         apri = roundDouble(apri)
+        swe = roundDouble(swe)
     }
     private fun roundDouble(value: Double): Double {
         return Math.round(value * 100.0) / 100.0
@@ -93,7 +109,7 @@ data class Scores(
 
 @Composable
 fun LiverFibrosisScoreSystemScreen(navController: NavController) {
-    var allScores by remember { mutableStateOf(Scores(0.0,0.0)) }
+    var allScores by remember { mutableStateOf(Scores(0.0,0.0, 0.0)) }
     Scaffold(
         topBar = {
             TitleTopAppBar(
@@ -117,10 +133,12 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                 Card(
                     modifier = Modifier
                         .padding(4.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+
+                    ,
                 ) {
                     Text(
-                        text = "${stringResource(R.string.fib4)}",
+                        text = stringResource(R.string.fib4),
                         modifier = Modifier
                             .padding(5.dp)
                     )
@@ -129,7 +147,6 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         minValue = 0.1F,
                         firstThreshold = 1.3F,
                         secondThreshold = 2.67F,
-                        fibrosisScore = allScores.fib4score.toFloat(),
                         firstLabel = stringResource(R.string.lowRisk),
                         secondLabel = stringResource(R.string.intermediateRisk),
                         thirdLabel = stringResource(R.string.highRisk),
@@ -142,7 +159,7 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         .fillMaxWidth(),
                 ) {
                     Text(
-                        text = "${stringResource(R.string.apri)}",
+                        text = stringResource(R.string.apri),
                         modifier = Modifier
                             .padding(5.dp)
                     )
@@ -151,23 +168,42 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         minValue = 0.01F,
                         firstThreshold = 1.34F,
                         secondThreshold = 0F,
-                        fibrosisScore = allScores.apri.toFloat(),
                         firstLabel = stringResource(R.string.fibrosisStage02),
                         secondLabel = stringResource(R.string.stage34),
                         thirdLabel = "",
                         score = allScores.apri
                     )
                 }
+                Card(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(R.string.shearWaveElastography),
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                    GraphAndThreshold(
+                        maxValue = 3F,
+                        minValue = 0.01F,
+                        firstThreshold = 1.3F,
+                        secondThreshold = 2.1F,
+                        firstLabel = stringResource(R.string.normal),
+                        secondLabel = "",
+                        thirdLabel = stringResource(R.string.cACLD),
+                        thirdLabelInDetail = stringResource(R.string.compensatedAdvancedChronicLiverDisease),
+                        score = allScores.swe
+                    )
+                }
+
             }
         }
     }
 }
 
-
-
 @Composable
 fun GraphAndThreshold(
-    fibrosisScore: Float,
     maxValue: Float,
     minValue: Float,
     firstThreshold: Float,
@@ -175,6 +211,7 @@ fun GraphAndThreshold(
     firstLabel: String,
     secondLabel: String,
     thirdLabel: String,
+    thirdLabelInDetail: String = "",
     score: Double
 ) {
     val mediumColorValue =
@@ -182,24 +219,56 @@ fun GraphAndThreshold(
     val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
+
+//    var selectedPositionX: Float by remember { mutableFloatStateOf(0F) }
+//    var selectedPositionY: Float by remember { mutableFloatStateOf(0F) }
+
+    var offsetXOfThirdLabel: Float = 0F
+    var offsetYOfThirdLabel: Float = 0F
+    var heightOfThirdLabel: Float = 0F
+    var widthOfThirdLabel: Float = 0F
+
+    var thirdLabelTapped by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val imageBitmap: ImageBitmap? =
+        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)?.toBitmap()?.asImageBitmap()
+
+    val colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primaryContainer, BlendMode.SrcIn)
+
+//    var tapHappened by remember { mutableStateOf(false) }
+
     Canvas(
         modifier = Modifier
             .height(canvasHeight)//, canvasWidth.dp)
             .fillMaxWidth()
+            .tapOrPress(
+                onStart = { offsetX, offsetY -> Unit
+                },
+                onCancel = { offsetX, offsetY -> Unit
+                },
+                onCompleted = { offsetX, offsetY ->
+                    val isInsideXRegion = offsetX > offsetXOfThirdLabel && offsetX < offsetXOfThirdLabel + widthOfThirdLabel
+                    val isInsideYRegion = offsetY > offsetYOfThirdLabel && offsetY < offsetYOfThirdLabel + heightOfThirdLabel
+                    if (isInsideXRegion && isInsideYRegion) {
+                        thirdLabelTapped = !thirdLabelTapped
+                    }
+
+                }
+            )
     )
     {
         drawIntoCanvas { canvas ->
             val rectColorStops =
                 if (secondThreshold == 0F) {
                     arrayOf(
-                    0.0f to Color(0xFF1BFF0B),
-                    1.0f to Color(0xFFFF0180)
+                        0.0f to Color(0xFF1BFF0B),
+                        1.0f to Color(0xFFFF0180)
                     )
                 } else {
                     arrayOf(
-                    0.0f to Color(0xFF1BFF0B),
-                    mediumColorValue to Color(0xFFFFE30B),
-                    1.0f to Color(0xFFFF0180)
+                        0.0f to Color(0xFF1BFF0B),
+                        mediumColorValue to Color(0xFFFFE30B),
+                        1.0f to Color(0xFFFF0180)
                     )
                 }
             val rectGradient = Brush.horizontalGradient(
@@ -211,9 +280,9 @@ fun GraphAndThreshold(
             val circleSize = 20F
             val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
             val circleXOffset =
-                if (fibrosisScore > maxValue) size.width
-                else if (fibrosisScore < minValue) 0F
-                else  (fibrosisScore/ (maxValue-minValue)) * size.width
+                if (score > maxValue) size.width
+                else if (score < minValue) 0F
+                else  (score.toFloat()/ (maxValue-minValue)) * size.width
             val circleYOffset = size.height * 0.75F
             val circleGradient = Brush.radialGradient(
                 colors = circleColors,
@@ -252,6 +321,23 @@ fun GraphAndThreshold(
                     text = thirdLabel,
                     topLeft = Offset(10F+(secondThreshold/ (maxValue-minValue)) * size.width,10F)
                 )
+                offsetXOfThirdLabel = 10F+(secondThreshold/ (maxValue-minValue)) * size.width
+                offsetYOfThirdLabel = 10F
+                heightOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.height.toFloat()
+                widthOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.width.toFloat()
+
+
+                if (thirdLabelInDetail != "") {
+                    if (imageBitmap != null) {
+                        drawImage(
+                            image = imageBitmap,
+                            topLeft = Offset(
+                                x = offsetXOfThirdLabel + widthOfThirdLabel,
+                                y = offsetYOfThirdLabel),
+                            colorFilter = ColorFilter.tint(Color(0xFFFF9800))
+                        )
+                    }
+                }
             } else {
                 drawText(
                     textMeasurer = textMeasurer,
@@ -284,6 +370,33 @@ fun GraphAndThreshold(
                 )
             }
         }
+
+    }
+    if (thirdLabelTapped) {
+        Popup(
+            //offset = IntOffset(offsetXOfThirdLabel.toInt(), offsetYOfThirdLabel.toInt())
+        ) {
+            MyPopupContent(
+                text = thirdLabelInDetail,
+                onClick = {thirdLabelTapped = !thirdLabelTapped})
+        }
+    }
+}
+
+@Composable
+fun MyPopupContent(text: String, onClick: () -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
+        shadowElevation = 10.dp,
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier
+            .padding(8.dp) // Optional: Add padding around the text
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(8.dp) // Optional: Add padding inside the surface
+        )
     }
 }
 
@@ -306,10 +419,12 @@ fun inputAndCalculate(): Scores {
     val ast = remember { mutableDoubleStateOf(35.0) }
     val platelet = remember { mutableDoubleStateOf(150.0) }
     val alt = remember { mutableDoubleStateOf(30.0) }
+    val swe = remember { mutableDoubleStateOf(1.0) }
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
     var changedFactor3Unit by remember { mutableStateOf(true) }
     var changedFactor4Unit by remember { mutableStateOf(true) }
+    var changeFactor5Unit by remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier
@@ -339,15 +454,19 @@ fun inputAndCalculate(): Scores {
                 label = R.string.alt, value = alt, width = 100,
                 unit = R.string.iul, changeUnit = changedFactor4Unit, changedValueRate = 1.0
             )
+            InputValue(
+                label = R.string.shearWaveElastography, value = swe, width = 100,
+                unit = R.string.ms, changeUnit = changeFactor5Unit, changedValueRate = 1.0
+            )
         }
     }
 
     val fib4score = (age.doubleValue * ast.doubleValue) /
             (platelet.doubleValue * sqrt(alt.doubleValue))
 
-    val apri = (ast.doubleValue / 30 / platelet.doubleValue) *100
+    val apri = ((ast.doubleValue / 30) / platelet.doubleValue) * 100
 
-    val allScores = Scores(fib4score, apri)
+    val allScores = Scores(fib4score, apri, swe.doubleValue)
 
     return allScores
 }
@@ -379,27 +498,6 @@ fun InputValue(
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
-}
-
-@Composable
-private fun ClickableText(
-    text: Int,
-    onChanged: (Boolean) -> Unit,
-    changed: Boolean
-){
-    Text(
-        text = parseStyledString(text),
-        modifier = Modifier
-            .padding(5.dp)
-            .clickable {
-                onChanged(changed)
-            }
-            .background(
-                color = inverseOnSurfaceLight,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(5.dp),
-    )
 }
 
 @Composable
