@@ -215,6 +215,7 @@ fun GraphAndThreshold(
 
     var thirdLabelTapped by remember { mutableStateOf(false) }
 
+    var tapHappened by remember { mutableStateOf(false) }
 
     Canvas(
         modifier = Modifier
@@ -227,15 +228,20 @@ fun GraphAndThreshold(
                 },
                 onCompleted = { offsetX, offsetY ->
                     selectedPositionX = offsetX
-                    selectedPositionY = offsetY
-                    if (selectedPositionX > offsetXOfThirdLabel &&
-                        selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel) {
-                        if (selectedPositionY > offsetYOfThirdLabel &&
-                            selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
-                        ) {
-                            thirdLabelTapped = !thirdLabelTapped
-                        }
-                    }
+                       selectedPositionY = offsetY
+                    thirdLabelTapped = !thirdLabelTapped
+//                    if (!tapHappened) {
+//                        selectedPositionX = offsetX
+//                        selectedPositionY = offsetY
+//                        tapHappened = true
+//                        val isInsideXRegion =
+//                            selectedPositionX > offsetXOfThirdLabel && selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel
+//                        val isInsideYRegion =
+//                            selectedPositionY > offsetYOfThirdLabel && selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
+//                        if (isInsideXRegion && isInsideYRegion) {
+//                            thirdLabelTapped = !thirdLabelTapped
+//                        }
+//                    }
                 }
             )
     )
@@ -339,14 +345,14 @@ fun GraphAndThreshold(
                     )
                 )
             }
-            if (selectedPositionX > offsetXOfThirdLabel &&
-                selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel) {
-                if (selectedPositionY > offsetYOfThirdLabel &&
-                    selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
-                ) {
-                    thirdLabelTapped = !thirdLabelTapped
-                }
-            }
+//            if (selectedPositionX > offsetXOfThirdLabel &&
+//                selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel) {
+//                if (selectedPositionY > offsetYOfThirdLabel &&
+//                    selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
+//                ) {
+//                    thirdLabelTapped = !thirdLabelTapped
+//                }
+//            }
         }
 
     }
