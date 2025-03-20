@@ -230,7 +230,8 @@ fun GraphAndThreshold(
 
     var thirdLabelTapped by remember { mutableStateOf(false) }
     val context = LocalContext.current
-
+    val imageBitmap: ImageBitmap? =
+        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)?.toBitmap()?.asImageBitmap()
 
     val colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primaryContainer, BlendMode.SrcIn)
 
