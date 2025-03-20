@@ -1,6 +1,6 @@
 package com.example.medguidelines.ui.screen
 
-import android.icu.text.DecimalFormat
+import android.graphics.Rect
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +29,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -61,11 +62,9 @@ import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
+import com.example.medguidelines.ui.component.tapOrPress
 import com.example.medguidelines.ui.component.textAndUrl
-import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.math.sqrt
-import kotlin.reflect.KMutableProperty
 
 //regarding APRI:
 //Diagnostic Accuracy of Noninvasive Fibrosis Models to Detect Change in Fibrosis Stage
@@ -122,7 +121,9 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                 Card(
                     modifier = Modifier
                         .padding(4.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+
+                    ,
                 ) {
                     Text(
                         text = stringResource(R.string.fib4),
@@ -182,12 +183,26 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         score = allScores.swe
                     )
                 }
+
             }
         }
     }
 }
 
+private fun getSubTextForWord(word: String): String {
+    return when (word) {
+        "Clickable" -> "This is the subtext for Clickable."
+        "Regions" -> "This is the subtext for Regions."
+        "Text." -> "This is the subtext for Text."
+        else -> ""
+    }
+}
 
+private data class ClickableRegion(
+    val text: String,
+    val bounds: Rect,
+    val action: String
+)
 
 @Composable
 fun GraphAndThreshold(
@@ -205,10 +220,23 @@ fun GraphAndThreshold(
     val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
+    var clickableRegionActions by remember {
+        mutableStateOf(mapOf<String, Boolean>())
+
+        var selectedPosition by remember { mutableStateOf(0) }
+
+    }
     Canvas(
         modifier = Modifier
             .height(canvasHeight)//, canvasWidth.dp)
             .fillMaxWidth()
+            .tapOrPress(
+                onStart = {},
+                onCancel = {},
+                onCompleted = {
+
+                }
+            )
     )
     {
         drawIntoCanvas { canvas ->
@@ -306,6 +334,17 @@ fun GraphAndThreshold(
                     )
                 )
             }
+            drawText(
+                textMeasurer = textMeasurer,
+                text = score.toString(),
+                topLeft = Offset(
+                    x = distance.times(selectedBar!!.index),
+                    y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
+                )
+            )
+
+
+
         }
     }
 }
