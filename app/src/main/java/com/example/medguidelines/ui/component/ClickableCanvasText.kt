@@ -52,6 +52,12 @@ fun Modifier.tapOrPress(
                 onCancel(down.position.x, down.position.y)
             } else {
                 onCompleted(up.position.x, up.position.y)
+                //                        val isInsideXRegion =
+//                            selectedPositionX > offsetXOfThirdLabel && selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel
+//                        val isInsideYRegion =
+//                            selectedPositionY > offsetYOfThirdLabel && selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
+//                        if (isInsideXRegion && isInsideYRegion) {
+//                            thirdLabelTapped = !thirdLabelTapped
             }
         }
     }

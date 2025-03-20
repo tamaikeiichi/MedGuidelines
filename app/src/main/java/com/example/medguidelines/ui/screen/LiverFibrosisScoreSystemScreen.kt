@@ -1,6 +1,8 @@
 package com.example.medguidelines.ui.screen
 
+import android.R.attr.onClick
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +22,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -205,8 +208,8 @@ fun GraphAndThreshold(
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
 
-    var selectedPositionX: Float by remember { mutableFloatStateOf(0F) }
-    var selectedPositionY: Float by remember { mutableFloatStateOf(0F) }
+//    var selectedPositionX: Float by remember { mutableFloatStateOf(0F) }
+//    var selectedPositionY: Float by remember { mutableFloatStateOf(0F) }
 
     var offsetXOfThirdLabel: Float = 0F
     var offsetYOfThirdLabel: Float = 0F
@@ -215,7 +218,7 @@ fun GraphAndThreshold(
 
     var thirdLabelTapped by remember { mutableStateOf(false) }
 
-    var tapHappened by remember { mutableStateOf(false) }
+//    var tapHappened by remember { mutableStateOf(false) }
 
     Canvas(
         modifier = Modifier
@@ -227,21 +230,12 @@ fun GraphAndThreshold(
                 onCancel = { offsetX, offsetY -> Unit
                 },
                 onCompleted = { offsetX, offsetY ->
-                    selectedPositionX = offsetX
-                       selectedPositionY = offsetY
-                    thirdLabelTapped = !thirdLabelTapped
-//                    if (!tapHappened) {
-//                        selectedPositionX = offsetX
-//                        selectedPositionY = offsetY
-//                        tapHappened = true
-//                        val isInsideXRegion =
-//                            selectedPositionX > offsetXOfThirdLabel && selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel
-//                        val isInsideYRegion =
-//                            selectedPositionY > offsetYOfThirdLabel && selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
-//                        if (isInsideXRegion && isInsideYRegion) {
-//                            thirdLabelTapped = !thirdLabelTapped
-//                        }
-//                    }
+                    val isInsideXRegion = offsetX > offsetXOfThirdLabel && offsetX < offsetXOfThirdLabel + widthOfThirdLabel
+                    val isInsideYRegion = offsetY > offsetYOfThirdLabel && offsetY < offsetYOfThirdLabel + heightOfThirdLabel
+                    if (isInsideXRegion && isInsideYRegion) {
+                        thirdLabelTapped = !thirdLabelTapped
+                    }
+
                 }
             )
     )
@@ -345,14 +339,6 @@ fun GraphAndThreshold(
                     )
                 )
             }
-//            if (selectedPositionX > offsetXOfThirdLabel &&
-//                selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel) {
-//                if (selectedPositionY > offsetYOfThirdLabel &&
-//                    selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
-//                ) {
-//                    thirdLabelTapped = !thirdLabelTapped
-//                }
-//            }
         }
 
     }
@@ -360,8 +346,25 @@ fun GraphAndThreshold(
         Popup(
             //offset = IntOffset(offsetXOfThirdLabel.toInt(), offsetYOfThirdLabel.toInt())
         ) {
-            Text(text = thirdLabelInDetail.toString())
+            MyPopupContent(
+                text = thirdLabelInDetail,
+                onClick = {thirdLabelTapped = !thirdLabelTapped})
         }
+    }
+}
+
+@Composable
+fun MyPopupContent(text: String, onClick: () -> Unit) {
+    Surface(
+        color = Color.White, // Set the background color to white
+        modifier = Modifier
+            .padding(8.dp) // Optional: Add padding around the text
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(8.dp) // Optional: Add padding inside the surface
+        )
     }
 }
 
