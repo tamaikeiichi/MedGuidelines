@@ -1,9 +1,6 @@
 package com.example.medguidelines.ui.screen
 
-import android.graphics.Rect
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
@@ -29,9 +25,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,11 +50,12 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
-import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
@@ -179,7 +176,8 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         secondThreshold = 2.1F,
                         firstLabel = stringResource(R.string.normal),
                         secondLabel = "",
-                        thirdLabel = stringResource(R.string.compensatedAdvancedChronicLiverDisease),
+                        thirdLabel = stringResource(R.string.cACLD),
+                        thirdLabelInDetail = stringResource(R.string.compensatedAdvancedChronicLiverDisease),
                         score = allScores.swe
                     )
                 }
@@ -188,21 +186,6 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
         }
     }
 }
-
-private fun getSubTextForWord(word: String): String {
-    return when (word) {
-        "Clickable" -> "This is the subtext for Clickable."
-        "Regions" -> "This is the subtext for Regions."
-        "Text." -> "This is the subtext for Text."
-        else -> ""
-    }
-}
-
-private data class ClickableRegion(
-    val text: String,
-    val bounds: Rect,
-    val action: String
-)
 
 @Composable
 fun GraphAndThreshold(
@@ -213,6 +196,7 @@ fun GraphAndThreshold(
     firstLabel: String,
     secondLabel: String,
     thirdLabel: String,
+    thirdLabelInDetail: String = "",
     score: Double
 ) {
     val mediumColorValue =
@@ -220,21 +204,38 @@ fun GraphAndThreshold(
     val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
-    var clickableRegionActions by remember {
-        mutableStateOf(mapOf<String, Boolean>())
 
-        var selectedPosition by remember { mutableStateOf(0) }
+    var selectedPositionX: Float by remember { mutableFloatStateOf(0F) }
+    var selectedPositionY: Float by remember { mutableFloatStateOf(0F) }
 
-    }
+    var offsetXOfThirdLabel: Float = 0F
+    var offsetYOfThirdLabel: Float = 0F
+    var heightOfThirdLabel: Float = 0F
+    var widthOfThirdLabel: Float = 0F
+
+    var thirdLabelTapped by remember { mutableStateOf(false) }
+
+
     Canvas(
         modifier = Modifier
             .height(canvasHeight)//, canvasWidth.dp)
             .fillMaxWidth()
             .tapOrPress(
-                onStart = {},
-                onCancel = {},
-                onCompleted = {
-
+                onStart = { offsetX, offsetY -> Unit
+                },
+                onCancel = { offsetX, offsetY -> Unit
+                },
+                onCompleted = { offsetX, offsetY ->
+                    selectedPositionX = offsetX
+                    selectedPositionY = offsetY
+                    if (selectedPositionX > offsetXOfThirdLabel &&
+                        selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel) {
+                        if (selectedPositionY > offsetYOfThirdLabel &&
+                            selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
+                        ) {
+                            thirdLabelTapped = !thirdLabelTapped
+                        }
+                    }
                 }
             )
     )
@@ -243,14 +244,14 @@ fun GraphAndThreshold(
             val rectColorStops =
                 if (secondThreshold == 0F) {
                     arrayOf(
-                    0.0f to Color(0xFF1BFF0B),
-                    1.0f to Color(0xFFFF0180)
+                        0.0f to Color(0xFF1BFF0B),
+                        1.0f to Color(0xFFFF0180)
                     )
                 } else {
                     arrayOf(
-                    0.0f to Color(0xFF1BFF0B),
-                    mediumColorValue to Color(0xFFFFE30B),
-                    1.0f to Color(0xFFFF0180)
+                        0.0f to Color(0xFF1BFF0B),
+                        mediumColorValue to Color(0xFFFFE30B),
+                        1.0f to Color(0xFFFF0180)
                     )
                 }
             val rectGradient = Brush.horizontalGradient(
@@ -303,6 +304,10 @@ fun GraphAndThreshold(
                     text = thirdLabel,
                     topLeft = Offset(10F+(secondThreshold/ (maxValue-minValue)) * size.width,10F)
                 )
+                offsetXOfThirdLabel = 10F+(secondThreshold/ (maxValue-minValue)) * size.width
+                offsetYOfThirdLabel = 10F
+                heightOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.height.toFloat()
+                widthOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.width.toFloat()
             } else {
                 drawText(
                     textMeasurer = textMeasurer,
@@ -334,17 +339,22 @@ fun GraphAndThreshold(
                     )
                 )
             }
-            drawText(
-                textMeasurer = textMeasurer,
-                text = score.toString(),
-                topLeft = Offset(
-                    x = distance.times(selectedBar!!.index),
-                    y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
-                )
-            )
+            if (selectedPositionX > offsetXOfThirdLabel &&
+                selectedPositionX < offsetXOfThirdLabel + widthOfThirdLabel) {
+                if (selectedPositionY > offsetYOfThirdLabel &&
+                    selectedPositionY < offsetYOfThirdLabel + heightOfThirdLabel
+                ) {
+                    thirdLabelTapped = !thirdLabelTapped
+                }
+            }
+        }
 
-
-
+    }
+    if (thirdLabelTapped) {
+        Popup(
+            //offset = IntOffset(offsetXOfThirdLabel.toInt(), offsetYOfThirdLabel.toInt())
+        ) {
+            Text(text = thirdLabelInDetail.toString())
         }
     }
 }
@@ -447,27 +457,6 @@ fun InputValue(
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
-}
-
-@Composable
-private fun ClickableText(
-    text: Int,
-    onChanged: (Boolean) -> Unit,
-    changed: Boolean
-){
-    Text(
-        text = parseStyledString(text),
-        modifier = Modifier
-            .padding(5.dp)
-            .clickable {
-                onChanged(changed)
-            }
-            .background(
-                color = inverseOnSurfaceLight,
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(5.dp),
-    )
 }
 
 @Composable

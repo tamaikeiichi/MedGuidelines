@@ -219,4 +219,5 @@
     <string name="ms">m/s</string>
     <string name="normal">Normal\n</string>
     <string name="compensatedAdvancedChronicLiverDisease">Compensated Advanced Chronic Liver Disease</string>
+    <string name="cACLD">cACLD</string>
 </resources>
