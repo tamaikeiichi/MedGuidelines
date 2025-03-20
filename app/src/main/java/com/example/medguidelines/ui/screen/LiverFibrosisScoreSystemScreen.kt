@@ -1,6 +1,7 @@
 package com.example.medguidelines.ui.screen
 
 import android.R.attr.onClick
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,8 +20,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,8 +44,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalContext
@@ -58,12 +67,15 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.tapOrPress
 import com.example.medguidelines.ui.component.textAndUrl
+import kotlin.math.round
 import kotlin.math.sqrt
 
 //regarding APRI:
@@ -217,6 +229,10 @@ fun GraphAndThreshold(
     var widthOfThirdLabel: Float = 0F
 
     var thirdLabelTapped by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+
+    val colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primaryContainer, BlendMode.SrcIn)
 
 //    var tapHappened by remember { mutableStateOf(false) }
 
@@ -308,6 +324,19 @@ fun GraphAndThreshold(
                 offsetYOfThirdLabel = 10F
                 heightOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.height.toFloat()
                 widthOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.width.toFloat()
+
+
+                if (thirdLabelInDetail != "") {
+                    if (imageBitmap != null) {
+                        drawImage(
+                            image = imageBitmap,
+                            topLeft = Offset(
+                                x = offsetXOfThirdLabel + widthOfThirdLabel,
+                                y = offsetYOfThirdLabel),
+                            colorFilter = ColorFilter.tint(Color(0xFFFF9800))
+                        )
+                    }
+                }
             } else {
                 drawText(
                     textMeasurer = textMeasurer,
@@ -356,7 +385,9 @@ fun GraphAndThreshold(
 @Composable
 fun MyPopupContent(text: String, onClick: () -> Unit) {
     Surface(
-        color = Color.White, // Set the background color to white
+        color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
+        shadowElevation = 10.dp,
+        shape = RoundedCornerShape(16.dp),
         modifier = Modifier
             .padding(8.dp) // Optional: Add padding around the text
             .clickable(onClick = onClick)
