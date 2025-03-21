@@ -1,7 +1,5 @@
 package com.example.medguidelines.ui.screen
 
-import android.R.attr.onClick
-import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,8 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -35,7 +31,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,8 +47,11 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.input.ImeAction
@@ -62,7 +60,6 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,7 +72,6 @@ import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.tapOrPress
 import com.example.medguidelines.ui.component.textAndUrl
-import kotlin.math.round
 import kotlin.math.sqrt
 
 //regarding APRI:
@@ -215,14 +211,10 @@ fun GraphAndThreshold(
     score: Double
 ) {
     val mediumColorValue =
-        (secondThreshold - firstThreshold) / (maxValue - minValue)
+        ((secondThreshold + firstThreshold)/2) / (maxValue - minValue)
     val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
-
-//    var selectedPositionX: Float by remember { mutableFloatStateOf(0F) }
-//    var selectedPositionY: Float by remember { mutableFloatStateOf(0F) }
-
     var offsetXOfThirdLabel: Float = 0F
     var offsetYOfThirdLabel: Float = 0F
     var heightOfThirdLabel: Float = 0F
@@ -231,15 +223,17 @@ fun GraphAndThreshold(
     var thirdLabelTapped by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val imageBitmap: ImageBitmap? =
-        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)?.toBitmap()?.asImageBitmap()
+        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)?.toBitmap(width = 45, height = 45)?.asImageBitmap()
 
     val colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primaryContainer, BlendMode.SrcIn)
 
-//    var tapHappened by remember { mutableStateOf(false) }
+    val greenColor = Color(0xFF1BFF0B)
+    val yellowColor = Color(0xFFFFE30B)
+    val redColor = Color(0xFFFF0180)
 
     Canvas(
         modifier = Modifier
-            .height(canvasHeight)//, canvasWidth.dp)
+            .height(canvasHeight)
             .fillMaxWidth()
             .tapOrPress(
                 onStart = { offsetX, offsetY -> Unit
@@ -261,14 +255,15 @@ fun GraphAndThreshold(
             val rectColorStops =
                 if (secondThreshold == 0F) {
                     arrayOf(
-                        0.0f to Color(0xFF1BFF0B),
-                        1.0f to Color(0xFFFF0180)
+                        0.0f to greenColor,
+                        firstThreshold/(maxValue - minValue) to yellowColor,
+                        1.0f to redColor
                     )
                 } else {
                     arrayOf(
-                        0.0f to Color(0xFF1BFF0B),
-                        mediumColorValue to Color(0xFFFFE30B),
-                        1.0f to Color(0xFFFF0180)
+                        0.0f to greenColor,
+                        mediumColorValue to yellowColor,
+                        1.0f to redColor
                     )
                 }
             val rectGradient = Brush.horizontalGradient(
@@ -326,7 +321,6 @@ fun GraphAndThreshold(
                 heightOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.height.toFloat()
                 widthOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.width.toFloat()
 
-
                 if (thirdLabelInDetail != "") {
                     if (imageBitmap != null) {
                         drawImage(
@@ -334,7 +328,7 @@ fun GraphAndThreshold(
                             topLeft = Offset(
                                 x = offsetXOfThirdLabel + widthOfThirdLabel,
                                 y = offsetYOfThirdLabel),
-                            colorFilter = ColorFilter.tint(Color(0xFFFF9800))
+                            colorFilter = ColorFilter.tint(Color(0xFF885200))
                         )
                     }
                 }
@@ -369,22 +363,51 @@ fun GraphAndThreshold(
                     )
                 )
             }
+            rotate(
+                degrees = -90F,
+                pivot = Offset(x = ((firstThreshold / (maxValue - minValue)) * size.width), y = (size.height / 2))
+            ) {
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = firstThreshold.toString(),
+                    topLeft = Offset(
+                        x = ((firstThreshold / (maxValue - minValue)) * size.width) + (textMeasurer.measure(text = firstThreshold.toString()).size.height)/ 4,
+                        y = (size.height / 2) - (textMeasurer.measure(text = firstThreshold.toString()).size.height / 2)
+                    ),
+                    style = TextStyle(fontSize = 10.sp, color = Color.Gray)
+                )
+            }
+            rotate(
+                degrees = -90F,
+                pivot = Offset(x = ((secondThreshold / (maxValue - minValue)) * size.width), y = (size.height / 2))
+            ) {
+                drawText(
+                    textMeasurer = textMeasurer,
+                    text = secondThreshold.toString(),
+                    topLeft = Offset(
+                        x = ((secondThreshold / (maxValue - minValue)) * size.width) + (textMeasurer.measure(text = secondThreshold.toString()).size.height)/ 4,
+                        y = (size.height / 2) - (textMeasurer.measure(text = secondThreshold.toString()).size.height / 2)
+                    ),
+                    style = TextStyle(fontSize = 10.sp, color = Color.Gray)
+                )
+            }
         }
-
     }
     if (thirdLabelTapped) {
         Popup(
             //offset = IntOffset(offsetXOfThirdLabel.toInt(), offsetYOfThirdLabel.toInt())
         ) {
-            MyPopupContent(
+            PopupClickable(
                 text = thirdLabelInDetail,
                 onClick = {thirdLabelTapped = !thirdLabelTapped})
         }
     }
 }
 
+
+
 @Composable
-fun MyPopupContent(text: String, onClick: () -> Unit) {
+fun PopupClickable(text: String, onClick: () -> Unit) {
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
         shadowElevation = 10.dp,
@@ -439,23 +462,23 @@ fun inputAndCalculate(): Scores {
                 ),
         ) {
             InputValue(
-                label = R.string.age, value = age, width = 100,
+                label = R.string.age, value = age,
                 unit = R.string.years, changeUnit = changedFactor1Unit, changedValueRate = 1.0
             )
             InputValue(
-                label = R.string.ast, value = ast, width = 100,
+                label = R.string.ast, value = ast,
                 unit = R.string.iul, changeUnit = changedFactor2Unit, changedValueRate = 1.0
             )
             InputValue(
-                label = R.string.plateletCount, value = platelet, width = 100,
+                label = R.string.plateletCount, value = platelet,
                 unit = R.string.unit109L, changeUnit = changedFactor3Unit, changedValueRate = 1.0
             )
             InputValue(
-                label = R.string.alt, value = alt, width = 100,
+                label = R.string.alt, value = alt,
                 unit = R.string.iul, changeUnit = changedFactor4Unit, changedValueRate = 1.0
             )
             InputValue(
-                label = R.string.shearWaveElastography, value = swe, width = 100,
+                label = R.string.shearWaveElastography, value = swe,
                 unit = R.string.ms, changeUnit = changeFactor5Unit, changedValueRate = 1.0
             )
         }
@@ -475,18 +498,19 @@ fun inputAndCalculate(): Scores {
 fun InputValue(
     label: Int,
     value: MutableDoubleState,
-    width: Int,
     unit: Int,
     changeUnit: Boolean,
     changedValueRate: Double
 ){
+    val textMeasurer = rememberTextMeasurer()
+    val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
     Row(
         modifier = Modifier
             .padding(4.dp),
         verticalAlignment = Alignment.Bottom,
     ) {
         NumberInTextField(
-            label = label, value = value, width = width,
+            label = label, value = value, width = Math.round(labelWidth*0.15).toInt()+70,
             multiplier = if (changeUnit) 1.0 else changedValueRate
         )
         Column(
