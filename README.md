@@ -12,7 +12,8 @@ mALBI
 Acute tonsillitis/pharyngitis algorithm  
 Blood Gas Analysis  
 Severity of Acute Pancreatitis  
+Liver Fibrosis Score System (FIB4, NAFLD Fibrosis Score, ELF Score, APRI, Shear Wave Elastography)
 
 ## Welcom to your requests! 
 
-<img src="https://github.com/user-attachments/assets/817f883b-8120-4245-a0b5-03f14c5f4bca" width="200">
+<img src="https://github.com/user-attachments/assets/11e947c3-9704-4732-8b66-f3a0ac0fd256" width="200">
