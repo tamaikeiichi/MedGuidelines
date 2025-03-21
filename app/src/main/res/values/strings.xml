@@ -211,7 +211,7 @@
     <string name="highRisk">High Risk</string>
     <string name="fibrosisStage02">Fibrosis Stage 0-2</string>
     <string name="stage34">Stage 3-4</string>
-    <string name="fib4score">Fib4 Score</string>
+    <string name="fib4score">FIB4 Score</string>
     <string name="apriScore">APRI score</string>
     <string name="fib4">FIB4</string>
     <string name="apri">APRI (AST to Platelet Ratio Index)</string>
@@ -232,4 +232,15 @@
     <string name="dmPresenceNote">Impaired Fasting Glucose or Diabetes Mellitus</string>
     <string name="unlikely">Unlikely</string>
     <string name="likely">Likely</string>
+    <string name="elfScore">ELF score</string>
+    <string name="fibrosisStage2">Fibrosis Stage2</string>
+    <string name="fibrosisStage3">Fibrosis Stage3</string>
+    <string name="f2">F2</string>
+    <string name="f3">F3</string>
+    <string name="elfScoreUrl">https://pubmed.ncbi.nlm.nih.gov/37088311/</string>
+    <string name="hyaluronicAcid">Hyaluroninc Acid</string>
+    <string name="ngml">ng/mL</string>
+    <string name="timp1">TIMP-1</string>
+    <string name="piiip">PIIIP</string>
+    <string name="platelet">Platelet</string>
 </resources>

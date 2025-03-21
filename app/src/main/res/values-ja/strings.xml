@@ -122,6 +122,7 @@
     <string name="esophagealTNMTitle">食道癌TNM分類（UICC第8版）</string>
     <string name="totalBilirubin">総ビリルビン</string>
     <string name="plateletCount">血小板数</string>
+    <string name="liverFibrosisScoreSystemTitle">肝線維化指標一覧</string>
     <string name="lowRisk">低リスク</string>
     <string name="intermediateRisk">中等度</string>
     <string name="highRisk">高リスク</string>
@@ -131,6 +132,11 @@
     <string name="bodyHeight">身長</string>
     <string name="bodyWeight">体重</string>
     <string name="dmPresence">耐糖能異常・糖尿病が存在するか</string>
-    <string name="unlikely">疑わしくない</string>
+    <string name="unlikely">否定的</string>
     <string name="likely">疑わしい</string>
+    <string name="elfScore">ELFスコア</string>
+    <string name="hyaluronicAcid">ヒアルロン酸</string>
+    <string name="fib4score">FIB4スコア</string>
+    <string name="apriScore">APRIスコア</string>
+    <string name="years">歳</string>
 </resources>
