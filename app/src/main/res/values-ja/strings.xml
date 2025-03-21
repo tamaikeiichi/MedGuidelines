@@ -121,4 +121,16 @@
     <string name="MfactorTitleNoteEsophagealCancer">&lt;b>M1&lt;/b>: 遠隔転移</string>
     <string name="esophagealTNMTitle">食道癌TNM分類（UICC第8版）</string>
     <string name="totalBilirubin">総ビリルビン</string>
+    <string name="plateletCount">血小板数</string>
+    <string name="lowRisk">低リスク</string>
+    <string name="intermediateRisk">中等度</string>
+    <string name="highRisk">高リスク</string>
+    <string name="fibrosisStage02">線維化ステージ0-2</string>
+    <string name="stage34">ステージ3-4</string>
+    <string name="compensatedAdvancedChronicLiverDisease">代償性肝硬変</string>
+    <string name="bodyHeight">身長</string>
+    <string name="bodyWeight">体重</string>
+    <string name="dmPresence">耐糖能異常・糖尿病が存在するか</string>
+    <string name="unlikely">疑わしくない</string>
+    <string name="likely">疑わしい</string>
 </resources>

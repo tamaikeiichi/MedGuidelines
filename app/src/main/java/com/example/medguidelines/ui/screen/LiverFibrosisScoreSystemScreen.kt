@@ -31,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -474,7 +475,7 @@ fun DrawScope.drawThresholdLine(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun inputAndCalculate(): Scores {
-    val age = remember { mutableDoubleStateOf(40.0) }
+    val age = remember { mutableDoubleStateOf(40.toDouble()) }
     val ast = remember { mutableDoubleStateOf(35.0) }
     val platelet = remember { mutableDoubleStateOf(250.0) }
     val alt = remember { mutableDoubleStateOf(30.0) }
@@ -531,7 +532,7 @@ fun inputAndCalculate(): Scores {
             )
             InputValue(
                 label = R.string.albumin, value = albumin,
-                unit = R.string.gL, changeUnit = false, changedValueRate = 1.0
+                unit = R.string.gdL, changeUnit = false, changedValueRate = 1.0
             )
             dmPresence = buttonAndScore(
                 factor = noYes,

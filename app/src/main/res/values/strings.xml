@@ -187,7 +187,7 @@
     <string name="TfactorTitleNoteEsophagealCancer">&lt;b>Tis&lt;/b>: high grade dysplasia\n&lt;b>T1a&lt;/b>: lamina propria or musclaris mucosase\n&lt;b>T1b&lt;/b>: submucosa\n&lt;b>T2&lt;/b>: muscularis propria\n&lt;b>T3&lt;/b>: adventitia\n&lt;b>T4a&lt;/b>: pleura, pericardium, azygos vein, diaphragm, or peritoneum\n&lt;b>T4b&lt;/b>: other adjacent structures, such as aorta, vertebral body, or trachea</string>
     <string name="NfactorTitleNoteEsophagealCancer">&lt;b>N1&lt;/b>: 1–2 regional lymph nodes\n&lt;b>N2&lt;/b>: 3–6\n&lt;b>N3&lt;/b>: 7 or more</string>
     <string name="MfactorTitleNoteEsophagealCancer">&lt;b>M1&lt;/b>: distant metastasis</string>
-    <string name="mALBITitle">mALBI</string>
+    <string name="mALBITitle" translatable="false">mALBI</string>
     <string name="mALBIRef" translatable="false">Liver cancer vol. 6,4 (2017): 325-336.</string>
     <string name="mALBIUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/29234636/</string>
     <string name="totalBilirubin">Total bilirubin</string>
@@ -200,11 +200,11 @@
     <string name="umolL" translatable="false">μmol/L</string>
     <string name="gL" translatable="false">g/L</string>
     <string name="years">years</string>
-    <string name="ast">AST</string>
-    <string name="iul">IU/L</string>
+    <string name="ast" translatable="false">AST</string>
+    <string name="iul" translatable="false">IU/L</string>
     <string name="plateletCount">platelet count</string>
     <string name="unit109L"><![CDATA[10<sup>9</sup>/L]]></string>
-    <string name="alt">ALT</string>
+    <string name="alt" translatable="false">ALT</string>
     <string name="liverFibrosisScoreSystemTitle">Liver Fibrosis Score System</string>
     <string name="lowRisk">Low Risk</string>
     <string name="intermediateRisk">Intermediate</string>
@@ -219,11 +219,11 @@
     <string name="ms">m/s</string>
     <string name="normal">Normal\n</string>
     <string name="compensatedAdvancedChronicLiverDisease">Compensated Advanced Chronic Liver Disease</string>
-    <string name="cACLD">cACLD</string>
-    <string name="apriUrl">https://pubmed.ncbi.nlm.nih.gov/30616027/</string>
-    <string name="shearWaveElastographyUrl">https://doi.org/10.1148/radiol.2020192437</string>
+    <string name="cACLD" translatable="false">cACLD</string>
+    <string name="apriUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/30616027/</string>
+    <string name="shearWaveElastographyUrl" translatable="false">https://doi.org/10.1148/radiol.2020192437</string>
     <string name="nafldFibrosisScore">NAFLD Fibrosis Score</string>
-    <string name="nafldFibrosisScoreUrl">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
+    <string name="nafldFibrosisScoreUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
     <string name="bodyHeight">Body Height</string>
     <string name="cm">cm</string>
     <string name="bodyWeight">Body Weight</string>
