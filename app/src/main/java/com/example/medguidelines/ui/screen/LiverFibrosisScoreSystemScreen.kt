@@ -29,6 +29,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -50,10 +51,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.input.ImeAction
@@ -76,7 +75,6 @@ import com.example.medguidelines.ui.component.buttonAndScore
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.tapOrPress
 import com.example.medguidelines.ui.component.textAndUrl
-import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -109,12 +107,47 @@ data class Scores(
 }
 
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun LiverFibrosisScoreSystemScreen(navController: NavController) {
+fun LiverFibrosisScoreSystemScreen(
+    navController: NavController,
+
+    ) {
+    val age = remember { mutableDoubleStateOf(0.0) }
+    val ast = remember { mutableDoubleStateOf(0.0) }
+    val platelet = remember { mutableDoubleStateOf(0.0) }
+    val alt = remember { mutableDoubleStateOf(0.0) }
+    val swe = remember { mutableDoubleStateOf(0.0) }
+    val bodyHeight = remember { mutableDoubleStateOf(0.0) }
+    val bodyWeight = remember { mutableDoubleStateOf(0.0) }
+    val dmPresence = remember { mutableIntStateOf(0) }
+    val albumin = remember { mutableDoubleStateOf(0.0) }
+    val hyaluronicAcid = remember { mutableDoubleStateOf(0.0) }
+    val piiinp = remember { mutableDoubleStateOf(0.0) }
+    val timp1 = remember { mutableDoubleStateOf(0.0) }
+    val elfScore = remember { mutableDoubleStateOf(0.0) }
     var allScores by remember {
         mutableStateOf(Scores(
             0.0,0.0, 0.0, 0.0, 0.0)
         )
+    }
+    val calculatedElfScore by remember {
+        //mutableDoubleStateOf(
+        derivedStateOf {
+            (Math.round(
+                (2.278 +
+                        0.815 * ln(hyaluronicAcid.doubleValue) +
+                        0.751 * ln(piiinp.doubleValue) +
+                        0.394 * ln(timp1.doubleValue)
+                        ) * 100.0
+                )
+            ) / 100.0
+        }
+        //)
+    }
+    LaunchedEffect(key1 = calculatedElfScore) {
+        if(calculatedElfScore != elfScore.doubleValue)
+            elfScore.doubleValue = calculatedElfScore
     }
     Scaffold(
         topBar = {
@@ -134,7 +167,22 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
             state = rememberLazyListState()
         ) {
             item {
-                allScores = inputAndCalculate()
+                allScores = inputAndCalculate(
+                    age = age,
+                    ast = ast,
+                    platelet = platelet,
+                    alt = alt,
+                    swe = swe,
+                    bodyHeight = bodyHeight,
+                    bodyWeight = bodyWeight,
+                    dmPresence = dmPresence,
+                    albumin = albumin,
+                    hyaluronicAcid = hyaluronicAcid,
+                    piiinp = piiinp,
+                    timp1 = timp1,
+                    elfScore = elfScore,
+                    calculatedElfScore = calculatedElfScore
+                )
                 allScores.roundToTwoDecimals()
                 Card(
                     modifier = Modifier
@@ -159,15 +207,19 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                     Row(){
                         FactorAlerts(
                             text = R.string.age,
+                            factor = age.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.ast,
-                        )
-                        FactorAlerts(
-                            text = R.string.alt,
+                            factor = ast.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.platelet,
+                            factor = platelet.doubleValue
+                        )
+                        FactorAlerts(
+                            text = R.string.alt,
+                            factor = alt.doubleValue
                         )
                     }
                 }
@@ -190,6 +242,49 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         thirdLabel = stringResource(R.string.likely),
                         score = allScores.nfs
                     )
+                    FlowRow {
+                        FactorAlerts(
+                            text = R.string.age,
+                            factor = age.doubleValue.toDouble()
+                        )
+                        FactorAlerts(
+                            text = R.string.bodyHeight,
+                            factor = bodyHeight.doubleValue.toDouble()
+                        )
+                        FactorAlerts(
+                            text = R.string.bodyWeight,
+                            factor = bodyWeight.doubleValue.toDouble()
+                        )
+                        Surface(
+                            color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
+                            shadowElevation = 2.dp,
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier
+                                .padding(4.dp) // Optional: Add padding around the text
+                        ) {
+                            Text(
+                                text = stringResource(R.string.diabetesMellitus),
+                                color = Color.Black,
+                                modifier = Modifier.padding(2.dp)
+                            )
+                        }
+                        FactorAlerts(
+                            text = R.string.ast,
+                            factor = ast.doubleValue.toDouble()
+                        )
+                        FactorAlerts(
+                            text = R.string.alt,
+                            factor = alt.doubleValue.toDouble()
+                        )
+                        FactorAlerts(
+                            text = R.string.platelet,
+                            factor = platelet.doubleValue.toDouble()
+                        )
+                        FactorAlerts(
+                            text = R.string.albumin,
+                            factor = albumin.doubleValue.toDouble()
+                        )
+                    }
                 }
                 Card(
                     modifier = Modifier
@@ -211,6 +306,20 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         thirdLabel = stringResource(R.string.f3),
                         score = allScores.elfScore
                     )
+                    FlowRow {
+                        FactorAlerts(
+                            text = R.string.hyaluronicAcid,
+                            factor = hyaluronicAcid.doubleValue
+                        )
+                        FactorAlerts(
+                            text = R.string.piiip,
+                            factor = piiinp.doubleValue
+                        )
+                        FactorAlerts(
+                            text = R.string.timp1,
+                            factor = timp1.doubleValue
+                        )
+                    }
                 }
                 Card(
                     modifier = Modifier
@@ -231,6 +340,20 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         secondLabel = stringResource(R.string.stage34),
                         score = allScores.apri
                     )
+                    FlowRow {
+                        FactorAlerts(
+                            text = R.string.ast,
+                            factor = ast.doubleValue
+                        )
+                        FactorAlerts(
+                            text = R.string.alt,
+                            factor = alt.doubleValue
+                        )
+                        FactorAlerts(
+                            text = R.string.platelet,
+                            factor = platelet.doubleValue
+                        )
+                    }
                 }
                 Card(
                     modifier = Modifier
@@ -253,6 +376,10 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                             R.string.compensatedAdvancedChronicLiverDisease),
                         score = allScores.swe
                     )
+                    FactorAlerts(
+                        text = R.string.shearWaveElastography,
+                        factor = swe.doubleValue
+                    )
                 }
             }
         }
@@ -261,8 +388,8 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
 
 @Composable
 fun FactorAlerts(
-    color: Color = Color.Black,
-    text: Int
+    text: Int,
+    factor: Double
 ){
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
@@ -271,14 +398,22 @@ fun FactorAlerts(
         modifier = Modifier
             .padding(4.dp) // Optional: Add padding around the text
     ) {
-        Text(
-            text = stringResource(text),
-            color = color,
-            modifier = Modifier.padding(2.dp)
-        )
+        if (factor != 0.0) {
+            Text(
+                text = stringResource(text),
+                color = Color.Black,
+                modifier = Modifier.padding(2.dp)
+            )
+        } else {
+            Text(
+                text = stringResource(text),
+                color = Color.Red,
+                modifier = Modifier.padding(2.dp)
+            )
+        }
+
     }
 }
-
 
 @Composable
 fun GraphAndThreshold(
@@ -534,20 +669,22 @@ fun DrawScope.drawThresholdLine(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun inputAndCalculate(): Scores {
-    val age = remember { mutableDoubleStateOf(60.toDouble()) }
-    val ast = remember { mutableDoubleStateOf(30.0) }
-    val platelet = remember { mutableDoubleStateOf(250.0) }
-    val alt = remember { mutableDoubleStateOf(30.0) }
-    val swe = remember { mutableDoubleStateOf(1.0) }
-    val bodyHeight = remember { mutableDoubleStateOf(170.0) }
-    val bodyWeight = remember { mutableDoubleStateOf(70.0) }
-    var dmPresence: Int = 0
-    val albumin = remember { mutableDoubleStateOf(4.0) }
-    val hyaluronicAcid = remember { mutableDoubleStateOf(50.0) }
-    val piiinp = remember { mutableDoubleStateOf(5.0) }
-    val timp1 = remember { mutableDoubleStateOf(10.0) }
-    var elfScore = remember { mutableDoubleStateOf(1.0) }
+fun inputAndCalculate(
+    age: MutableDoubleState,
+    ast: MutableDoubleState,
+    platelet: MutableDoubleState,
+    alt: MutableDoubleState,
+    swe: MutableDoubleState,
+    bodyHeight: MutableDoubleState,
+    bodyWeight: MutableDoubleState,
+    dmPresence: MutableIntState,
+    albumin: MutableDoubleState,
+    hyaluronicAcid: MutableDoubleState,
+    piiinp: MutableDoubleState,
+    timp1: MutableDoubleState,
+    elfScore: MutableDoubleState,
+    calculatedElfScore: Double
+): Scores {
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
     var changedFactor3Unit by remember { mutableStateOf(true) }
@@ -602,7 +739,7 @@ fun inputAndCalculate(): Scores {
                 label = R.string.elfScore, value = elfScore,
                 unit = R.string.space, changeUnit = false, changedValueRate = 1.0
             )
-            dmPresence = buttonAndScore(
+            dmPresence.intValue = buttonAndScore(
                 factor = noYes,
                 title = R.string.dmPresence,
                 titleNote = R.string.dmPresenceNote
@@ -628,22 +765,12 @@ fun inputAndCalculate(): Scores {
     val nfs = -1.675 +
             (0.037 * age.doubleValue) +
             0.094 * (bodyWeight.doubleValue/((bodyHeight.doubleValue / 100).pow(2.0))) +
-            1.13 * dmPresence +
+            1.13 * dmPresence.intValue +
             0.99 * ast.doubleValue/ alt.doubleValue -
             0.013 * platelet.doubleValue -
             0.66 * albumin.doubleValue
-    val calculatedElfScore by remember {
-        derivedStateOf {
-                Math.round((2.278 +
-                        0.815 * ln(hyaluronicAcid.doubleValue) +
-                        0.751 * ln(piiinp.doubleValue) +
-                        0.394 * ln(timp1.doubleValue)) * 100.0) / 100.0
-        }
-    }
-    LaunchedEffect(key1 = calculatedElfScore) {
-        if(calculatedElfScore != elfScore.doubleValue)
-            elfScore.doubleValue = calculatedElfScore
-    }
+
+
     val allScores = Scores(fib4score, apri, swe.doubleValue, nfs, elfScore.doubleValue)
     allScores.roundToTwoDecimals()
     return allScores
