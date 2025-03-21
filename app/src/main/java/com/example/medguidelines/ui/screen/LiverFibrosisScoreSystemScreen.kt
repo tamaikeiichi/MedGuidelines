@@ -68,34 +68,34 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavController
 import com.example.medguidelines.R
+import com.example.medguidelines.data.noYes
 import com.example.medguidelines.ui.component.TitleTopAppBar
+import com.example.medguidelines.ui.component.buttonAndScore
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.tapOrPress
 import com.example.medguidelines.ui.component.textAndUrl
+import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.math.sqrt
 
-//regarding APRI:
-//Diagnostic Accuracy of Noninvasive Fibrosis Models to Detect Change in Fibrosis Stage
-//Siddiqui, Mohammad ShadabAllende, Daniela et al.
-//Clinical Gastroenterology and Hepatology, Volume 17, Issue 9, 1877 - 1885.e5
-
-//regarding shear wave elastography:
-//https://doi.org/10.1148/radiol.2020192437
-
 val references = listOf(
-    textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
-    textAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
+    textAndUrl(R.string.apri, R.string.apriUrl),
+    textAndUrl(R.string.shearWaveElastography, R.string.shearWaveElastographyUrl),
+    textAndUrl(R.string.nafldFibrosisScore, R.string.nafldFibrosisScoreUrl)
+
 )
 
 data class Scores(
     var fib4score: Double,
     var apri: Double,
-    var swe: Double
+    var swe: Double,
+    var nfs: Double
 ){
     fun roundToTwoDecimals() {
         fib4score = roundDouble(fib4score)
         apri = roundDouble(apri)
         swe = roundDouble(swe)
+        nfs = roundDouble(nfs)
     }
     private fun roundDouble(value: Double): Double {
         return Math.round(value * 100.0) / 100.0
@@ -105,7 +105,7 @@ data class Scores(
 
 @Composable
 fun LiverFibrosisScoreSystemScreen(navController: NavController) {
-    var allScores by remember { mutableStateOf(Scores(0.0,0.0, 0.0)) }
+    var allScores by remember { mutableStateOf(Scores(0.0,0.0, 0.0, 0.0)) }
     Scaffold(
         topBar = {
             TitleTopAppBar(
@@ -166,7 +166,6 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         secondThreshold = 0F,
                         firstLabel = stringResource(R.string.fibrosisStage02),
                         secondLabel = stringResource(R.string.stage34),
-                        thirdLabel = "",
                         score = allScores.apri
                     )
                 }
@@ -186,10 +185,29 @@ fun LiverFibrosisScoreSystemScreen(navController: NavController) {
                         firstThreshold = 1.3F,
                         secondThreshold = 2.1F,
                         firstLabel = stringResource(R.string.normal),
-                        secondLabel = "",
                         thirdLabel = stringResource(R.string.cACLD),
                         thirdLabelInDetail = stringResource(R.string.compensatedAdvancedChronicLiverDisease),
                         score = allScores.swe
+                    )
+                }
+                Card(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                ){
+                    Text(
+                        text = stringResource(R.string.nafldFibrosisScore),
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                    GraphAndThreshold(
+                        maxValue = 2F,
+                        minValue = -4F,
+                        firstThreshold = -1.44F,
+                        secondThreshold = 0.672F,
+                        firstLabel = stringResource(R.string.unlikely),
+                        thirdLabel = stringResource(R.string.likely),
+                        score = allScores.nfs
                     )
                 }
 
@@ -205,13 +223,13 @@ fun GraphAndThreshold(
     firstThreshold: Float,
     secondThreshold: Float,
     firstLabel: String,
-    secondLabel: String,
-    thirdLabel: String,
+    secondLabel: String = "",
+    thirdLabel: String = "",
     thirdLabelInDetail: String = "",
     score: Double
 ) {
     val mediumColorValue =
-        ((secondThreshold + firstThreshold)/2) / (maxValue - minValue)
+        (((secondThreshold + firstThreshold)/2)-minValue) / (maxValue - minValue)
     val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
@@ -222,10 +240,17 @@ fun GraphAndThreshold(
 
     var thirdLabelTapped by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val helpImageWidth = 45
+    val helpImageHeight = 45
     val imageBitmap: ImageBitmap? =
-        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)?.toBitmap(width = 45, height = 45)?.asImageBitmap()
+        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)?.
+        toBitmap(width = helpImageWidth, height = helpImageHeight)?.
+        asImageBitmap()
 
-    val colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primaryContainer, BlendMode.SrcIn)
+    val colorFilter = ColorFilter.tint(
+        MaterialTheme.colorScheme.primaryContainer,
+        BlendMode.SrcIn
+    )
 
     val greenColor = Color(0xFF1BFF0B)
     val yellowColor = Color(0xFFFFE30B)
@@ -241,8 +266,12 @@ fun GraphAndThreshold(
                 onCancel = { offsetX, offsetY -> Unit
                 },
                 onCompleted = { offsetX, offsetY ->
-                    val isInsideXRegion = offsetX > offsetXOfThirdLabel && offsetX < offsetXOfThirdLabel + widthOfThirdLabel
-                    val isInsideYRegion = offsetY > offsetYOfThirdLabel && offsetY < offsetYOfThirdLabel + heightOfThirdLabel
+                    val isInsideXRegion =
+                        offsetX > offsetXOfThirdLabel
+                                && offsetX < offsetXOfThirdLabel + widthOfThirdLabel + helpImageWidth
+                    val isInsideYRegion =
+                        offsetY > offsetYOfThirdLabel
+                                && offsetY < offsetYOfThirdLabel + heightOfThirdLabel + helpImageHeight
                     if (isInsideXRegion && isInsideYRegion) {
                         thirdLabelTapped = !thirdLabelTapped
                     }
@@ -256,7 +285,7 @@ fun GraphAndThreshold(
                 if (secondThreshold == 0F) {
                     arrayOf(
                         0.0f to greenColor,
-                        firstThreshold/(maxValue - minValue) to yellowColor,
+                        (firstThreshold - minValue)/(maxValue - minValue) to yellowColor,
                         1.0f to redColor
                     )
                 } else {
@@ -277,7 +306,7 @@ fun GraphAndThreshold(
             val circleXOffset =
                 if (score > maxValue) size.width
                 else if (score < minValue) 0F
-                else  (score.toFloat()/ (maxValue-minValue)) * size.width
+                else  ((score.toFloat()-minValue)/ (maxValue-minValue)) * size.width
             val circleYOffset = size.height * 0.75F
             val circleGradient = Brush.radialGradient(
                 colors = circleColors,
@@ -292,12 +321,12 @@ fun GraphAndThreshold(
             )
             drawThresholdLine(
                 height = size.height/2,
-                xPosition = ((firstThreshold/ (maxValue-minValue))) * size.width
+                xPosition = (((firstThreshold-minValue)/ (maxValue-minValue))) * size.width
             )
             if (secondThreshold != 0F) {
                 drawThresholdLine(
                     height = size.height/2,
-                    xPosition = ((secondThreshold / (maxValue - minValue))) * size.width
+                    xPosition = (((secondThreshold-minValue) / (maxValue - minValue))) * size.width
                 )
             }
             drawText(
@@ -309,14 +338,14 @@ fun GraphAndThreshold(
                 drawText(
                     textMeasurer = textMeasurer,
                     text = secondLabel,
-                    topLeft = Offset(10F+(firstThreshold/ (maxValue-minValue)) * size.width,10F)
+                    topLeft = Offset(10F+((firstThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
                 )
                 drawText(
                     textMeasurer = textMeasurer,
                     text = thirdLabel,
-                    topLeft = Offset(10F+(secondThreshold/ (maxValue-minValue)) * size.width,10F)
+                    topLeft = Offset(10F+((secondThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
                 )
-                offsetXOfThirdLabel = 10F+(secondThreshold/ (maxValue-minValue)) * size.width
+                offsetXOfThirdLabel = 10F+((secondThreshold-minValue)/ (maxValue-minValue)) * size.width
                 offsetYOfThirdLabel = 10F
                 heightOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.height.toFloat()
                 widthOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.width.toFloat()
@@ -336,7 +365,7 @@ fun GraphAndThreshold(
                 drawText(
                     textMeasurer = textMeasurer,
                     text = secondLabel,
-                    topLeft = Offset(10F+(firstThreshold/ (maxValue-minValue)) * size.width,10F)
+                    topLeft = Offset(10F+((firstThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
                 )
             }
             drawCircle(
@@ -358,35 +387,42 @@ fun GraphAndThreshold(
                     textMeasurer = textMeasurer,
                     text = score.toString(),
                     topLeft = Offset(
-                        x = circleXOffset - circleSize * 1.5F - textMeasurer.measure(text = score.toString()).size.width,
+                        x = circleXOffset - circleSize * 1.5F
+                                - textMeasurer.measure(text = score.toString()).size.width,
                         y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
                     )
                 )
             }
             rotate(
                 degrees = -90F,
-                pivot = Offset(x = ((firstThreshold / (maxValue - minValue)) * size.width), y = (size.height / 2))
+                pivot = Offset(x = (((firstThreshold-minValue)
+                        / (maxValue - minValue)) * size.width), y = (size.height / 2))
             ) {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = firstThreshold.toString(),
                     topLeft = Offset(
-                        x = ((firstThreshold / (maxValue - minValue)) * size.width) + (textMeasurer.measure(text = firstThreshold.toString()).size.height)/ 4,
-                        y = (size.height / 2) - (textMeasurer.measure(text = firstThreshold.toString()).size.height / 2)
+                        x = (((firstThreshold-minValue) / (maxValue - minValue)) * size.width)
+                                + (textMeasurer.measure(text = firstThreshold.toString()).size.height)/ 4,
+                        y = (size.height / 2)
+                                - (textMeasurer.measure(text = firstThreshold.toString()).size.height / 2)
                     ),
                     style = TextStyle(fontSize = 10.sp, color = Color.Gray)
                 )
             }
             rotate(
                 degrees = -90F,
-                pivot = Offset(x = ((secondThreshold / (maxValue - minValue)) * size.width), y = (size.height / 2))
+                pivot = Offset(x = (((secondThreshold-minValue)
+                        / (maxValue - minValue)) * size.width), y = (size.height / 2))
             ) {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = secondThreshold.toString(),
                     topLeft = Offset(
-                        x = ((secondThreshold / (maxValue - minValue)) * size.width) + (textMeasurer.measure(text = secondThreshold.toString()).size.height)/ 4,
-                        y = (size.height / 2) - (textMeasurer.measure(text = secondThreshold.toString()).size.height / 2)
+                        x = (((secondThreshold-minValue) / (maxValue - minValue)) * size.width)
+                                + (textMeasurer.measure(text = secondThreshold.toString()).size.height)/ 4,
+                        y = (size.height / 2)
+                                - (textMeasurer.measure(text = secondThreshold.toString()).size.height / 2)
                     ),
                     style = TextStyle(fontSize = 10.sp, color = Color.Gray)
                 )
@@ -440,9 +476,13 @@ fun DrawScope.drawThresholdLine(
 fun inputAndCalculate(): Scores {
     val age = remember { mutableDoubleStateOf(40.0) }
     val ast = remember { mutableDoubleStateOf(35.0) }
-    val platelet = remember { mutableDoubleStateOf(150.0) }
+    val platelet = remember { mutableDoubleStateOf(250.0) }
     val alt = remember { mutableDoubleStateOf(30.0) }
     val swe = remember { mutableDoubleStateOf(1.0) }
+    val bodyHeight = remember { mutableDoubleStateOf(170.0) }
+    val bodyWeight = remember { mutableDoubleStateOf(70.0) }
+    var dmPresence: Int = 0
+    val albumin = remember { mutableDoubleStateOf(4.0) }
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
     var changedFactor3Unit by remember { mutableStateOf(true) }
@@ -481,6 +521,23 @@ fun inputAndCalculate(): Scores {
                 label = R.string.shearWaveElastography, value = swe,
                 unit = R.string.ms, changeUnit = changeFactor5Unit, changedValueRate = 1.0
             )
+            InputValue(
+                label = R.string.bodyHeight, value = bodyHeight,
+                unit = R.string.cm, changeUnit = false, changedValueRate = 1.0
+            )
+            InputValue(
+                label = R.string.bodyWeight, value = bodyWeight,
+                unit = R.string.kg, changeUnit = false, changedValueRate = 1.0
+            )
+            InputValue(
+                label = R.string.albumin, value = albumin,
+                unit = R.string.gL, changeUnit = false, changedValueRate = 1.0
+            )
+            dmPresence = buttonAndScore(
+                factor = noYes,
+                title = R.string.dmPresence,
+                titleNote = R.string.dmPresenceNote
+            )
         }
     }
 
@@ -489,7 +546,15 @@ fun inputAndCalculate(): Scores {
 
     val apri = ((ast.doubleValue / 30) / platelet.doubleValue) * 100
 
-    val allScores = Scores(fib4score, apri, swe.doubleValue)
+    val nfs = -1.675 +
+            (0.037 * age.doubleValue) +
+            0.094 * (bodyWeight.doubleValue/((bodyHeight.doubleValue / 100).pow(2.0))) +
+            1.13 * dmPresence +
+            0.99 * ast.doubleValue/ alt.doubleValue -
+            0.013 * platelet.doubleValue -
+            0.66 * albumin.doubleValue
+
+    val allScores = Scores(fib4score, apri, swe.doubleValue, nfs)
 
     return allScores
 }
@@ -593,3 +658,16 @@ fun LiverFibrosisScoreSystemScreenPreview(){
     LiverFibrosisScoreSystemScreen(navController = NavController(LocalContext.current))
 }
 
+@Preview
+@Composable
+fun NfsPreview(){
+    GraphAndThreshold(
+        maxValue = 2F,
+        minValue = -4F,
+        firstThreshold = -1.44F,
+        secondThreshold = 0.672F,
+        firstLabel = stringResource(R.string.unlikely),
+        thirdLabel = stringResource(R.string.likely),
+        score = 0.0
+    )
+}

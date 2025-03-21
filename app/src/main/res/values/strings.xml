@@ -220,4 +220,16 @@
     <string name="normal">Normal\n</string>
     <string name="compensatedAdvancedChronicLiverDisease">Compensated Advanced Chronic Liver Disease</string>
     <string name="cACLD">cACLD</string>
+    <string name="apriUrl">https://pubmed.ncbi.nlm.nih.gov/30616027/</string>
+    <string name="shearWaveElastographyUrl">https://doi.org/10.1148/radiol.2020192437</string>
+    <string name="nafldFibrosisScore">NAFLD Fibrosis Score</string>
+    <string name="nafldFibrosisScoreUrl">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
+    <string name="bodyHeight">Body Height</string>
+    <string name="cm">cm</string>
+    <string name="bodyWeight">Body Weight</string>
+    <string name="kg">Kg</string>
+    <string name="dmPresence">Presence of IFG/diabetes</string>
+    <string name="dmPresenceNote">Impaired Fasting Glucose or Diabetes Mellitus</string>
+    <string name="unlikely">Unlikely</string>
+    <string name="likely">Likely</string>
 </resources>
