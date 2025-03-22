@@ -77,6 +77,7 @@ import com.example.medguidelines.ui.component.tapOrPress
 import com.example.medguidelines.ui.component.textAndUrl
 import kotlin.math.ln
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 val references = listOf(
@@ -134,14 +135,16 @@ fun LiverFibrosisScoreSystemScreen(
     val calculatedElfScore by remember {
         //mutableDoubleStateOf(
         derivedStateOf {
-            (Math.round(
-                (2.278 +
+            if((hyaluronicAcid.doubleValue != 0.0) && (piiinp.doubleValue != 0.0) && (timp1.doubleValue != 0.0)) {
+                (((2.278 +
                         0.815 * ln(hyaluronicAcid.doubleValue) +
                         0.751 * ln(piiinp.doubleValue) +
                         0.394 * ln(timp1.doubleValue)
-                        ) * 100.0
-                )
-            ) / 100.0
+                        ) * 100.0).roundToInt()
+                        ) / 100.0
+            } else {
+                0.0
+            }
         }
         //)
     }
