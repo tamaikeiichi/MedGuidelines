@@ -139,4 +139,6 @@
     <string name="fib4score">FIB4スコア</string>
     <string name="apriScore">APRIスコア</string>
     <string name="years">歳</string>
+    <string name="platelet">血小板</string>
+    <string name="diabetesMellitus">糖尿病</string>
 </resources>
