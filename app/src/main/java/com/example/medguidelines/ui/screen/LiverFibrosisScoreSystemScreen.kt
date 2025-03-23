@@ -84,6 +84,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 val references = listOf(
+    textAndUrl(R.string.fib4, R.string.fib4Url),
     textAndUrl(R.string.apri, R.string.apriUrl),
     textAndUrl(R.string.shearWaveElastography, R.string.shearWaveElastographyUrl),
     textAndUrl(R.string.nafldFibrosisScore, R.string.nafldFibrosisScoreUrl),

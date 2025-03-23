@@ -244,4 +244,5 @@
     <string name="piiip">PIIIP</string>
     <string name="platelet">Platelet</string>
     <string name="diabetesMellitus">Diabetes Mellitus</string>
+    <string name="fib4Url">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
 </resources>
