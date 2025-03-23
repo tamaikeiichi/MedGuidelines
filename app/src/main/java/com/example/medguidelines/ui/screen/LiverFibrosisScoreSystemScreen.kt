@@ -48,8 +48,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -333,7 +331,7 @@ fun LiverFibrosisScoreSystemScreen(
                         .fillMaxWidth(),
                 ) {
                     Text(
-                        text = stringResource(R.string.apri),
+                        text = stringResource(R.string.astToPlateletRatioIndex),
                         modifier = Modifier
                             .padding(5.dp)
                     )

@@ -214,7 +214,8 @@
     <string name="fib4score">FIB4 Score</string>
     <string name="apriScore">APRI score</string>
     <string name="fib4">FIB4</string>
-    <string name="apri">APRI (AST to Platelet Ratio Index)</string>
+    <string name="apri">APRI</string>
+    <string name="astToPlateletRatioIndex">AST to Platelet Ratio Index (APRI)</string>
     <string name="shearWaveElastography">Shear Wave Elastography</string>
     <string name="ms">m/s</string>
     <string name="normal">Normal\n</string>
