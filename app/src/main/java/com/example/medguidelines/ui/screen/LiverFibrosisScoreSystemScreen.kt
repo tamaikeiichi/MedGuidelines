@@ -1,5 +1,7 @@
 package com.example.medguidelines.ui.screen
 
+import android.annotation.SuppressLint
+import android.icu.text.DecimalFormat
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -79,13 +81,13 @@ import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
+import kotlin.text.format
 
 val references = listOf(
     textAndUrl(R.string.apri, R.string.apriUrl),
     textAndUrl(R.string.shearWaveElastography, R.string.shearWaveElastographyUrl),
     textAndUrl(R.string.nafldFibrosisScore, R.string.nafldFibrosisScoreUrl),
     textAndUrl(R.string.elfScore, R.string.elfScoreUrl)
-
 )
 
 data class Scores(
@@ -112,7 +114,7 @@ data class Scores(
 fun LiverFibrosisScoreSystemScreen(
     navController: NavController,
     ) {
-    val age = remember { mutableDoubleStateOf(0.0) }
+    val age = remember { mutableDoubleStateOf(0.00) }
     val ast = remember { mutableDoubleStateOf(0.0) }
     val platelet = remember { mutableDoubleStateOf(0.0) }
     val alt = remember { mutableDoubleStateOf(0.0) }
@@ -132,13 +134,17 @@ fun LiverFibrosisScoreSystemScreen(
     }
     val calculatedElfScore by remember {
         derivedStateOf {
-            if((hyaluronicAcid.doubleValue != 0.0) && (piiinp.doubleValue != 0.0) && (timp1.doubleValue != 0.0)) {
-                (((2.278 +
-                        0.815 * ln(hyaluronicAcid.doubleValue) +
-                        0.751 * ln(piiinp.doubleValue) +
-                        0.394 * ln(timp1.doubleValue)
-                        ) * 100.0).roundToInt()
-                        ) / 100.0
+            if((hyaluronicAcid.doubleValue != 0.0) &&
+                (piiinp.doubleValue != 0.0) &&
+                (timp1.doubleValue != 0.0))
+            {(((
+                                        calculateElfScore(
+                                            hyaluronicAcid.doubleValue,
+                                            piiinp.doubleValue,
+                                            timp1.doubleValue) * 100.0
+                                        ).roundToInt()
+                                ) / 100.0
+                        )
             } else {
                 0.0
             }
@@ -244,15 +250,15 @@ fun LiverFibrosisScoreSystemScreen(
                     FlowRow {
                         FactorAlerts(
                             text = R.string.age,
-                            factor = age.doubleValue.toDouble()
+                            factor = age.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.bodyHeight,
-                            factor = bodyHeight.doubleValue.toDouble()
+                            factor = bodyHeight.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.bodyWeight,
-                            factor = bodyWeight.doubleValue.toDouble()
+                            factor = bodyWeight.doubleValue
                         )
                         Surface(
                             color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
@@ -269,19 +275,19 @@ fun LiverFibrosisScoreSystemScreen(
                         }
                         FactorAlerts(
                             text = R.string.ast,
-                            factor = ast.doubleValue.toDouble()
+                            factor = ast.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.alt,
-                            factor = alt.doubleValue.toDouble()
+                            factor = alt.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.platelet,
-                            factor = platelet.doubleValue.toDouble()
+                            factor = platelet.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.albumin,
-                            factor = albumin.doubleValue.toDouble()
+                            factor = albumin.doubleValue
                         )
                     }
                 }
@@ -385,6 +391,18 @@ fun LiverFibrosisScoreSystemScreen(
     }
 }
 
+fun calculateElfScore(
+    hyaluronicAcid:Double,
+    piiinp: Double,
+    timp1: Double
+): Double{
+    val score = 2.278 +
+            0.815 * ln(hyaluronicAcid) +
+            0.751 * ln(piiinp) +
+            0.394 * ln(timp1)
+    return score
+}
+
 @Composable
 fun FactorAlerts(
     text: Int,
@@ -410,7 +428,6 @@ fun FactorAlerts(
                 modifier = Modifier.padding(2.dp)
             )
         }
-
     }
 }
 
@@ -445,11 +462,6 @@ fun GraphAndThreshold(
         toBitmap(width = helpImageWidth, height = helpImageHeight)?.
         asImageBitmap()
 
-    val colorFilter = ColorFilter.tint(
-        MaterialTheme.colorScheme.primaryContainer,
-        BlendMode.SrcIn
-    )
-
     val greenColor = Color(0xFF1BFF0B)
     val yellowColor = Color(0xFFFFE30B)
     val redColor = Color(0xFFFF0180)
@@ -473,12 +485,11 @@ fun GraphAndThreshold(
                     if (isInsideXRegion && isInsideYRegion) {
                         thirdLabelTapped = !thirdLabelTapped
                     }
-
                 }
             )
     )
     {
-        drawIntoCanvas { canvas ->
+        drawIntoCanvas {
             val rectColorStops =
                 if (secondThreshold == 0F) {
                     arrayOf(
@@ -684,11 +695,11 @@ fun inputAndCalculate(
     elfScore: MutableDoubleState,
     calculatedElfScore: Double
 ): Scores {
-    var changedFactor1Unit by remember { mutableStateOf(true) }
-    var changedFactor2Unit by remember { mutableStateOf(true) }
-    var changedFactor3Unit by remember { mutableStateOf(true) }
-    var changedFactor4Unit by remember { mutableStateOf(true) }
-    var changeFactor5Unit by remember { mutableStateOf(true) }
+    val changedFactor1Unit by remember { mutableStateOf(true) }
+    val changedFactor2Unit by remember { mutableStateOf(true) }
+    val changedFactor3Unit by remember { mutableStateOf(true) }
+    val changedFactor4Unit by remember { mutableStateOf(true) }
+    val changeFactor5Unit by remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier
@@ -704,39 +715,39 @@ fun inputAndCalculate(
         ) {
             InputValue(
                 label = R.string.age, value = age,
-                unit = R.string.years, changeUnit = changedFactor1Unit, changedValueRate = 1.0
+                unit = R.string.years, changeUnit = changedFactor1Unit
             )
             InputValue(
                 label = R.string.bodyHeight, value = bodyHeight,
-                unit = R.string.cm, changeUnit = false, changedValueRate = 1.0
+                unit = R.string.cm, changeUnit = false
             )
             InputValue(
                 label = R.string.bodyWeight, value = bodyWeight,
-                unit = R.string.kg, changeUnit = false, changedValueRate = 1.0
+                unit = R.string.kg, changeUnit = false
             )
             InputValue(
                 label = R.string.ast, value = ast,
-                unit = R.string.iul, changeUnit = changedFactor2Unit, changedValueRate = 1.0
+                unit = R.string.iul, changeUnit = changedFactor2Unit
             )
             InputValue(
                 label = R.string.alt, value = alt,
-                unit = R.string.iul, changeUnit = changedFactor4Unit, changedValueRate = 1.0
+                unit = R.string.iul, changeUnit = changedFactor4Unit
             )
             InputValue(
                 label = R.string.plateletCount, value = platelet,
-                unit = R.string.unit109L, changeUnit = changedFactor3Unit, changedValueRate = 1.0
+                unit = R.string.unit109L, changeUnit = changedFactor3Unit
             )
             InputValue(
                 label = R.string.albumin, value = albumin,
-                unit = R.string.gdL, changeUnit = false, changedValueRate = 1.0
+                unit = R.string.gdL, changeUnit = false
             )
             InputValue(
                 label = R.string.shearWaveElastography, value = swe,
-                unit = R.string.ms, changeUnit = changeFactor5Unit, changedValueRate = 1.0
+                unit = R.string.ms, changeUnit = changeFactor5Unit
             )
             InputValue(
                 label = R.string.elfScore, value = elfScore,
-                unit = R.string.space, changeUnit = false, changedValueRate = 1.0
+                unit = R.string.space, changeUnit = false
             )
             dmPresence.intValue = buttonAndScore(
                 factor = noYes,
@@ -745,15 +756,15 @@ fun inputAndCalculate(
             )
             InputValue(
                 label = R.string.hyaluronicAcid, value = hyaluronicAcid,
-                unit = R.string.ngml, changeUnit = false, changedValueRate = 1.0
+                unit = R.string.ngml, changeUnit = false
             )
             InputValue(
                 label = R.string.piiip, value = piiinp,
-                unit = R.string.ngml, changeUnit = false, changedValueRate = 1.0
+                unit = R.string.ngml, changeUnit = false
             )
             InputValue(
                 label = R.string.timp1, value = timp1,
-                unit = R.string.ngml, changeUnit = false, changedValueRate = 1.0
+                unit = R.string.ngml, changeUnit = false
             )
         }
     }
@@ -768,8 +779,6 @@ fun inputAndCalculate(
             0.99 * ast.doubleValue/ alt.doubleValue -
             0.013 * platelet.doubleValue -
             0.66 * albumin.doubleValue
-
-
     val allScores = Scores(fib4score, apri, swe.doubleValue, nfs, elfScore.doubleValue)
     allScores.roundToTwoDecimals()
     return allScores
@@ -781,10 +790,11 @@ fun InputValue(
     value: MutableDoubleState,
     unit: Int,
     changeUnit: Boolean,
-    changedValueRate: Double
+    changedValueRate: Double = 1.0
 ){
     val textMeasurer = rememberTextMeasurer()
     val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
+    val formatter = remember { DecimalFormat("#") }
     Row(
         modifier = Modifier
             .padding(4.dp),
@@ -792,7 +802,8 @@ fun InputValue(
     ) {
         NumberInTextField(
             label = label, value = value, width = Math.round(labelWidth*0.15).toInt()+80,
-            multiplier = if (changeUnit) 1.0 else changedValueRate
+            multiplier = if (changeUnit) 1.0 else changedValueRate,
+            formatter = formatter
         )
         Column(
             verticalArrangement = Arrangement.Bottom
@@ -805,32 +816,38 @@ fun InputValue(
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 private fun NumberInTextField(
     label: Int,
     value: MutableDoubleState,
     width: Int,
-    multiplier: Double
+    multiplier: Double,
+    formatter: DecimalFormat
 ) {
-    var text by remember { mutableStateOf((
-                formatDouble(value.doubleValue * multiplier)
-            )//.toString()
-    )
-    }
+//    var text by remember { mutableStateOf((
+//                formatDouble(value.doubleValue * multiplier)
+//            )
+//    )
+//    }
+    var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
-
     LaunchedEffect(key1 = value.doubleValue, key2 = multiplier) {
-        text = (value.doubleValue * multiplier).toString()
-    }
+        //text = (value.doubleValue * multiplier).toString()
+        if (value.doubleValue == value.doubleValue.toInt().toDouble()) {
+            text = formatter.format(value.doubleValue * multiplier)
+        } else {
+            text = (value.doubleValue * multiplier).toString()
+        }
 
+    }
     LaunchedEffect(isFocused) {
         if (isFocused) {
             text = ""
         }
     }
     val fontSize = calculateFontSize(text)
-
     TextField(
         label = { Text(parseStyledString(label)) },
         value = text,
@@ -873,7 +890,7 @@ fun formatDouble(value: Double): String {
     } else {
         stringValue = value.toString()
     }
-    return stringValue // Return the full double string
+    return stringValue
 }
 
 private fun calculateFontSize(text: String): TextUnit {
@@ -888,6 +905,7 @@ private fun calculateFontSize(text: String): TextUnit {
     }
 }
 
+
 @Preview
 @Composable
 fun LiverFibrosisScoreSystemScreenPreview(){
@@ -896,40 +914,8 @@ fun LiverFibrosisScoreSystemScreenPreview(){
 
 @Preview
 @Composable
-fun NfsPreview(){
-    Card(
-        modifier = Modifier
-            .padding(4.dp)
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = stringResource(R.string.fib4),
-            modifier = Modifier
-                .padding(5.dp)
-        )
-        GraphAndThreshold(
-            maxValue = 5F,
-            minValue = 0.1F,
-            firstThreshold = 1.3F,
-            secondThreshold = 2.67F,
-            firstLabel = stringResource(R.string.lowRisk),
-            secondLabel = stringResource(R.string.intermediateRisk),
-            thirdLabel = stringResource(R.string.highRisk),
-            score = 1.0
-        )
-        Row(){
-            Text(
-                text = stringResource(R.string.age)
-            )
-            Text(
-                text = stringResource(R.string.ast)
-            )
-            Text(
-                text = stringResource(R.string.alt)
-            )
-            Text(
-                text = stringResource(R.string.platelet)
-            )
-        }
-    }
+fun LiverFibrosisScoreSystemScreenPreview2(){
+    LiverFibrosisScoreSystemScreen(navController = NavController(LocalContext.current))
 }
+
+
