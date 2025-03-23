@@ -813,11 +813,7 @@ private fun NumberInTextField(
     multiplier: Double
 ) {
     var text by remember { mutableStateOf((
-//            if (value.doubleValue == 0.0) {
-//                ""
-//            } else {
-                value.doubleValue * multiplier
-           // }
+                formatDouble(value.doubleValue * multiplier)
             ).toString()) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -860,6 +856,16 @@ private fun NumberInTextField(
         maxLines = 1,
         interactionSource = interactionSource
     )
+}
+
+fun formatDouble(value: Double): String {
+    val stringValue: String
+    if (value == value.toInt().toDouble()) {
+        stringValue = value.toInt().toString()
+    } else {
+        stringValue = value.toString()
+    }
+    return stringValue // Return the full double string
 }
 
 private fun calculateFontSize(text: String): TextUnit {
