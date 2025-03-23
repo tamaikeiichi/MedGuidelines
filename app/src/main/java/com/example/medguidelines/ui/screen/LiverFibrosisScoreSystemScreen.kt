@@ -44,11 +44,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -81,7 +82,6 @@ import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
-import kotlin.text.format
 
 val references = listOf(
     textAndUrl(R.string.apri, R.string.apriUrl),
@@ -186,7 +186,7 @@ fun LiverFibrosisScoreSystemScreen(
                     piiinp = piiinp,
                     timp1 = timp1,
                     elfScore = elfScore,
-                    calculatedElfScore = calculatedElfScore
+                    //calculatedElfScore = calculatedElfScore
                 )
                 allScores.roundToTwoDecimals()
                 Card(
@@ -471,9 +471,11 @@ fun GraphAndThreshold(
             .height(canvasHeight)
             .fillMaxWidth()
             .tapOrPress(
-                onStart = { offsetX, offsetY -> Unit
+                onStart = { offsetX, offsetY ->
+                    Unit
                 },
-                onCancel = { offsetX, offsetY -> Unit
+                onCancel = { offsetX, offsetY ->
+                    Unit
                 },
                 onCompleted = { offsetX, offsetY ->
                     val isInsideXRegion =
@@ -577,11 +579,53 @@ fun GraphAndThreshold(
                     topLeft = Offset(10F+((firstThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
                 )
             }
+            val alphaCircle =
+            if (score == 0.0)  0.2F
+            else  1F
             drawCircle(
                 brush = circleGradient,
                 radius = circleSize,
                 center = Offset(x = circleXOffset, y = circleYOffset),
+                alpha = alphaCircle
             )
+            val textBackgroundColor = Color(0xFFFFF8E6)
+            val textBackgroundCornerRadius = CornerRadius(7.dp.toPx(), 7.dp.toPx())
+            val textSize = textMeasurer.measure(text = score.toString())
+            if (circleXOffset <= size.width/2) {
+                drawRoundRect(
+                    color = textBackgroundColor,
+                    size = Size(
+                        width = textSize.size.width.toFloat() + 10F,
+                        height = textSize.size.height.toFloat() + 5F
+                    ),
+                    //brush = circleGradient,
+                    topLeft = Offset(
+                        x = circleXOffset + circleSize * 1.5F
+                                //- textMeasurer.measure(text = score.toString()).size.width
+                                - 5F,
+                        y = circleYOffset - textSize.size.height / 2 - 2.5F
+                    ),
+                    cornerRadius = textBackgroundCornerRadius
+                )
+            } else {
+                drawRoundRect(
+                    color = textBackgroundColor,
+                    size = Size(
+                        width = textSize.size.width.toFloat() + 10F,
+                        height = textSize.size.height.toFloat() + 5F
+                    ),
+                    //brush = circleGradient,
+                    topLeft = Offset(
+                        x = circleXOffset - circleSize * 1.5F
+                                - textSize.size.width - 5F,
+                        y = circleYOffset - textSize.size.height / 2 - 2.5F
+                    ),
+                    cornerRadius = textBackgroundCornerRadius
+                )
+            }
+            val scoreStringAlpha =
+                if (score == 0.0)  0.3F
+                else  1F
             if (circleXOffset <= size.width/2) {
                 drawText(
                     textMeasurer = textMeasurer,
@@ -589,6 +633,11 @@ fun GraphAndThreshold(
                     topLeft = Offset(
                         x = circleXOffset + circleSize * 1.5F,
                         y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
+                        
+                    ),
+                    style = TextStyle(
+                        color = Color(red = 0f, green = 0f, blue = 0f,alpha = scoreStringAlpha),
+                        //background = Color(red = 1f, green = 1f, blue = 1f,alpha = scoreStringAlpha)
                     )
                 )
             } else {
@@ -599,6 +648,13 @@ fun GraphAndThreshold(
                         x = circleXOffset - circleSize * 1.5F
                                 - textMeasurer.measure(text = score.toString()).size.width,
                         y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
+                    ),
+                    style = TextStyle(color = Color(red = 0f, green = 0f, blue = 0f,alpha = scoreStringAlpha),
+//                        shadow = Shadow(
+//                            color = Color.White
+//                            , blurRadius = 0.5f),
+                        //background = Color(red = 1f, green = 1f, blue = 1f,alpha = scoreStringAlpha),
+
                     )
                 )
             }
@@ -693,7 +749,7 @@ fun inputAndCalculate(
     piiinp: MutableDoubleState,
     timp1: MutableDoubleState,
     elfScore: MutableDoubleState,
-    calculatedElfScore: Double
+    //calculatedElfScore: Double
 ): Scores {
     val changedFactor1Unit by remember { mutableStateOf(true) }
     val changedFactor2Unit by remember { mutableStateOf(true) }
@@ -780,7 +836,7 @@ fun inputAndCalculate(
             0.013 * platelet.doubleValue -
             0.66 * albumin.doubleValue
     val allScores = Scores(fib4score, apri, swe.doubleValue, nfs, elfScore.doubleValue)
-    allScores.roundToTwoDecimals()
+    //allScores.roundToTwoDecimals()
     return allScores
 }
 
@@ -825,22 +881,15 @@ private fun NumberInTextField(
     multiplier: Double,
     formatter: DecimalFormat
 ) {
-//    var text by remember { mutableStateOf((
-//                formatDouble(value.doubleValue * multiplier)
-//            )
-//    )
-//    }
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     LaunchedEffect(key1 = value.doubleValue, key2 = multiplier) {
-        //text = (value.doubleValue * multiplier).toString()
-        if (value.doubleValue == value.doubleValue.toInt().toDouble()) {
-            text = formatter.format(value.doubleValue * multiplier)
+        text = if (value.doubleValue == value.doubleValue.toInt().toDouble()) {
+            formatter.format(value.doubleValue * multiplier)
         } else {
-            text = (value.doubleValue * multiplier).toString()
+            (value.doubleValue * multiplier).toString()
         }
-
     }
     LaunchedEffect(isFocused) {
         if (isFocused) {
@@ -852,6 +901,14 @@ private fun NumberInTextField(
         label = { Text(parseStyledString(label)) },
         value = text,
         onValueChange = {newText ->
+//            if (newText.toDouble() == newText.toDouble().toInt().toDouble()) {
+//                formatter.format((newText.toDouble()) * multiplier)
+//                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
+//            } else {
+//                text = newText
+//                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
+//        }
+
             if (newText.matches(Regex("([0-9]*)\\.?[0]*")) ||
                 (newText.matches(Regex("([0-9]*)$")))
                 )
@@ -861,7 +918,8 @@ private fun NumberInTextField(
                 } else if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
                 text = newText
                 value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
-            }},
+            }
+                        },
         modifier = Modifier
             .padding(5.dp)
             .width(width.dp),
@@ -915,7 +973,15 @@ fun LiverFibrosisScoreSystemScreenPreview(){
 @Preview
 @Composable
 fun LiverFibrosisScoreSystemScreenPreview2(){
-    LiverFibrosisScoreSystemScreen(navController = NavController(LocalContext.current))
+    GraphAndThreshold(
+        maxValue = 2F,
+        minValue = -4F,
+        firstThreshold = -1.44F,
+        secondThreshold = 0.672F,
+        firstLabel = stringResource(R.string.unlikely),
+        thirdLabel = stringResource(R.string.likely),
+        score = 0.0
+    )
 }
 
 
