@@ -107,12 +107,10 @@ data class Scores(
     }
 }
 
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun LiverFibrosisScoreSystemScreen(
     navController: NavController,
-
     ) {
     val age = remember { mutableDoubleStateOf(0.0) }
     val ast = remember { mutableDoubleStateOf(0.0) }
@@ -133,7 +131,6 @@ fun LiverFibrosisScoreSystemScreen(
         )
     }
     val calculatedElfScore by remember {
-        //mutableDoubleStateOf(
         derivedStateOf {
             if((hyaluronicAcid.doubleValue != 0.0) && (piiinp.doubleValue != 0.0) && (timp1.doubleValue != 0.0)) {
                 (((2.278 +
@@ -146,7 +143,6 @@ fun LiverFibrosisScoreSystemScreen(
                 0.0
             }
         }
-        //)
     }
     LaunchedEffect(key1 = calculatedElfScore) {
         if(calculatedElfScore != elfScore.doubleValue)
@@ -217,12 +213,12 @@ fun LiverFibrosisScoreSystemScreen(
                             factor = ast.doubleValue
                         )
                         FactorAlerts(
-                            text = R.string.platelet,
-                            factor = platelet.doubleValue
-                        )
-                        FactorAlerts(
                             text = R.string.alt,
                             factor = alt.doubleValue
+                        )
+                        FactorAlerts(
+                            text = R.string.platelet,
+                            factor = platelet.doubleValue
                         )
                     }
                 }
@@ -816,7 +812,13 @@ private fun NumberInTextField(
     width: Int,
     multiplier: Double
 ) {
-    var text by remember { mutableStateOf((value.doubleValue * multiplier).toString()) }
+    var text by remember { mutableStateOf((
+//            if (value.doubleValue == 0.0) {
+//                ""
+//            } else {
+                value.doubleValue * multiplier
+           // }
+            ).toString()) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
@@ -844,7 +846,7 @@ private fun NumberInTextField(
             .width(width.dp),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Next
         ),
         textStyle = TextStyle.Default.copy(
             fontSize = fontSize,
