@@ -814,7 +814,9 @@ private fun NumberInTextField(
 ) {
     var text by remember { mutableStateOf((
                 formatDouble(value.doubleValue * multiplier)
-            ).toString()) }
+            )//.toString()
+    )
+    }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
@@ -833,7 +835,13 @@ private fun NumberInTextField(
         label = { Text(parseStyledString(label)) },
         value = text,
         onValueChange = {newText ->
-            if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
+            if (newText.matches(Regex("([0-9]*)\\.?[0]*")) ||
+                (newText.matches(Regex("([0-9]*)$")))
+                )
+                {
+                    text = Regex(".0+\$").replace(newText, "")
+                    value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
+                } else if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
                 text = newText
                 value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
             }},
