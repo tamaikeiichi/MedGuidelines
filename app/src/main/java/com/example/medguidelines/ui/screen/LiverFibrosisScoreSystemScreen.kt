@@ -883,11 +883,10 @@ private fun NumberInTextField(
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
-    LaunchedEffect(key1 = value.doubleValue, key2 = multiplier) {
-        text = if (value.doubleValue == value.doubleValue.toInt().toDouble()) {
-            formatter.format(value.doubleValue * multiplier)
-        } else {
-            (value.doubleValue * multiplier).toString()
+
+    LaunchedEffect(isFocused, value.doubleValue) {
+        if (!isFocused) {
+            text = formatDouble(value.doubleValue * multiplier)
         }
     }
     LaunchedEffect(isFocused) {
@@ -907,18 +906,21 @@ private fun NumberInTextField(
 //                text = newText
 //                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
 //        }
-
-            if (newText.matches(Regex("([0-9]*)\\.?[0]*")) ||
-                (newText.matches(Regex("([0-9]*)$")))
-                )
-                {
-                    text = Regex(".0+\$").replace(newText, "")
-                    value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
-                } else if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
-                text = newText
-                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
-            }
-                        },
+            text = newText
+            // Update doubleValue on every change
+            value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) / multiplier
+        },
+//            if (newText.matches(Regex("([0-9]*)\\.?[0]*")) ||
+//                (newText.matches(Regex("([0-9]*)$")))
+//                )
+//                {
+//                    text = Regex(".0+\$").replace(newText, "")
+//                    value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
+//                } else if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
+//                text = newText
+//                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
+//            }
+//                        },
         modifier = Modifier
             .padding(5.dp)
             .width(width.dp),
