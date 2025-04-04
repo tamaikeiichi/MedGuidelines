@@ -86,7 +86,8 @@ val references = listOf(
     textAndUrl(R.string.apri, R.string.apriUrl),
     textAndUrl(R.string.shearWaveElastography, R.string.shearWaveElastographyUrl),
     textAndUrl(R.string.nafldFibrosisScore, R.string.nafldFibrosisScoreUrl),
-    textAndUrl(R.string.elfScore, R.string.elfScoreUrl)
+    textAndUrl(R.string.elfScore, R.string.elfScoreUrl),
+    textAndUrl(R.string.m2bpgi, R.string.m2bpgiUrl)
 )
 
 data class Scores(
@@ -94,7 +95,8 @@ data class Scores(
     var apri: Double,
     var swe: Double,
     var nfs: Double,
-    var elfScore: Double
+    var elfScore: Double,
+    var m2bpgi: Double
 ){
     fun roundToTwoDecimals() {
         fib4score = roundDouble(fib4score)
@@ -126,9 +128,10 @@ fun LiverFibrosisScoreSystemScreen(
     val piiinp = remember { mutableDoubleStateOf(0.0) }
     val timp1 = remember { mutableDoubleStateOf(0.0) }
     val elfScore = remember { mutableDoubleStateOf(0.0) }
+    val m2bpgi = remember { mutableDoubleStateOf(0.0) }
     var allScores by remember {
         mutableStateOf(Scores(
-            0.0,0.0, 0.0, 0.0, 0.0)
+            0.0,0.0, 0.0, 0.0, 0.0, 0.0)
         )
     }
     val calculatedElfScore by remember {
@@ -185,6 +188,7 @@ fun LiverFibrosisScoreSystemScreen(
                     piiinp = piiinp,
                     timp1 = timp1,
                     elfScore = elfScore,
+                    m2bpgi = m2bpgi,
                     //calculatedElfScore = calculatedElfScore
                 )
                 allScores.roundToTwoDecimals()
@@ -336,11 +340,11 @@ fun LiverFibrosisScoreSystemScreen(
                             .padding(5.dp)
                     )
                     GraphAndThreshold(
-                        maxValue = 3F,
+                        maxValue = 2.5F,
                         minValue = 0.01F,
                         firstThreshold = 1.34F,
                         secondThreshold = 0F,
-                        firstLabel = stringResource(R.string.fibrosisStage02),
+                        firstLabel = stringResource(R.string.nashCrnFibrosisStage02),
                         secondLabel = stringResource(R.string.stage34),
                         score = allScores.apri
                     )
@@ -358,6 +362,31 @@ fun LiverFibrosisScoreSystemScreen(
                             factor = platelet.doubleValue
                         )
                     }
+                }
+                Card(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(R.string.m2bpgi),
+                        modifier = Modifier
+                            .padding(5.dp)
+                    )
+                    GraphAndThreshold(
+                        maxValue = 3F,
+                        minValue = 0.01F,
+                        firstThreshold = 0.94F,
+                        secondThreshold = 1.46F,
+                        firstLabel = stringResource(R.string.bruntStaging),
+                        secondLabel = stringResource(R.string.stage3),
+                        thirdLabel = stringResource(R.string.stage4),
+                        score = allScores.m2bpgi
+                    )
+                    FactorAlerts(
+                        text = R.string.m2bpgi,
+                        factor = m2bpgi.doubleValue
+                    )
                 }
                 Card(
                     modifier = Modifier
@@ -748,6 +777,7 @@ fun inputAndCalculate(
     piiinp: MutableDoubleState,
     timp1: MutableDoubleState,
     elfScore: MutableDoubleState,
+    m2bpgi: MutableDoubleState,
     //calculatedElfScore: Double
 ): Scores {
     val changedFactor1Unit by remember { mutableStateOf(true) }
@@ -804,6 +834,10 @@ fun inputAndCalculate(
                 label = R.string.elfScore, value = elfScore,
                 unit = R.string.space, changeUnit = false
             )
+            InputValue(
+                label = R.string.m2bpgi, value = m2bpgi,
+                unit = R.string.coi, changeUnit = false
+            )
             dmPresence.intValue = buttonAndScore(
                 factor = noYes,
                 title = R.string.dmPresence,
@@ -834,7 +868,7 @@ fun inputAndCalculate(
             0.99 * ast.doubleValue/ alt.doubleValue -
             0.013 * platelet.doubleValue -
             0.66 * albumin.doubleValue
-    val allScores = Scores(fib4score, apri, swe.doubleValue, nfs, elfScore.doubleValue)
+    val allScores = Scores(fib4score, apri, swe.doubleValue, nfs, elfScore.doubleValue, m2bpgi.doubleValue)
     //allScores.roundToTwoDecimals()
     return allScores
 }

@@ -246,4 +246,11 @@
     <string name="platelet">Platelet</string>
     <string name="diabetesMellitus">Diabetes Mellitus</string>
     <string name="fib4Url">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
+    <string name="m2bpgi">M2BPGi</string>
+    <string name="coi">COI</string>
+    <string name="stage3">Stage 3</string>
+    <string name="stage4">Stage 4</string>
+    <string name="m2bpgiUrl">https://pubmed.ncbi.nlm.nih.gov/25326152/</string>
+    <string name="bruntStaging">Brunt staging</string>
+    <string name="nashCrnFibrosisStage02">NASH-CRN Fibrosis Stage 0-2</string>
 </resources>
