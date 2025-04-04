@@ -110,6 +110,14 @@ data class Scores(
     }
 }
 
+fun Modifier.cardModifier(): Modifier =
+    this
+        .padding(4.dp)
+        .fillMaxWidth()
+
+fun Modifier.textModifier(): Modifier =
+    this.padding(5.dp)
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun LiverFibrosisScoreSystemScreen(
@@ -193,14 +201,11 @@ fun LiverFibrosisScoreSystemScreen(
                 )
                 allScores.roundToTwoDecimals()
                 Card(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth()
+                    modifier = Modifier.cardModifier()
                 ) {
                     Text(
                         text = stringResource(R.string.fib4),
-                        modifier = Modifier
-                            .padding(5.dp)
+                        modifier = Modifier.textModifier()
                     )
                     GraphAndThreshold(
                         maxValue = 5F,
@@ -232,14 +237,11 @@ fun LiverFibrosisScoreSystemScreen(
                     }
                 }
                 Card(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.cardModifier()
                 ){
                     Text(
                         text = stringResource(R.string.nafldFibrosisScore),
-                        modifier = Modifier
-                            .padding(5.dp)
+                        modifier = Modifier.textModifier()
                     )
                     GraphAndThreshold(
                         maxValue = 2F,
@@ -295,14 +297,11 @@ fun LiverFibrosisScoreSystemScreen(
                     }
                 }
                 Card(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.cardModifier()
                 ){
                     Text(
                         text = stringResource(R.string.elfScore),
-                        modifier = Modifier
-                            .padding(5.dp)
+                        modifier = Modifier.textModifier()
                     )
                     GraphAndThreshold(
                         maxValue = 14F,
@@ -330,14 +329,11 @@ fun LiverFibrosisScoreSystemScreen(
                     }
                 }
                 Card(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.cardModifier()
                 ) {
                     Text(
                         text = stringResource(R.string.astToPlateletRatioIndex),
-                        modifier = Modifier
-                            .padding(5.dp)
+                        modifier = Modifier.textModifier()
                     )
                     GraphAndThreshold(
                         maxValue = 2.5F,
@@ -364,14 +360,11 @@ fun LiverFibrosisScoreSystemScreen(
                     }
                 }
                 Card(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.cardModifier()
                 ) {
                     Text(
                         text = stringResource(R.string.m2bpgi),
-                        modifier = Modifier
-                            .padding(5.dp)
+                        modifier = Modifier.textModifier()
                     )
                     GraphAndThreshold(
                         maxValue = 3F,
@@ -389,14 +382,11 @@ fun LiverFibrosisScoreSystemScreen(
                     )
                 }
                 Card(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.cardModifier()
                 ) {
                     Text(
                         text = stringResource(R.string.shearWaveElastography),
-                        modifier = Modifier
-                            .padding(5.dp)
+                        modifier = Modifier.textModifier()
                     )
                     GraphAndThreshold(
                         maxValue = 3F,
@@ -678,11 +668,6 @@ fun GraphAndThreshold(
                         y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
                     ),
                     style = TextStyle(color = Color(red = 0f, green = 0f, blue = 0f,alpha = scoreStringAlpha),
-//                        shadow = Shadow(
-//                            color = Color.White
-//                            , blurRadius = 0.5f),
-                        //background = Color(red = 1f, green = 1f, blue = 1f,alpha = scoreStringAlpha),
-
                     )
                 )
             }
@@ -787,9 +772,7 @@ fun inputAndCalculate(
     val changeFactor5Unit by remember { mutableStateOf(true) }
 
     Card(
-        modifier = Modifier
-            .padding(4.dp)
-            .fillMaxWidth(),
+        modifier = Modifier.cardModifier()
     ) {
         FlowRow(
             modifier = Modifier
@@ -933,28 +916,9 @@ private fun NumberInTextField(
         label = { Text(parseStyledString(label)) },
         value = text,
         onValueChange = {newText ->
-//            if (newText.toDouble() == newText.toDouble().toInt().toDouble()) {
-//                formatter.format((newText.toDouble()) * multiplier)
-//                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
-//            } else {
-//                text = newText
-//                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
-//        }
             text = newText
-            // Update doubleValue on every change
             value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) / multiplier
         },
-//            if (newText.matches(Regex("([0-9]*)\\.?[0]*")) ||
-//                (newText.matches(Regex("([0-9]*)$")))
-//                )
-//                {
-//                    text = Regex(".0+\$").replace(newText, "")
-//                    value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
-//                } else if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
-//                text = newText
-//                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) * multiplier
-//            }
-//                        },
         modifier = Modifier
             .padding(5.dp)
             .width(width.dp),
@@ -998,7 +962,6 @@ private fun calculateFontSize(text: String): TextUnit {
     }
 }
 
-
 @Preview
 @Composable
 fun LiverFibrosisScoreSystemScreenPreview(){
@@ -1018,5 +981,3 @@ fun LiverFibrosisScoreSystemScreenPreview2(){
         score = 0.0
     )
 }
-
-
