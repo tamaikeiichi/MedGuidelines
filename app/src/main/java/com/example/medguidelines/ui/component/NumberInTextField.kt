@@ -1,6 +1,7 @@
 package com.example.medguidelines.ui.component
 
 import android.annotation.SuppressLint
+import android.icu.text.DecimalFormat
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -26,62 +27,57 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
-@SuppressLint("SuspiciousIndentation")
-@OptIn(ExperimentalLayoutApi::class)
+//@SuppressLint("RememberReturnType")
 @Composable
-fun NumberInTextField(label: Int, value: MutableDoubleState, width: Int,
+fun NumberInTextField(
+    label: Int,
+    value: MutableDoubleState,
+    width: Int,
+    multiplier: Double = 1.0,
+    formatter: DecimalFormat = remember { DecimalFormat("#") }
 ) {
-    var text by remember { mutableStateOf(value.doubleValue.toString()) }
+    var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
+    LaunchedEffect(isFocused, multiplier) {
+        if (!isFocused) {
+            text = formatDouble(value.doubleValue * multiplier)
+        }
+    }
+//    LaunchedEffect(value.doubleValue) { // Always update text when value changes
+//        text = formatDouble(value.doubleValue * multiplier)
+//    }
     LaunchedEffect(isFocused) {
         if (isFocused) {
             text = ""
         }
     }
     val fontSize = calculateFontSize(text)
-
-            TextField(
-                label = { Text(parseStyledString(label)) },
-                value = text,
-                onValueChange = {newText ->
-                    if (newText.matches(Regex("[0-9]*\\.?[0-9]*")) || newText.isEmpty()) {
-                        text = newText
-                        value.doubleValue = newText.toDoubleOrNull() ?: 0.0
-                    }},
-                modifier = Modifier
-                    .padding(5.dp)
-                    .width(width.dp)
-                ,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                textStyle = TextStyle.Default.copy(
-                    fontSize = fontSize,
-                    textAlign = TextAlign
-                        .Right,
-                    lineHeightStyle = LineHeightStyle(
-                        alignment = LineHeightStyle.Alignment.Bottom,
-                        trim = LineHeightStyle.Trim.Both
-                    )
-                ),
-                maxLines = 1,
-                interactionSource = interactionSource
-                //TextFieldColors =
+    TextField(
+        label = { Text(parseStyledString(label)) },
+        value = text,
+        onValueChange = {newText ->
+            text = newText
+            value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) // multiplier
+        },
+        modifier = Modifier
+            .padding(5.dp)
+            .width(width.dp),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next
+        ),
+        textStyle = TextStyle.Default.copy(
+            fontSize = fontSize,
+            textAlign = TextAlign
+                .Right,
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Bottom,
+                trim = LineHeightStyle.Trim.Both
             )
-        }
-
-private fun calculateFontSize(text: String): TextUnit {
-    val baseSize = 28.sp
-    val minSize = 12.sp
-    val maxLength = 5
-
-    return when {
-        text.length <= maxLength / 2 -> baseSize
-        text.length <= maxLength -> (baseSize.value - (text.length - maxLength / 2) * 2).sp
-        else -> minSize
-    }
+        ),
+        maxLines = 1,
+        interactionSource = interactionSource
+    )
 }

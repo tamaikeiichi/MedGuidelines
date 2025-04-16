@@ -24,6 +24,7 @@ import com.example.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.example.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.example.medguidelines.ui.screen.BloodGasAnalysisScreen
 import com.example.medguidelines.ui.screen.EsophagealTNMScreen
+import com.example.medguidelines.ui.screen.HomaIRScreen
 import com.example.medguidelines.ui.screen.LiverFibrosisScoreSystemScreen
 import com.example.medguidelines.ui.screen.MALBIScreen
 import com.example.medguidelines.ui.screen.NetakiridoScreen
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
                                 navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen")},
                                 navigateToMALBI = { controller.navigate("MALBIScreen")},
                                 navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen")},
+                                navigateToHomaIR = { controller.navigate("HomaIRScreen")}
                             )
                         }
                     }
@@ -107,6 +109,11 @@ class MainActivity : ComponentActivity() {
                     composable("LiverFibrosisScoreSystemScreen") {
                         ChildComposable {
                             LiverFibrosisScoreSystemScreen(controller)
+                        }
+                    }
+                    composable("HomaIRScreen") {
+                        ChildComposable {
+                            HomaIRScreen(controller)
                         }
                     }
                 }

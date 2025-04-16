@@ -253,4 +253,11 @@
     <string name="m2bpgiUrl">https://pubmed.ncbi.nlm.nih.gov/25326152/</string>
     <string name="bruntStaging">Brunt staging</string>
     <string name="nashCrnFibrosisStage02">NASH-CRN Fibrosis Stage 0-2</string>
+    <string name="homairTitle">HOMA-IR</string>
+    <string name="boaderline">Boarderline</string>
+    <string name="insulinResistance">Insulin Resistance</string>
+    <string name="fastingInsulin">Fasting Insulin</string>
+    <string name="uUml">μU/mL</string>
+    <string name="fastingGlucose">Fasting Glucose</string>
+    <string name="mmoll">mmol/L</string>
 </resources>

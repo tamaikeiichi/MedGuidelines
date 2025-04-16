@@ -2,31 +2,22 @@ package com.example.medguidelines.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableDoubleState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,41 +26,35 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
-import com.example.medguidelines.ui.component.ClickableText
-import com.example.medguidelines.ui.component.NumberInTextField
+import com.example.medguidelines.ui.component.InputValue
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
-import kotlin.math.log10
 
 @Composable
-fun MALBIScreen(navController: NavController) {
+fun HomaIRScreen(navController: NavController) {
     var grade by remember { mutableStateOf("") }
     var score by remember { mutableDoubleStateOf(0.0) }
     var scoreRound by remember { mutableDoubleStateOf(0.0) }
     Scaffold(
         topBar = {
             TitleTopAppBar(
-                title = R.string.mALBITitle,
+                title = R.string.homairTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.mALBIRef, R.string.mALBIUrl)
+                    textAndUrl(R.string.space, R.string.space)
                 )
             )
         },
@@ -82,13 +67,14 @@ fun MALBIScreen(navController: NavController) {
                 ){
                     Text(
                         buildAnnotatedString {
-                            append("mALBI ")
+                            append(stringResource(R.string.insulinResistance))
+                            append(" ")
                             withStyle(
                                 style = SpanStyle(fontWeight = FontWeight.Bold)
                             ){
                                 append(" $grade ")
                             }
-                            append(" ($scoreRound)")
+                            append("HOMA-IR=$scoreRound")
                         },
                         fontSize = 30.sp,
                         textAlign = TextAlign.Center
@@ -105,12 +91,11 @@ fun MALBIScreen(navController: NavController) {
             state = rememberLazyListState()
         ) {
             item {
-                score = mALBIInput()
+                score = homaIRInput()
                 grade = when {
-                    score <= -2.6 -> "1"
-                    score < -2.27 -> "2a"
-                    score <= -1.39 -> "2b"
-                    else -> "3"
+                    score <= 1.6 -> stringResource(R.string.absence)
+                    score < 2.5 -> stringResource(R.string.boaderline)
+                    else -> stringResource(R.string.presence)
                 }
                 scoreRound = Math.round(score * 100.0)/100.0
             }
@@ -120,11 +105,11 @@ fun MALBIScreen(navController: NavController) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun mALBIInput(): Double {
-    val totalBilirubin = remember { mutableDoubleStateOf(1.0) }
-    val albumin = remember { mutableDoubleStateOf(4.1) }
-    var changedBilirubinUnit by remember { mutableStateOf(true) }
-    var changedAlbuminUnit by remember { mutableStateOf(true) }
+fun homaIRInput(): Double {
+    val insulin = remember { mutableDoubleStateOf(5.0) }
+    val glucose = remember { mutableDoubleStateOf(100.0) }
+    var changedFactor1Unit by remember { mutableStateOf(true) }
+    var changedFactor2Unit by remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier
@@ -133,58 +118,31 @@ fun mALBIInput(): Double {
     ) {
         FlowRow(
             modifier = Modifier
-                .padding(4.dp),
+                .padding(4.dp)
+                .wrapContentHeight(
+                    align = Alignment.Bottom
+                ),
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.Bottom),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                NumberInTextField(
-                    label = R.string.totalBilirubin, value = totalBilirubin , width = 100,
-                    multiplier = if (changedBilirubinUnit) 1.0 else 17.1
-                )
-                Column(
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    ClickableText(
-                        text = if (changedBilirubinUnit) R.string.mgdl else R.string.umolL,
-                        onChanged = { changedBilirubinUnit = !changedBilirubinUnit },
-                        changed = changedBilirubinUnit
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.Bottom),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                NumberInTextField(
-                    label = R.string.albumin, value = albumin, width = 100,
-                    multiplier = if (changedAlbuminUnit) 1.0 else 10.0
-                )
-                Column(
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    ClickableText(
-                        text = if (changedAlbuminUnit) R.string.gdL else R.string.gL,
-                        onChanged = { changedAlbuminUnit = !changedAlbuminUnit },
-                        changed = changedAlbuminUnit
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
+            InputValue(
+                label = R.string.fastingInsulin, value = insulin,
+                unit = R.string.uUml,
+                changeUnit = remember { mutableStateOf(changedFactor1Unit) }.also { changedFactor1Unit = it.value }
+            )
+            InputValue(
+                label = R.string.fastingGlucose, value = glucose,
+                unit = R.string.mgdl,
+                changeUnit = remember { mutableStateOf(changedFactor2Unit) }.also { changedFactor2Unit = it.value },
+                changedValueRate = 0.05551,
+                changedUnit = R.string.mmoll
+            )
         }
     }
-    val score = (log10(17.1 * totalBilirubin.doubleValue)) * 0.66 + (10 * albumin.doubleValue * (-0.085))
+    val score = insulin.doubleValue * glucose.doubleValue / 405
     return score
 }
 
 @Preview
 @Composable
-fun MALBIScreenPreview(){
-    MALBIScreen(navController = NavController(LocalContext.current))
+fun HomaIRScreenPreview(){
+    HomaIRScreen(navController = NavController(LocalContext.current))
 }

@@ -71,8 +71,11 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavController
 import com.example.medguidelines.R
 import com.example.medguidelines.data.noYes
+import com.example.medguidelines.ui.component.InputValue
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.buttonAndScore
+import com.example.medguidelines.ui.component.calculateFontSize
+import com.example.medguidelines.ui.component.formatDouble
 import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.tapOrPress
 import com.example.medguidelines.ui.component.textAndUrl
@@ -783,43 +786,43 @@ fun inputAndCalculate(
         ) {
             InputValue(
                 label = R.string.age, value = age,
-                unit = R.string.years, changeUnit = changedFactor1Unit
+                unit = R.string.years, //changeUnit = changedFactor1Unit
             )
             InputValue(
                 label = R.string.bodyHeight, value = bodyHeight,
-                unit = R.string.cm, changeUnit = false
+                unit = R.string.cm, //changeUnit = false
             )
             InputValue(
                 label = R.string.bodyWeight, value = bodyWeight,
-                unit = R.string.kg, changeUnit = false
+                unit = R.string.kg, //changeUnit = false
             )
             InputValue(
                 label = R.string.ast, value = ast,
-                unit = R.string.iul, changeUnit = changedFactor2Unit
+                unit = R.string.iul, //changeUnit = changedFactor2Unit
             )
             InputValue(
                 label = R.string.alt, value = alt,
-                unit = R.string.iul, changeUnit = changedFactor4Unit
+                unit = R.string.iul, //changeUnit = changedFactor4Unit
             )
             InputValue(
                 label = R.string.plateletCount, value = platelet,
-                unit = R.string.unit109L, changeUnit = changedFactor3Unit
+                unit = R.string.unit109L, //changeUnit = changedFactor3Unit
             )
             InputValue(
                 label = R.string.albumin, value = albumin,
-                unit = R.string.gdL, changeUnit = false
+                unit = R.string.gdL, //changeUnit = false
             )
             InputValue(
                 label = R.string.shearWaveElastography, value = swe,
-                unit = R.string.ms, changeUnit = changeFactor5Unit
+                unit = R.string.ms, //changeUnit = changeFactor5Unit
             )
             InputValue(
                 label = R.string.elfScore, value = elfScore,
-                unit = R.string.space, changeUnit = false
+                unit = R.string.space, //changeUnit = false
             )
             InputValue(
                 label = R.string.m2bpgi, value = m2bpgi,
-                unit = R.string.coi, changeUnit = false
+                unit = R.string.coi, //changeUnit = false
             )
             dmPresence.intValue = buttonAndScore(
                 factor = noYes,
@@ -828,15 +831,15 @@ fun inputAndCalculate(
             )
             InputValue(
                 label = R.string.hyaluronicAcid, value = hyaluronicAcid,
-                unit = R.string.ngml, changeUnit = false
+                unit = R.string.ngml, //changeUnit = false
             )
             InputValue(
                 label = R.string.piiip, value = piiinp,
-                unit = R.string.ngml, changeUnit = false
+                unit = R.string.ngml, //changeUnit = false
             )
             InputValue(
                 label = R.string.timp1, value = timp1,
-                unit = R.string.ngml, changeUnit = false
+                unit = R.string.ngml, //changeUnit = false
             )
         }
     }
@@ -856,111 +859,7 @@ fun inputAndCalculate(
     return allScores
 }
 
-@Composable
-fun InputValue(
-    label: Int,
-    value: MutableDoubleState,
-    unit: Int,
-    changeUnit: Boolean,
-    changedValueRate: Double = 1.0
-){
-    val textMeasurer = rememberTextMeasurer()
-    val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
-    val formatter = remember { DecimalFormat("#") }
-    Row(
-        modifier = Modifier
-            .padding(4.dp),
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        NumberInTextField(
-            label = label, value = value, width = Math.round(labelWidth*0.15).toInt()+80,
-            multiplier = if (changeUnit) 1.0 else changedValueRate,
-            formatter = formatter
-        )
-        Column(
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Text(
-                text = parseStyledString(unit),
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-    }
-}
 
-@SuppressLint("RememberReturnType")
-@Composable
-private fun NumberInTextField(
-    label: Int,
-    value: MutableDoubleState,
-    width: Int,
-    multiplier: Double,
-    formatter: DecimalFormat
-) {
-    var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-
-    LaunchedEffect(isFocused, value.doubleValue) {
-        if (!isFocused) {
-            text = formatDouble(value.doubleValue * multiplier)
-        }
-    }
-    LaunchedEffect(isFocused) {
-        if (isFocused) {
-            text = ""
-        }
-    }
-    val fontSize = calculateFontSize(text)
-    TextField(
-        label = { Text(parseStyledString(label)) },
-        value = text,
-        onValueChange = {newText ->
-            text = newText
-            value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) / multiplier
-        },
-        modifier = Modifier
-            .padding(5.dp)
-            .width(width.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Next
-        ),
-        textStyle = TextStyle.Default.copy(
-            fontSize = fontSize,
-            textAlign = TextAlign
-                .Right,
-            lineHeightStyle = LineHeightStyle(
-                alignment = LineHeightStyle.Alignment.Bottom,
-                trim = LineHeightStyle.Trim.Both
-            )
-        ),
-        maxLines = 1,
-        interactionSource = interactionSource
-    )
-}
-
-fun formatDouble(value: Double): String {
-    val stringValue: String
-    if (value == value.toInt().toDouble()) {
-        stringValue = value.toInt().toString()
-    } else {
-        stringValue = value.toString()
-    }
-    return stringValue
-}
-
-private fun calculateFontSize(text: String): TextUnit {
-    val baseSize = 28.sp
-    val minSize = 12.sp
-    val maxLength = 5
-
-    return when {
-        text.length <= maxLength / 2 -> baseSize
-        text.length <= maxLength -> (baseSize.value - (text.length - maxLength / 2) * 2).sp
-        else -> minSize
-    }
-}
 
 @Preview
 @Composable

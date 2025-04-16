@@ -51,6 +51,7 @@ val itemsList = listOf(
     ListItemData(R.string.esophagealTNMTitle, ActionType.NAVIGATE_TO_ESOPAGEAL_TNM),
     ListItemData(R.string.mALBITitle, ActionType.NAVIGATE_TO_MALBI),
     ListItemData(R.string.liverFibrosisScoreSystemTitle, ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM),
+    ListItemData(R.string.homairTitle, ActionType.NAVIGATE_TO_HOMAIR)
 )
 
 @Composable
@@ -66,6 +67,7 @@ fun IndexScreen(
     navigateToEsophagealTNM: () -> Unit,
     navigateToMALBI: () -> Unit,
     navigateToLiverFibrosisScoreSystem: () -> Unit,
+    navigateToHomaIR: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -132,6 +134,7 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_ESOPAGEAL_TNM -> navigateToEsophagealTNM()
                             ActionType.NAVIGATE_TO_MALBI -> navigateToMALBI()
                             ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM -> navigateToLiverFibrosisScoreSystem()
+                            ActionType.NAVIGATE_TO_HOMAIR -> navigateToHomaIR()
                         }
                     }
                 )
@@ -177,5 +180,6 @@ fun IndexScreenPreview(){
         navigateToEsophagealTNM = {},
         navigateToMALBI = {},
         navigateToLiverFibrosisScoreSystem = {},
+        navigateToHomaIR = {}
     )
 }
