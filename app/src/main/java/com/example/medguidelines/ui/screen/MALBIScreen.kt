@@ -148,6 +148,7 @@ fun mALBIInput(): Double {
         FlowRow(
             modifier = Modifier
                 .padding(4.dp),
+            itemVerticalAlignment = Alignment.Bottom,
         ) {
             Row(
                 modifier = Modifier

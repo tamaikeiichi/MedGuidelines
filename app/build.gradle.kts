@@ -85,7 +85,7 @@ dependencies {
     implementation(libs.androidx.preference)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.accompanist.flowlayout)
-
+    implementation(libs.androidx.foundation.layout)
 }
 
 protobuf {

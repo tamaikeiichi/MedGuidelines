@@ -27,14 +27,16 @@ fun InputValue(
     unit: Int,
     changeUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
     changedValueRate: Double = 1.0,
-    changedUnit: Int = R.string.space
+    changedUnit: Int = R.string.space,
+
 ){
     val textMeasurer = rememberTextMeasurer()
     val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
     val formatter = remember { DecimalFormat("#.##") }
     Row(
         modifier = Modifier
-            .padding(4.dp),
+            .padding(4.dp)
+            ,
         verticalAlignment = Alignment.Bottom,
     ) {
         NumberInTextField(

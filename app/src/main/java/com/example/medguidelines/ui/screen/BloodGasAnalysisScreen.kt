@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -85,7 +86,8 @@ fun BloodGasAnalysisInput() {
         bloodGasAnalysisContent = {
             FlowRow(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(4.dp),
+                itemVerticalAlignment = Alignment.Bottom
             ) {
                 NumberInTextField(
                     label = R.string.ph, value = ph, width = 100,

@@ -64,7 +64,8 @@ fun NumberInTextField(
         },
         modifier = Modifier
             .padding(5.dp)
-            .width(width.dp),
+            .width(width.dp)
+        ,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next

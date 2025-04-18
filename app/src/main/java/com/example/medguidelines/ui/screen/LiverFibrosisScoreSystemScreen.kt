@@ -54,6 +54,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -796,6 +798,7 @@ fun inputAndCalculate(
                 .wrapContentHeight(
                     align = Alignment.Bottom
                 ),
+            itemVerticalAlignment = Alignment.Bottom,
         ) {
             InputValue(
                 label = R.string.age, value = age,
