@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.medguidelines.R
+import com.example.medguidelines.ui.component.InputValue
 import com.example.medguidelines.ui.component.NumberInTextField
 import com.example.medguidelines.ui.component.TextInCard
 import com.example.medguidelines.ui.component.TitleTopAppBar
@@ -89,29 +90,29 @@ fun BloodGasAnalysisInput() {
                     .padding(4.dp),
                 itemVerticalAlignment = Alignment.Bottom
             ) {
-                NumberInTextField(
-                    label = R.string.ph, value = ph, width = 100,
+                InputValue(
+                    label = R.string.ph, value = ph,unit = R.string.space
                 )
-                NumberInTextField(
-                    label = R.string.po2, value = paO2, width = 110,
+                InputValue(
+                    label= R.string.po2, value = paO2, unit = R.string.mmhg
                 )
-                NumberInTextField(
-                    label = R.string.pco2, value = paCo2, width = 120,
+                InputValue(
+                    label = R.string.pco2, value = paCo2, unit = R.string.mmhg
                 )
-                NumberInTextField(
-                    label = R.string.hco3, value = hco3, width = 120,
+                InputValue(
+                    label = R.string.hco3, value = hco3, unit = R.string.meql
                 )
-                NumberInTextField(
-                    label = R.string.na, value = na, width = 110,
+                InputValue(
+                    label = R.string.na, value = na, unit = R.string.meql
                 )
-                NumberInTextField(
-                    label = R.string.k, value = k, width = 100,
+                InputValue(
+                    label = R.string.k, value = k, unit = R.string.meql
                 )
-                NumberInTextField(
-                    label = R.string.cl, value = cl, width = 110,
+                InputValue(
+                    label = R.string.cl, value = cl, unit = R.string.meql
                 )
-                NumberInTextField(
-                    label = R.string.albumin, value = albumin, width = 120,
+                InputValue(
+                    label = R.string.albumin, value = albumin, unit = R.string.mgdl
                 )
             }
         }

@@ -55,6 +55,7 @@ import androidx.navigation.NavController
 import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.ClickableText
+import com.example.medguidelines.ui.component.InputValue
 import com.example.medguidelines.ui.component.NumberInTextField
 import com.example.medguidelines.ui.component.TitleTopAppBar
 import com.example.medguidelines.ui.component.parseStyledString
@@ -102,14 +103,14 @@ fun MALBIScreen(navController: NavController) {
         },
         modifier = Modifier
             .pointerInput(Unit) { // Use pointerInput with detectTapGestures
-            detectTapGestures(
-                onTap = {
-                    focusManager.clearFocus() // Clear focus on tap outside
-                }
-            )
-        },
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus() // Clear focus on tap outside
+                    }
+                )
+            },
 
-    ) { innerPadding ->
+        ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
@@ -137,8 +138,6 @@ fun MALBIScreen(navController: NavController) {
 fun mALBIInput(): Double {
     val totalBilirubin = remember { mutableDoubleStateOf(1.0) }
     val albumin = remember { mutableDoubleStateOf(4.1) }
-    var changedBilirubinUnit by remember { mutableStateOf(true) }
-    var changedAlbuminUnit by remember { mutableStateOf(true) }
 
     Card(
         modifier = Modifier
@@ -150,48 +149,14 @@ fun mALBIInput(): Double {
                 .padding(4.dp),
             itemVerticalAlignment = Alignment.Bottom,
         ) {
-            Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.Bottom),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                NumberInTextField(
-                    label = R.string.totalBilirubin, value = totalBilirubin , width = 100,
-                    multiplier = if (changedBilirubinUnit) 1.0 else 17.1
-                )
-                Column(
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    ClickableText(
-                        text = if (changedBilirubinUnit) R.string.mgdl else R.string.umolL,
-                        onChanged = { changedBilirubinUnit = !changedBilirubinUnit },
-                        changed = changedBilirubinUnit
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .align(Alignment.Bottom),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                NumberInTextField(
-                    label = R.string.albumin, value = albumin, width = 100,
-                    multiplier = if (changedAlbuminUnit) 1.0 else 10.0
-                )
-                Column(
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    ClickableText(
-                        text = if (changedAlbuminUnit) R.string.gdL else R.string.gL,
-                        onChanged = { changedAlbuminUnit = !changedAlbuminUnit },
-                        changed = changedAlbuminUnit
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-            }
+            InputValue(
+                label = R.string.totalBilirubin, value = totalBilirubin, unit = R.string.mgdl,
+                changedValueRate = 17.1, changedUnit = R.string.umolL
+            )
+            InputValue(
+                label = R.string.albumin, value = albumin, unit = R.string.gdL,
+                changedValueRate = 10.0, changedUnit = R.string.gL
+            )
         }
     }
     val score = (log10(17.1 * totalBilirubin.doubleValue)) * 0.66 + (10 * albumin.doubleValue * (-0.085))
