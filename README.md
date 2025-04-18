@@ -13,6 +13,7 @@ Acute tonsillitis/pharyngitis algorithm
 Blood Gas Analysis  
 Severity of Acute Pancreatitis  
 Liver Fibrosis Score System (FIB4, NAFLD Fibrosis Score, ELF Score, APRI, Shear Wave Elastography)
+HOMA-IR
 
 ## Welcom to your requests! 
 
