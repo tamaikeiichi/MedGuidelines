@@ -31,7 +31,7 @@ fun InputValue(
 ){
     val textMeasurer = rememberTextMeasurer()
     val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
-    val formatter = remember { DecimalFormat("#") }
+    val formatter = remember { DecimalFormat("#.##") }
     Row(
         modifier = Modifier
             .padding(4.dp),

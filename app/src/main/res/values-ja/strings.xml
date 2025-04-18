@@ -142,4 +142,7 @@
     <string name="platelet">血小板</string>
     <string name="diabetesMellitus">糖尿病</string>
     <string name="nashCrnFibrosisStage02">NASH-CRN線維化ステージ0-2</string>
+    <string name="insulinResistance">インスリン抵抗性</string>
+    <string name="fastingInsulin">空腹時インスリン</string>
+    <string name="fastingGlucose">空腹時血糖</string>
 </resources>

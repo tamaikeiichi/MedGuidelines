@@ -1,7 +1,6 @@
 package com.example.medguidelines.ui.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
@@ -25,7 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,11 +36,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.compose.inverseOnSurfaceLight
 import com.example.medguidelines.R
 import com.example.medguidelines.ui.component.InputValue
 import com.example.medguidelines.ui.component.TitleTopAppBar
-import com.example.medguidelines.ui.component.parseStyledString
 import com.example.medguidelines.ui.component.textAndUrl
 
 @Composable
@@ -48,6 +46,7 @@ fun HomaIRScreen(navController: NavController) {
     var grade by remember { mutableStateOf("") }
     var score by remember { mutableDoubleStateOf(0.0) }
     var scoreRound by remember { mutableDoubleStateOf(0.0) }
+    val focusManager = LocalFocusManager.current
     Scaffold(
         topBar = {
             TitleTopAppBar(
@@ -81,7 +80,15 @@ fun HomaIRScreen(navController: NavController) {
                     )
                 }
             }
-        }
+        },
+        modifier = Modifier
+            .pointerInput(Unit) { // Use pointerInput with detectTapGestures
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus() // Clear focus on tap outside
+                    }
+                )
+            },
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
@@ -111,10 +118,12 @@ fun homaIRInput(): Double {
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
 
+
     Card(
         modifier = Modifier
             .padding(4.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+
     ) {
         FlowRow(
             modifier = Modifier

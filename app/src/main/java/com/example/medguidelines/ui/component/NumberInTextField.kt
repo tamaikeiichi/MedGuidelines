@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
@@ -34,7 +35,7 @@ fun NumberInTextField(
     value: MutableDoubleState,
     width: Int,
     multiplier: Double = 1.0,
-    formatter: DecimalFormat = remember { DecimalFormat("#") }
+    formatter: DecimalFormat = remember { DecimalFormat("#.##") }
 ) {
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -42,12 +43,12 @@ fun NumberInTextField(
 
     LaunchedEffect(isFocused, multiplier) {
         if (!isFocused) {
-            text = formatDouble(value.doubleValue * multiplier)
+            text =
+                formatter.format(
+                (value.doubleValue * multiplier)//.toString()
+                )
         }
     }
-//    LaunchedEffect(value.doubleValue) { // Always update text when value changes
-//        text = formatDouble(value.doubleValue * multiplier)
-//    }
     LaunchedEffect(isFocused) {
         if (isFocused) {
             text = ""

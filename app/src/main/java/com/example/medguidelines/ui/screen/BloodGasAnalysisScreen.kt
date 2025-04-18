@@ -1,5 +1,6 @@
 package com.example.medguidelines.ui.screen
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -15,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,6 +31,7 @@ import com.example.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun BloodGasAnalysisScreen(navController: NavController) {
+    val focusManager = LocalFocusManager.current
     Scaffold(
         topBar = {
             TitleTopAppBar(
@@ -38,6 +42,14 @@ fun BloodGasAnalysisScreen(navController: NavController) {
                 )
             )
         },
+        modifier = Modifier
+            .pointerInput(Unit) { // Use pointerInput with detectTapGestures
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus() // Clear focus on tap outside
+                    }
+                )
+            },
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier

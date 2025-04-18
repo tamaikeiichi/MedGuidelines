@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.icu.text.DecimalFormat
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -52,7 +53,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -121,11 +124,13 @@ fun Modifier.cardModifier(): Modifier =
 fun Modifier.textModifier(): Modifier =
     this.padding(5.dp)
 
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun LiverFibrosisScoreSystemScreen(
     navController: NavController,
     ) {
+    val focusManager = LocalFocusManager.current
     val age = remember { mutableDoubleStateOf(0.00) }
     val ast = remember { mutableDoubleStateOf(0.0) }
     val platelet = remember { mutableDoubleStateOf(0.0) }
@@ -175,6 +180,14 @@ fun LiverFibrosisScoreSystemScreen(
                 references = references,
             )
         },
+        modifier = Modifier
+            .pointerInput(Unit) { // Use pointerInput with detectTapGestures
+                detectTapGestures(
+                    onTap = {
+                        focusManager.clearFocus() // Clear focus on tap outside
+                    }
+                )
+            },
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
