@@ -1,4 +1,4 @@
-package com.example.medguidelines
+package com.keiichi.medguidelines
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

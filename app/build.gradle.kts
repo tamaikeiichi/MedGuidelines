@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.medguidelines"
+    namespace = "com.keiichi.medguidelines"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.medguidelines"
+        applicationId = "com.keiichi.medguidelines"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -86,6 +86,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.accompanist.flowlayout)
     implementation(libs.androidx.foundation.layout)
+    implementation(libs.androidx.material.icons.extended)
+
 }
 
 protobuf {
