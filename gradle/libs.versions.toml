@@ -1,6 +1,6 @@
 [versions]
 accompanistFlowlayout = "0.36.0"
-agp = "8.9.1"
+agp = "8.9.2"
 androidxDatastorePreferences = "1.0.0"
 datastorePreferencesVersion = "1.1.1"
 foundationLayout = "1.8.0-rc03"
