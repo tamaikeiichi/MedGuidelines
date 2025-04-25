@@ -262,4 +262,6 @@
     <string name="mmoll">mmol/L</string>
     <string name="mmhg">mmHg</string>
     <string name="meql">mEq/L</string>
+    <string name="acuteTonsillitisAlgorithmReference">気道感染症の抗菌薬適正使用に関する提言（日本感染症学会）</string>
+    <string name="acuteTonsillitisAlgorithmReferenceUrl">https://www.kansensho.or.jp/uploads/files/guidelines/2211_teigen.pdf</string>
 </resources>

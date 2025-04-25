@@ -42,7 +42,7 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
                 title = R.string.acuteTonsillitisAlgorithmTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.space, R.string.space)
+                    textAndUrl(R.string.acuteTonsillitisAlgorithmReference, R.string.acuteTonsillitisAlgorithmReferenceUrl)
                 )
             )
         },
