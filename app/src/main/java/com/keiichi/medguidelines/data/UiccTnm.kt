@@ -29,3 +29,15 @@ val esophagealCancerTNM = listOf(
     listOf("N/A",   "IVA",   "IVA","IVA",   "IVA",   "IVA",  "IVA"),//N3
     listOf("N/A",   "IVB",  "IVB",  "IVB",   "IVB",   "IVB",  "IVB"),//M1
 )
+
+val lungCancerTNM = listOf(
+    //      Tis,     T1a,   T1b,    T1c,    T2a,    T2b,    T3,     T4
+    listOf("0",     "IA1",  "IA2",  "IA3",  "IB",   "IIA",  "IIB",  "IIIA"),//N0
+    listOf("N/A",   "IIA",  "IIA",  "IIA",  "IIB",   "IIB",  "IIIA",  "IIIA"),//N1
+    listOf("N/A",   "IIB",  "IIB",  "IIB",  "IIIA",   "IIIA",  "IIIA",  "IIIB"),//N2a
+    listOf("N/A",   "IIIA",  "IIIA",  "IIIA",  "IIIB",   "IIIB",  "IIIB",  "IIIB"),//N2b
+    listOf("N/A",   "IIIB",  "IIIB",  "IIIB",  "IIIB",   "IIIB",  "IIIC",  "IIIC"),//N2c
+    listOf("N/A",   "IVA",  "IVA",  "IVA",  "IVA",   "IVA",  "IVA",  "IVA"),//M1a
+    listOf("N/A",   "IVA",  "IVA",  "IVA",  "IVA",   "IVA",  "IVA",  "IVA"),//M1b
+    listOf("N/A",   "IVB",  "IVB",  "IVB",  "IVB",   "IVB",  "IVB",  "IVB"),//M1c
+)

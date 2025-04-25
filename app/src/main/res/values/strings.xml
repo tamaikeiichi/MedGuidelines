@@ -264,4 +264,16 @@
     <string name="meql">mEq/L</string>
     <string name="acuteTonsillitisAlgorithmReference">気道感染症の抗菌薬適正使用に関する提言（日本感染症学会）</string>
     <string name="acuteTonsillitisAlgorithmReferenceUrl">https://www.kansensho.or.jp/uploads/files/guidelines/2211_teigen.pdf</string>
+    <string name="lungTNMTitle">Lung Cancer TNM classification (UICC 9th)</string>
+    <string name="T2a">T2a</string>
+    <string name="T2b">T2b</string>
+    <string name="TfactorTitleNoteLungCancer">&lt;b>Tis&lt;/b> Carcinoma in situ\n
+        &lt;b>T1a&lt;/b> Tumor ≤ 1cm\n
+        &lt;b>T1b&lt;/b> Tumor > 1cm but ≤ 2cm\n
+        &lt;b>T1c&lt;/b> Tumor > 2 cm but ≤ 3cm\n
+        &lt;b>T2a&lt;/b> Tumor > 3 cm but ≤ 4 cm, invades visceral pleura, invades an adjacent lobe, involves main bronchus (up to but not including the carina) or is associated with atelectasis or obstructive pneumonitis, extending to the hilar region, involving either part of or the entire lung\n
+        &lt;b>T2b&lt;/b> Tumor > 4 cm but ≤ 5 cm\n
+        &lt;b>T3&lt;/b> Tumor with any of the following features: tumor > 5 cm but 7 cm in greatest dimension invades parietal pleuraorchestwallinvadespericardium,phrenicnerve,or azygos vein invades thoracic nerve roots (i.e.,T1,T2) or stellate ganglion separate tumor nodule(s) in the same lobe as the primary\n
+        &lt;b>T4&lt;/b> Tumor with any of the following features: tumor > 7 cm, invades mediastinum, thymus, trachea, carina, recurrent laryngeal nerve, vagusnerve,esophagus,ordiaphragminvadesheart,greatvessels(aorta,superiororinferiorvenacava,intrapericardialpulmonaryarteriesorveins),supra-aorticarteries,orbrachiocephalicveinsinvadessubclavianvessels,vertebralbody,lamina,spinalcanal,cervicalnerveroots,orbrachialplexus(i.e.,trunks,divisions,cords,orterminalnerves)separatetumornodule(s) inadifferentipsilateral lobethanthatoftheprimar
+    </string>
 </resources>
