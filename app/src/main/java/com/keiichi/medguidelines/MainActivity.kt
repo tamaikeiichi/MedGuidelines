@@ -25,6 +25,7 @@ import com.keiichi.medguidelines.ui.screen.BloodGasAnalysisScreen
 import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
 import com.keiichi.medguidelines.ui.screen.HomaIRScreen
 import com.keiichi.medguidelines.ui.screen.LiverFibrosisScoreSystemScreen
+import com.keiichi.medguidelines.ui.screen.LungTNMScreen
 import com.keiichi.medguidelines.ui.screen.MALBIScreen
 import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
 import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
@@ -51,7 +52,8 @@ class MainActivity : ComponentActivity() {
                                 navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen")},
                                 navigateToMALBI = { controller.navigate("MALBIScreen")},
                                 navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen")},
-                                navigateToHomaIR = { controller.navigate("HomaIRScreen")}
+                                navigateToHomaIR = { controller.navigate("HomaIRScreen")},
+                                navigateToLungTNM = { controller.navigate("LungTNM")}
                             )
                         }
                     }
@@ -113,6 +115,11 @@ class MainActivity : ComponentActivity() {
                     composable("HomaIRScreen") {
                         ChildComposable {
                             HomaIRScreen(controller)
+                        }
+                    }
+                    composable("LungTNM") {
+                        ChildComposable {
+                            LungTNMScreen(controller)
                         }
                     }
                 }

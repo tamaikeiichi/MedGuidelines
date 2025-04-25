@@ -16,10 +16,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.MfactorColorectal
+import com.keiichi.medguidelines.data.MfactorLung
 import com.keiichi.medguidelines.data.NfactorColorectal
+import com.keiichi.medguidelines.data.NfactorLung
 import com.keiichi.medguidelines.data.TfactorColorectal
 import com.keiichi.medguidelines.data.TfactorLung
 import com.keiichi.medguidelines.data.colorectalCancerTNM
+import com.keiichi.medguidelines.data.lungCancerTNM
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
@@ -52,8 +55,8 @@ fun LungTNMScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            score = colorectalTNMScore()
-            literalScore = colorectalCancerTNM[score.last()][score.first()]
+            score = lungTNMScore()
+            literalScore = lungCancerTNM[score.last()][score.first()]
         }
     }
 }
@@ -66,26 +69,26 @@ fun lungTNMScore(): List<Int> {
         R.string.TfactorTitleNoteLungCancer
     )
     val scoreB = buttonAndScore(
-        NfactorColorectal,
+        NfactorLung,
         R.string.NFactorTitle,
-        R.string.NfactorTitleNoteColorectalCancer
+        R.string.NfactorTitleNoteLungCancer
     )
     val scoreC = buttonAndScore(
-        MfactorColorectal,
+        MfactorLung,
         R.string.MFactorTitle,
-        R.string.MfactorTitleNoteColorectalCancer
+        R.string.MfactorTitleNoteLungCancer
     )
     val score = if (scoreC == 0) {
         listOf(scoreA, scoreB)
     }
     else {
-        listOf(scoreA, scoreC + NfactorColorectal.size - 1)
+        listOf(scoreA, scoreC + NfactorLung.size - 1)
     }
     return  score
 }
 
 @Preview
 @Composable
-fun ColorectalTNMScreenPreview(){
-    ColorectalTNMScreen(navController = NavController(LocalContext.current))
+fun LungTNMScreenPreview(){
+    LungTNMScreen(navController = NavController(LocalContext.current))
 }

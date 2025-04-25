@@ -267,13 +267,14 @@
     <string name="lungTNMTitle">Lung Cancer TNM classification (UICC 9th)</string>
     <string name="T2a">T2a</string>
     <string name="T2b">T2b</string>
-    <string name="TfactorTitleNoteLungCancer">&lt;b>Tis&lt;/b> Carcinoma in situ\n
-        &lt;b>T1a&lt;/b> Tumor ≤ 1cm\n
-        &lt;b>T1b&lt;/b> Tumor > 1cm but ≤ 2cm\n
-        &lt;b>T1c&lt;/b> Tumor > 2 cm but ≤ 3cm\n
-        &lt;b>T2a&lt;/b> Tumor > 3 cm but ≤ 4 cm, invades visceral pleura, invades an adjacent lobe, involves main bronchus (up to but not including the carina) or is associated with atelectasis or obstructive pneumonitis, extending to the hilar region, involving either part of or the entire lung\n
-        &lt;b>T2b&lt;/b> Tumor > 4 cm but ≤ 5 cm\n
-        &lt;b>T3&lt;/b> Tumor with any of the following features: tumor > 5 cm but 7 cm in greatest dimension invades parietal pleuraorchestwallinvadespericardium,phrenicnerve,or azygos vein invades thoracic nerve roots (i.e.,T1,T2) or stellate ganglion separate tumor nodule(s) in the same lobe as the primary\n
-        &lt;b>T4&lt;/b> Tumor with any of the following features: tumor > 7 cm, invades mediastinum, thymus, trachea, carina, recurrent laryngeal nerve, vagusnerve,esophagus,ordiaphragminvadesheart,greatvessels(aorta,superiororinferiorvenacava,intrapericardialpulmonaryarteriesorveins),supra-aorticarteries,orbrachiocephalicveinsinvadessubclavianvessels,vertebralbody,lamina,spinalcanal,cervicalnerveroots,orbrachialplexus(i.e.,trunks,divisions,cords,orterminalnerves)separatetumornodule(s) inadifferentipsilateral lobethanthatoftheprimar
+    <string name="TfactorTitleNoteLungCancer">
+        &lt;b>Tis&lt;/b> Carcinoma in situ\n&lt;b>T1a&lt;/b> Tumor ≤ 1cm\n&lt;b>T1b&lt;/b> Tumor > 1cm but ≤ 2cm\n&lt;b>T1c&lt;/b> Tumor > 2 cm but ≤ 3cm\n&lt;b>T2a&lt;/b> Tumor > 3 cm but ≤ 4 cm, invades visceral pleura, invades an adjacent lobe, involves main bronchus (up to but not including the carina) or is associated with atelectasis or obstructive pneumonitis, extending to the hilar region, involving either part of or the entire lung\n&lt;b>T2b&lt;/b> Tumor > 4 cm but ≤ 5 cm\n&lt;b>T3&lt;/b> Tumor with any of the following features: tumor > 5 cm but 7 cm in greatest dimension invades parietal pleuraorchestwallinvadespericardium,phrenicnerve,or azygos vein invades thoracic nerve roots (i.e.,T1,T2) or stellate ganglion separate tumor nodule(s) in the same lobe as the primary\n&lt;b>T4&lt;/b> Tumor with any of the following features: tumor > 7 cm, invades mediastinum, thymus, trachea, carina, recurrent laryngeal nerve, vagusnerve, esophagus,or diaphragm invades heart, great vessels (aorta,superior or inferior vena cava, intrapericardial pulmonary arteries or veins), supra-aortic arteries, or brachiocephalic veins invades subclavian vessels, vertebral body, lamina, spinal canal, cervical nerve roots, or brachial plexus (i.e.,trunks, divisions, cords,or terminal nerves) separate tumor nodule(s) in a different ipsilateral lobe than that of the primary
     </string>
+    <string name="NfactorTitleNoteLungCancer">
+        &lt;b>N1&lt;/b> Metastasis in ipsilateral peribronchial or ipsilateral hilar or intrapulmonary lymph nodes, including involvement by direct extension\n&lt;b>N2&lt;/b> Metastasis in ipsilateral mediastinal or subcarinal lymph node(s)\n&lt;b>N2a&lt;/b> Metastasis(es) in a single ipsilateral mediastinal or in the subcarinal nodal station\n&lt;b>N2a&lt;/b> Metastases in multiple ipsilateral mediastinal nodal stations with or without involvement of the subcarinal nodal station\n&lt;b>N3&lt;/b> Metastasis in contralateral mediastinal, contralateral hilar, ipsilateral or contralateral scalene or supraclavicular lymph node(s)
+    </string>
+    <string name="MfactorTitleNoteLungCancer">
+        &lt;b>M1a&lt;/b> Tumor with pleural or pericardial nodules or malignant pleural or pericardial effusions, separate tumor nodule(s) in a contralateral lobe\n&lt;b>M1b&lt;/b> Single extra thoracic metastasis in a single organ system\n&lt;b>M1c&lt;/b> Multiple extra thoracic metastases in a single or multiple organ system(s)
+    </string>
+
 </resources>
