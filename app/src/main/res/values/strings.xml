@@ -276,5 +276,8 @@
     <string name="MfactorTitleNoteLungCancer">
         &lt;b>M1a&lt;/b> Tumor with pleural or pericardial nodules or malignant pleural or pericardial effusions, separate tumor nodule(s) in a contralateral lobe\n&lt;b>M1b&lt;/b> Single extra thoracic metastasis in a single organ system\n&lt;b>M1c&lt;/b> Multiple extra thoracic metastases in a single or multiple organ system(s)
     </string>
+    <string name="grade1">Grade 1</string>
+    <string name="grade2a">Grade 2a</string>
+    <string name="grade2b">Grade 2b</string>
 
 </resources>

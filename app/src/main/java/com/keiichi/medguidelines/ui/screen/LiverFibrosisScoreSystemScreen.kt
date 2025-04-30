@@ -452,11 +452,13 @@ fun GraphAndThreshold(
     maxValue: Float,
     minValue: Float,
     firstThreshold: Float,
-    secondThreshold: Float,
+    secondThreshold: Float = 0F,
+    thirdThreshold: Float = 0F,
     firstLabel: String,
     secondLabel: String = "",
     thirdLabel: String = "",
     thirdLabelInDetail: String = "",
+    fourthLabel: String = "",
     score: Double
 ) {
     val mediumColorValue =
