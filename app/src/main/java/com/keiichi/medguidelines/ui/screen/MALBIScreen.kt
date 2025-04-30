@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.textAndUrl
@@ -112,7 +113,7 @@ fun MALBIScreen(navController: NavController) {
                     modifier = Modifier.cardModifier()
                 ) {
                     Text(
-                        text = stringResource(R.string.fib4),
+                        text = stringResource(R.string.mALBITitle),
                         modifier = Modifier.textModifier()
                     )
                     GraphAndThreshold(
@@ -120,10 +121,11 @@ fun MALBIScreen(navController: NavController) {
                         minValue = -3.2F,
                         firstThreshold = -2.6F,
                         secondThreshold = -2.27F,
-                        //thirdThreshold = -1.39F,
+                        thirdThreshold = -1.39F,
                         firstLabel = stringResource(R.string.grade1),
-                        secondLabel = stringResource(R.string.grade2a),
-                        thirdLabel = stringResource(R.string.grade2b),
+                        secondLabel = stringResource(R.string.g2a),
+                        thirdLabel = stringResource(R.string.g2b),
+                        fourthLabel = stringResource(R.string.g3),
                         score = scoreRound
                     )
                 }

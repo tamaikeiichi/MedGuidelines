@@ -1,6 +1,5 @@
 package com.keiichi.medguidelines.ui.screen
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,37 +30,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
+import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
-import com.keiichi.medguidelines.ui.component.tapOrPress
 import com.keiichi.medguidelines.ui.component.textAndUrl
 import kotlin.math.ln
 import kotlin.math.pow
@@ -443,276 +426,6 @@ fun FactorAlerts(
                 color = Color.Red,
                 modifier = Modifier.padding(2.dp)
             )
-        }
-    }
-}
-
-@Composable
-fun GraphAndThreshold(
-    maxValue: Float,
-    minValue: Float,
-    firstThreshold: Float,
-    secondThreshold: Float = 0F,
-    thirdThreshold: Float = 0F,
-    firstLabel: String,
-    secondLabel: String = "",
-    thirdLabel: String = "",
-    thirdLabelInDetail: String = "",
-    fourthLabel: String = "",
-    score: Double
-) {
-    val mediumColorValue =
-        (((secondThreshold + firstThreshold)/2)-minValue) / (maxValue - minValue)
-    val canvasHeightValue = 50
-    val canvasHeight = canvasHeightValue.dp
-    val textMeasurer = rememberTextMeasurer()
-    var offsetXOfThirdLabel: Float = 0F
-    var offsetYOfThirdLabel: Float = 0F
-    var heightOfThirdLabel: Float = 0F
-    var widthOfThirdLabel: Float = 0F
-
-    var thirdLabelTapped by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val helpImageWidth = 45
-    val helpImageHeight = 45
-    val imageBitmap: ImageBitmap? =
-        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)?.
-        toBitmap(width = helpImageWidth, height = helpImageHeight)?.
-        asImageBitmap()
-
-    val greenColor = Color(0xFF1BFF0B)
-    val yellowColor = Color(0xFFFFE30B)
-    val redColor = Color(0xFFFF0180)
-
-    Canvas(
-        modifier = Modifier
-            .height(canvasHeight)
-            .fillMaxWidth()
-            .tapOrPress(
-                onStart = { offsetX, offsetY ->
-                    Unit
-                },
-                onCancel = { offsetX, offsetY ->
-                    Unit
-                },
-                onCompleted = { offsetX, offsetY ->
-                    val isInsideXRegion =
-                        offsetX > offsetXOfThirdLabel
-                                && offsetX < offsetXOfThirdLabel + widthOfThirdLabel + helpImageWidth
-                    val isInsideYRegion =
-                        offsetY > offsetYOfThirdLabel
-                                && offsetY < offsetYOfThirdLabel + heightOfThirdLabel + helpImageHeight
-                    if (isInsideXRegion && isInsideYRegion) {
-                        thirdLabelTapped = !thirdLabelTapped
-                    }
-                }
-            )
-    )
-    {
-        drawIntoCanvas {
-            val rectColorStops =
-                if (secondThreshold == 0F) {
-                    arrayOf(
-                        0.0f to greenColor,
-                        (firstThreshold - minValue)/(maxValue - minValue) to yellowColor,
-                        1.0f to redColor
-                    )
-                } else {
-                    arrayOf(
-                        0.0f to greenColor,
-                        mediumColorValue to yellowColor,
-                        1.0f to redColor
-                    )
-                }
-            val rectGradient = Brush.horizontalGradient(
-                colorStops = rectColorStops,
-                startX = size.width * (0),
-                endX = size.width * (1F / 1F)
-            )
-            val rectCornerRadius = CornerRadius(0.dp.toPx(), 10.dp.toPx())
-            val circleSize = 20F
-            val circleColors = listOf(Color(0xFFFF1C07), Color(0xFFFDFDFF))
-            val circleXOffset =
-                if (score > maxValue) size.width
-                else if (score < minValue) 0F
-                else  ((score.toFloat()-minValue)/ (maxValue-minValue)) * size.width
-            val circleYOffset = size.height * 0.75F
-            val circleGradient = Brush.radialGradient(
-                colors = circleColors,
-                center = Offset(x = circleXOffset, y = circleYOffset),
-                radius = circleSize * 1.1F
-            )
-            drawRoundRect(
-                size = Size(width = size.width, height = size.height/2),
-                brush = rectGradient,
-                topLeft = Offset(x = 0F, y = size.height/2),
-                cornerRadius = rectCornerRadius
-            )
-            drawThresholdLine(
-                height = size.height/2,
-                xPosition = (((firstThreshold-minValue)/ (maxValue-minValue))) * size.width
-            )
-            if (secondThreshold != 0F) {
-                drawThresholdLine(
-                    height = size.height/2,
-                    xPosition = (((secondThreshold-minValue) / (maxValue - minValue))) * size.width
-                )
-            }
-            drawText(
-                textMeasurer = textMeasurer,
-                text = firstLabel,
-                topLeft = Offset(10F+0F * size.width,10F)
-            )
-            if (secondThreshold != 0F){
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = secondLabel,
-                    topLeft = Offset(10F+((firstThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
-                )
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = thirdLabel,
-                    topLeft = Offset(10F+((secondThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
-                )
-                offsetXOfThirdLabel = 10F+((secondThreshold-minValue)/ (maxValue-minValue)) * size.width
-                offsetYOfThirdLabel = 10F
-                heightOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.height.toFloat()
-                widthOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.width.toFloat()
-
-                if (thirdLabelInDetail != "") {
-                    if (imageBitmap != null) {
-                        drawImage(
-                            image = imageBitmap,
-                            topLeft = Offset(
-                                x = offsetXOfThirdLabel + widthOfThirdLabel,
-                                y = offsetYOfThirdLabel),
-                            colorFilter = ColorFilter.tint(Color(0xFF885200))
-                        )
-                    }
-                }
-            } else {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = secondLabel,
-                    topLeft = Offset(10F+((firstThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
-                )
-            }
-            val alphaCircle =
-            if (score == 0.0)  0.2F
-            else  1F
-            drawCircle(
-                brush = circleGradient,
-                radius = circleSize,
-                center = Offset(x = circleXOffset, y = circleYOffset),
-                alpha = alphaCircle
-            )
-            val textBackgroundColor = Color(0xFFFFF8E6)
-            val textBackgroundCornerRadius = CornerRadius(7.dp.toPx(), 7.dp.toPx())
-            val textSize = textMeasurer.measure(text = score.toString())
-            if (circleXOffset <= size.width/2) {
-                drawRoundRect(
-                    color = textBackgroundColor,
-                    size = Size(
-                        width = textSize.size.width.toFloat() + 10F,
-                        height = textSize.size.height.toFloat() + 5F
-                    ),
-                    //brush = circleGradient,
-                    topLeft = Offset(
-                        x = circleXOffset + circleSize * 1.5F
-                                //- textMeasurer.measure(text = score.toString()).size.width
-                                - 5F,
-                        y = circleYOffset - textSize.size.height / 2 - 2.5F
-                    ),
-                    cornerRadius = textBackgroundCornerRadius
-                )
-            } else {
-                drawRoundRect(
-                    color = textBackgroundColor,
-                    size = Size(
-                        width = textSize.size.width.toFloat() + 10F,
-                        height = textSize.size.height.toFloat() + 5F
-                    ),
-                    //brush = circleGradient,
-                    topLeft = Offset(
-                        x = circleXOffset - circleSize * 1.5F
-                                - textSize.size.width - 5F,
-                        y = circleYOffset - textSize.size.height / 2 - 2.5F
-                    ),
-                    cornerRadius = textBackgroundCornerRadius
-                )
-            }
-            val scoreStringAlpha =
-                if (score == 0.0)  0.3F
-                else  1F
-            if (circleXOffset <= size.width/2) {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = score.toString(),
-                    topLeft = Offset(
-                        x = circleXOffset + circleSize * 1.5F,
-                        y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
-                        
-                    ),
-                    style = TextStyle(
-                        color = Color(red = 0f, green = 0f, blue = 0f,alpha = scoreStringAlpha),
-                        //background = Color(red = 1f, green = 1f, blue = 1f,alpha = scoreStringAlpha)
-                    )
-                )
-            } else {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = score.toString(),
-                    topLeft = Offset(
-                        x = circleXOffset - circleSize * 1.5F
-                                - textMeasurer.measure(text = score.toString()).size.width,
-                        y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
-                    ),
-                    style = TextStyle(color = Color(red = 0f, green = 0f, blue = 0f,alpha = scoreStringAlpha),
-                    )
-                )
-            }
-            rotate(
-                degrees = -90F,
-                pivot = Offset(x = (((firstThreshold-minValue)
-                        / (maxValue - minValue)) * size.width), y = (size.height / 2))
-            ) {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = firstThreshold.toString(),
-                    topLeft = Offset(
-                        x = (((firstThreshold-minValue) / (maxValue - minValue)) * size.width)
-                                + (textMeasurer.measure(text = firstThreshold.toString()).size.height)/ 4,
-                        y = (size.height / 2)
-                                - (textMeasurer.measure(text = firstThreshold.toString()).size.height / 2)
-                    ),
-                    style = TextStyle(fontSize = 10.sp, color = Color.Gray)
-                )
-            }
-            rotate(
-                degrees = -90F,
-                pivot = Offset(x = (((secondThreshold-minValue)
-                        / (maxValue - minValue)) * size.width), y = (size.height / 2))
-            ) {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = secondThreshold.toString(),
-                    topLeft = Offset(
-                        x = (((secondThreshold-minValue) / (maxValue - minValue)) * size.width)
-                                + (textMeasurer.measure(text = secondThreshold.toString()).size.height)/ 4,
-                        y = (size.height / 2)
-                                - (textMeasurer.measure(text = secondThreshold.toString()).size.height / 2)
-                    ),
-                    style = TextStyle(fontSize = 10.sp, color = Color.Gray)
-                )
-            }
-        }
-    }
-    if (thirdLabelTapped) {
-        Popup(
-        ) {
-            PopupClickable(
-                text = thirdLabelInDetail,
-                onClick = {thirdLabelTapped = !thirdLabelTapped})
         }
     }
 }

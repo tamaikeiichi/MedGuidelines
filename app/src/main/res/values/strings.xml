@@ -279,5 +279,9 @@
     <string name="grade1">Grade 1</string>
     <string name="grade2a">Grade 2a</string>
     <string name="grade2b">Grade 2b</string>
+    <string name="grade3">Grade 3</string>
+    <string name="g2a">2a</string>
+    <string name="g2b">2b</string>
+    <string name="g3">3</string>
 
 </resources>
