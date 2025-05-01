@@ -145,4 +145,5 @@
     <string name="insulinResistance">インスリン抵抗性</string>
     <string name="fastingInsulin">空腹時インスリン</string>
     <string name="fastingGlucose">空腹時血糖</string>
+    <string name="lungTNMTitle">肺癌TNM分類 (UICC 9th)</string>
 </resources>
