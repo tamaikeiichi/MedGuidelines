@@ -273,7 +273,7 @@
         &lt;b>N1&lt;/b> Metastasis in ipsilateral peribronchial or ipsilateral hilar or intrapulmonary lymph nodes, including involvement by direct extension\n&lt;b>N2&lt;/b> Metastasis in ipsilateral mediastinal or subcarinal lymph node(s)\n&lt;b>N2a&lt;/b> Metastasis(es) in a single ipsilateral mediastinal or in the subcarinal nodal station\n&lt;b>N2a&lt;/b> Metastases in multiple ipsilateral mediastinal nodal stations with or without involvement of the subcarinal nodal station\n&lt;b>N3&lt;/b> Metastasis in contralateral mediastinal, contralateral hilar, ipsilateral or contralateral scalene or supraclavicular lymph node(s)
     </string>
     <string name="MfactorTitleNoteLungCancer">
-        &lt;b>M1a&lt;/b> Tumor with pleural or pericardial nodules or malignant pleural or pericardial effusions, separate tumor nodule(s) in a contralateral lobe\n&lt;b>M1b&lt;/b> Single extra thoracic metastasis in a single organ system\n&lt;b>M1c&lt;/b> Multiple extra thoracic metastases in a single or multiple organ system(s)
+        &lt;b>M1a&lt;/b> Tumor with pleural or pericardial nodules, or malignant pleural or pericardial effusions, separate tumor nodule(s) in a contralateral lobe\n&lt;b>M1b&lt;/b> Single extra thoracic metastasis in a single organ system\n&lt;b>M1c&lt;/b> Multiple extra thoracic metastases in a single or multiple organ system(s)
     </string>
     <string name="grade1" translatable="false">Grade 1</string>
     <string name="grade2a" translatable="false">Grade 2a</string>
