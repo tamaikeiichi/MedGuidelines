@@ -203,7 +203,7 @@
     <string name="ast" translatable="false">AST</string>
     <string name="iul" translatable="false">IU/L</string>
     <string name="plateletCount">platelet count</string>
-    <string name="unit109L"><![CDATA[10<sup>9</sup>/L]]></string>
+    <string name="unit109L" translatable="false"><![CDATA[10<sup>9</sup>/L]]></string>
     <string name="alt" translatable="false">ALT</string>
     <string name="liverFibrosisScoreSystemTitle">Liver Fibrosis Score System</string>
     <string name="lowRisk">Low Risk</string>
@@ -216,21 +216,21 @@
     <string name="fib4" translatable="false">FIB4</string>
     <string name="apri" translatable="false">APRI</string>
     <string name="astToPlateletRatioIndex" translatable="false">AST to Platelet Ratio Index (APRI)</string>
-    <string name="shearWaveElastography">Shear Wave Elastography</string>
+    <string name="shearWaveElastography" translatable="false">Shear Wave Elastography</string>
     <string name="ms" translatable="false">m/s</string>
-    <string name="normal">Normal\n</string>
+    <string name="normal">Normal</string>
     <string name="compensatedAdvancedChronicLiverDisease">Compensated Advanced Chronic Liver Disease</string>
     <string name="cACLD" translatable="false">cACLD</string>
     <string name="apriUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/30616027/</string>
     <string name="shearWaveElastographyUrl" translatable="false">https://doi.org/10.1148/radiol.2020192437</string>
-    <string name="nafldFibrosisScore">NAFLD Fibrosis Score</string>
+    <string name="nafldFibrosisScore" translatable="false">NAFLD Fibrosis Score</string>
     <string name="nafldFibrosisScoreUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
     <string name="bodyHeight">Body Height</string>
     <string name="cm" translatable="false">cm</string>
     <string name="bodyWeight">Body Weight</string>
     <string name="kg" translatable="false">Kg</string>
     <string name="dmPresence">Presence of IFG/diabetes</string>
-    <string name="dmPresenceNote">Impaired Fasting Glucose or Diabetes Mellitus</string>
+    <string name="dmPresenceNote" translatable="false">Impaired Fasting Glucose or Diabetes Mellitus</string>
     <string name="unlikely">Unlikely</string>
     <string name="likely">Likely</string>
     <string name="elfScore">ELF score</string>
