@@ -18,7 +18,7 @@ import com.keiichi.medguidelines.ui.screen.ChildPughScreen
 import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
 import com.keiichi.medguidelines.ui.screen.IndexScreen
 import androidx.compose.runtime.Composable
-import com.keiichi.compose.ContrastAwareMedguidelinesTheme
+import com.keiichi.compose.MedGuidelinesTheme
 import com.keiichi.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.keiichi.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.keiichi.medguidelines.ui.screen.BloodGasAnalysisScreen
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ContrastAwareMedguidelinesTheme {
+            MedGuidelinesTheme {
                 val controller = rememberNavController()
                 NavHost(controller, startDestination = "IndexScreen") {
                     composable("IndexScreen") {

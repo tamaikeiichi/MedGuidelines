@@ -2,11 +2,6 @@ package com.keiichi.medguidelines.data
 
 import com.keiichi.medguidelines.R
 
-val test = listOf(
-    R.string.bilirubinGrade1,
-    R.string.bilirubinGrade2,
-)
-
 val bilirubinGrade = listOf(
     R.string.bilirubinGrade1,
     R.string.bilirubinGrade2,
@@ -17,7 +12,6 @@ val albuminGrade = listOf(
     R.string.albuminGrade1,
     R.string.albuminGrade2,
     R.string.albuminGrade3,
-
 )
 
 val ptGrade = listOf(
@@ -54,7 +48,6 @@ val NfactorColorectal = listOf(
     R.string.N1c,
     R.string.N2a,
     R.string.N2b,
-
 )
 
 val MfactorColorectal = listOf(

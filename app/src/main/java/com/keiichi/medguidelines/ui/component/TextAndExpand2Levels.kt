@@ -28,57 +28,10 @@ import androidx.compose.material3.CardDefaults
 import com.keiichi.medguidelines.R
 
 @Composable
-fun TextAndExpandTest(
-    firstTitle: Int,
-    secondTitle: Int? = null,
-    nextCard: @Composable (() -> Unit)? = null,
-)
-{
-    Column(){
-        var expanded by remember { mutableStateOf(false) }
-        val cardModifier = Modifier
-            .padding(vertical = 4.dp, horizontal = 4.dp)
-            .fillMaxWidth()
-            .width(IntrinsicSize.Max)
-            .then(
-                if (secondTitle != R.string.space) {
-                    Modifier.clickable { expanded = !expanded }
-                } else {
-                    Modifier
-                }
-            )
-        Card(
-            modifier = cardModifier
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .animateContentSize(),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                    //.padding(3.dp)
-                ) {
-                    TextInCardTitleMedium(firstTitle)
-                    if (expanded && nextCard != null) {
-                        nextCard()
-                    }
-                }
-                if (secondTitle != R.string.space) {
-                    IconButtonInCard(
-                        expanded = expanded,
-                        onExpandChange = { expanded = it }
-                    )
-                }
-            }
-        }
-    }}
-
-@Composable
 fun textAndExpand1Level(
     firstTitle: Int,
-    cardColor: Color = MaterialTheme.colorScheme.surfaceVariant
+    cardColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    textColor: Color
 ):Boolean
 {
     var expanded by remember { mutableStateOf(false) }
@@ -105,7 +58,10 @@ fun textAndExpand1Level(
                         .weight(1f)
                         .padding(4.dp)
                 ) {
-                    TextInCardTitleMedium(firstTitle)
+                    TextInCardTitleMedium(
+                        text = firstTitle,
+                        color = textColor
+                    )
                 }
                 IconButtonInCard(
                     expanded = expanded,
@@ -120,6 +76,7 @@ fun textAndExpand1Level(
 @Composable
 fun Text1Level(
     firstTitle: Int,
+    color: Color
 )
 {
     Column(){
@@ -140,7 +97,9 @@ fun Text1Level(
                         .weight(1f)
                         .padding(4.dp)
                 ) {
-                    TextInCardTitleMedium(firstTitle)
+                    TextInCardTitleMedium(
+                        text = firstTitle,
+                        color = color)
                 }
             }
         }
@@ -151,6 +110,8 @@ fun Text1Level(
 fun TextAndExpand2Levels(
     firstTitle: Int,
     secondTitle: Int,
+    firstTextColor: Color,
+    secondTextColor: Color
 ) {
     Column(){
         var expanded by remember { mutableStateOf(false) }
@@ -180,7 +141,10 @@ fun TextAndExpand2Levels(
                         .weight(1f)
                         .padding(4.dp)
                 ) {
-                    TextInCardTitleMedium(firstTitle)
+                    TextInCardTitleMedium(
+                        text = firstTitle,
+                        color = firstTextColor
+                    )
                 }
                 if (secondTitle != R.string.space) {
                     IconButtonInCard(
@@ -194,7 +158,10 @@ fun TextAndExpand2Levels(
                     modifier = Modifier
                         .padding(8.dp)
                 ) {
-                    TextInCardTitleMedium(secondTitle)
+                    TextInCardTitleMedium(
+                        text = secondTitle,
+                        color = secondTextColor
+                    )
                 }
             }
         }
@@ -208,6 +175,9 @@ fun TextAndExpand3Levels(
     secondTitle2: Int,
     thirdTitle11: Int,
     thirdTitle21: Int,
+    firstColor: Color,
+    secondColor: Color,
+    thirdColor: Color
 )
 {
     Column(){
@@ -235,7 +205,9 @@ fun TextAndExpand3Levels(
                     Column (
                         modifier = Modifier.weight(1f)
                     ){
-                        TextInCardTitleMedium(firstTitle)
+                        TextInCardTitleMedium(
+                            text = firstTitle,
+                            color = firstColor)
                     }
                     IconButtonInCard(
                         expanded = expanded1,
@@ -249,7 +221,9 @@ fun TextAndExpand3Levels(
                         Column(
                             modifier = Modifier.weight(1f)
                         ){
-                            TextInCardTitleMedium(secondTitle1)
+                            TextInCardTitleMedium(
+                                text = secondTitle1,
+                                color = secondColor)
                         }
                         IconButtonInCard(
                             expanded = expanded2,
@@ -261,7 +235,9 @@ fun TextAndExpand3Levels(
                     modifier = rowModifier
                 ) {
                     if (expanded2) {
-                        TextInCardTitleMedium(thirdTitle11)
+                        TextInCardTitleMedium(
+                            text =thirdTitle11,
+                            color = thirdColor)
                     }
                 }
                 Row(
@@ -271,7 +247,9 @@ fun TextAndExpand3Levels(
                         Column(
                             modifier = Modifier.weight(1f)
                         ){
-                            TextInCardTitleMedium(secondTitle2)
+                            TextInCardTitleMedium(
+                                text = secondTitle2,
+                                color = secondColor)
                         }
                         IconButtonInCard(
                             expanded = expanded3,
@@ -284,7 +262,9 @@ fun TextAndExpand3Levels(
                 )
                 {
                     if (expanded3) {
-                        TextInCardTitleMedium(thirdTitle21)
+                        TextInCardTitleMedium(
+                            text = thirdTitle21,
+                            color = thirdColor)
                     }
                 }
             }
@@ -294,11 +274,13 @@ fun TextAndExpand3Levels(
 
 @Composable
 private fun TextInCardTitleMedium(
-    text: Int
+    text: Int,
+    color: Color,
 ) {
     Text(
         text = parseStyledString(text),
         style = MaterialTheme.typography.titleMedium,
+        color = color,
         modifier = Modifier
             .padding(4.dp)
     )
