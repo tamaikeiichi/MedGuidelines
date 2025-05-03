@@ -80,7 +80,7 @@ fun RadioButtonAndExpand(
                         )
                     }
                 }
-                if (titleNote != R.string.space){
+                if (titleNote != R.string.space) {
                     IconButton(onClick = { expanded = !expanded }) {
                         Icon(
                             imageVector = if (expanded) Icons.Filled.KeyboardArrowUp

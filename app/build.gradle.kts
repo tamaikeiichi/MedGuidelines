@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -106,7 +105,7 @@ protobuf {
     }
 }
 
-configurations.implementation{
+configurations.implementation {
     exclude(group = "com.intellij", module = "annotations")
     exclude(group = "com.google.auto.value", module = "auto-value")
     exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")

@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +24,7 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.absencePresence
 import com.keiichi.medguidelines.data.mclsaacAge
 import com.keiichi.medguidelines.data.tonsillitisRedFlag
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.textAndUrl
@@ -36,13 +36,16 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
     var score by remember { mutableIntStateOf(0) }
     val listState = rememberLazyListState()
 
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
                 title = R.string.acuteTonsillitisAlgorithmTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.acuteTonsillitisAlgorithmReference, R.string.acuteTonsillitisAlgorithmReferenceUrl)
+                    textAndUrl(
+                        R.string.acuteTonsillitisAlgorithmReference,
+                        R.string.acuteTonsillitisAlgorithmReferenceUrl
+                    )
                 )
             )
         },
@@ -54,61 +57,64 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
             contentPadding = PaddingValues(10.dp),
             state = listState
         ) {
-            item{
+            item {
                 redFlagScore = acuteTonsillitisRedFlagScore()
                 if (redFlagScore > 0) {
                     LaunchedEffect(key1 = redFlagScore) {
                         listState.animateScrollToItem(0)
                     }
                     AcuteTonsillitisCard(title = R.string.needSpecialistExamination)
-                    } else {
-                        score = acuteTonsillitisMclsaacScore()
-                        when (score) {
-                            -1,0,1 -> AcuteTonsillitisFollowupScore()
-                            2,3 -> {
-                                LaunchedEffect(key1 = score) {
-                                    listState.animateScrollToItem(1)
-                                }
-                                AcuteTonsillitisCard(R.string.antigenTest)
-                                AcuteTonsillitisCard(R.string.antibioticsAMPC)
+                } else {
+                    score = acuteTonsillitisMclsaacScore()
+                    when (score) {
+                        -1, 0, 1 -> AcuteTonsillitisFollowupScore()
+                        2, 3 -> {
+                            LaunchedEffect(key1 = score) {
+                                listState.animateScrollToItem(1)
                             }
-                            4,5,6,7 -> {
-                                LaunchedEffect(key1 = score) {
-                                    listState.animateScrollToItem(1)
-                                }
-                                AcuteTonsillitisCard(R.string.antigenTest)
-                                AcuteTonsillitisCard(R.string.antibioticsAMPC)
-                                AcuteTonsillitisCard(R.string.hospitalCare)
-                            }
+                            AcuteTonsillitisCard(R.string.antigenTest)
+                            AcuteTonsillitisCard(R.string.antibioticsAMPC)
                         }
-                }
+
+                        4, 5, 6, 7 -> {
+                            LaunchedEffect(key1 = score) {
+                                listState.animateScrollToItem(1)
+                            }
+                            AcuteTonsillitisCard(R.string.antigenTest)
+                            AcuteTonsillitisCard(R.string.antibioticsAMPC)
+                            AcuteTonsillitisCard(R.string.hospitalCare)
+                        }
+                    }
                 }
             }
         }
     }
+}
 
 @Composable
 fun AcuteTonsillitisCard(title: Int) {
-    Card (
+    Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-    ){
-        Text(text = stringResource(id = title),
+    ) {
+        Text(
+            text = stringResource(id = title),
             modifier = Modifier.padding(8.dp),
-            style = MaterialTheme.typography.titleMedium)
+            style = MaterialTheme.typography.titleMedium
+        )
     }
 }
 
 @Composable
-fun acuteTonsillitisRedFlagScore():Int {
+fun acuteTonsillitisRedFlagScore(): Int {
     var score by remember { mutableIntStateOf(0) }
-    Card (
+    Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
-    ){
-        Column (
+    ) {
+        Column(
             modifier = Modifier.padding(8.dp)
         ) {
             score = buttonAndScore(
@@ -123,13 +129,15 @@ fun acuteTonsillitisRedFlagScore():Int {
 
 @Composable
 fun AcuteTonsillitisFollowupScore() {
-    Card (
+    Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
-    ){
-        Text(text = stringResource(id = R.string.followup),
-            modifier = Modifier.padding(8.dp))
+    ) {
+        Text(
+            text = stringResource(id = R.string.followup),
+            modifier = Modifier.padding(8.dp)
+        )
     }
 }
 
@@ -175,7 +183,7 @@ fun acuteTonsillitisMclsaacScore(): Int {
                 R.string.space
             )
             totalScore =
-                    scoreA + scoreB + scoreC + scoreD + (scoreE * (-1) + 1)
+                scoreA + scoreB + scoreC + scoreD + (scoreE * (-1) + 1)
 
         }
     }

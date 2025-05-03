@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.InputValue
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.NumberInTextField
 import com.keiichi.medguidelines.ui.component.TextInCard
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
@@ -34,7 +34,7 @@ import com.keiichi.medguidelines.ui.component.textAndUrl
 @Composable
 fun BloodGasAnalysisScreen(navController: NavController) {
     val focusManager = LocalFocusManager.current
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
                 title = R.string.bloodGasAnalysisTitle,
@@ -91,10 +91,10 @@ fun BloodGasAnalysisInput() {
                 itemVerticalAlignment = Alignment.Bottom
             ) {
                 InputValue(
-                    label = R.string.ph, value = ph,unit = R.string.space
+                    label = R.string.ph, value = ph, unit = R.string.space
                 )
                 InputValue(
-                    label= R.string.po2, value = paO2, unit = R.string.mmhg
+                    label = R.string.po2, value = paO2, unit = R.string.mmhg
                 )
                 InputValue(
                     label = R.string.pco2, value = paCo2, unit = R.string.mmhg
@@ -173,7 +173,7 @@ fun BloodGasAnalysisInput() {
             }
         } else if (paCo2.doubleValue > 42 && hco3.doubleValue > 22) {
             TextInCard(R.string.respiratoryAcidosis)
-            val hco3change = (hco3.doubleValue - 23) / ((paCo2.doubleValue - 40)/10)
+            val hco3change = (hco3.doubleValue - 23) / ((paCo2.doubleValue - 40) / 10)
             if (0.0 < hco3change && hco3change < 1.0) {
                 TextInCard(R.string.additionalMetabolicAcidosis)
             } else if (1.0 <= hco3change && hco3change < 4.0) {
@@ -214,7 +214,8 @@ fun BloodGasAnalysisInput() {
             }
         } else if (hco3.doubleValue < 26 && paCo2.doubleValue < 38) {
             TextInCard(R.string.respiratoryAlkalosis)
-            val hco3Change = (hco3.doubleValue - normalHco3) / (paCo2.doubleValue - normalPaCo2)/10
+            val hco3Change =
+                (hco3.doubleValue - normalHco3) / (paCo2.doubleValue - normalPaCo2) / 10
             if (0.0 < hco3Change && hco3Change < 2.0) {
                 TextInCard(R.string.additionalMetabolicAlkalosis)
             } else if (2.0 <= hco3Change && hco3Change < 4.0) {
@@ -227,7 +228,7 @@ fun BloodGasAnalysisInput() {
             val age = remember { mutableDoubleStateOf(65.0) }
             BloodGasAnalysisCard(
                 bloodGasAnalysisContent = {
-                    FlowRow (
+                    FlowRow(
                         modifier = Modifier
                             .padding(4.dp)
                     ) {
@@ -267,7 +268,7 @@ fun BloodGasAnalysisText(text: Int) {
 }
 
 @Composable
-fun BloodGasAnalysisCard(bloodGasAnalysisContent: @Composable ()-> Unit) {
+fun BloodGasAnalysisCard(bloodGasAnalysisContent: @Composable () -> Unit) {
     Card(
         modifier = Modifier
             .padding(4.dp)

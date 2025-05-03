@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +18,7 @@ import com.keiichi.medguidelines.data.MfactorPancreatic
 import com.keiichi.medguidelines.data.NfactorPancreatic
 import com.keiichi.medguidelines.data.TfactorPancreatic
 import com.keiichi.medguidelines.data.pancreaticCancerTNM
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
@@ -26,15 +26,16 @@ import com.keiichi.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun PancreaticTNMScreen(navController: NavController) {
-    var score by remember { mutableStateOf(listOf(0,0)) }
+    var score by remember { mutableStateOf(listOf(0, 0)) }
     var literalScore by remember { mutableStateOf("") }
 
     // Build the display string here
     val displayString = "Stage $literalScore"
 
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
-            TitleTopAppBar(title =  R.string.pancreaticTNMTitle,
+            TitleTopAppBar(
+                title = R.string.pancreaticTNMTitle,
                 navController = navController,
                 references = listOf(
                     textAndUrl(R.string.space, R.string.space)
@@ -75,15 +76,14 @@ private fun TNMScore(): List<Int> {
     )
     val score = if (scoreC == 0) {
         listOf(scoreA, scoreB)
-    }
-    else {
+    } else {
         listOf(scoreA, scoreC + NfactorPancreatic.size - 1)
     }
-    return  score
+    return score
 }
 
 @Preview
 @Composable
-fun PnacreaticTNMScreenPreview(){
+fun PnacreaticTNMScreenPreview() {
     PancreaticTNMScreen(navController = NavController(LocalContext.current))
 }

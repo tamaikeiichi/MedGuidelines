@@ -23,7 +23,8 @@
     <string name="encephalopathyGrade3">grade 3–4</string>
     <string name="ageTitle">Age: Male &gt;= 70, Female &gt;= 75</string>
     <string name="dehydrationTitle">BUN &gt; 21 mg/dL or dehydration</string>
-    <string name="respirationTitle">SpO&lt;sub>2&lt;/sub> &lt; 90% or PaO&lt;sub>2&lt;/sub> &lt; 60 mmHg</string>"
+    <string name="respirationTitle">SpO&lt;sub>2&lt;/sub> &lt; 90% or PaO&lt;sub>2&lt;/sub> &lt; 60 mmHg</string>
+    "
     <string name="orientationTitle">Consciousness disorder</string>
     <string name="pressureTitle">Systolic pressure &lt; 90 mmHg</string>"
     <string name="bilirubinTitle">Bilirubin (mg/dL)</string>

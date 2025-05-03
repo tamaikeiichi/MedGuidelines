@@ -40,7 +40,7 @@ fun NumberInTextField(
         if (!isFocused) {
             text =
                 formatter.format(
-                (value.doubleValue * multiplier)//.toString()
+                    (value.doubleValue * multiplier)//.toString()
                 )
         }
     }
@@ -53,14 +53,13 @@ fun NumberInTextField(
     TextField(
         label = { Text(parseStyledString(label)) },
         value = text,
-        onValueChange = {newText ->
+        onValueChange = { newText ->
             text = newText
             value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) // multiplier
         },
         modifier = Modifier
             .padding(5.dp)
-            .width(width.dp)
-        ,
+            .width(width.dp),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next

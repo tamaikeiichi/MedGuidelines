@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +18,7 @@ import com.keiichi.medguidelines.data.MfactorEsophageal
 import com.keiichi.medguidelines.data.NfactorEsophageal
 import com.keiichi.medguidelines.data.TfactorEsophageal
 import com.keiichi.medguidelines.data.esophagealCancerTNM
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
@@ -26,12 +26,13 @@ import com.keiichi.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun EsophagealTNMScreen(navController: NavController) {
-    var score by remember { mutableStateOf(listOf(0,0)) }
+    var score by remember { mutableStateOf(listOf(0, 0)) }
     var literalScore by remember { mutableStateOf("") }
     val displayString = "Stage $literalScore"
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
-            TitleTopAppBar(title =  R.string.esophagealTNMTitle,
+            TitleTopAppBar(
+                title = R.string.esophagealTNMTitle,
                 navController = navController,
                 references = listOf(
                     textAndUrl(R.string.space, R.string.space)
@@ -72,15 +73,14 @@ private fun TNMScore(): List<Int> {
     )
     val score = if (scoreC == 0) {
         listOf(scoreA, scoreB)
-    }
-    else {
+    } else {
         listOf(scoreA, scoreC + NfactorEsophageal.size - 1)
     }
-    return  score
+    return score
 }
 
 @Preview
 @Composable
-fun EsophagealTNMScreenPreview(){
+fun EsophagealTNMScreenPreview() {
     EsophagealTNMScreen(navController = NavController(LocalContext.current))
 }

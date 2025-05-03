@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,14 +14,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
-import com.keiichi.medguidelines.data.MfactorColorectal
 import com.keiichi.medguidelines.data.MfactorLung
-import com.keiichi.medguidelines.data.NfactorColorectal
 import com.keiichi.medguidelines.data.NfactorLung
-import com.keiichi.medguidelines.data.TfactorColorectal
 import com.keiichi.medguidelines.data.TfactorLung
-import com.keiichi.medguidelines.data.colorectalCancerTNM
 import com.keiichi.medguidelines.data.lungCancerTNM
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
@@ -31,15 +27,16 @@ import com.keiichi.medguidelines.ui.component.textAndUrl
 
 @Composable
 fun LungTNMScreen(navController: NavController) {
-    var score by remember { mutableStateOf(listOf(0,0)) }
+    var score by remember { mutableStateOf(listOf(0, 0)) }
     var literalScore by remember { mutableStateOf("") }
 
     // Build the display string here
     val displayString = "Stage $literalScore"
 
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
-            TitleTopAppBar(title =  R.string.lungTNMTitle,
+            TitleTopAppBar(
+                title = R.string.lungTNMTitle,
                 navController = navController,
                 references = listOf(
                     textAndUrl(R.string.space, R.string.space)
@@ -80,15 +77,14 @@ fun lungTNMScore(): List<Int> {
     )
     val score = if (scoreC == 0) {
         listOf(scoreA, scoreB)
-    }
-    else {
+    } else {
         listOf(scoreA, scoreC + NfactorLung.size - 1)
     }
-    return  score
+    return score
 }
 
 @Preview
 @Composable
-fun LungTNMScreenPreview(){
+fun LungTNMScreenPreview() {
     LungTNMScreen(navController = NavController(LocalContext.current))
 }

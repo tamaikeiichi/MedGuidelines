@@ -15,7 +15,7 @@ fun ClickableText(
     text: Int,
     onChanged: (Boolean) -> Unit,
     changed: Boolean
-){
+) {
     Text(
         text = parseStyledString(text),
         modifier = Modifier
@@ -26,6 +26,7 @@ fun ClickableText(
             .background(
                 color = inverseOnSurfaceLight,
                 shape = RoundedCornerShape(16.dp)
-            ).padding(5.dp),
+            )
+            .padding(5.dp),
     )
 }

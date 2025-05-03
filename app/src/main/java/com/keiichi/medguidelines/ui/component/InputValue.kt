@@ -34,7 +34,7 @@ fun InputValue(
     changedValueRate: Double = 1.0,
     changedUnit: Int = R.string.space,
 
-){
+    ) {
     val textMeasurer = rememberTextMeasurer()
     val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
     val formatter = remember { DecimalFormat("#.##") }
@@ -51,11 +51,11 @@ fun InputValue(
             )
         },
         modifier = Modifier.size(0.dp)
-    ){ measurables, constraints ->
+    ) { measurables, constraints ->
         val textPlaceable = measurables.first().measure(constraints)
 
-        layout(0,0){
-            textPlaceable.place(0,0)
+        layout(0, 0) {
+            textPlaceable.place(0, 0)
         }
     }
 
@@ -66,11 +66,11 @@ fun InputValue(
     ) {
         NumberInTextField(
             label = label, value = value,
-            width = (textWidth * 0.3).roundToInt()+90,//(labelWidth * 0.5).roundToInt()+50,
+            width = (textWidth * 0.3).roundToInt() + 90,//(labelWidth * 0.5).roundToInt()+50,
             multiplier = if (changeUnit.value) 1.0 else changedValueRate,
             formatter = formatter
         )
-        if (changedValueRate == 1.0){
+        if (changedValueRate == 1.0) {
             Column(
                 verticalArrangement = Arrangement.Bottom
             ) {

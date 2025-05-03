@@ -47,7 +47,7 @@ fun GraphAndThreshold(
     score: Double
 ) {
     val mediumColorValue =
-        (((secondThreshold + firstThreshold)/2)-minValue) / (maxValue - minValue)
+        (((secondThreshold + firstThreshold) / 2) - minValue) / (maxValue - minValue)
     val canvasHeightValue = 50
     val canvasHeight = canvasHeightValue.dp
     val textMeasurer = rememberTextMeasurer()
@@ -61,9 +61,8 @@ fun GraphAndThreshold(
     val helpImageWidth = 45
     val helpImageHeight = 45
     val imageBitmap: ImageBitmap? =
-        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)?.
-        toBitmap(width = helpImageWidth, height = helpImageHeight)?.
-        asImageBitmap()
+        ContextCompat.getDrawable(context, R.drawable.baseline_help_24)
+            ?.toBitmap(width = helpImageWidth, height = helpImageHeight)?.asImageBitmap()
 
     val greenColor = Color(0xFF1BFF0B)
     val yellowColor = Color(0xFFFFE30B)
@@ -99,7 +98,7 @@ fun GraphAndThreshold(
                 if (secondThreshold == 0F) {
                     arrayOf(
                         0.0f to greenColor,
-                        (firstThreshold - minValue)/(maxValue - minValue) to yellowColor,
+                        (firstThreshold - minValue) / (maxValue - minValue) to yellowColor,
                         1.0f to redColor
                     )
                 } else {
@@ -120,7 +119,7 @@ fun GraphAndThreshold(
             val circleXOffset =
                 if (score > maxValue) size.width
                 else if (score < minValue) 0F
-                else  ((score.toFloat()-minValue)/ (maxValue-minValue)) * size.width
+                else ((score.toFloat() - minValue) / (maxValue - minValue)) * size.width
             val circleYOffset = size.height * 0.75F
             val circleGradient = Brush.radialGradient(
                 colors = circleColors,
@@ -128,39 +127,48 @@ fun GraphAndThreshold(
                 radius = circleSize * 1.1F
             )
             drawRoundRect(
-                size = Size(width = size.width, height = size.height/2),
+                size = Size(width = size.width, height = size.height / 2),
                 brush = rectGradient,
-                topLeft = Offset(x = 0F, y = size.height/2),
+                topLeft = Offset(x = 0F, y = size.height / 2),
                 cornerRadius = rectCornerRadius
             )
             drawText(
                 textMeasurer = textMeasurer,
                 text = firstLabel,
-                topLeft = Offset(10F+0F * size.width,10F)
+                topLeft = Offset(10F + 0F * size.width, 10F)
             )
             drawThresholdLine(
-                height = size.height/2,
-                xPosition = (((firstThreshold-minValue)/ (maxValue-minValue))) * size.width
+                height = size.height / 2,
+                xPosition = (((firstThreshold - minValue) / (maxValue - minValue))) * size.width
             )
             drawText(
                 textMeasurer = textMeasurer,
                 text = secondLabel,
-                topLeft = Offset(10F+((firstThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
+                topLeft = Offset(
+                    10F + ((firstThreshold - minValue) / (maxValue - minValue)) * size.width,
+                    10F
+                )
             )
-            if (secondThreshold != 0F){
+            if (secondThreshold != 0F) {
                 drawThresholdLine(
-                    height = size.height/2,
-                    xPosition = (((secondThreshold-minValue) / (maxValue - minValue))) * size.width
+                    height = size.height / 2,
+                    xPosition = (((secondThreshold - minValue) / (maxValue - minValue))) * size.width
                 )
                 drawText(
                     textMeasurer = textMeasurer,
                     text = thirdLabel,
-                    topLeft = Offset(10F+((secondThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
+                    topLeft = Offset(
+                        10F + ((secondThreshold - minValue) / (maxValue - minValue)) * size.width,
+                        10F
+                    )
                 )
-                offsetXOfThirdLabel = 10F+((secondThreshold-minValue)/ (maxValue-minValue)) * size.width
+                offsetXOfThirdLabel =
+                    10F + ((secondThreshold - minValue) / (maxValue - minValue)) * size.width
                 offsetYOfThirdLabel = 10F
-                heightOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.height.toFloat()
-                widthOfThirdLabel = textMeasurer.measure(text = thirdLabel.toString()).size.width.toFloat()
+                heightOfThirdLabel =
+                    textMeasurer.measure(text = thirdLabel.toString()).size.height.toFloat()
+                widthOfThirdLabel =
+                    textMeasurer.measure(text = thirdLabel.toString()).size.width.toFloat()
 
                 if (thirdLabelInDetail != "") {
                     if (imageBitmap != null) {
@@ -168,7 +176,8 @@ fun GraphAndThreshold(
                             image = imageBitmap,
                             topLeft = Offset(
                                 x = offsetXOfThirdLabel + widthOfThirdLabel,
-                                y = offsetYOfThirdLabel),
+                                y = offsetYOfThirdLabel
+                            ),
                             colorFilter = ColorFilter.tint(Color(0xFF885200))
                         )
                     }
@@ -176,25 +185,31 @@ fun GraphAndThreshold(
             }
             if (thirdThreshold != 0F) {
                 drawThresholdLine(
-                    height = size.height/2,
-                    xPosition = (((thirdThreshold-minValue) / (maxValue - minValue))) * size.width
+                    height = size.height / 2,
+                    xPosition = (((thirdThreshold - minValue) / (maxValue - minValue))) * size.width
                 )
                 drawText(
                     textMeasurer = textMeasurer,
                     text = fourthLabel,
-                    topLeft = Offset(10F+((thirdThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
+                    topLeft = Offset(
+                        10F + ((thirdThreshold - minValue) / (maxValue - minValue)) * size.width,
+                        10F
+                    )
                 )
             }
             if (thirdLabelInDetail != "") {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = fourthLabel,
-                    topLeft = Offset(10F+((thirdThreshold-minValue)/ (maxValue-minValue)) * size.width,10F)
+                    topLeft = Offset(
+                        10F + ((thirdThreshold - minValue) / (maxValue - minValue)) * size.width,
+                        10F
+                    )
                 )
             }
             val alphaCircle =
-                if (score == 0.0)  0.2F
-                else  1F
+                if (score == 0.0) 0.2F
+                else 1F
             drawCircle(
                 brush = circleGradient,
                 radius = circleSize,
@@ -204,7 +219,7 @@ fun GraphAndThreshold(
             val textBackgroundColor = Color(0xFFFFF8E6)
             val textBackgroundCornerRadius = CornerRadius(7.dp.toPx(), 7.dp.toPx())
             val textSize = textMeasurer.measure(text = score.toString())
-            if (circleXOffset <= size.width/2) {
+            if (circleXOffset <= size.width / 2) {
                 drawRoundRect(
                     color = textBackgroundColor,
                     size = Size(
@@ -236,19 +251,19 @@ fun GraphAndThreshold(
                 )
             }
             val scoreStringAlpha =
-                if (score == 0.0)  0.3F
-                else  1F
-            if (circleXOffset <= size.width/2) {
+                if (score == 0.0) 0.3F
+                else 1F
+            if (circleXOffset <= size.width / 2) {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = score.toString(),
                     topLeft = Offset(
                         x = circleXOffset + circleSize * 1.5F,
-                        y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
+                        y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height / 2
 
                     ),
                     style = TextStyle(
-                        color = Color(red = 0f, green = 0f, blue = 0f,alpha = scoreStringAlpha),
+                        color = Color(red = 0f, green = 0f, blue = 0f, alpha = scoreStringAlpha),
                     )
                 )
             } else {
@@ -258,23 +273,26 @@ fun GraphAndThreshold(
                     topLeft = Offset(
                         x = circleXOffset - circleSize * 1.5F
                                 - textMeasurer.measure(text = score.toString()).size.width,
-                        y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height/2
+                        y = circleYOffset - textMeasurer.measure(text = score.toString()).size.height / 2
                     ),
-                    style = TextStyle(color = Color(red = 0f, green = 0f, blue = 0f,alpha = scoreStringAlpha),
+                    style = TextStyle(
+                        color = Color(red = 0f, green = 0f, blue = 0f, alpha = scoreStringAlpha),
                     )
                 )
             }
             rotate(
                 degrees = -90F,
-                pivot = Offset(x = (((firstThreshold-minValue)
-                        / (maxValue - minValue)) * size.width), y = (size.height / 2))
+                pivot = Offset(
+                    x = (((firstThreshold - minValue)
+                            / (maxValue - minValue)) * size.width), y = (size.height / 2)
+                )
             ) {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = firstThreshold.toString(),
                     topLeft = Offset(
-                        x = (((firstThreshold-minValue) / (maxValue - minValue)) * size.width)
-                                + (textMeasurer.measure(text = firstThreshold.toString()).size.height)/ 4,
+                        x = (((firstThreshold - minValue) / (maxValue - minValue)) * size.width)
+                                + (textMeasurer.measure(text = firstThreshold.toString()).size.height) / 4,
                         y = (size.height / 2)
                                 - (textMeasurer.measure(text = firstThreshold.toString()).size.height / 2)
                     ),
@@ -283,15 +301,17 @@ fun GraphAndThreshold(
             }
             rotate(
                 degrees = -90F,
-                pivot = Offset(x = (((secondThreshold-minValue)
-                        / (maxValue - minValue)) * size.width), y = (size.height / 2))
+                pivot = Offset(
+                    x = (((secondThreshold - minValue)
+                            / (maxValue - minValue)) * size.width), y = (size.height / 2)
+                )
             ) {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = secondThreshold.toString(),
                     topLeft = Offset(
-                        x = (((secondThreshold-minValue) / (maxValue - minValue)) * size.width)
-                                + (textMeasurer.measure(text = secondThreshold.toString()).size.height)/ 4,
+                        x = (((secondThreshold - minValue) / (maxValue - minValue)) * size.width)
+                                + (textMeasurer.measure(text = secondThreshold.toString()).size.height) / 4,
                         y = (size.height / 2)
                                 - (textMeasurer.measure(text = secondThreshold.toString()).size.height / 2)
                     ),
@@ -300,15 +320,17 @@ fun GraphAndThreshold(
             }
             rotate(
                 degrees = -90F,
-                pivot = Offset(x = (((thirdThreshold-minValue)
-                        / (maxValue - minValue)) * size.width), y = (size.height / 2))
+                pivot = Offset(
+                    x = (((thirdThreshold - minValue)
+                            / (maxValue - minValue)) * size.width), y = (size.height / 2)
+                )
             ) {
                 drawText(
                     textMeasurer = textMeasurer,
                     text = thirdThreshold.toString(),
                     topLeft = Offset(
-                        x = (((thirdThreshold-minValue) / (maxValue - minValue)) * size.width)
-                                + (textMeasurer.measure(text = thirdThreshold.toString()).size.height)/ 4,
+                        x = (((thirdThreshold - minValue) / (maxValue - minValue)) * size.width)
+                                + (textMeasurer.measure(text = thirdThreshold.toString()).size.height) / 4,
                         y = (size.height / 2)
                                 - (textMeasurer.measure(text = thirdThreshold.toString()).size.height / 2)
                     ),
@@ -322,7 +344,7 @@ fun GraphAndThreshold(
         ) {
             PopupClickable(
                 text = thirdLabelInDetail,
-                onClick = {thirdLabelTapped = !thirdLabelTapped})
+                onClick = { thirdLabelTapped = !thirdLabelTapped })
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,18 +25,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.material3.CardDefaults
 import com.keiichi.medguidelines.R
 
 @Composable
 fun textAndExpand1Level(
     firstTitle: Int,
-    cardColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    textColor: Color
-):Boolean
-{
+    cardColor: Color = MaterialTheme.colorScheme.onSecondary,
+    textColor: Color = MaterialTheme.colorScheme.secondary
+): Boolean {
     var expanded by remember { mutableStateOf(false) }
-    Column(){
+    Column() {
         val cardModifier = Modifier
             .padding(vertical = 4.dp, horizontal = 4.dp)
             .fillMaxWidth()
@@ -76,16 +75,19 @@ fun textAndExpand1Level(
 @Composable
 fun Text1Level(
     firstTitle: Int,
-    color: Color
-)
-{
-    Column(){
+    firstTextColor: Color = MaterialTheme.colorScheme.secondary,
+    firstCardColor: Color = MaterialTheme.colorScheme.onSecondary,
+) {
+    Column() {
         val cardModifier = Modifier
             .padding(vertical = 4.dp, horizontal = 4.dp)
             .fillMaxWidth()
             .width(IntrinsicSize.Max)
         Card(
-            modifier = cardModifier
+            modifier = cardModifier,
+            colors = CardDefaults.cardColors(
+                containerColor = firstCardColor
+            )
         ) {
             Row(
                 modifier = Modifier
@@ -99,7 +101,8 @@ fun Text1Level(
                 ) {
                     TextInCardTitleMedium(
                         text = firstTitle,
-                        color = color)
+                        color = firstTextColor
+                    )
                 }
             }
         }
@@ -110,10 +113,12 @@ fun Text1Level(
 fun TextAndExpand2Levels(
     firstTitle: Int,
     secondTitle: Int,
-    firstTextColor: Color,
-    secondTextColor: Color
+    firstTextColor: Color = MaterialTheme.colorScheme.secondary,
+    secondTextColor: Color = MaterialTheme.colorScheme.tertiary,
+    firstCardColor: Color = MaterialTheme.colorScheme.onSecondary,
+    //secondCardColor: Color,
 ) {
-    Column(){
+    Column() {
         var expanded by remember { mutableStateOf(false) }
         val cardModifier = Modifier
             .padding(vertical = 4.dp, horizontal = 4.dp)
@@ -129,7 +134,10 @@ fun TextAndExpand2Levels(
                 }
             )
         Card(
-            modifier = cardModifier
+            modifier = cardModifier,
+            colors = CardDefaults.cardColors(
+                containerColor = firstCardColor // Set the card color here
+            )
         ) {
             Row(
                 modifier = Modifier
@@ -156,8 +164,9 @@ fun TextAndExpand2Levels(
             if (expanded) {
                 Column(
                     modifier = Modifier
-                        .padding(8.dp)
-                ) {
+                        .padding(8.dp),
+
+                    ) {
                     TextInCardTitleMedium(
                         text = secondTitle,
                         color = secondTextColor
@@ -178,9 +187,8 @@ fun TextAndExpand3Levels(
     firstColor: Color,
     secondColor: Color,
     thirdColor: Color
-)
-{
-    Column(){
+) {
+    Column() {
         var expanded1 by remember { mutableStateOf(false) }
         var expanded2 by remember { mutableStateOf(false) }
         var expanded3 by remember { mutableStateOf(false) }
@@ -198,16 +206,17 @@ fun TextAndExpand3Levels(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-            ){
+            ) {
                 Row(
                     modifier = rowModifier
                 ) {
-                    Column (
+                    Column(
                         modifier = Modifier.weight(1f)
-                    ){
+                    ) {
                         TextInCardTitleMedium(
                             text = firstTitle,
-                            color = firstColor)
+                            color = firstColor
+                        )
                     }
                     IconButtonInCard(
                         expanded = expanded1,
@@ -220,10 +229,11 @@ fun TextAndExpand3Levels(
                     if (expanded1) {
                         Column(
                             modifier = Modifier.weight(1f)
-                        ){
+                        ) {
                             TextInCardTitleMedium(
                                 text = secondTitle1,
-                                color = secondColor)
+                                color = secondColor
+                            )
                         }
                         IconButtonInCard(
                             expanded = expanded2,
@@ -236,8 +246,9 @@ fun TextAndExpand3Levels(
                 ) {
                     if (expanded2) {
                         TextInCardTitleMedium(
-                            text =thirdTitle11,
-                            color = thirdColor)
+                            text = thirdTitle11,
+                            color = thirdColor
+                        )
                     }
                 }
                 Row(
@@ -246,10 +257,11 @@ fun TextAndExpand3Levels(
                     if (expanded1) {
                         Column(
                             modifier = Modifier.weight(1f)
-                        ){
+                        ) {
                             TextInCardTitleMedium(
                                 text = secondTitle2,
-                                color = secondColor)
+                                color = secondColor
+                            )
                         }
                         IconButtonInCard(
                             expanded = expanded3,
@@ -264,7 +276,8 @@ fun TextAndExpand3Levels(
                     if (expanded3) {
                         TextInCardTitleMedium(
                             text = thirdTitle21,
-                            color = thirdColor)
+                            color = thirdColor
+                        )
                     }
                 }
             }
@@ -290,7 +303,7 @@ private fun TextInCardTitleMedium(
 fun IconButtonInCard(
     expanded: Boolean,
     onExpandChange: (Boolean) -> Unit
-){
+) {
     IconButton(onClick = { onExpandChange(!expanded) }) {
         Icon(
             imageVector = if (expanded) Icons.Filled.KeyboardArrowUp

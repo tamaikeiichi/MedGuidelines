@@ -1,18 +1,14 @@
 package com.keiichi.medguidelines.ui.screen
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,6 +34,8 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
+import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.textAndUrl
 import kotlin.math.log10
@@ -48,7 +46,7 @@ fun MALBIScreen(navController: NavController) {
     var score by remember { mutableDoubleStateOf(0.0) }
     var scoreRound by remember { mutableDoubleStateOf(0.0) }
     val focusManager = LocalFocusManager.current
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
                 title = R.string.mALBITitle,
@@ -59,26 +57,22 @@ fun MALBIScreen(navController: NavController) {
             )
         },
         bottomBar = {
-            BottomAppBar {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    Text(
-                        buildAnnotatedString {
-                            append("mALBI ")
-                            withStyle(
-                                style = SpanStyle(fontWeight = FontWeight.Bold)
-                            ){
-                                append(" $grade ")
-                            }
-                            append(" ($scoreRound)")
-                        },
-                        fontSize = 30.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+            ResultBottomAppBar {
+
+                Text(
+                    buildAnnotatedString {
+                        append("mALBI ")
+                        withStyle(
+                            style = SpanStyle(fontWeight = FontWeight.Bold)
+                        ) {
+                            append(" $grade ")
+                        }
+                        append(" ($scoreRound)")
+                    },
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center
+                )
+
             }
         },
         modifier = Modifier
@@ -160,12 +154,13 @@ fun mALBIInput(): Double {
             )
         }
     }
-    val score = (log10(17.1 * totalBilirubin.doubleValue)) * 0.66 + (10 * albumin.doubleValue * (-0.085))
+    val score =
+        (log10(17.1 * totalBilirubin.doubleValue)) * 0.66 + (10 * albumin.doubleValue * (-0.085))
     return score
 }
 
 @Preview
 @Composable
-fun MALBIScreenPreview(){
+fun MALBIScreenPreview() {
     MALBIScreen(navController = NavController(LocalContext.current))
 }

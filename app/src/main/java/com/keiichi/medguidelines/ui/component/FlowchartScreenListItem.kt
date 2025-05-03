@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun FlowchartScreenListItem (singleFlowchartPanel: () -> Unit) {
+fun FlowchartScreenListItem(singleFlowchartPanel: () -> Unit) {
     Column {
         Card {
             singleFlowchartPanel()

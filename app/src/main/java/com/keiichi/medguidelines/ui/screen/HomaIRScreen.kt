@@ -1,19 +1,15 @@
 package com.keiichi.medguidelines.ui.screen
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +35,8 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
+import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.textAndUrl
 
@@ -48,7 +46,7 @@ fun HomaIRScreen(navController: NavController) {
     var score by remember { mutableDoubleStateOf(0.0) }
     var scoreRound by remember { mutableDoubleStateOf(0.0) }
     val focusManager = LocalFocusManager.current
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
                 title = R.string.homairTitle,
@@ -59,27 +57,23 @@ fun HomaIRScreen(navController: NavController) {
             )
         },
         bottomBar = {
-            BottomAppBar {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    Text(
-                        buildAnnotatedString {
-                            append(stringResource(R.string.insulinResistance))
-                            append(" ")
-                            withStyle(
-                                style = SpanStyle(fontWeight = FontWeight.Bold)
-                            ){
-                                append(" $grade ")
-                            }
-                            append("HOMA-IR=$scoreRound")
-                        },
-                        fontSize = 30.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+            ResultBottomAppBar {
+
+                Text(
+                    buildAnnotatedString {
+                        append(stringResource(R.string.insulinResistance))
+                        append(" ")
+                        withStyle(
+                            style = SpanStyle(fontWeight = FontWeight.Bold)
+                        ) {
+                            append(" $grade ")
+                        }
+                        append("HOMA-IR=$scoreRound")
+                    },
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center
+                )
+
             }
         },
         modifier = Modifier
@@ -105,7 +99,7 @@ fun HomaIRScreen(navController: NavController) {
                     score < 2.5 -> stringResource(R.string.boaderline)
                     else -> stringResource(R.string.presence)
                 }
-                scoreRound = Math.round(score * 100.0)/100.0
+                scoreRound = Math.round(score * 100.0) / 100.0
                 Card(
                     modifier = Modifier
                         .padding(4.dp)
@@ -158,12 +152,16 @@ fun homaIRInput(): Double {
             InputValue(
                 label = R.string.fastingInsulin, value = insulin,
                 unit = R.string.uUml,
-                changeUnit = remember { mutableStateOf(changedFactor1Unit) }.also { changedFactor1Unit = it.value }
+                changeUnit = remember { mutableStateOf(changedFactor1Unit) }.also {
+                    changedFactor1Unit = it.value
+                }
             )
             InputValue(
                 label = R.string.fastingGlucose, value = glucose,
                 unit = R.string.mgdl,
-                changeUnit = remember { mutableStateOf(changedFactor2Unit) }.also { changedFactor2Unit = it.value },
+                changeUnit = remember { mutableStateOf(changedFactor2Unit) }.also {
+                    changedFactor2Unit = it.value
+                },
                 changedValueRate = 0.05551,
                 changedUnit = R.string.mmoll
             )
@@ -176,6 +174,6 @@ fun homaIRInput(): Double {
 
 @Preview
 @Composable
-fun HomaIRScreenPreview(){
+fun HomaIRScreenPreview() {
     HomaIRScreen(navController = NavController(LocalContext.current))
 }

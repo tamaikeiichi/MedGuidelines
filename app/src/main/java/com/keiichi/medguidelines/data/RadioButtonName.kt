@@ -71,7 +71,7 @@ val NfactorPancreatic = listOf(
     R.string.N0,
     R.string.N1,
     R.string.N2,
-    )
+)
 
 val MfactorPancreatic = listOf(
     R.string.M0,
@@ -143,7 +143,7 @@ val tonsillitisRedFlag = listOf(
     R.string.tonsillitisRedFlag3,
     R.string.tonsillitisRedFlag4,
     R.string.tonsillitisRedFlag5,
-    )
+)
 
 val noYes = listOf(
     R.string.no,

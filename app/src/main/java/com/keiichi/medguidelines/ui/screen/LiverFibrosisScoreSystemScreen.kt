@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +43,7 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.textAndUrl
@@ -68,7 +68,7 @@ data class Scores(
     var nfs: Double,
     var elfScore: Double,
     var m2bpgi: Double
-){
+) {
     fun roundToTwoDecimals() {
         fib4score = roundDouble(fib4score)
         apri = roundDouble(apri)
@@ -76,6 +76,7 @@ data class Scores(
         nfs = roundDouble(nfs)
         elfScore = roundDouble(elfScore)
     }
+
     private fun roundDouble(value: Double): Double {
         return Math.round(value * 100.0) / 100.0
     }
@@ -94,7 +95,7 @@ fun Modifier.textModifier(): Modifier =
 @Composable
 fun LiverFibrosisScoreSystemScreen(
     navController: NavController,
-    ) {
+) {
     val focusManager = LocalFocusManager.current
     val age = remember { mutableDoubleStateOf(0.00) }
     val ast = remember { mutableDoubleStateOf(0.0) }
@@ -111,22 +112,26 @@ fun LiverFibrosisScoreSystemScreen(
     val elfScore = remember { mutableDoubleStateOf(0.0) }
     val m2bpgi = remember { mutableDoubleStateOf(0.0) }
     var allScores by remember {
-        mutableStateOf(Scores(
-            0.0,0.0, 0.0, 0.0, 0.0, 0.0)
+        mutableStateOf(
+            Scores(
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+            )
         )
     }
     val calculatedElfScore by remember {
         derivedStateOf {
-            if((hyaluronicAcid.doubleValue != 0.0) &&
+            if ((hyaluronicAcid.doubleValue != 0.0) &&
                 (piiinp.doubleValue != 0.0) &&
-                (timp1.doubleValue != 0.0))
-            {(((
-                                        calculateElfScore(
-                                            hyaluronicAcid.doubleValue,
-                                            piiinp.doubleValue,
-                                            timp1.doubleValue) * 100.0
-                                        ).roundToInt()
-                                ) / 100.0
+                (timp1.doubleValue != 0.0)
+            ) {
+                (((
+                        calculateElfScore(
+                            hyaluronicAcid.doubleValue,
+                            piiinp.doubleValue,
+                            timp1.doubleValue
+                        ) * 100.0
+                        ).roundToInt()
+                        ) / 100.0
                         )
             } else {
                 0.0
@@ -134,10 +139,10 @@ fun LiverFibrosisScoreSystemScreen(
         }
     }
     LaunchedEffect(key1 = calculatedElfScore) {
-        if(calculatedElfScore != elfScore.doubleValue)
+        if (calculatedElfScore != elfScore.doubleValue)
             elfScore.doubleValue = calculatedElfScore
     }
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
                 title = R.string.liverFibrosisScoreSystemTitle,
@@ -157,8 +162,7 @@ fun LiverFibrosisScoreSystemScreen(
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxWidth()
-            ,
+                .fillMaxWidth(),
             contentPadding = PaddingValues(10.dp),
             state = rememberLazyListState()
         ) {
@@ -198,7 +202,7 @@ fun LiverFibrosisScoreSystemScreen(
                         thirdLabel = stringResource(R.string.highRisk),
                         score = allScores.fib4score
                     )
-                    Row(){
+                    Row() {
                         FactorAlerts(
                             text = R.string.age,
                             factor = age.doubleValue
@@ -219,7 +223,7 @@ fun LiverFibrosisScoreSystemScreen(
                 }
                 Card(
                     modifier = Modifier.cardModifier()
-                ){
+                ) {
                     Text(
                         text = stringResource(R.string.nafldFibrosisScore),
                         modifier = Modifier.textModifier()
@@ -279,7 +283,7 @@ fun LiverFibrosisScoreSystemScreen(
                 }
                 Card(
                     modifier = Modifier.cardModifier()
-                ){
+                ) {
                     Text(
                         text = stringResource(R.string.elfScore),
                         modifier = Modifier.textModifier()
@@ -377,7 +381,8 @@ fun LiverFibrosisScoreSystemScreen(
                         firstLabel = stringResource(R.string.normal),
                         thirdLabel = stringResource(R.string.cACLD),
                         thirdLabelInDetail = stringResource(
-                            R.string.compensatedAdvancedChronicLiverDisease),
+                            R.string.compensatedAdvancedChronicLiverDisease
+                        ),
                         score = allScores.swe
                     )
                     FactorAlerts(
@@ -391,10 +396,10 @@ fun LiverFibrosisScoreSystemScreen(
 }
 
 fun calculateElfScore(
-    hyaluronicAcid:Double,
+    hyaluronicAcid: Double,
     piiinp: Double,
     timp1: Double
-): Double{
+): Double {
     val score = 2.278 +
             0.815 * ln(hyaluronicAcid) +
             0.751 * ln(piiinp) +
@@ -406,7 +411,7 @@ fun calculateElfScore(
 fun FactorAlerts(
     text: Int,
     factor: Double
-){
+) {
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
         shadowElevation = 2.dp,
@@ -454,7 +459,7 @@ fun DrawScope.drawThresholdLine(
     drawLine(
         color = Color.Black,
         start = Offset(x = xPosition, y = height),
-        end = Offset(x = xPosition, y = height *2),
+        end = Offset(x = xPosition, y = height * 2),
         strokeWidth = 3F
     )
 }
@@ -560,27 +565,27 @@ fun inputAndCalculate(
     val apri = ((ast.doubleValue / 30) / platelet.doubleValue) * 100
     val nfs = -1.675 +
             (0.037 * age.doubleValue) +
-            0.094 * (bodyWeight.doubleValue/((bodyHeight.doubleValue / 100).pow(2.0))) +
+            0.094 * (bodyWeight.doubleValue / ((bodyHeight.doubleValue / 100).pow(2.0))) +
             1.13 * dmPresence.intValue +
-            0.99 * ast.doubleValue/ alt.doubleValue -
+            0.99 * ast.doubleValue / alt.doubleValue -
             0.013 * platelet.doubleValue -
             0.66 * albumin.doubleValue
-    val allScores = Scores(fib4score, apri, swe.doubleValue, nfs, elfScore.doubleValue, m2bpgi.doubleValue)
+    val allScores =
+        Scores(fib4score, apri, swe.doubleValue, nfs, elfScore.doubleValue, m2bpgi.doubleValue)
     //allScores.roundToTwoDecimals()
     return allScores
 }
 
 
-
 @Preview
 @Composable
-fun LiverFibrosisScoreSystemScreenPreview(){
+fun LiverFibrosisScoreSystemScreenPreview() {
     LiverFibrosisScoreSystemScreen(navController = NavController(LocalContext.current))
 }
 
 @Preview
 @Composable
-fun LiverFibrosisScoreSystemScreenPreview2(){
+fun LiverFibrosisScoreSystemScreenPreview2() {
     GraphAndThreshold(
         maxValue = 2F,
         minValue = -4F,

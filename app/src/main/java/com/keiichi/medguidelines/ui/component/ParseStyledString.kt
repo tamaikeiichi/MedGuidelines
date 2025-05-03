@@ -18,8 +18,16 @@ fun parseStyledString(stringResId: Int): AnnotatedString {
     return buildAnnotatedString {
         val tagRegexes = listOf(
             TagRegex("<b>", "</b>", SpanStyle(fontWeight = FontWeight.Bold)),
-            TagRegex("<sub>", "</sub>", SpanStyle(fontSize = 0.8.em, baselineShift = BaselineShift(-0.2F))),
-            TagRegex("<sup>", "</sup>", SpanStyle(fontSize = 0.8.em, baselineShift = BaselineShift(0.2F))),
+            TagRegex(
+                "<sub>",
+                "</sub>",
+                SpanStyle(fontSize = 0.8.em, baselineShift = BaselineShift(-0.2F))
+            ),
+            TagRegex(
+                "<sup>",
+                "</sup>",
+                SpanStyle(fontSize = 0.8.em, baselineShift = BaselineShift(0.2F))
+            ),
             TagRegex("<u>", "</u>", SpanStyle(textDecoration = TextDecoration.Underline)),
             TagRegex("<bold>", "</bold>", SpanStyle(fontWeight = FontWeight.Bold)),
             TagRegex("<small>", "</small>", SpanStyle(fontSize = 0.7.em)),
@@ -32,7 +40,8 @@ fun parseStyledString(stringResId: Int): AnnotatedString {
 
         // Find all tag ranges and their styles
         for (tagRegex in tagRegexes) {
-            val regex = Regex(Regex.escape(tagRegex.openingTag) + "(.*?)" + Regex.escape(tagRegex.closingTag))
+            val regex =
+                Regex(Regex.escape(tagRegex.openingTag) + "(.*?)" + Regex.escape(tagRegex.closingTag))
             regex.findAll(fullString).forEach { matchResult ->
                 tagRanges.add(
                     TagRange(

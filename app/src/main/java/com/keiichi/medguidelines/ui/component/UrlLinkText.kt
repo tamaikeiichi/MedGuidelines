@@ -14,7 +14,6 @@ data class textAndUrl(
 )
 
 
-
 @Composable
 fun UrlLinkText(
     reference: textAndUrl,
@@ -22,7 +21,7 @@ fun UrlLinkText(
 ) {
     val url = stringResource(id = reference.Url)
     Text(
-        text = parseStyledString(reference.Text) ,
+        text = parseStyledString(reference.Text),
         modifier = Modifier
             .clickable(enabled = true, onClickLabel = "Open URL") {
                 urlHandler.openUri(url)

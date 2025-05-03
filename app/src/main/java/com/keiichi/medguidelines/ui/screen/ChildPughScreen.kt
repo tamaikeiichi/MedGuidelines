@@ -1,15 +1,10 @@
 package com.keiichi.medguidelines.ui.screen
 
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +24,8 @@ import com.keiichi.medguidelines.data.ascitesGrade
 import com.keiichi.medguidelines.data.bilirubinGrade
 import com.keiichi.medguidelines.data.encephalopathyGrade
 import com.keiichi.medguidelines.data.ptGrade
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
+import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.textAndUrl
@@ -38,9 +35,10 @@ fun ChildPughScreen(navController: NavController) {
     var totalScore by remember { mutableIntStateOf(0) }
     var childPughScoreABC by remember { mutableStateOf("") }
 
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
-            TitleTopAppBar(title =  R.string.childPughTitle,
+            TitleTopAppBar(
+                title = R.string.childPughTitle,
                 navController = navController,
                 references = listOf(
                     textAndUrl(R.string.space, R.string.space)
@@ -48,19 +46,12 @@ fun ChildPughScreen(navController: NavController) {
             )
         },
         bottomBar = {
-            BottomAppBar {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    Text(
-                        text = "Child-Pugh $childPughScoreABC ($totalScore)",
-                        fontSize = 30.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
-
+            ResultBottomAppBar {
+                Text(
+                    text = "Child-Pugh $childPughScoreABC ($totalScore)",
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     ) { innerPadding ->
@@ -94,7 +85,8 @@ fun childPughTotalScore(): Int {
             R.string.albuminTitle,
             R.string.space
         ) + 1
-    val ptScore = buttonAndScore(ptGrade,
+    val ptScore = buttonAndScore(
+        ptGrade,
         R.string.ptTitle,
         R.string.ptTitleNote
     ) + 1
@@ -112,11 +104,11 @@ fun childPughTotalScore(): Int {
 
     val totalScore =
         bilirubinScore + albuminScore + ptScore + ascitesScore + encephalopathyScore
-    return  totalScore
+    return totalScore
 }
 
 @Preview
 @Composable
-fun ChildPughScreenPreview(){
+fun ChildPughScreenPreview() {
     ChildPughScreen(navController = NavController(LocalContext.current))
 }

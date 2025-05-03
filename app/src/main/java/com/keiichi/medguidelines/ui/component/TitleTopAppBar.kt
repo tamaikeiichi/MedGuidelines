@@ -26,11 +26,11 @@ import com.keiichi.medguidelines.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TitleTopAppBar (
+fun TitleTopAppBar(
     title: Int,
     navController: NavController,
     references: List<textAndUrl>
-){
+) {
     var expanded by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
         title = { Text(text = parseStyledString(title)) },
@@ -45,29 +45,30 @@ fun TitleTopAppBar (
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.onPrimary,
             titleContentColor = MaterialTheme.colorScheme.primary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.primary,
+            actionIconContentColor = MaterialTheme.colorScheme.primary,
         ),
         actions = {
-            if (references[0].Url != R.string.space && references[0].Text != R.string.space){
+            if (references[0].Url != R.string.space && references[0].Text != R.string.space) {
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id= R.drawable.quick_reference_all_24px) ,
+                        imageVector = ImageVector.vectorResource(id = R.drawable.quick_reference_all_24px),
                         contentDescription = "Reference",
                     )
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        DropdownMenuItem(text = {
-                            Column(){
-                                for (reference in references){
-                                    UrlLinkText(reference)
+                        DropdownMenuItem(
+                            text = {
+                                Column() {
+                                    for (reference in references) {
+                                        UrlLinkText(reference)
+                                    }
                                 }
-                            }
-                        },
+                            },
                             onClick = {
-                            expanded = false
-                        })
+                                expanded = false
+                            })
                     }
                 }
             }
@@ -77,7 +78,7 @@ fun TitleTopAppBar (
 
 @Preview
 @Composable
-fun TitleTopAppBarPreview(){
+fun TitleTopAppBarPreview() {
     TitleTopAppBar(
         title = R.string.space,
         navController = NavController(LocalContext.current),

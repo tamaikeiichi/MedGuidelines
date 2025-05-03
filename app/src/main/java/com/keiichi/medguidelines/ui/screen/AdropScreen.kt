@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -18,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
+import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
@@ -31,9 +31,10 @@ fun AdropScreen(navController: NavController) {
     // Build the display string here
     val displayString = "$literalScore ($totalScore)"
 
-    Scaffold(
+    MedGuidelinesScaffold(
         topBar = {
-            TitleTopAppBar(title =  R.string.aDropTitle,
+            TitleTopAppBar(
+                title = R.string.aDropTitle,
                 navController = navController,
                 references = listOf(
                     textAndUrl(R.string.space, R.string.space)
@@ -53,7 +54,7 @@ fun AdropScreen(navController: NavController) {
             //Text(text = totalScore.toString())
 
             literalScore = when (totalScore) {
-                in 0 .. 0 -> stringResource(id = R.string.adropLiteralScoreMild)
+                in 0..0 -> stringResource(id = R.string.adropLiteralScoreMild)
                 in 1..2 -> stringResource(id = R.string.adropLiteralScoreModerate)
                 in 3..3 -> stringResource(id = R.string.adropLiteralScoreSevere)
                 else -> stringResource(id = R.string.adropLiteralScoreMostSevere)
@@ -66,32 +67,32 @@ fun AdropScreen(navController: NavController) {
 fun adropTotalScore(): Int {
     val scoreA = buttonAndScore(
         noYes,
-         R.string.ageTitle,
+        R.string.ageTitle,
         R.string.space
     )
     val scoreB = buttonAndScore(
         noYes,
-         R.string.dehydrationTitle,
+        R.string.dehydrationTitle,
         R.string.space
     )
     val scoreC = buttonAndScore(
         noYes,
-         R.string.respirationTitle,
+        R.string.respirationTitle,
         R.string.space
     )
     val scoreD = buttonAndScore(
         noYes,
-         R.string.orientationTitle,
+        R.string.orientationTitle,
         R.string.space
     )
     val scoreE = buttonAndScore(
         noYes,
-         R.string.pressureTitle,
+        R.string.pressureTitle,
         R.string.space
     )
     val totalScore =
         scoreA + scoreB + scoreC + scoreD + scoreE
-    return  totalScore
+    return totalScore
 }
 
 //@Composable
@@ -115,6 +116,6 @@ fun adropTotalScore(): Int {
 
 @Preview
 @Composable
-fun AdropPreview(){
+fun AdropPreview() {
     AdropScreen(navController = NavController(LocalContext.current))
 }
