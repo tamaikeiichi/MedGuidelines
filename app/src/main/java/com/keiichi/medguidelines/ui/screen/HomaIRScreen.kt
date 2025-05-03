@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.textAndUrl
@@ -105,6 +106,27 @@ fun HomaIRScreen(navController: NavController) {
                     else -> stringResource(R.string.presence)
                 }
                 scoreRound = Math.round(score * 100.0)/100.0
+                Card(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .fillMaxWidth()
+
+                ) {
+                    Text(
+                        text = stringResource(R.string.homairTitle),
+                        modifier = Modifier.textModifier()
+                    )
+                    GraphAndThreshold(
+                        maxValue = 4F,
+                        minValue = 0.1F,
+                        firstThreshold = 1.6F,
+                        secondThreshold = 2.5F,
+                        firstLabel = stringResource(R.string.normal),
+                        secondLabel = stringResource(R.string.space),
+                        thirdLabel = stringResource(R.string.insulinResistance),
+                        score = scoreRound
+                    )
+                }
             }
         }
     }
@@ -146,6 +168,7 @@ fun homaIRInput(): Double {
                 changedUnit = R.string.mmoll
             )
         }
+
     }
     val score = insulin.doubleValue * glucose.doubleValue / 405
     return score

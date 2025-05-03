@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.textAndUrl
@@ -105,7 +107,28 @@ fun MALBIScreen(navController: NavController) {
                     score <= -1.39 -> "2b"
                     else -> "3"
                 }
-                scoreRound = Math.round(score * 100.0)/100.0
+                scoreRound = Math.round(score * 100.0) / 100.0
+
+                Card(
+                    modifier = Modifier.cardModifier()
+                ) {
+                    Text(
+                        text = stringResource(R.string.mALBITitle),
+                        modifier = Modifier.textModifier()
+                    )
+                    GraphAndThreshold(
+                        maxValue = -1F,
+                        minValue = -3.2F,
+                        firstThreshold = -2.6F,
+                        secondThreshold = -2.27F,
+                        thirdThreshold = -1.39F,
+                        firstLabel = stringResource(R.string.grade1),
+                        secondLabel = stringResource(R.string.g2a),
+                        thirdLabel = stringResource(R.string.g2b),
+                        fourthLabel = stringResource(R.string.g3),
+                        score = scoreRound
+                    )
+                }
             }
         }
     }

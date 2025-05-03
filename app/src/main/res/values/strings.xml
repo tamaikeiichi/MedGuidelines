@@ -203,7 +203,7 @@
     <string name="ast" translatable="false">AST</string>
     <string name="iul" translatable="false">IU/L</string>
     <string name="plateletCount">platelet count</string>
-    <string name="unit109L"><![CDATA[10<sup>9</sup>/L]]></string>
+    <string name="unit109L" translatable="false"><![CDATA[10<sup>9</sup>/L]]></string>
     <string name="alt" translatable="false">ALT</string>
     <string name="liverFibrosisScoreSystemTitle">Liver Fibrosis Score System</string>
     <string name="lowRisk">Low Risk</string>
@@ -213,53 +213,75 @@
     <string name="stage34">Stage 3-4</string>
     <string name="fib4score">FIB4 Score</string>
     <string name="apriScore">APRI score</string>
-    <string name="fib4">FIB4</string>
-    <string name="apri">APRI</string>
-    <string name="astToPlateletRatioIndex">AST to Platelet Ratio Index (APRI)</string>
-    <string name="shearWaveElastography">Shear Wave Elastography</string>
-    <string name="ms">m/s</string>
-    <string name="normal">Normal\n</string>
+    <string name="fib4" translatable="false">FIB4</string>
+    <string name="apri" translatable="false">APRI</string>
+    <string name="astToPlateletRatioIndex" translatable="false">AST to Platelet Ratio Index (APRI)</string>
+    <string name="shearWaveElastography" translatable="false">Shear Wave Elastography</string>
+    <string name="ms" translatable="false">m/s</string>
+    <string name="normal">Normal</string>
     <string name="compensatedAdvancedChronicLiverDisease">Compensated Advanced Chronic Liver Disease</string>
     <string name="cACLD" translatable="false">cACLD</string>
     <string name="apriUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/30616027/</string>
     <string name="shearWaveElastographyUrl" translatable="false">https://doi.org/10.1148/radiol.2020192437</string>
-    <string name="nafldFibrosisScore">NAFLD Fibrosis Score</string>
+    <string name="nafldFibrosisScore" translatable="false">NAFLD Fibrosis Score</string>
     <string name="nafldFibrosisScoreUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
     <string name="bodyHeight">Body Height</string>
-    <string name="cm">cm</string>
+    <string name="cm" translatable="false">cm</string>
     <string name="bodyWeight">Body Weight</string>
-    <string name="kg">Kg</string>
+    <string name="kg" translatable="false">Kg</string>
     <string name="dmPresence">Presence of IFG/diabetes</string>
-    <string name="dmPresenceNote">Impaired Fasting Glucose or Diabetes Mellitus</string>
+    <string name="dmPresenceNote" translatable="false">Impaired Fasting Glucose or Diabetes Mellitus</string>
     <string name="unlikely">Unlikely</string>
     <string name="likely">Likely</string>
     <string name="elfScore">ELF score</string>
     <string name="fibrosisStage2">Fibrosis Stage2</string>
     <string name="fibrosisStage3">Fibrosis Stage3</string>
-    <string name="f2">F2</string>
-    <string name="f3">F3</string>
-    <string name="elfScoreUrl">https://pubmed.ncbi.nlm.nih.gov/37088311/</string>
+    <string name="f2" translatable="false">F2</string>
+    <string name="f3" translatable="false">F3</string>
+    <string name="elfScoreUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/37088311/</string>
     <string name="hyaluronicAcid">Hyaluroninc Acid</string>
-    <string name="ngml">ng/mL</string>
-    <string name="timp1">TIMP-1</string>
-    <string name="piiip">PIIIP</string>
+    <string name="ngml" translatable="false">ng/mL</string>
+    <string name="timp1" translatable="false">TIMP-1</string>
+    <string name="piiip" translatable="false">PIIIP</string>
     <string name="platelet">Platelet</string>
     <string name="diabetesMellitus">Diabetes Mellitus</string>
-    <string name="fib4Url">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
-    <string name="m2bpgi">M2BPGi</string>
-    <string name="coi">COI</string>
+    <string name="fib4Url" translatable="false">https://pubmed.ncbi.nlm.nih.gov/36727674/</string>
+    <string name="m2bpgi" translatable="false">M2BPGi</string>
+    <string name="coi" translatable="false">COI</string>
     <string name="stage3">Stage 3</string>
     <string name="stage4">Stage 4</string>
-    <string name="m2bpgiUrl">https://pubmed.ncbi.nlm.nih.gov/25326152/</string>
+    <string name="m2bpgiUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/25326152/</string>
     <string name="bruntStaging">Brunt staging</string>
     <string name="nashCrnFibrosisStage02">NASH-CRN Fibrosis Stage 0-2</string>
-    <string name="homairTitle">HOMA-IR</string>
+    <string name="homairTitle" translatable="false">HOMA-IR</string>
     <string name="boaderline">Boarderline</string>
     <string name="insulinResistance">Insulin Resistance</string>
     <string name="fastingInsulin">Fasting Insulin</string>
-    <string name="uUml">μU/mL</string>
+    <string name="uUml" translatable="false">μU/mL</string>
     <string name="fastingGlucose">Fasting Glucose</string>
-    <string name="mmoll">mmol/L</string>
-    <string name="mmhg">mmHg</string>
-    <string name="meql">mEq/L</string>
+    <string name="mmoll" translatable="false">mmol/L</string>
+    <string name="mmhg" translatable="false">mmHg</string>
+    <string name="meql" translatable="false">mEq/L</string>
+    <string name="acuteTonsillitisAlgorithmReference" translatable="false">気道感染症の抗菌薬適正使用に関する提言（日本感染症学会）</string>
+    <string name="acuteTonsillitisAlgorithmReferenceUrl" translatable="false">https://www.kansensho.or.jp/uploads/files/guidelines/2211_teigen.pdf</string>
+    <string name="T2a" translatable="false">T2a</string>
+    <string name="T2b" translatable="false">T2b</string>
+    <string name="TfactorTitleNoteLungCancer">
+        &lt;b>Tis&lt;/b> Carcinoma in situ\n&lt;b>T1a&lt;/b> Tumor ≤ 1cm\n&lt;b>T1b&lt;/b> Tumor > 1cm but ≤ 2cm\n&lt;b>T1c&lt;/b> Tumor > 2 cm but ≤ 3cm\n&lt;b>T2a&lt;/b> Tumor > 3 cm but ≤ 4 cm, invades visceral pleura, invades an adjacent lobe, involves main bronchus (up to but not including the carina) or is associated with atelectasis or obstructive pneumonitis, extending to the hilar region, involving either part of or the entire lung\n&lt;b>T2b&lt;/b> Tumor > 4 cm but ≤ 5 cm\n&lt;b>T3&lt;/b> Tumor with any of the following features: tumor > 5 cm but 7 cm in greatest dimension. invades parietal pleura or chest wall. invades pericardium,phrenicnerve,or azygos vein. invades thoracic nerve roots (i.e.,T1,T2) or stellate ganglion separate tumor nodule(s) in the same lobe as the primary.\n&lt;b>T4&lt;/b> Tumor with any of the following features: tumor > 7 cm, invades mediastinum, thymus, trachea, carina, recurrent laryngeal nerve, vagus nerve, esophagus,or diaphragm invades heart, great vessels (aorta,superior or inferior vena cava, intrapericardial pulmonary arteries or veins), supra-aortic arteries, or brachiocephalic veins invades subclavian vessels, vertebral body, lamina, spinal canal, cervical nerve roots, or brachial plexus (i.e.,trunks, divisions, cords,or terminal nerves) separate tumor nodule(s) in a different ipsilateral lobe than that of the primary
+    </string>
+    <string name="NfactorTitleNoteLungCancer">
+        &lt;b>N1&lt;/b> Metastasis in ipsilateral peribronchial or ipsilateral hilar or intrapulmonary lymph nodes, including involvement by direct extension\n&lt;b>N2&lt;/b> Metastasis in ipsilateral mediastinal or subcarinal lymph node(s)\n&lt;b>N2a&lt;/b> Metastasis(es) in a single ipsilateral mediastinal or in the subcarinal nodal station\n&lt;b>N2a&lt;/b> Metastases in multiple ipsilateral mediastinal nodal stations with or without involvement of the subcarinal nodal station\n&lt;b>N3&lt;/b> Metastasis in contralateral mediastinal, contralateral hilar, ipsilateral or contralateral scalene or supraclavicular lymph node(s)
+    </string>
+    <string name="MfactorTitleNoteLungCancer">
+        &lt;b>M1a&lt;/b> Tumor with pleural or pericardial nodules, or malignant pleural or pericardial effusions, separate tumor nodule(s) in a contralateral lobe\n&lt;b>M1b&lt;/b> Single extra thoracic metastasis in a single organ system\n&lt;b>M1c&lt;/b> Multiple extra thoracic metastases in a single or multiple organ system(s)
+    </string>
+    <string name="grade1" translatable="false">Grade 1</string>
+    <string name="grade2a" translatable="false">Grade 2a</string>
+    <string name="grade2b" translatable="false">Grade 2b</string>
+    <string name="grade3" translatable="false">Grade 3</string>
+    <string name="g2a" translatable="false">2a</string>
+    <string name="g2b" translatable="false">2b</string>
+    <string name="g3" translatable="false">3</string>
+    <string name="lungTNMTitle">Lung Cancer TNM classification (UICC 9th)</string>
+
 </resources>

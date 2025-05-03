@@ -107,6 +107,31 @@ val MfactorEsophageal = listOf(
     R.string.M1,
 )
 
+val TfactorLung = listOf(
+    R.string.Tis,
+    R.string.T1a,
+    R.string.T1b,
+    R.string.T1c,
+    R.string.T2a,
+    R.string.T2b,
+    R.string.T3,
+    R.string.T4,
+)
+
+val NfactorLung = listOf(
+    R.string.N0,
+    R.string.N1,
+    R.string.N2a,
+    R.string.N2b,
+    R.string.N3,
+)
+
+val MfactorLung = listOf(
+    R.string.M0,
+    R.string.M1a,
+    R.string.M1b,
+    R.string.M1c,
+)
 val absencePresence = listOf(
     R.string.absence,
     R.string.presence,
