@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.tv.material3.MaterialTheme
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.screen.PopupClickable
 import com.keiichi.medguidelines.ui.screen.drawThresholdLine
@@ -67,6 +68,10 @@ fun GraphAndThreshold(
     val greenColor = Color(0xFF1BFF0B)
     val yellowColor = Color(0xFFFFE30B)
     val redColor = Color(0xFFFF0180)
+
+    val labelTextStyle = TextStyle(
+        color = MaterialTheme.colorScheme.tertiary
+    )
 
     Canvas(
         modifier = Modifier
@@ -135,6 +140,7 @@ fun GraphAndThreshold(
             drawText(
                 textMeasurer = textMeasurer,
                 text = firstLabel,
+                style = labelTextStyle,
                 topLeft = Offset(10F + 0F * size.width, 10F)
             )
             drawThresholdLine(
@@ -144,6 +150,7 @@ fun GraphAndThreshold(
             drawText(
                 textMeasurer = textMeasurer,
                 text = secondLabel,
+                style = labelTextStyle,
                 topLeft = Offset(
                     10F + ((firstThreshold - minValue) / (maxValue - minValue)) * size.width,
                     10F
@@ -157,6 +164,7 @@ fun GraphAndThreshold(
                 drawText(
                     textMeasurer = textMeasurer,
                     text = thirdLabel,
+                    style = labelTextStyle,
                     topLeft = Offset(
                         10F + ((secondThreshold - minValue) / (maxValue - minValue)) * size.width,
                         10F

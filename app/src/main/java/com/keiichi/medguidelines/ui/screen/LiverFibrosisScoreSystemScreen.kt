@@ -43,6 +43,7 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
+import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
@@ -185,7 +186,7 @@ fun LiverFibrosisScoreSystemScreen(
                     //calculatedElfScore = calculatedElfScore
                 )
                 allScores.roundToTwoDecimals()
-                Card(
+                MedGuidelinesCard(
                     modifier = Modifier.cardModifier()
                 ) {
                     Text(
@@ -221,7 +222,7 @@ fun LiverFibrosisScoreSystemScreen(
                         )
                     }
                 }
-                Card(
+                MedGuidelinesCard(
                     modifier = Modifier.cardModifier()
                 ) {
                     Text(
@@ -281,7 +282,7 @@ fun LiverFibrosisScoreSystemScreen(
                         )
                     }
                 }
-                Card(
+                MedGuidelinesCard(
                     modifier = Modifier.cardModifier()
                 ) {
                     Text(
@@ -313,7 +314,7 @@ fun LiverFibrosisScoreSystemScreen(
                         )
                     }
                 }
-                Card(
+                MedGuidelinesCard(
                     modifier = Modifier.cardModifier()
                 ) {
                     Text(
@@ -344,7 +345,7 @@ fun LiverFibrosisScoreSystemScreen(
                         )
                     }
                 }
-                Card(
+                MedGuidelinesCard(
                     modifier = Modifier.cardModifier()
                 ) {
                     Text(
@@ -366,7 +367,7 @@ fun LiverFibrosisScoreSystemScreen(
                         factor = m2bpgi.doubleValue
                     )
                 }
-                Card(
+                MedGuidelinesCard(
                     modifier = Modifier.cardModifier()
                 ) {
                     Text(
@@ -412,8 +413,13 @@ fun FactorAlerts(
     text: Int,
     factor: Double
 ) {
+    val color = if (factor != 0.0) {
+        MaterialTheme.colorScheme.onSecondary
+    } else {
+        MaterialTheme.colorScheme.onError
+    }
     Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
+        color = color, // Set the background color to white
         shadowElevation = 2.dp,
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
@@ -422,13 +428,13 @@ fun FactorAlerts(
         if (factor != 0.0) {
             Text(
                 text = stringResource(text),
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.padding(2.dp)
             )
         } else {
             Text(
                 text = stringResource(text),
-                color = Color.Red,
+                color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(2.dp)
             )
         }
@@ -489,7 +495,7 @@ fun inputAndCalculate(
     val changedFactor4Unit by remember { mutableStateOf(true) }
     val changeFactor5Unit by remember { mutableStateOf(true) }
 
-    Card(
+    MedGuidelinesCard(
         modifier = Modifier.cardModifier()
     ) {
         FlowRow(
@@ -543,7 +549,8 @@ fun inputAndCalculate(
             dmPresence.intValue = buttonAndScore(
                 factor = noYes,
                 title = R.string.dmPresence,
-                titleNote = R.string.dmPresenceNote
+                titleNote = R.string.dmPresenceNote,
+                cardColor = MaterialTheme.colorScheme.onSecondary,
             )
             InputValue(
                 label = R.string.hyaluronicAcid, value = hyaluronicAcid,

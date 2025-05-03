@@ -134,7 +134,8 @@ fun acutePancreatitisButtonAndScore(
         selectedOption,
         { selectedOption = it },
         data.title,
-        data.titleNote
+        data.titleNote,
+
     )
     data.score = radioOptions.indexOf(selectedOption).coerceAtLeast(0)
     return data
