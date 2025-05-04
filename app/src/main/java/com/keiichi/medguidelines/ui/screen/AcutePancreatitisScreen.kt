@@ -28,7 +28,7 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.RadioButtonAndExpand
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 
 @Composable
 fun AcutePancreatitisScreen(navController: NavController) {
@@ -41,7 +41,7 @@ fun AcutePancreatitisScreen(navController: NavController) {
                 title = R.string.acutePancreatitisTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.space, R.string.space)
+                    TextAndUrl(R.string.space, R.string.space)
                 )
             )
         },

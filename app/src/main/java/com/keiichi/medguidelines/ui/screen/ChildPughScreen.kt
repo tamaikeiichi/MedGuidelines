@@ -28,7 +28,7 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 
 @Composable
 fun ChildPughScreen(navController: NavController) {
@@ -41,7 +41,7 @@ fun ChildPughScreen(navController: NavController) {
                 title = R.string.childPughTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.space, R.string.space)
+                    TextAndUrl(R.string.space, R.string.space)
                 )
             )
         },

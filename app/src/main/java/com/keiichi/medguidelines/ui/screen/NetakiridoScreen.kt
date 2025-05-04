@@ -14,7 +14,7 @@ import com.keiichi.medguidelines.ui.component.Text1Level
 import com.keiichi.medguidelines.ui.component.TextAndExpand2Levels
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.textAndExpand1Level
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 
 @Composable
 fun NetakiridoScreen(navController: NavController) {
@@ -25,7 +25,7 @@ fun NetakiridoScreen(navController: NavController) {
                 title = R.string.netakiridoTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
+                    TextAndUrl(R.string.netakiridoRefTitle, R.string.netakiridoUrl)
                 )
             )
         },

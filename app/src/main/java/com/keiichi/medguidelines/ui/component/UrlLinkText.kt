@@ -8,20 +8,19 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 
-data class textAndUrl(
-    val Text: Int,
-    val Url: Int
+data class TextAndUrl(
+    val text: Int,
+    val url: Int
 )
-
 
 @Composable
 fun UrlLinkText(
-    reference: textAndUrl,
+    reference: TextAndUrl,
     urlHandler: UriHandler = LocalUriHandler.current
 ) {
-    val url = stringResource(id = reference.Url)
+    val url = stringResource(id = reference.url)
     Text(
-        text = parseStyledString(reference.Text),
+        text = parseStyledString(reference.text),
         modifier = Modifier
             .clickable(enabled = true, onClickLabel = "Open URL") {
                 urlHandler.openUri(url)

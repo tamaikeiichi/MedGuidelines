@@ -29,7 +29,7 @@ import com.keiichi.medguidelines.ui.component.NumberInTextField
 import com.keiichi.medguidelines.ui.component.TextInCard
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.parseStyledString
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 
 @Composable
 fun BloodGasAnalysisScreen(navController: NavController) {
@@ -40,7 +40,7 @@ fun BloodGasAnalysisScreen(navController: NavController) {
                 title = R.string.bloodGasAnalysisTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.bloodGasAnalysisRef, R.string.bloodGasAnalysisUrl)
+                    TextAndUrl(R.string.bloodGasAnalysisRef, R.string.bloodGasAnalysisUrl)
                 )
             )
         },

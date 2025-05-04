@@ -87,6 +87,5 @@ fun NumberInTextField(
             unfocusedLabelColor = MaterialTheme.colorScheme.primary,
             focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
         )
-
     )
 }

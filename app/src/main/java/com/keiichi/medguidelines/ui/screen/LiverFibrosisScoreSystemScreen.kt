@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,19 +46,19 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 val references = listOf(
-    textAndUrl(R.string.fib4, R.string.fib4Url),
-    textAndUrl(R.string.apri, R.string.apriUrl),
-    textAndUrl(R.string.shearWaveElastography, R.string.shearWaveElastographyUrl),
-    textAndUrl(R.string.nafldFibrosisScore, R.string.nafldFibrosisScoreUrl),
-    textAndUrl(R.string.elfScore, R.string.elfScoreUrl),
-    textAndUrl(R.string.m2bpgi, R.string.m2bpgiUrl)
+    TextAndUrl(R.string.fib4, R.string.fib4Url),
+    TextAndUrl(R.string.apri, R.string.apriUrl),
+    TextAndUrl(R.string.shearWaveElastography, R.string.shearWaveElastographyUrl),
+    TextAndUrl(R.string.nafldFibrosisScore, R.string.nafldFibrosisScoreUrl),
+    TextAndUrl(R.string.elfScore, R.string.elfScoreUrl),
+    TextAndUrl(R.string.m2bpgi, R.string.m2bpgiUrl)
 )
 
 data class Scores(
@@ -489,12 +488,6 @@ fun inputAndCalculate(
     m2bpgi: MutableDoubleState,
     //calculatedElfScore: Double
 ): Scores {
-    val changedFactor1Unit by remember { mutableStateOf(true) }
-    val changedFactor2Unit by remember { mutableStateOf(true) }
-    val changedFactor3Unit by remember { mutableStateOf(true) }
-    val changedFactor4Unit by remember { mutableStateOf(true) }
-    val changeFactor5Unit by remember { mutableStateOf(true) }
-
     MedGuidelinesCard(
         modifier = Modifier.cardModifier()
     ) {

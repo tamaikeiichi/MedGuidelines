@@ -38,7 +38,7 @@ import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 
 @Composable
 fun HomaIRScreen(navController: NavController) {
@@ -52,7 +52,7 @@ fun HomaIRScreen(navController: NavController) {
                 title = R.string.homairTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.space, R.string.space)
+                    TextAndUrl(R.string.space, R.string.space)
                 )
             )
         },

@@ -27,7 +27,7 @@ import com.keiichi.medguidelines.data.tonsillitisRedFlag
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 
 
 @Composable
@@ -42,7 +42,7 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
                 title = R.string.acuteTonsillitisAlgorithmTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(
+                    TextAndUrl(
                         R.string.acuteTonsillitisAlgorithmReference,
                         R.string.acuteTonsillitisAlgorithmReferenceUrl
                     )

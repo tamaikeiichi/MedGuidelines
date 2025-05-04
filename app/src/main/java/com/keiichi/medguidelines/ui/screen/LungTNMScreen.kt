@@ -22,7 +22,7 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 
 
 @Composable
@@ -39,7 +39,7 @@ fun LungTNMScreen(navController: NavController) {
                 title = R.string.lungTNMTitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.space, R.string.space)
+                    TextAndUrl(R.string.space, R.string.space)
                 )
             )
         },

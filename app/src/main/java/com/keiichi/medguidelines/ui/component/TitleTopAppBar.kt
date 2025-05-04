@@ -29,7 +29,7 @@ import com.keiichi.medguidelines.R
 fun TitleTopAppBar(
     title: Int,
     navController: NavController,
-    references: List<textAndUrl>
+    references: List<TextAndUrl>
 ) {
     var expanded by remember { mutableStateOf(false) }
     CenterAlignedTopAppBar(
@@ -51,7 +51,7 @@ fun TitleTopAppBar(
             actionIconContentColor = MaterialTheme.colorScheme.primary,
         ),
         actions = {
-            if (references[0].Url != R.string.space && references[0].Text != R.string.space) {
+            if (references[0].url != R.string.space && references[0].text != R.string.space) {
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.quick_reference_all_24px),
@@ -83,8 +83,8 @@ fun TitleTopAppBarPreview() {
         title = R.string.space,
         navController = NavController(LocalContext.current),
         references = listOf(
-            textAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
-            textAndUrl(R.string.space, R.string.space)
+            TextAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
+            TextAndUrl(R.string.space, R.string.space)
         )
     )
 }

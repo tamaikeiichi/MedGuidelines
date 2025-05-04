@@ -37,7 +37,7 @@ import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
-import com.keiichi.medguidelines.ui.component.textAndUrl
+import com.keiichi.medguidelines.ui.component.TextAndUrl
 import kotlin.math.log10
 
 @Composable
@@ -52,7 +52,7 @@ fun MALBIScreen(navController: NavController) {
                 title = R.string.mALBITitle,
                 navController = navController,
                 references = listOf(
-                    textAndUrl(R.string.mALBIRef, R.string.mALBIUrl)
+                    TextAndUrl(R.string.mALBIRef, R.string.mALBIUrl)
                 )
             )
         },
