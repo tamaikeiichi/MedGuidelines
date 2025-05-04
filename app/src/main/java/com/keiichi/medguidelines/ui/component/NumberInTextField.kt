@@ -83,9 +83,9 @@ fun NumberInTextField(
         interactionSource = interactionSource,
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-            focusedContainerColor = MaterialTheme.colorScheme.onErrorContainer,
+            focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
             unfocusedLabelColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
+            focusedLabelColor = MaterialTheme.colorScheme.error,
         )
     )
 }

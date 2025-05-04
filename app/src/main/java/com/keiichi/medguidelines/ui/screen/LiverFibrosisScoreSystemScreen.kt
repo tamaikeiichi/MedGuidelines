@@ -47,6 +47,7 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.TextAndUrl
+import com.keiichi.medguidelines.ui.component.cardModifier
 import kotlin.math.ln
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -82,10 +83,7 @@ data class Scores(
     }
 }
 
-fun Modifier.cardModifier(): Modifier =
-    this
-        .padding(4.dp)
-        .fillMaxWidth()
+
 
 fun Modifier.textModifier(): Modifier =
     this.padding(5.dp)

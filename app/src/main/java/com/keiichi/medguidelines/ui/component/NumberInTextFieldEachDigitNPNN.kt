@@ -120,7 +120,11 @@ fun NumberInTextFieldEachDigitNPNN(
             text = parseStyledString(label),
             style = TextStyle(
                 fontSize = 13.sp,
-                color = MaterialTheme.colorScheme.primary
+                color = if (isFocused1 || isFocused2 || isFocused3) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.primary
+                }
             )
         )
 
@@ -156,7 +160,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 interactionSource = interactionSource1,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedContainerColor = MaterialTheme.colorScheme.onErrorContainer,
+                    focusedContainerColor = MaterialTheme.colorScheme.onError,
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
                     focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
                 )
@@ -198,7 +202,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 interactionSource = interactionSource2,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedContainerColor = MaterialTheme.colorScheme.onErrorContainer,
+                    focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
                     focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
                 )
@@ -231,7 +235,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 interactionSource = interactionSource3,
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedContainerColor = MaterialTheme.colorScheme.onErrorContainer,
+                    focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
                     focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
                 )

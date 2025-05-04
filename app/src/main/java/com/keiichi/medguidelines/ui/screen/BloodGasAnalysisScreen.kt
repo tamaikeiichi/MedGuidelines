@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.InputValueEachDigitNPNN
+import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.NumberInTextField
 import com.keiichi.medguidelines.ui.component.TextInCard
@@ -86,35 +87,38 @@ fun BloodGasAnalysisInput() {
 
     BloodGasAnalysisCard(
         bloodGasAnalysisContent = {
-            FlowRow(
-                modifier = Modifier
-                    .padding(4.dp),
-                itemVerticalAlignment = Alignment.Bottom
-            ) {
-                InputValueEachDigitNPNN(
-                    label = R.string.ph, value = ph, unit = R.string.space
-                )
-                InputValue(
-                    label = R.string.po2, value = paO2, unit = R.string.mmhg
-                )
-                InputValue(
-                    label = R.string.pco2, value = paCo2, unit = R.string.mmhg
-                )
-                InputValue(
-                    label = R.string.hco3, value = hco3, unit = R.string.meql
-                )
-                InputValue(
-                    label = R.string.na, value = na, unit = R.string.meql
-                )
-                InputValue(
-                    label = R.string.k, value = k, unit = R.string.meql
-                )
-                InputValue(
-                    label = R.string.cl, value = cl, unit = R.string.meql
-                )
-                InputValue(
-                    label = R.string.albumin, value = albumin, unit = R.string.mgdl
-                )
+            MedGuidelinesCard {
+
+                FlowRow(
+                    modifier = Modifier
+                        .padding(4.dp),
+                    itemVerticalAlignment = Alignment.Bottom
+                ) {
+                    InputValueEachDigitNPNN(
+                        label = R.string.ph, value = ph, unit = R.string.space
+                    )
+                    InputValue(
+                        label = R.string.po2, value = paO2, unit = R.string.mmhg
+                    )
+                    InputValue(
+                        label = R.string.pco2, value = paCo2, unit = R.string.mmhg
+                    )
+                    InputValue(
+                        label = R.string.hco3, value = hco3, unit = R.string.meql
+                    )
+                    InputValue(
+                        label = R.string.na, value = na, unit = R.string.meql
+                    )
+                    InputValue(
+                        label = R.string.k, value = k, unit = R.string.meql
+                    )
+                    InputValue(
+                        label = R.string.cl, value = cl, unit = R.string.meql
+                    )
+                    InputValue(
+                        label = R.string.albumin, value = albumin, unit = R.string.mgdl
+                    )
+                }
             }
         }
     )
