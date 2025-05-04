@@ -62,34 +62,13 @@ fun InputValueEachDigitNPNN(
             .padding(4.dp),
         verticalAlignment = Alignment.Bottom,
     ) {
-        NumberInTextField(
+        NumberInTextFieldEachDigitNPNN(
             label = label, value = value,
             width = (textWidth * 0.3).roundToInt() + 90,//(labelWidth * 0.5).roundToInt()+50,
             multiplier = if (changeUnit.value) 1.0 else changedValueRate,
             formatter = formatter
         )
 
-//        if (changedValueRate == 1.0) {
-//            Column(
-//                verticalArrangement = Arrangement.Bottom
-//            ) {
-//                Text(
-//                    text = parseStyledString(unit),
-//                )
-//                Spacer(modifier = Modifier.height(10.dp))
-//            }
-//        } else {
-//            Column(
-//                verticalArrangement = Arrangement.Bottom
-//            ) {
-//                ClickableText(
-//                    text = if (changeUnit.value) unit else changedUnit,
-//                    onChanged = { changeUnit.value = !changeUnit.value },
-//                    changed = changeUnit.value
-//                )
-//                Spacer(modifier = Modifier.height(10.dp))
-//            }
-//        }
     }
 }
 

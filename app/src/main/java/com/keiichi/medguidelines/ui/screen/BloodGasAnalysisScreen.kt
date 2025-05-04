@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.InputValue
+import com.keiichi.medguidelines.ui.component.InputValueEachDigitNPNN
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.NumberInTextField
 import com.keiichi.medguidelines.ui.component.TextInCard
@@ -70,7 +71,7 @@ fun BloodGasAnalysisScreen(navController: NavController) {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun BloodGasAnalysisInput() {
-    val ph = remember { mutableDoubleStateOf(7.40) }
+    val ph = remember { mutableDoubleStateOf(7.41) }
     val paO2 = remember { mutableDoubleStateOf(100.0) }
     val paCo2 = remember { mutableDoubleStateOf(40.0) }
     val hco3 = remember { mutableDoubleStateOf(24.0) }
@@ -90,7 +91,7 @@ fun BloodGasAnalysisInput() {
                     .padding(4.dp),
                 itemVerticalAlignment = Alignment.Bottom
             ) {
-                InputValue(
+                InputValueEachDigitNPNN(
                     label = R.string.ph, value = ph, unit = R.string.space
                 )
                 InputValue(
