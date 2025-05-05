@@ -88,7 +88,6 @@ fun BloodGasAnalysisInput() {
     BloodGasAnalysisCard(
         bloodGasAnalysisContent = {
             MedGuidelinesCard {
-
                 FlowRow(
                     modifier = Modifier
                         .padding(4.dp),
