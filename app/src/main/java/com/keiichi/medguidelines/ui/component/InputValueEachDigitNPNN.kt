@@ -66,7 +66,8 @@ fun InputValueEachDigitNPNN(
             label = label, value = value,
             width = (textWidth * 0.3).roundToInt() + 90,//(labelWidth * 0.5).roundToInt()+50,
             multiplier = if (changeUnit.value) 1.0 else changedValueRate,
-            formatter = formatter
+            formatter = formatter,
+            //onClick = () -> Unit
         )
 
     }

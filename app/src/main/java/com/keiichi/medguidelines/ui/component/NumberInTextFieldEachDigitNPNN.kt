@@ -4,6 +4,7 @@ import android.R.attr.onClick
 import android.annotation.SuppressLint
 import android.icu.text.DecimalFormat
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.requestFocus
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -48,7 +50,7 @@ fun NumberInTextFieldEachDigitNPNN(
     width: Int,
     multiplier: Double = 1.0,
     formatter: DecimalFormat = remember { DecimalFormat("#.##") },
-    onClick: () -> Unit
+    //onClick: () -> Unit
 ) {
     val interactionSource1 = remember { MutableInteractionSource() }
     val isFocused1 by interactionSource1.collectIsFocusedAsState()
@@ -116,10 +118,15 @@ fun NumberInTextFieldEachDigitNPNN(
     val fontSize = calculateFontSize(text1) * 1
     val color = MaterialTheme.colorScheme.secondary
 
+    //val focusRequester = remember { FocusRequester() }
+
     Column(
-        modifier = Modifier.clickable{
-            onClick()
-        }
+        modifier = Modifier
+//            .clickable(){
+//            onClick()
+//            focusRequester1.requestFocus()
+//        }
+
     ) {
         Text(
             modifier = Modifier.padding(5.dp),
@@ -172,6 +179,7 @@ fun NumberInTextFieldEachDigitNPNN(
                     focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
                 )
             )
+
             Text(
                 text = ".",
                 style = TextStyle(
@@ -292,6 +300,6 @@ fun NumberInTextFieldEachDigitNPNNPreview(){
         label = R.string.ph,
         value = remember { mutableDoubleStateOf(7.14) },
         width = 50,
-        onClick = {}
+        //onClick = {}
     )
 }
