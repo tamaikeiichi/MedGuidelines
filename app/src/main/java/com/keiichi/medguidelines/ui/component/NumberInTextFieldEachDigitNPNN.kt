@@ -1,7 +1,9 @@
 package com.keiichi.medguidelines.ui.component
 
+import android.R.attr.onClick
 import android.annotation.SuppressLint
 import android.icu.text.DecimalFormat
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Column
@@ -45,7 +47,8 @@ fun NumberInTextFieldEachDigitNPNN(
     value: MutableDoubleState,
     width: Int,
     multiplier: Double = 1.0,
-    formatter: DecimalFormat = remember { DecimalFormat("#.##") }
+    formatter: DecimalFormat = remember { DecimalFormat("#.##") },
+    onClick: () -> Unit
 ) {
     val interactionSource1 = remember { MutableInteractionSource() }
     val isFocused1 by interactionSource1.collectIsFocusedAsState()
@@ -84,14 +87,12 @@ fun NumberInTextFieldEachDigitNPNN(
             value.doubleValue = combineDigitsToDouble(text1, text2, text3)
         }
     }
-
     LaunchedEffect(text3) {
         if (text3.length == 1 && isFocused3) {
             value.doubleValue = combineDigitsToDouble(text1, text2, text3)
             focusManager.moveFocus(FocusDirection.Right)
         }
     }
-
     LaunchedEffect(isFocused1 || isFocused2 || isFocused3) {
         if (!isFocused1 || !isFocused2 || !isFocused3) {
             val (newText1, newText2, newText3) = separateDoubleIntoDigits(value.doubleValue * multiplier)
@@ -113,8 +114,13 @@ fun NumberInTextFieldEachDigitNPNN(
     }
 
     val fontSize = calculateFontSize(text1) * 1
+    val color = MaterialTheme.colorScheme.secondary
 
-    Column() {
+    Column(
+        modifier = Modifier.clickable{
+            onClick()
+        }
+    ) {
         Text(
             modifier = Modifier.padding(5.dp),
             text = parseStyledString(label),
@@ -138,10 +144,10 @@ fun NumberInTextFieldEachDigitNPNN(
                     text1 = newText
                     value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) // multiplier
                 },
+                fontSize = fontSize,
+                color = color,
                 modifier = Modifier
                     .focusRequester(focusRequester1)
-                //.padding(5.dp)
-                //.width(20.dp)
                 ,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -149,6 +155,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 ),
                 textStyle = TextStyle(
                     fontSize = fontSize,
+                    color = color,
                     textAlign = TextAlign
                         .Center,
                     lineHeightStyle = LineHeightStyle(
@@ -159,8 +166,8 @@ fun NumberInTextFieldEachDigitNPNN(
                 maxLines = 1,
                 interactionSource = interactionSource1,
                 colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
-                    focusedContainerColor = MaterialTheme.colorScheme.onError,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
+                    focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
                     focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
                 )
@@ -175,12 +182,13 @@ fun NumberInTextFieldEachDigitNPNN(
                 modifier = Modifier.padding(vertical = 1.dp)
             )
             TextFieldOneDigit(
-                //label = 1,//{ Text(parseStyledString(label)) },
                 value = text2,
                 onValueChange = { newText ->
                     text2 = newText
                     value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) // multiplier
                 },
+                fontSize = fontSize,
+                color = color,
                 modifier = Modifier
                     .focusRequester(focusRequester2)
                     //.padding(5.dp)
@@ -189,8 +197,9 @@ fun NumberInTextFieldEachDigitNPNN(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
                 ),
-                textStyle = TextStyle.Default.copy(
+                textStyle = TextStyle(
                     fontSize = fontSize,
+                    color = color,
                     textAlign = TextAlign
                         .Center,
                     lineHeightStyle = LineHeightStyle(
@@ -201,7 +210,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 maxLines = 1,
                 interactionSource = interactionSource2,
                 colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
                     focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
                     focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
@@ -214,6 +223,8 @@ fun NumberInTextFieldEachDigitNPNN(
                     text3 = newText
                     value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) // multiplier
                 },
+                fontSize = fontSize,
+                color = color,
                 modifier = Modifier
                     .focusRequester(focusRequester3)
                     //.padding(5.dp)
@@ -224,6 +235,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 ),
                 textStyle = TextStyle.Default.copy(
                     fontSize = fontSize,
+                    color = color,
                     textAlign = TextAlign
                         .Center,
                     lineHeightStyle = LineHeightStyle(
@@ -234,7 +246,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 maxLines = 1,
                 interactionSource = interactionSource3,
                 colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
                     focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
                     unfocusedLabelColor = MaterialTheme.colorScheme.primary,
                     focusedLabelColor = MaterialTheme.colorScheme.errorContainer,
@@ -279,6 +291,7 @@ fun NumberInTextFieldEachDigitNPNNPreview(){
     NumberInTextFieldEachDigitNPNN(
         label = R.string.ph,
         value = remember { mutableDoubleStateOf(7.14) },
-        width = 50
+        width = 50,
+        onClick = {}
     )
 }

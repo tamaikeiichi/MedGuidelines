@@ -8,29 +8,43 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldOneDigit(
     value: String,
     onValueChange: (String) -> Unit,
+    fontSize: TextUnit,
+    color: Color,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = TextStyle(
+        color = color,
+        fontSize = fontSize,
+        textAlign = TextAlign
+            .Center,
+        lineHeightStyle = LineHeightStyle(
+            alignment = LineHeightStyle.Alignment.Bottom,
+            trim = LineHeightStyle.Trim.Both
+        )
+    ),
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -47,7 +61,12 @@ fun TextFieldOneDigit(
     minLines: Int = 1,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = TextFieldDefaults.shape,
-    colors: TextFieldColors = TextFieldDefaults.colors()
+    colors: TextFieldColors = TextFieldDefaults.colors(
+        focusedTextColor = MaterialTheme.colorScheme.primary,
+        unfocusedTextColor = MaterialTheme.colorScheme.primary,
+        focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+        unfocusedContainerColor = MaterialTheme.colorScheme.onPrimary,
+    )
 ) {
         BasicTextField(
             modifier = Modifier
@@ -58,9 +77,6 @@ fun TextFieldOneDigit(
                     40.dp
                 ),
             textStyle = textStyle,
-//                TextStyle(
-//                textAlign = TextAlign.Center,
-//            ),
             value = value,
             onValueChange = {
                 if (it.length <= 1) { // Add this limitation
@@ -110,6 +126,8 @@ internal val TextFieldWithLabelVerticalPadding = 8.dp
 fun TextFieldOneDigitPreview(){
     TextFieldOneDigit(
         value = "0",
-        onValueChange = {}
+        onValueChange = {},
+        fontSize = 20.dp.value.sp,
+        color = Color.Black
     )
 }
