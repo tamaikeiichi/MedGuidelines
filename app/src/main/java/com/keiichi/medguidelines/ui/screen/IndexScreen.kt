@@ -3,14 +3,9 @@ package com.keiichi.medguidelines.ui.screen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,10 +16,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.keiichi.medguidelines.R
@@ -33,9 +28,12 @@ import com.keiichi.medguidelines.data.ListItemData
 import com.keiichi.medguidelines.data.loadListItemData
 import com.keiichi.medguidelines.data.saveListItemData
 import com.keiichi.medguidelines.ui.component.IndexScreenListItem
+import com.keiichi.medguidelines.ui.component.SearchBar
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.collections.addAll
+import kotlin.text.clear
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
@@ -59,6 +57,11 @@ val itemsList = listOf(
     ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM)
 )
 
+//fun setOriginalItems(mutableState: SnapshotStateList<ListItemData>, newList: MutableList<ListItemData>) {
+//    mutableState.clear()
+//    mutableState.addAll(newList)
+//}
+
 @Composable
 fun IndexScreen(
     navigateToChildPugh: () -> Unit,
@@ -79,15 +82,21 @@ fun IndexScreen(
     val scope = rememberCoroutineScope()
     var searchQuery by remember { mutableStateOf("") }
 
+    val expectedItem = itemsList
+    val expectedItemCount = itemsList.size
+
     val originalItems = rememberSaveable(
         saver = listSaver(
-        save = { it.map { item -> Json.encodeToString(item) } },
-        restore = {
-            it.map { item -> Json.decodeFromString<ListItemData>(item) }.toMutableStateList()
-        }
-    )) {
+            save = { it.map { item -> Json.encodeToString(item) } },
+            restore = {restored ->
+                restored.map { item -> Json.decodeFromString<ListItemData>(item) }
+                    .toMutableStateList()
+            }
+        )
+    ) {
         mutableStateListOf<ListItemData>()
     }
+
     val filteredItems = remember(searchQuery, originalItems) {
         if (searchQuery.isBlank()) {
             originalItems
@@ -100,9 +109,10 @@ fun IndexScreen(
     }
 
     LaunchedEffect(Unit) {
-        loadListItemData(context).collect { loadedItems ->
-            originalItems.clear()
-            originalItems.addAll(loadedItems)
+        loadListItemData(context, expectedItemCount).collect { loadedItems ->
+                originalItems.clear()
+                originalItems.addAll(loadedItems)
+//            setOriginalItems(originalItems, loadedItems.toMutableList())
         }
     }
 
@@ -151,28 +161,6 @@ fun IndexScreen(
             }
         }
     }
-}
-
-@Composable
-fun SearchBar(
-    searchQuery: String,
-    onSearchQueryChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        value = searchQuery,
-        onValueChange = onSearchQueryChange,
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            focusedContainerColor = MaterialTheme.colorScheme.surface
-        ),
-        placeholder = {
-            Text(stringResource(R.string.indexScreen_searchbar))
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
-    )
 }
 
 @Preview
