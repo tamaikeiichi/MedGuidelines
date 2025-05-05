@@ -16,14 +16,17 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun IndexScreenListItem(name: Int, onClick: () -> Unit) {
     Column {
-        Card {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable{ onClick()}
+        ) {
             Text(
                 text = parseStyledString(name),
                 fontSize = 25.sp,
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
-                    .clickable { onClick() }
             )
         }
         Spacer(

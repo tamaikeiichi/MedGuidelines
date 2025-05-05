@@ -79,7 +79,7 @@ fun TextFieldOneDigit(
                     20.dp
                 )
                 .height(
-                    30.dp
+                    35.dp
                 )
 
                 .padding(2.dp)
