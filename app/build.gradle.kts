@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.accompanist.flowlayout)
     implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.material.icons.extended)
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
 
 }
 

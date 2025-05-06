@@ -1,5 +1,6 @@
 [versions]
 accompanistFlowlayout = "0.36.0"
+accompanistNavigationAnimation = "0.34.0"
 agp = "8.9.2"
 androidxDatastorePreferences = "1.0.0"
 datastorePreferencesVersion = "1.1.1"
@@ -28,6 +29,7 @@ roomCompilerProcessingTesting = "2.6.1"
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesVersion" }
 androidx-datastore-preferences-v100 = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDatastorePreferences" }

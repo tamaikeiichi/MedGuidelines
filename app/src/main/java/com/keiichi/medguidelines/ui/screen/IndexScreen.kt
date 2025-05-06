@@ -1,12 +1,16 @@
 package com.keiichi.medguidelines.ui.screen
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -16,24 +20,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.ActionType
 import com.keiichi.medguidelines.data.ListItemData
 import com.keiichi.medguidelines.data.loadListItemData
 import com.keiichi.medguidelines.data.saveListItemData
-import com.keiichi.medguidelines.ui.component.IndexScreenListItem
+import com.keiichi.medguidelines.ui.component.IndexScreenItemCard
 import com.keiichi.medguidelines.ui.component.SearchBar
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.collections.addAll
-import kotlin.text.clear
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
@@ -81,6 +86,46 @@ fun IndexScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var searchQuery by remember { mutableStateOf("") }
+
+    var animateFirstItem by remember { mutableStateOf(false) }
+    var animationCount by remember { mutableStateOf(0) }
+    var hasBeenVisited by remember { mutableStateOf(false) } // New state to track if visited
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lazyListState = rememberLazyListState()
+    val alpha: Float by animateFloatAsState(
+        targetValue = if (animateFirstItem) 0.3f else 1f,
+        animationSpec = tween(durationMillis = 100), label = ""
+    )
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+//            if (event == Lifecycle.Event.ON_RESUME) {
+//                animateFirstItem = true
+//            }
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    if (hasBeenVisited) { // Only animate on resume if visited before
+                        animateFirstItem = true
+                    }
+                    hasBeenVisited = true // Mark as visited on every resume
+                }
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+    LaunchedEffect(animateFirstItem) {
+        if (animateFirstItem) {
+            while (animationCount < 3) {
+                kotlinx.coroutines.delay(100)
+                animationCount++
+            }
+            animateFirstItem = false
+            animationCount = 0
+        }
+    }
 
     val expectedItem = itemsList
     val expectedItemCount = itemsList.size
@@ -132,7 +177,12 @@ fun IndexScreen(
             items(
                 filteredItems//items
             ) { itemData ->
-                IndexScreenListItem(
+
+                val isFirstItem = lazyListState.firstVisibleItemIndex == filteredItems.indexOf(itemData)
+                val currentAlpha = if (isFirstItem) alpha else 1f
+
+                IndexScreenItemCard(
+                    currentAlpha = currentAlpha,
                     name = itemData.nameResId,
                     onClick = {
                         val updatedItems = originalItems.toMutableList()//items.toMutableList()
@@ -161,6 +211,12 @@ fun IndexScreen(
             }
         }
     }
+//    Button(
+//        onClick = {
+//        } as () -> Unit
+//    ) {
+//        Text("Go to Child Screen")
+//    }
 }
 
 @Preview
