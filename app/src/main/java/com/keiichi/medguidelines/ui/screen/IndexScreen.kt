@@ -98,7 +98,7 @@ fun IndexScreen(
     val lazyListState = rememberLazyListState()
     val alpha: Float by animateFloatAsState(
         targetValue = if (animateFirstItem) 0.9f else 1f,
-        animationSpec = tween(durationMillis = 50), label = ""
+        animationSpec = tween(durationMillis = 200), label = ""
     )
 
     DisposableEffect(lifecycleOwner) {
@@ -122,7 +122,7 @@ fun IndexScreen(
     LaunchedEffect(animateFirstItem) {
         if (animateFirstItem) {
             while (animationCount < 3) {
-                kotlinx.coroutines.delay(50)
+                kotlinx.coroutines.delay(200)
                 animationCount++
             }
             animateFirstItem = false
