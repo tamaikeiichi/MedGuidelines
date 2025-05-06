@@ -1,5 +1,9 @@
 package com.keiichi.medguidelines.ui.screen
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
@@ -89,26 +93,25 @@ fun IndexScreen(
 
     var animateFirstItem by remember { mutableStateOf(false) }
     var animationCount by remember { mutableStateOf(0) }
-    var hasBeenVisited by remember { mutableStateOf(false) } // New state to track if visited
+    var hasBeenVisited by rememberSaveable { mutableStateOf(false) }
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val lazyListState = rememberLazyListState()
     val alpha: Float by animateFloatAsState(
-        targetValue = if (animateFirstItem) 0.3f else 1f,
-        animationSpec = tween(durationMillis = 100), label = ""
+        targetValue = if (animateFirstItem) 0.9f else 1f,
+        animationSpec = tween(durationMillis = 50), label = ""
     )
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-//            if (event == Lifecycle.Event.ON_RESUME) {
-//                animateFirstItem = true
-//            }
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    if (hasBeenVisited) { // Only animate on resume if visited before
+                    if (hasBeenVisited) {
                         animateFirstItem = true
                     }
-                    hasBeenVisited = true // Mark as visited on every resume
+                    hasBeenVisited = true
                 }
-                else -> {}
+                else -> {
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -119,7 +122,7 @@ fun IndexScreen(
     LaunchedEffect(animateFirstItem) {
         if (animateFirstItem) {
             while (animationCount < 3) {
-                kotlinx.coroutines.delay(100)
+                kotlinx.coroutines.delay(50)
                 animationCount++
             }
             animateFirstItem = false
@@ -157,7 +160,6 @@ fun IndexScreen(
         loadListItemData(context, expectedItemCount).collect { loadedItems ->
                 originalItems.clear()
                 originalItems.addAll(loadedItems)
-//            setOriginalItems(originalItems, loadedItems.toMutableList())
         }
     }
 
