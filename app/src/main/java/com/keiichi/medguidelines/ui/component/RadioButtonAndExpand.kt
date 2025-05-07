@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +45,7 @@ fun RadioButtonAndExpand(
     titleNote: Int,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
+    //var selectedOption by rememberSaveable { mutableStateOf(radioOptions.first()) }
     Column() {
         var expanded by remember { mutableStateOf(false) }
         val cardModifier = Modifier

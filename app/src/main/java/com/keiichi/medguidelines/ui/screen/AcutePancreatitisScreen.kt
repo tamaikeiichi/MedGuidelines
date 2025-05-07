@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -128,7 +129,7 @@ fun acutePancreatitisButtonAndScore(
     data: AcutePancreatitisData
 ): AcutePancreatitisData {
     val radioOptions: List<Int> = data.radioOptions
-    var selectedOption by remember { mutableStateOf(radioOptions[0]) }
+    var selectedOption by rememberSaveable { mutableStateOf(radioOptions[0]) }
     RadioButtonAndExpand(
         radioOptions,
         selectedOption,

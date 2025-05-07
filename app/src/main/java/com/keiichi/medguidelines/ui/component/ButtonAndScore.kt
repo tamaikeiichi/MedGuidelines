@@ -16,7 +16,9 @@ fun buttonAndScore(
     val radioOptions: List<Int> = factor
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     RadioButtonAndExpand(
-        factor, selectedOption, onOptionSelected, title, titleNote, cardColor,
+        factor,
+        selectedOption,
+        onOptionSelected, title, titleNote, cardColor,
         )
     val score: Int =
         radioOptions.indexOf(selectedOption).coerceAtLeast(0)
