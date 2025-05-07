@@ -25,9 +25,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.keiichi.compose.MedGuidelinesTheme
 import com.keiichi.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.keiichi.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
@@ -36,6 +33,7 @@ import com.keiichi.medguidelines.ui.screen.BloodGasAnalysisScreen
 import com.keiichi.medguidelines.ui.screen.ChildPughScreen
 import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
 import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
+import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
 import com.keiichi.medguidelines.ui.screen.HomaIRScreen
 import com.keiichi.medguidelines.ui.screen.IndexScreen
 import com.keiichi.medguidelines.ui.screen.LiverFibrosisScoreSystemScreen
@@ -74,7 +72,8 @@ class MainActivity : ComponentActivity() {
                                     navigateToMALBI = { controller.navigate("MALBIScreen") },
                                     navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
                                     navigateToHomaIR = { controller.navigate("HomaIRScreen") },
-                                    navigateToLungTNM = { controller.navigate("LungTNM") }
+                                    navigateToLungTNM = { controller.navigate("LungTNM") },
+                                    navigateToHccTNM = { controller.navigate("HccTNM") }
                                 )
                             }
                         }
@@ -141,6 +140,11 @@ class MainActivity : ComponentActivity() {
                         composable("LungTNM") {
                             ChildComposable {
                                 LungTNMScreen(controller)
+                            }
+                        }
+                        composable("HccTNM") {
+                            ChildComposable {
+                                HCCTNMScreen(controller)
                             }
                         }
                     }

@@ -14,12 +14,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
-import com.keiichi.medguidelines.data.MfactorLung
-import com.keiichi.medguidelines.data.NfactorLung
+import com.keiichi.medguidelines.data.MfactorHcc
+import com.keiichi.medguidelines.data.NfactorHcc
 import com.keiichi.medguidelines.data.TfactorHcc
-import com.keiichi.medguidelines.data.TfactorLung
 import com.keiichi.medguidelines.data.hccTNM
-import com.keiichi.medguidelines.data.lungCancerTNM
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
@@ -68,25 +66,25 @@ private fun tNMScore(): List<Int> {
         R.string.TfactorTitleNoteHcc
     )
     val scoreB = buttonAndScore(
-        NfactorLung,
+        NfactorHcc,
         R.string.NFactorTitle,
-        R.string.NfactorTitleNoteLungCancer
+        R.string.NfactorTitleNoteHcc
     )
     val scoreC = buttonAndScore(
-        MfactorLung,
+        MfactorHcc,
         R.string.MFactorTitle,
-        R.string.MfactorTitleNoteLungCancer
+        R.string.MfactorTitleNoteHcc
     )
     val score = if (scoreC == 0) {
         listOf(scoreA, scoreB)
     } else {
-        listOf(scoreA, scoreC + NfactorLung.size - 1)
+        listOf(scoreA, scoreC + NfactorHcc.size - 1)
     }
     return score
 }
 
 @Preview
 @Composable
-fun LungTNMScreenPreview() {
-    LungTNMScreen(navController = NavController(LocalContext.current))
+fun HccTNMScreenPreview() {
+    HCCTNMScreen(navController = NavController(LocalContext.current))
 }

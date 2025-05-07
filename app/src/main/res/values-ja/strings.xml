@@ -162,4 +162,8 @@
     <string name="fibrosisStage2">線維化ステージ2</string>
     <string name="fibrosisStage3">線維化ステージ3</string>
     <string name="normal">正常</string>
+    <string name="hccTNMTitle">肝細胞癌TNM分類 (UICC第8版)</string>
+    <string name="TfactorTitleNoteHcc">&lt;b>T1&lt;/b> 単発腫瘍 ≤2 cm, あるいは >2 cm 血管浸潤なし\n&lt;b>T1a&lt;/b> 単発腫瘍 ≤2 cm\n&lt;b>T1b&lt;/b> 単発腫瘍 >2 cm 血管浸潤なし\n&lt;b>T2&lt;/b> 血管浸潤を伴う単発腫瘍 >2 cm, あるいは多発腫瘍, 5 cmを超えない\n&lt;b>T3&lt;/b> 多発腫瘍、少なくとも一つが>5 cm\n&lt;b>T4&lt;/b> 単発あるいは多発腫瘍、サイズを問わない、門脈あるいは肝静脈主管部に浸潤している、あるいは胆のう以外の隣接臓器に直接浸潤している、あるいは臓側腹膜を穿孔している</string>
+    <string name="NfactorTitleNoteHcc">&lt;b>N0&lt;/b> リンパ節転移を認めない\n&lt;b>M1&lt;/b> 所属リンパ節転移を認める</string>
+    <string name="MfactorTitleNoteHcc">&lt;b>M0&lt;/b> 遠隔転移なし\n&lt;b>M1&lt;/b> 遠隔転移あり</string>
 </resources>

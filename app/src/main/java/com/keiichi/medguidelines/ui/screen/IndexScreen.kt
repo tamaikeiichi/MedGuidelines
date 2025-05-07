@@ -63,7 +63,8 @@ val itemsList = listOf(
         ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM
     ),
     ListItemData(R.string.homairTitle, ActionType.NAVIGATE_TO_HOMAIR),
-    ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM)
+    ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM),
+    ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
 )
 
 //fun setOriginalItems(mutableState: SnapshotStateList<ListItemData>, newList: MutableList<ListItemData>) {
@@ -85,7 +86,8 @@ fun IndexScreen(
     navigateToMALBI: () -> Unit,
     navigateToLiverFibrosisScoreSystem: () -> Unit,
     navigateToHomaIR: () -> Unit,
-    navigateToLungTNM: () -> Unit
+    navigateToLungTNM: () -> Unit,
+    navigateToHccTNM: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -207,6 +209,7 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM -> navigateToLiverFibrosisScoreSystem()
                             ActionType.NAVIGATE_TO_HOMAIR -> navigateToHomaIR()
                             ActionType.NAVIGATE_TO_LUNG_TNM -> navigateToLungTNM()
+                            ActionType.NAVIGATE_TO_HCC_TNM -> navigateToHccTNM()
                         }
                     }
                 )
@@ -237,6 +240,7 @@ fun IndexScreenPreview() {
         navigateToMALBI = {},
         navigateToLiverFibrosisScoreSystem = {},
         navigateToHomaIR = {},
-        navigateToLungTNM = {}
+        navigateToLungTNM = {},
+        navigateToHccTNM = {}
     )
 }
