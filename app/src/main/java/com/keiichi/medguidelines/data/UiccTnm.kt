@@ -41,3 +41,10 @@ val lungCancerTNM = listOf(
     listOf("N/A", "IVA", "IVA", "IVA", "IVA", "IVA", "IVA", "IVA"),//M1b
     listOf("N/A", "IVB", "IVB", "IVB", "IVB", "IVB", "IVB", "IVB"),//M1c
 )
+
+val hccTNM = listOf(
+    //       T1a,   T1b,    T2,      T3,     T4
+    listOf("IA", "IB", "II", "IIIA", "IIIB"),//N0
+    listOf("IVA", "IVA", "IVA", "IVA", "IVA"),//N1
+    listOf("IVB", "IVB", "IVB", "IVB", "IVB"),//M1
+)

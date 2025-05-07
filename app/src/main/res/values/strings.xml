@@ -284,5 +284,6 @@
     <string name="g2b" translatable="false">2b</string>
     <string name="g3" translatable="false">3</string>
     <string name="lungTNMTitle">Lung Cancer TNM classification (UICC 9th)</string>
+    <string name="hccTNMTitle">Hepatocellular Carcinoma TNM classification (UICC 8th)</string>
 
 </resources>

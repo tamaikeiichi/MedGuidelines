@@ -119,6 +119,25 @@ val NfactorLung = listOf(
     R.string.N3,
 )
 
+val TfactorHcc = listOf(
+    R.string.T1a,
+    R.string.T1b,
+    R.string.T2,
+    R.string.T3,
+    R.string.T4,
+)
+
+val NfactorHcc = listOf(
+    R.string.N0,
+    R.string.N1,
+)
+
+val MfactorHcc = listOf(
+    R.string.M0,
+    R.string.M1,
+)
+
+
 val MfactorLung = listOf(
     R.string.M0,
     R.string.M1a,
