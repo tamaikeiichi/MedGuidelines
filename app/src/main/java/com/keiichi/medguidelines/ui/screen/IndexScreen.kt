@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.add
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -43,6 +45,9 @@ import com.keiichi.medguidelines.ui.component.SearchBar
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.collections.addAll
+import kotlin.collections.remove
+import kotlin.collections.toMutableList
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
@@ -103,10 +108,41 @@ fun IndexScreen(
         animationSpec = tween(durationMillis = 200), label = ""
     )
 
+    val originalItems = rememberSaveable(
+        saver = listSaver(
+            save = { it.map { item -> Json.encodeToString(item) } },
+            restore = {restored ->
+                restored.map { item -> Json.decodeFromString<ListItemData>(item) }
+                    .toMutableStateList()
+            }
+        )
+    ) {
+        mutableStateListOf<ListItemData>()
+    }
+
+    // Track the item that was clicked for later processing
+    var clickedItem by remember { mutableStateOf<ListItemData?>(null) }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
+                    // This is where we handle the item movement and saving when returning
+                    clickedItem?.let { item ->
+                        val updatedItems = originalItems.toMutableList()
+                        if (updatedItems.remove(item)) {
+                            updatedItems.add(0, item)
+                            scope.launch {
+                                saveListItemData(context, updatedItems)
+                            }
+                            // Update the originalItems state to trigger recomposition
+                            originalItems.clear()
+                            originalItems.addAll(updatedItems)
+                        }
+                        // Clear the clickedItem after processing
+                        clickedItem = null
+                    }
+
                     if (hasBeenVisited) {
                         animateFirstItem = true
                     }
@@ -132,20 +168,9 @@ fun IndexScreen(
         }
     }
 
-    val expectedItem = itemsList
     val expectedItemCount = itemsList.size
 
-    val originalItems = rememberSaveable(
-        saver = listSaver(
-            save = { it.map { item -> Json.encodeToString(item) } },
-            restore = {restored ->
-                restored.map { item -> Json.decodeFromString<ListItemData>(item) }
-                    .toMutableStateList()
-            }
-        )
-    ) {
-        mutableStateListOf<ListItemData>()
-    }
+
 
     val filteredItems = remember(searchQuery, originalItems) {
         if (searchQuery.isBlank()) {
@@ -173,6 +198,7 @@ fun IndexScreen(
             }
         )
         LazyColumn(
+            state = lazyListState,
             modifier = Modifier
                 .padding(2.dp)
                 .fillMaxWidth(),
