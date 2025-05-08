@@ -70,6 +70,7 @@ val itemsList = listOf(
     ListItemData(R.string.homairTitle, ActionType.NAVIGATE_TO_HOMAIR),
     ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM),
     ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
+    ListItemData(R.string.intrahepaticCholangiocarcinomaTNMTitle, ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM),
 )
 
 //fun setOriginalItems(mutableState: SnapshotStateList<ListItemData>, newList: MutableList<ListItemData>) {
@@ -93,6 +94,7 @@ fun IndexScreen(
     navigateToHomaIR: () -> Unit,
     navigateToLungTNM: () -> Unit,
     navigateToHccTNM: () -> Unit,
+    navigateToIntrahepaticCholangiocarcinomaTNM: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -236,6 +238,7 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_HOMAIR -> navigateToHomaIR()
                             ActionType.NAVIGATE_TO_LUNG_TNM -> navigateToLungTNM()
                             ActionType.NAVIGATE_TO_HCC_TNM -> navigateToHccTNM()
+                            ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM -> navigateToIntrahepaticCholangiocarcinomaTNM()
                         }
                     }
                 )
@@ -267,6 +270,7 @@ fun IndexScreenPreview() {
         navigateToLiverFibrosisScoreSystem = {},
         navigateToHomaIR = {},
         navigateToLungTNM = {},
-        navigateToHccTNM = {}
+        navigateToHccTNM = {},
+        navigateToIntrahepaticCholangiocarcinomaTNM = {}
     )
 }

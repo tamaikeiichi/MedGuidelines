@@ -36,6 +36,7 @@ import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
 import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
 import com.keiichi.medguidelines.ui.screen.HomaIRScreen
 import com.keiichi.medguidelines.ui.screen.IndexScreen
+import com.keiichi.medguidelines.ui.screen.IntrahepaticCholangiocarcinomaTNMScreen
 import com.keiichi.medguidelines.ui.screen.LiverFibrosisScoreSystemScreen
 import com.keiichi.medguidelines.ui.screen.LungTNMScreen
 import com.keiichi.medguidelines.ui.screen.MALBIScreen
@@ -73,7 +74,8 @@ class MainActivity : ComponentActivity() {
                                     navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
                                     navigateToHomaIR = { controller.navigate("HomaIRScreen") },
                                     navigateToLungTNM = { controller.navigate("LungTNM") },
-                                    navigateToHccTNM = { controller.navigate("HccTNM") }
+                                    navigateToHccTNM = { controller.navigate("HccTNM") },
+                                    navigateToIntrahepaticCholangiocarcinomaTNM = { controller.navigate("IntrahepaticCholangiocarcinomaTNM")}
                                 )
                             }
                         }
@@ -145,6 +147,11 @@ class MainActivity : ComponentActivity() {
                         composable("HccTNM") {
                             ChildComposable {
                                 HCCTNMScreen(controller)
+                            }
+                        }
+                        composable("IntrahepaticCholangiocarcinomaTNM") {
+                            ChildComposable {
+                                IntrahepaticCholangiocarcinomaTNMScreen(controller)
                             }
                         }
                     }

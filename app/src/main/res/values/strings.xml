@@ -288,5 +288,8 @@
     <string name="TfactorTitleNoteHcc">&lt;b>T1&lt;/b> Solitary tumor ≤2 cm, or >2 cm without vascular invasion\n&lt;b>T1a&lt;/b> Solitary tumor ≤2 cm\n&lt;b>T1b&lt;/b> Solitary tumor >2 cm without vascular invasion\n&lt;b>T2&lt;/b> Solitary tumor >2 cm with vascular invasion, or multiple tumors, none >5 cm &lt;b>T3&lt;/b> Multiple tumors, at least one of which is >5 cm\n&lt;b>T4&lt;/b> Single tumor or multiple tumors of any size involving a major branch of the portal vein or hepatic vein, or tumor(s) with direct invasion of adjacent organs other than the gallbladder or with perforation of visceral peritoneum</string>
     <string name="NfactorTitleNoteHcc">N0 No regional lymph node metastasis N1 Regional lymph node metastasis</string>
     <string name="MfactorTitleNoteHcc">M0 No distant metastasis M1 Distant metastasis</string>
-
+    <string name="intrahepaticCholangiocarcinomaTNMTitle">Intrahepatic Cholangiocarcinoma TNM Classificaiton (UICC 8th)</string>
+    <string name="TfactorTitleNoteIntrahepaticCholangiocarcinoma">&lt;b>Tis&lt;/b> Carcinoma in Situ/n&lt;b>T1a&lt;/b> Solitary tumor ≤5 cm without vascular invasion\n&lt;b>T1b&lt;/b> Solitary tumor >5 cm without vascular invasion\n&lt;b>T2&lt;/b> Solitary tumor with vascular invasion, or multiple tumors with or without vascular invasion/n&lt;b>T3&lt;/b> Single tumor or multiple tumors with perforation of visceral peritoneum\n&lt;b>T4&lt;/b> Tumor(s) with direct invasion of nearby structures outside of the liver</string>
+    <string name="NfactorTitleNoteIntrahepaticCholangiocarcinoma">N0 No regional lymph node metastasis N1 Regional lymph node metastasis</string>
+    <string name="MfactorTitleNoteIntrahepaticCholangiocarcinoma">M0 No distant metastasis M1 Distant metastasis</string>
 </resources>

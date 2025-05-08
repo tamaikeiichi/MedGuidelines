@@ -48,3 +48,10 @@ val hccTNM = listOf(
     listOf("IVA", "IVA", "IVA", "IVA", "IVA"),//N1
     listOf("IVB", "IVB", "IVB", "IVB", "IVB"),//M1
 )
+
+val intrahepaticCholangiocarcinomaTNM = listOf(
+    //      Tis,  T1a, T1b, T2,  T3,     T4
+    listOf("0", "IA", "IB", "II", "IIIA", "IIIB"), //N0
+    listOf("N/A", "IIIB", "IIIB", "IIIB", "IIIB", "IIIB"),//N1
+    listOf("N/A", "IV", "IV", "IV", "IV", "IV"),//M1
+)
