@@ -99,7 +99,7 @@ fun IndexScreen(
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val lazyListState = rememberLazyListState()
     val alpha: Float by animateFloatAsState(
-        targetValue = if (animateFirstItem) 0.9f else 1f,
+        targetValue = if (animateFirstItem) 0.7f else 1f,
         animationSpec = tween(durationMillis = 200), label = ""
     )
 
