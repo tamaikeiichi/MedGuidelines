@@ -55,8 +55,6 @@ fun AcutePancreatitisScreen(navController: NavController) {
                     textAlign = TextAlign.Center,
                     lineHeight = 1.2.em,
                 )
-
-
             }
         }
     ) { innerPadding ->
@@ -104,11 +102,13 @@ val acutePancreatitisPrognosticFactorRadioButtonAndTitleAndNote = listOf(
     AcutePancreatitisData(noYes, R.string.acutePancreatitisLDHTitle, R.string.space),
     AcutePancreatitisData(noYes, R.string.acutePancreatitisPltTitle, R.string.space),
     AcutePancreatitisData(noYes, R.string.acutePancreatitisCaTitle, R.string.space),
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisCRPTitle, R.string.space),
     AcutePancreatitisData(
         noYes,
         R.string.acutePancreatitisSIRSTitle,
         R.string.acutePancreatitisSIRSTitleNote
     ),
+    AcutePancreatitisData(noYes, R.string.acutePancreatitisAgeTitle, R.string.space),
 )
 
 val acutePancreatitisCTGradeRadioButtonAndTitleAndNote = listOf(
