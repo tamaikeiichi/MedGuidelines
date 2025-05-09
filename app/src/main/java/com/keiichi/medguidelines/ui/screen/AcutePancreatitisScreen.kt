@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,16 +28,19 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.CTGradeInflammation
 import com.keiichi.medguidelines.data.CTGradePoorContrast
 import com.keiichi.medguidelines.data.noYes
+import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.RadioButtonAndExpand
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
+import com.keiichi.medguidelines.ui.component.cardModifier
 
 @Composable
 fun AcutePancreatitisScreen(navController: NavController) {
     var gradeByScore by remember { mutableStateOf("") }
     var cTGradeNumeric by remember { mutableIntStateOf(0) }
+    var prognosticFactor by remember { mutableIntStateOf(0) }
 
     MedGuidelinesScaffold(
         topBar = {
@@ -63,9 +69,11 @@ fun AcutePancreatitisScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            var prognosticFactor = 0
+
+            prognosticFactor =0
             for (data in acutePancreatitisPrognosticFactorRadioButtonAndTitleAndNote) {
                 acutePancreatitisButtonAndScore(data)
+
                 prognosticFactor += data.score
             }
 
@@ -75,6 +83,27 @@ fun AcutePancreatitisScreen(navController: NavController) {
                 CTGrade += data.score
             }
 
+            Card(
+                modifier = Modifier.cardModifier(),
+                colors = CardDefaults.cardColors(
+                    containerColor =MaterialTheme.colorScheme.onPrimary,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.prognosticFactor),
+                    modifier = Modifier.textModifier(),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                GraphAndThreshold(
+                    maxValue = 9.0F,
+                    minValue = 0.0F,
+                    firstThreshold = 3.0F,
+                    firstLabel = stringResource(R.string.space),
+                    secondLabel = stringResource(R.string.severe),
+                    score = prognosticFactor.toDouble(),
+                )
+            }
             gradeByScore = if (prognosticFactor >= 3 || CTGrade >= 2) {
                 stringResource(R.string.severe)
             } else {

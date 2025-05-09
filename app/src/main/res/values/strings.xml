@@ -292,4 +292,5 @@
     <string name="TfactorTitleNoteIntrahepaticCholangiocarcinoma">&lt;b>Tis&lt;/b> Carcinoma in Situ/n&lt;b>T1a&lt;/b> Solitary tumor ≤5 cm without vascular invasion\n&lt;b>T1b&lt;/b> Solitary tumor >5 cm without vascular invasion\n&lt;b>T2&lt;/b> Solitary tumor with vascular invasion, or multiple tumors with or without vascular invasion/n&lt;b>T3&lt;/b> Single tumor or multiple tumors with perforation of visceral peritoneum\n&lt;b>T4&lt;/b> Tumor(s) with direct invasion of nearby structures outside of the liver</string>
     <string name="NfactorTitleNoteIntrahepaticCholangiocarcinoma">N0 No regional lymph node metastasis N1 Regional lymph node metastasis</string>
     <string name="MfactorTitleNoteIntrahepaticCholangiocarcinoma">M0 No distant metastasis M1 Distant metastasis</string>
+    <string name="prognosticFactor">Prognostic Factors</string>
 </resources>
