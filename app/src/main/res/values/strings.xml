@@ -293,4 +293,10 @@
     <string name="NfactorTitleNoteIntrahepaticCholangiocarcinoma">N0 No regional lymph node metastasis N1 Regional lymph node metastasis</string>
     <string name="MfactorTitleNoteIntrahepaticCholangiocarcinoma">M0 No distant metastasis M1 Distant metastasis</string>
     <string name="prognosticFactor">Prognostic Factors</string>
+    <string name="chads2Title">CHADS2 Score</string>
+    <string name="congestiveHearFaiLureHistoryTitle">Congestive heart failure history</string>
+    <string name="hepertensionHistoryTitle">Hypertension history</string>
+    <string name="age75Title">Age ≥ 75</string>
+    <string name="diabetesMellitusHistoryTitle">Diabetes mellitus history</string>
+    <string name="strokeOrTIASymptomsPreviouslyTitle">Stroke or TIA symptoms previously</string>
 </resources>

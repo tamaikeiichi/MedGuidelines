@@ -30,6 +30,7 @@ import com.keiichi.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.keiichi.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.keiichi.medguidelines.ui.screen.AdropScreen
 import com.keiichi.medguidelines.ui.screen.BloodGasAnalysisScreen
+import com.keiichi.medguidelines.ui.screen.Chads2Screen
 import com.keiichi.medguidelines.ui.screen.ChildPughScreen
 import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
 import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
@@ -75,7 +76,8 @@ class MainActivity : ComponentActivity() {
                                     navigateToHomaIR = { controller.navigate("HomaIRScreen") },
                                     navigateToLungTNM = { controller.navigate("LungTNM") },
                                     navigateToHccTNM = { controller.navigate("HccTNM") },
-                                    navigateToIntrahepaticCholangiocarcinomaTNM = { controller.navigate("IntrahepaticCholangiocarcinomaTNM")}
+                                    navigateToIntrahepaticCholangiocarcinomaTNM = { controller.navigate("IntrahepaticCholangiocarcinomaTNM")},
+                                    navigateToCHADS2 = { controller.navigate("CHADS2") }
                                 )
                             }
                         }
@@ -152,6 +154,11 @@ class MainActivity : ComponentActivity() {
                         composable("IntrahepaticCholangiocarcinomaTNM") {
                             ChildComposable {
                                 IntrahepaticCholangiocarcinomaTNMScreen(controller)
+                            }
+                        }
+                        composable("CHADS2") {
+                            ChildComposable {
+                                Chads2Screen(controller)
                             }
                         }
                     }

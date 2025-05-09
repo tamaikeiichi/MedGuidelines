@@ -1,6 +1,7 @@
 package com.keiichi.medguidelines.ui.screen
 
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,6 +35,7 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
+import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
@@ -92,7 +94,8 @@ fun MALBIScreen(navController: NavController) {
                 .fillMaxWidth(),
 
             contentPadding = PaddingValues(10.dp),
-            state = rememberLazyListState()
+            state = rememberLazyListState(),
+            //verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
                 score = mALBIInput()
@@ -104,8 +107,8 @@ fun MALBIScreen(navController: NavController) {
                 }
                 scoreRound = Math.round(score * 100.0) / 100.0
 
-                Card(
-                    modifier = Modifier.cardModifier()
+                MedGuidelinesCard (
+                    //modifier = Modifier.cardModifier()
                 ) {
                     Text(
                         text = stringResource(R.string.mALBITitle),
@@ -135,10 +138,10 @@ fun mALBIInput(): Double {
     val totalBilirubin = remember { mutableDoubleStateOf(1.0) }
     val albumin = remember { mutableDoubleStateOf(4.1) }
 
-    Card(
-        modifier = Modifier
-            .padding(4.dp)
-            .fillMaxWidth(),
+    MedGuidelinesCard (
+//        modifier = Modifier
+//            .padding(4.dp)
+//            .fillMaxWidth(),
     ) {
         FlowRow(
             modifier = Modifier
