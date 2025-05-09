@@ -30,32 +30,25 @@ fun loadListItemData(context: Context, expectedItemCount: Int): Flow<List<ListIt
 
     return context.dataStore.data.map { preferences ->
         val jsonString = preferences[LIST_ITEM_DATA_KEY]
-//        if (jsonString != null) {
-//                Json.decodeFromString<List<ListItemData>>(jsonString)
-//            //val test = "test"
-//           // Log.println(Log.DEBUG, "loadListItemData", jsonString)
-//        } else {
-//            // Return the default itemsList if jsonString is null
-//            itemsList
-//        }
+
         if (jsonString != null) {
             try {
-            //Log.println(Log.DEBUG, "loadListItemData", jsonString)
             val decodedList = Json.decodeFromString<List<ListItemData>>(jsonString)
-            //Log.println(Log.DEBUG, "loadListItemData", decodedList.toString())
-            // Check if the decoded list has the expected size
-            if (decodedList.size == expectedItemCount) {
-                // If the size matches, restore the items
-                decodedList
+            if (
+                decodedList.size == expectedItemCount
+                && doAnyDecodeStringsMatchAnyItemsStrings(context, decodedList, itemsList)
+                ) {
+                //if (areAnyDecodeNamesInItemsList(decodedList, itemsList)) {
+                    decodedList
+                //}
             } else {
-                context.dataStore.edit { mutablePreferences ->
+                context.dataStore.edit {
+                    mutablePreferences ->
                     mutablePreferences.remove(LIST_ITEM_DATA_KEY)
                 }
                 itemsList
             }
             } catch (e: kotlinx.serialization.SerializationException) {
-                // Handle the deserialization error
-                // Remove the incorrect value
                 context.dataStore.edit { mutablePreferences ->
                     mutablePreferences.remove(LIST_ITEM_DATA_KEY)
                 }
@@ -66,5 +59,36 @@ fun loadListItemData(context: Context, expectedItemCount: Int): Flow<List<ListIt
             itemsList
         }
     }
+}
+
+fun doAnyDecodeStringsMatchAnyItemsStrings(
+    context: Context,
+    decodeList: List<ListItemData>,
+    itemsList: List<ListItemData>
+): Boolean {
+    // Get the set of strings from decodeList.nameResID (Set A)
+    val decodeStrings = decodeList.mapNotNull { listItem ->
+        try {
+            context.getString(listItem.nameResId)
+        } catch (e: Exception) {
+            // Handle invalid resource ID, filter out if needed
+            println("Error: Invalid resource ID in decodeList: ${listItem.nameResId}")
+            null // Exclude this string from the set
+        }
+    }.toSet()
+
+    // Get the set of strings from itemsList.nameResID (Set B)
+    val itemStrings = itemsList.mapNotNull { listItem ->
+        try {
+            context.getString(listItem.nameResId)
+        } catch (e: Exception) {
+            // Handle invalid resource ID, filter out if needed
+            println("Error: Invalid resource ID in itemsList: ${listItem.nameResId}")
+            null // Exclude this string from the set
+        }
+    }.toSet()
+
+    // Check if there is any intersection between the two sets of strings
+    return decodeStrings == itemStrings
 }
 

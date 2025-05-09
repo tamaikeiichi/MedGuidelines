@@ -29,8 +29,10 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
 import androidx.fragment.app.add
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -48,6 +50,10 @@ import kotlinx.serialization.json.Json
 import kotlin.collections.addAll
 import kotlin.collections.remove
 import kotlin.collections.toMutableList
+
+fun getStringFromResourceId(context: Context, resourceId: Int): String {
+    return context.getString(resourceId)
+}
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
@@ -72,11 +78,6 @@ val itemsList = listOf(
     ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
     ListItemData(R.string.intrahepaticCholangiocarcinomaTNMTitle, ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM),
 )
-
-//fun setOriginalItems(mutableState: SnapshotStateList<ListItemData>, newList: MutableList<ListItemData>) {
-//    mutableState.clear()
-//    mutableState.addAll(newList)
-//}
 
 @Composable
 fun IndexScreen(
@@ -172,8 +173,6 @@ fun IndexScreen(
 
     val expectedItemCount = itemsList.size
 
-
-
     val filteredItems = remember(searchQuery, originalItems) {
         if (searchQuery.isBlank()) {
             originalItems
@@ -245,12 +244,6 @@ fun IndexScreen(
             }
         }
     }
-//    Button(
-//        onClick = {
-//        } as () -> Unit
-//    ) {
-//        Text("Go to Child Screen")
-//    }
 }
 
 @Preview
