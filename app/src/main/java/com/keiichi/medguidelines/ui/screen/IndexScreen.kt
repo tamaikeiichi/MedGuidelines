@@ -104,7 +104,7 @@ fun IndexScreen(
     var animationCount by remember { mutableStateOf(0) }
     var hasBeenVisited by rememberSaveable { mutableStateOf(false) }
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    val lazyListState = rememberLazyListState()
+    val lazyListState = LazyListState()//rememberLazyListState()
     val alpha: Float by animateFloatAsState(
         targetValue = if (animateFirstItem) 0.5f else 1f,
         animationSpec = tween(durationMillis = 200), label = ""
