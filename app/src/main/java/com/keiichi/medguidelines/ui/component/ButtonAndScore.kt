@@ -12,6 +12,7 @@ fun buttonAndScore(
     title: Int,
     titleNote: Int,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
+    appendixLabel: @Composable (() -> Unit)? = null
 ): Int {
     val radioOptions: List<Int> = factor
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
@@ -19,6 +20,7 @@ fun buttonAndScore(
         factor,
         selectedOption,
         onOptionSelected, title, titleNote, cardColor,
+        appendixLabel= {appendixLabel} //as (() -> Unit)?
         )
     val score: Int =
         radioOptions.indexOf(selectedOption).coerceAtLeast(0)

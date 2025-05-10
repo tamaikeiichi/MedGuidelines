@@ -44,6 +44,7 @@ fun RadioButtonAndExpand(
     title: Int,
     titleNote: Int,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
+    appendixLabel: (() -> Unit)? = null
 ) {
     //var selectedOption by rememberSaveable { mutableStateOf(radioOptions.first()) }
     Column() {
@@ -85,6 +86,7 @@ fun RadioButtonAndExpand(
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
+                    appendixLabel?.invoke()
                 }
                 if (titleNote != R.string.space) {
                     IconButton(onClick = { expanded = !expanded }) {

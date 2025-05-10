@@ -19,6 +19,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
@@ -41,6 +42,7 @@ fun Chads2Screen(navController: NavController) {
     var totalScore: TotalScore by remember { mutableStateOf(TotalScore(0, 0)) }
     var chads2TotalScore by remember { mutableIntStateOf(0) }
     var helte2s2TotalScore by remember { mutableIntStateOf(0) }
+
     var chads2StrokeRate by remember { mutableStateOf("") }
     var helte2s2StrokeRate by remember { mutableStateOf("") }
     val chads2Result = buildAnnotatedString {
@@ -140,10 +142,15 @@ fun Chads2Screen(navController: NavController) {
 
 @Composable
 private fun totalScore(): TotalScore {
+    var scoreI by remember{mutableIntStateOf(0)}
     val scoreA = buttonAndScore(
         noYes,
         R.string.congestiveHearFaiLureHistoryTitle,
-        R.string.space
+        R.string.space,
+        appendixLabel = {FactorAlerts(
+            text = R.string.chads2,
+            factor = 1.0
+        )}
     )
     val scoreB = buttonAndScore(
         noYes,
@@ -155,6 +162,17 @@ private fun totalScore(): TotalScore {
         R.string.age75Title,
         R.string.space
     )
+    if(scoreC == 1) {
+        Column(
+            modifier = Modifier.padding(start = 20.dp)
+        ) {
+            scoreI = buttonAndScore(
+                noYes,
+                R.string.extremeElderly,
+                R.string.space
+            )
+        }
+    }
     val scoreD = buttonAndScore(
         noYes,
         R.string.diabetesMellitusHistoryTitle,
@@ -180,19 +198,19 @@ private fun totalScore(): TotalScore {
         R.string.typeOfAf,
         R.string.space
     )
-    val scoreI = buttonAndScore(
-        noYes,
-        R.string.extremeElderly,
-        R.string.space
-    )
-    val scoreJ = buttonAndScore(
-        noYes,
-        R.string.previousStroke,
-        R.string.space
-    )
+//    val scoreI = buttonAndScore(
+//        noYes,
+//        R.string.extremeElderly,
+//        R.string.space
+//    )
+//    val scoreJ = buttonAndScore(
+//        noYes,
+//        R.string.previousStroke,
+//        R.string.space
+//    )
     val totalScore: TotalScore = TotalScore(
         chads2Score = scoreA + scoreB + scoreC + scoreD + (scoreE *2),
-        helte2s2Score = scoreB + scoreF + scoreG + scoreH + (scoreI * 2) + (scoreJ * 2)
+        helte2s2Score = scoreB + scoreF + scoreG + scoreH + scoreC + (scoreI * 2) + (scoreE * 2)
     )
     return totalScore
 }
