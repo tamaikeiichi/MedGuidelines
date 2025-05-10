@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
+import com.keiichi.medguidelines.ui.component.Dimensions
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
@@ -161,7 +162,7 @@ fun LiverFibrosisScoreSystemScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(10.dp),
+            contentPadding = PaddingValues(Dimensions.lazyColumnPadding),
             state = rememberLazyListState()
         ) {
             item {

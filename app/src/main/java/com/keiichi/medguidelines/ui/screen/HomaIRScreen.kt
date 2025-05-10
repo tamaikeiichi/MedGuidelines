@@ -30,11 +30,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
+import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
@@ -71,7 +73,8 @@ fun HomaIRScreen(navController: NavController) {
                         append("HOMA-IR=$scoreRound")
                     },
                     fontSize = 30.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    lineHeight = 1.2.em
                 )
 
             }
@@ -100,10 +103,10 @@ fun HomaIRScreen(navController: NavController) {
                     else -> stringResource(R.string.presence)
                 }
                 scoreRound = Math.round(score * 100.0) / 100.0
-                Card(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .fillMaxWidth()
+                MedGuidelinesCard (
+//                    modifier = Modifier
+//                        .padding(4.dp)
+//                        .fillMaxWidth()
 
                 ) {
                     Text(
@@ -135,10 +138,10 @@ fun homaIRInput(): Double {
     var changedFactor2Unit by remember { mutableStateOf(true) }
 
 
-    Card(
-        modifier = Modifier
-            .padding(4.dp)
-            .fillMaxWidth()
+    MedGuidelinesCard (
+//        modifier = Modifier
+//            .padding(4.dp)
+//            .fillMaxWidth()
 
     ) {
         FlowRow(

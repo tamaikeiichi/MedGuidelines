@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.navigation.NavGraph
@@ -26,6 +27,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.keiichi.compose.MedGuidelinesTheme
+import com.keiichi.medguidelines.ui.component.AppDimensions
+import com.keiichi.medguidelines.ui.component.LocalAppDimensions
 import com.keiichi.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.keiichi.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.keiichi.medguidelines.ui.screen.AdropScreen
@@ -51,114 +54,126 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MedGuidelinesTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.surfaceVariant
-                )
-                {
-                    val controller = rememberNavController()
+                CompositionLocalProvider(LocalAppDimensions provides AppDimensions()) {
+                    // Your main navigation and screen content goes here
+                    // All composables
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                    {
+                        val controller = rememberNavController()
 
-                    NavHost(controller, startDestination = "IndexScreen") {
-                        composable("IndexScreen") {
-                            ChildComposable {
-                                IndexScreen(
-                                    navigateToChildPugh = { controller.navigate("ChildPughScreen") },
-                                    navigateToAdrop = { controller.navigate("AdropScreen") },
-                                    navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
-                                    navigateToAcuteTonsillitisAlgorithm = { controller.navigate("AcuteTonsillitisAlgorithmScreen") },
-                                    navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen") },
-                                    navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen") },
-                                    navigateToNetakirido = { controller.navigate("NetakiridoScreen") },
-                                    navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen") },
-                                    navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen") },
-                                    navigateToMALBI = { controller.navigate("MALBIScreen") },
-                                    navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
-                                    navigateToHomaIR = { controller.navigate("HomaIRScreen") },
-                                    navigateToLungTNM = { controller.navigate("LungTNM") },
-                                    navigateToHccTNM = { controller.navigate("HccTNM") },
-                                    navigateToIntrahepaticCholangiocarcinomaTNM = { controller.navigate("IntrahepaticCholangiocarcinomaTNM")},
-                                    navigateToCHADS2 = { controller.navigate("CHADS2") }
-                                )
+                        NavHost(controller, startDestination = "IndexScreen") {
+                            composable("IndexScreen") {
+                                ChildComposable {
+                                    IndexScreen(
+                                        navigateToChildPugh = { controller.navigate("ChildPughScreen") },
+                                        navigateToAdrop = { controller.navigate("AdropScreen") },
+                                        navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
+                                        navigateToAcuteTonsillitisAlgorithm = {
+                                            controller.navigate(
+                                                "AcuteTonsillitisAlgorithmScreen"
+                                            )
+                                        },
+                                        navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen") },
+                                        navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen") },
+                                        navigateToNetakirido = { controller.navigate("NetakiridoScreen") },
+                                        navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen") },
+                                        navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen") },
+                                        navigateToMALBI = { controller.navigate("MALBIScreen") },
+                                        navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
+                                        navigateToHomaIR = { controller.navigate("HomaIRScreen") },
+                                        navigateToLungTNM = { controller.navigate("LungTNM") },
+                                        navigateToHccTNM = { controller.navigate("HccTNM") },
+                                        navigateToIntrahepaticCholangiocarcinomaTNM = {
+                                            controller.navigate(
+                                                "IntrahepaticCholangiocarcinomaTNM"
+                                            )
+                                        },
+                                        navigateToCHADS2 = { controller.navigate("CHADS2") }
+                                    )
+                                }
                             }
-                        }
-                        composable("ChildPughScreen") {
-                            ChildComposable {
-                                ChildPughScreen(controller)
+                            composable("ChildPughScreen") {
+                                ChildComposable {
+                                    ChildPughScreen(controller)
+                                }
                             }
-                        }
-                        composable("AdropScreen") {
-                            ChildComposable {
-                                AdropScreen(controller)
+                            composable("AdropScreen") {
+                                ChildComposable {
+                                    AdropScreen(controller)
+                                }
                             }
-                        }
-                        composable("ColorectalTNMScreen") {
-                            ChildComposable {
-                                ColorectalTNMScreen(controller)
+                            composable("ColorectalTNMScreen") {
+                                ChildComposable {
+                                    ColorectalTNMScreen(controller)
+                                }
                             }
-                        }
-                        composable("AcuteTonsillitisAlgorithmScreen") {
-                            ChildComposable {
-                                AcuteTonsillitisAlgorithmScreen(controller)
+                            composable("AcuteTonsillitisAlgorithmScreen") {
+                                ChildComposable {
+                                    AcuteTonsillitisAlgorithmScreen(controller)
+                                }
                             }
-                        }
-                        composable("BloodGasAnalysisScreen") {
-                            ChildComposable {
-                                BloodGasAnalysisScreen(controller)
+                            composable("BloodGasAnalysisScreen") {
+                                ChildComposable {
+                                    BloodGasAnalysisScreen(controller)
+                                }
                             }
-                        }
-                        composable("AcutePancreatitisScreen") {
-                            ChildComposable {
-                                AcutePancreatitisScreen(controller)
+                            composable("AcutePancreatitisScreen") {
+                                ChildComposable {
+                                    AcutePancreatitisScreen(controller)
+                                }
                             }
-                        }
-                        composable("NetakiridoScreen") {
-                            ChildComposable {
-                                NetakiridoScreen(controller)
+                            composable("NetakiridoScreen") {
+                                ChildComposable {
+                                    NetakiridoScreen(controller)
+                                }
                             }
-                        }
-                        composable("PancreaticTNMScreen") {
-                            ChildComposable {
-                                PancreaticTNMScreen(controller)
+                            composable("PancreaticTNMScreen") {
+                                ChildComposable {
+                                    PancreaticTNMScreen(controller)
+                                }
                             }
-                        }
-                        composable("EsophagealTNMScreen") {
-                            ChildComposable {
-                                EsophagealTNMScreen(controller)
+                            composable("EsophagealTNMScreen") {
+                                ChildComposable {
+                                    EsophagealTNMScreen(controller)
+                                }
                             }
-                        }
-                        composable("MALBIScreen") {
-                            ChildComposable {
-                                MALBIScreen(controller)
+                            composable("MALBIScreen") {
+                                ChildComposable {
+                                    MALBIScreen(controller)
+                                }
                             }
-                        }
-                        composable("LiverFibrosisScoreSystemScreen") {
-                            ChildComposable {
-                                LiverFibrosisScoreSystemScreen(controller)
+                            composable("LiverFibrosisScoreSystemScreen") {
+                                ChildComposable {
+                                    LiverFibrosisScoreSystemScreen(controller)
+                                }
                             }
-                        }
-                        composable("HomaIRScreen") {
-                            ChildComposable {
-                                HomaIRScreen(controller)
+                            composable("HomaIRScreen") {
+                                ChildComposable {
+                                    HomaIRScreen(controller)
+                                }
                             }
-                        }
-                        composable("LungTNM") {
-                            ChildComposable {
-                                LungTNMScreen(controller)
+                            composable("LungTNM") {
+                                ChildComposable {
+                                    LungTNMScreen(controller)
+                                }
                             }
-                        }
-                        composable("HccTNM") {
-                            ChildComposable {
-                                HCCTNMScreen(controller)
+                            composable("HccTNM") {
+                                ChildComposable {
+                                    HCCTNMScreen(controller)
+                                }
                             }
-                        }
-                        composable("IntrahepaticCholangiocarcinomaTNM") {
-                            ChildComposable {
-                                IntrahepaticCholangiocarcinomaTNMScreen(controller)
+                            composable("IntrahepaticCholangiocarcinomaTNM") {
+                                ChildComposable {
+                                    IntrahepaticCholangiocarcinomaTNMScreen(controller)
+                                }
                             }
-                        }
-                        composable("CHADS2") {
-                            ChildComposable {
-                                Chads2Screen(controller)
+                            composable("CHADS2") {
+                                ChildComposable {
+                                    Chads2Screen(controller)
+                                }
                             }
                         }
                     }

@@ -95,25 +95,6 @@ fun adropTotalScore(): Int {
     return totalScore
 }
 
-//@Composable
-//fun adropButtonAndScore(
-//    factor : List<Int>,
-//    title : Int,
-//    titleNote : Int
-//): Int
-//{
-//    val radioOptions : List<Int> = factor
-//    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-//    RadioButtonAndExpand(factor, selectedOption, onOptionSelected, title, titleNote)
-//
-//    val score: Int =
-//        if (stringResource(id = selectedOption) == stringResource(id =radioOptions[0])) 0
-//        else 1
-//
-//    return score
-//}
-
-
 @Preview
 @Composable
 fun AdropPreview() {

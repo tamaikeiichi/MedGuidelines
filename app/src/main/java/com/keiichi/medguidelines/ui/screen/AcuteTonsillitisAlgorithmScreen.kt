@@ -20,18 +20,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.absencePresence
 import com.keiichi.medguidelines.data.mclsaacAge
 import com.keiichi.medguidelines.data.tonsillitisRedFlag
+import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 
+//fun Modifier.padding(): Modifier {
+//    return this.padding(4.dp)
+//}
 
 @Composable
 fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
@@ -57,7 +63,7 @@ fun AcuteTonsillitisAlgorithmScreen(navController: NavController) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(10.dp),
+            contentPadding = PaddingValues(4.dp),
             state = listState
         ) {
             item {
@@ -99,11 +105,11 @@ fun AcuteTonsillitisCard(
     title: Int,
     color: Color = MaterialTheme.colorScheme.onPrimary,
     ) {
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(color)
+    MedGuidelinesCard (
+//        modifier = Modifier
+//            .padding(4.dp)
+//            .fillMaxWidth(),
+//        colors = CardDefaults.cardColors(color)
     ) {
         Text(
             text = stringResource(id = title),
@@ -116,10 +122,10 @@ fun AcuteTonsillitisCard(
 @Composable
 fun acuteTonsillitisRedFlagScore(): Int {
     var score by rememberSaveable { mutableIntStateOf(0) }
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
+    MedGuidelinesCard (
+//        modifier = Modifier
+//            .padding(4.dp)
+//            .fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier.padding(8.dp)
@@ -138,11 +144,11 @@ fun acuteTonsillitisRedFlagScore(): Int {
 fun AcuteTonsillitisFollowupScore(
     color: Color = MaterialTheme.colorScheme.onPrimary
 ) {
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(color)
+    MedGuidelinesCard (
+//        modifier = Modifier
+//            .padding(4.dp)
+//            .fillMaxWidth(),
+//        colors = CardDefaults.cardColors(color)
     ) {
         Text(
             text = stringResource(id = R.string.followup),
@@ -160,13 +166,13 @@ fun acuteTonsillitisMclsaacScore(): Int {
     var scoreD by scores[3]
     var scoreE by scores[4]
     var totalScore by remember { mutableIntStateOf(0) }
-    Card(
-        modifier = Modifier.padding(8.dp),
-        colors = androidx.compose.material3.CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        ),
+    MedGuidelinesCard (
+//        modifier = Modifier.padding(4.dp),
+//        colors = androidx.compose.material3.CardDefaults.cardColors(
+//            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+       // ),
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = Modifier.padding(4.dp)) {
             scoreA = buttonAndScore(
                 absencePresence,
                 R.string.temperatureTitle,
@@ -200,8 +206,10 @@ fun acuteTonsillitisMclsaacScore(): Int {
     return totalScore
 }
 
-//@Preview
-//@Composable
-//fun AcuteTonsillitisAlgorithmScreenPreview() {
-//    AcuteTonsillitisAlgorithmScreen()
-//}
+@Preview
+@Composable
+fun AcuteTonsillitisAlgorithmScreenPreview() {
+    AcuteTonsillitisAlgorithmScreen(
+        navController = NavController(LocalContext.current)
+    )
+}
