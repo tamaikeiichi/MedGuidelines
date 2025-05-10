@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
@@ -29,7 +30,12 @@ fun AdropScreen(navController: NavController) {
     var literalScore by remember { mutableStateOf("") }
 
     // Build the display string here
-    val displayString = "$literalScore ($totalScore)"
+    val displayString = buildAnnotatedString {
+        append(literalScore)
+        append("(")
+        append(totalScore.toString())
+        append(")")
+    }
 
     MedGuidelinesScaffold(
         topBar = {

@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
@@ -31,7 +32,10 @@ fun LungTNMScreen(navController: NavController) {
     var literalScore by remember { mutableStateOf("") }
 
     // Build the display string here
-    val displayString = "Stage $literalScore"
+    val displayString = buildAnnotatedString {
+        append("Stage ")
+        append(literalScore)
+    }
 
     MedGuidelinesScaffold(
         topBar = {

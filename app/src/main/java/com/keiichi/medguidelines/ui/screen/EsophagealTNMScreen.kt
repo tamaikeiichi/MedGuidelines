@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
@@ -28,7 +29,10 @@ import com.keiichi.medguidelines.ui.component.TextAndUrl
 fun EsophagealTNMScreen(navController: NavController) {
     var score by remember { mutableStateOf(listOf(0, 0)) }
     var literalScore by remember { mutableStateOf("") }
-    val displayString = "Stage $literalScore"
+    val displayString = buildAnnotatedString {
+        append("Stage ")
+        append(literalScore)
+    }
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(

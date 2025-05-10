@@ -1,6 +1,5 @@
 package com.keiichi.medguidelines.ui.component
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -14,14 +13,18 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MedGuidelinesCard (
     modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.onPrimary,
+    containerColor: Color = MaterialTheme.colorScheme.onPrimary,
+    contentColor: Color = MaterialTheme.colorScheme.primary,
     content: @Composable () -> Unit,
 ){
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
-        colors = CardDefaults.cardColors(color)
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        )
     ){
             content()
 

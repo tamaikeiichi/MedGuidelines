@@ -299,4 +299,15 @@
     <string name="age75Title">Age ≥ 75</string>
     <string name="diabetesMellitusHistoryTitle">Diabetes mellitus history</string>
     <string name="strokeOrTIASymptomsPreviouslyTitle">Stroke or TIA symptoms previously</string>
+    <string name="helte2s2">HELT-E&lt;sub>2&lt;/sub>S&lt;sub>2&lt;/sub></string>
+    <string name="chads2Url">https://pubmed.ncbi.nlm.nih.gov/11401607/</string>
+    <string name="strokeRateWithoutAnticoagulant">Stroke rate without anticoagulant</string>
+    <string name="per100PatientYears">/100 patient-years</string>
+    <string name="chads2">CHADS2</string>
+    <string name="helte2s2Url">https://pubmed.ncbi.nlm.nih.gov/33762526/</string>
+    <string name="elderly">Elderly, Age 75-84 years</string>
+    <string name="lowBmi"><![CDATA[Low BMI (<18.5 kg/m<sup>2</sup>)]]></string>
+    <string name="typeOfAf">Type of AF (persistent/permanent)</string>
+    <string name="extremeElderly"><![CDATA[Extreme Elderly, Age >85 years]]></string>
+    <string name="previousStroke">Previous Stroke</string>
 </resources>
