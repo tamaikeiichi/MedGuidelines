@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.keiichi.medguidelines.R
 
@@ -44,9 +45,8 @@ fun RadioButtonAndExpand(
     title: Int,
     titleNote: Int,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
-    appendixLabel: (() -> Unit)? = null
+    appendixLabel: @Composable (() -> Unit)? = null
 ) {
-    //var selectedOption by rememberSaveable { mutableStateOf(radioOptions.first()) }
     Column() {
         var expanded by remember { mutableStateOf(false) }
         val cardModifier = Modifier
@@ -122,7 +122,7 @@ fun RadioButtonAndExpand(
             ) {
                 RadioButton(
                     selected = (text == selectedOption),
-                    onClick = null // null recommended for accessibility with screenreaders
+                    onClick = null
                 )
                 Text(
                     text = stringResource(id = text),
@@ -135,3 +135,13 @@ fun RadioButtonAndExpand(
     }
 }
 
+@Preview
+@Composable
+fun RadioButtonAndExpandPreview(
+    radioOptions: List<Int> = listOf(1, 2, 3),
+    selectedOption: Int = 1,
+    onOptionSelected: (selectedOption: Int) -> Unit = {},
+    title: Int = R.string.congestiveHearFaiLureHistoryTitle,
+    titleNote: Int = R.string.space
+
+) {}

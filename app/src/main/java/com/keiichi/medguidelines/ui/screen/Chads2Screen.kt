@@ -1,6 +1,7 @@
 package com.keiichi.medguidelines.ui.screen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,6 +25,7 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
 import com.keiichi.medguidelines.ui.component.Dimensions
+import com.keiichi.medguidelines.ui.component.FactorAlerts
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
@@ -40,46 +42,39 @@ data class TotalScore(
 @Composable
 fun Chads2Screen(navController: NavController) {
     var totalScore: TotalScore by remember { mutableStateOf(TotalScore(0, 0)) }
-    var chads2TotalScore by remember { mutableIntStateOf(0) }
-    var helte2s2TotalScore by remember { mutableIntStateOf(0) }
-
     var chads2StrokeRate by remember { mutableStateOf("") }
     var helte2s2StrokeRate by remember { mutableStateOf("") }
     val chads2Result = buildAnnotatedString {
-        append("CHADS2: ")
+        append("CHADS2 (")
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
             append(totalScore.chads2Score.toString())
         }
-        append(". ")
+        append(") ")
         append(parseStyledString(R.string.strokeRateWithoutAnticoagulant))
         append(" ")
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
             append(chads2StrokeRate.toString())
         }
-        append(" ")
         append(parseStyledString(R.string.per100PatientYears))
-        append(".")
     }
     val helte2s2Result = buildAnnotatedString {
         append(parseStyledString(R.string.helte2s2))
-        append(": ")
+        append(" (")
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
             append(totalScore.helte2s2Score.toString())
         }
-        append(". ")
+        append(") ")
         append(parseStyledString(R.string.strokeRateWithoutAnticoagulant))
         append(" ")
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
             append(helte2s2StrokeRate)
         }
-        append(" ")
         append(parseStyledString(R.string.per100PatientYears))
-        append(".")
     }
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
-                title = R.string.chads2Title,
+                title = R.string.chads2AndHelte2s2Title,
                 navController = navController,
                 references = listOf(
                     TextAndUrl(R.string.chads2, R.string.chads2Url),
@@ -87,9 +82,34 @@ fun Chads2Screen(navController: NavController) {
                 )
             )
         },
-//        bottomBar = {
-//            ScoreBottomAppBar(displayText = chads2Result)
-//        }
+        bottomBar = {
+            ScoreBottomAppBar(displayText =
+                buildAnnotatedString {
+                    append("CHADS2 (")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(totalScore.chads2Score.toString())
+                    }
+                    append(") ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(chads2StrokeRate.toString())
+                    }
+                    append("%")
+                    append(parseStyledString(R.string.perYear))
+                    append("\n")
+                    append(parseStyledString(R.string.helte2s2))
+                    append(" (")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(totalScore.helte2s2Score.toString())
+                    }
+                    append(") ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(helte2s2StrokeRate)
+                    }
+                    append("%")
+                    append(parseStyledString(R.string.perYear))
+
+                })
+        }
     ) { innerPadding ->
         Column(
             Modifier
@@ -142,75 +162,123 @@ fun Chads2Screen(navController: NavController) {
 
 @Composable
 private fun totalScore(): TotalScore {
-    var scoreI by remember{mutableIntStateOf(0)}
-    val scoreA = buttonAndScore(
+    var scoreAge85 by remember{mutableIntStateOf(0)}
+//    FactorAlerts(
+//        text = R.string.chads2,
+//        factor = 1.0)
+    val scoreCongestiveHeartFailure =
+        buttonAndScore(
         noYes,
         R.string.congestiveHearFaiLureHistoryTitle,
+        R.string.space,
+            appendixLabel = {FactorAlerts(
+                text = R.string.chads2,
+                factor = 1.0
+            )}
+    )
+    val scoreHypertension = buttonAndScore(
+        noYes,
+        R.string.hepertensionHistoryTitle,
+        R.string.space,
+
+                appendixLabel = {
+            Row(){
+                FactorAlerts(
+                    text = R.string.chads2,
+                    factor = 1.0
+                )
+                FactorAlerts(
+                    text = R.string.helte2s2,
+                    factor = 1.0
+                )
+            }
+        }
+    )
+    val scoreAge75 = buttonAndScore(
+        noYes,
+        R.string.age75Title,
+        R.string.space,
+
+        appendixLabel = {
+            Row(){
+                FactorAlerts(
+                    text = R.string.chads2,
+                    factor = 1.0
+                )
+                FactorAlerts(
+                    text = R.string.helte2s2,
+                    factor = 1.0
+                )
+            }
+        }
+    )
+    if(scoreAge75 == 1) {
+        Column(
+            modifier = Modifier.padding(start = 20.dp)
+        ) {
+            scoreAge85 = buttonAndScore(
+                noYes,
+                R.string.extremeElderly,
+                R.string.space,
+                appendixLabel = {
+                    FactorAlerts(
+                        text = R.string.helte2s2,
+                        factor = 1.0
+                    )
+                }
+            )
+        }
+    }
+    val scoreDiabetes = buttonAndScore(
+        noYes,
+        R.string.diabetesMellitusHistoryTitle,
         R.string.space,
         appendixLabel = {FactorAlerts(
             text = R.string.chads2,
             factor = 1.0
         )}
     )
-    val scoreB = buttonAndScore(
-        noYes,
-        R.string.hepertensionHistoryTitle,
-        R.string.space
-    )
-    val scoreC = buttonAndScore(
-        noYes,
-        R.string.age75Title,
-        R.string.space
-    )
-    if(scoreC == 1) {
-        Column(
-            modifier = Modifier.padding(start = 20.dp)
-        ) {
-            scoreI = buttonAndScore(
-                noYes,
-                R.string.extremeElderly,
-                R.string.space
-            )
-        }
-    }
-    val scoreD = buttonAndScore(
-        noYes,
-        R.string.diabetesMellitusHistoryTitle,
-        R.string.space
-    )
-    val scoreE = buttonAndScore(
+    val scoreStroke = buttonAndScore(
         noYes,
         R.string.strokeOrTIASymptomsPreviouslyTitle,
-        R.string.space
+        R.string.space ,       appendixLabel = {
+            Row(){
+                FactorAlerts(
+                    text = R.string.chads2,
+                    factor = 1.0
+                )
+                FactorAlerts(
+                    text = R.string.helte2s2,
+                    factor = 1.0
+                )
+            }
+        }
     )
-    val scoreF = buttonAndScore(
-        noYes,
-        R.string.elderly,
-        R.string.space
-    )
-    val scoreG = buttonAndScore(
+    val scoreLowBmi = buttonAndScore(
         noYes,
         R.string.lowBmi,
-        R.string.space
+        R.string.space,
+        appendixLabel = {
+            FactorAlerts(
+                text = R.string.helte2s2,
+                factor = 1.0
+            )
+        }
     )
-    val scoreH = buttonAndScore(
+    val scoreAf = buttonAndScore(
         noYes,
         R.string.typeOfAf,
-        R.string.space
+        R.string.space,
+        appendixLabel = {
+            FactorAlerts(
+                text = R.string.helte2s2,
+                factor = 1.0
+            )
+        }
     )
-//    val scoreI = buttonAndScore(
-//        noYes,
-//        R.string.extremeElderly,
-//        R.string.space
-//    )
-//    val scoreJ = buttonAndScore(
-//        noYes,
-//        R.string.previousStroke,
-//        R.string.space
-//    )
     val totalScore: TotalScore = TotalScore(
-        chads2Score = scoreA + scoreB + scoreC + scoreD + (scoreE *2),
-        helte2s2Score = scoreB + scoreF + scoreG + scoreH + scoreC + (scoreI * 2) + (scoreE * 2)
+        chads2Score = scoreCongestiveHeartFailure + scoreHypertension + scoreAge75 + scoreDiabetes + (scoreStroke * 2),
+        helte2s2Score = scoreHypertension + scoreLowBmi + scoreAf + scoreAge75 + (scoreAge85 * 2) + (scoreStroke * 2)
     )
     return totalScore
 }

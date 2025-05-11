@@ -293,7 +293,7 @@
     <string name="NfactorTitleNoteIntrahepaticCholangiocarcinoma">N0 No regional lymph node metastasis N1 Regional lymph node metastasis</string>
     <string name="MfactorTitleNoteIntrahepaticCholangiocarcinoma">M0 No distant metastasis M1 Distant metastasis</string>
     <string name="prognosticFactor">Prognostic Factors</string>
-    <string name="chads2Title">CHADS2 Score</string>
+    <string name="chads2AndHelte2s2Title">CHADS2/HELT-E&lt;sub>2&lt;/sub>S&lt;sub>2&lt;/sub> Score</string>
     <string name="congestiveHearFaiLureHistoryTitle">Congestive heart failure history</string>
     <string name="hepertensionHistoryTitle">Hypertension history</string>
     <string name="age75Title">Age ≥ 75</string>
@@ -310,4 +310,5 @@
     <string name="typeOfAf">Type of AF (persistent/permanent)</string>
     <string name="extremeElderly">Extreme Elderly, Age ≥ 85 years</string>
     <string name="previousStroke">Previous Stroke</string>
+    <string name="perYear">/year</string>
 </resources>

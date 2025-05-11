@@ -1,9 +1,6 @@
 package com.keiichi.medguidelines.ui.screen
 
 import android.content.Context
-import android.content.SharedPreferences
-import android.os.Bundle
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
@@ -13,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,15 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getString
-import androidx.fragment.app.add
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.ActionType
 import com.keiichi.medguidelines.data.ListItemData
@@ -47,8 +38,6 @@ import com.keiichi.medguidelines.ui.component.SearchBar
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.collections.addAll
-import kotlin.collections.remove
 import kotlin.collections.toMutableList
 
 fun getStringFromResourceId(context: Context, resourceId: Int): String {
@@ -77,7 +66,7 @@ val itemsList = listOf(
     ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM),
     ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
     ListItemData(R.string.intrahepaticCholangiocarcinomaTNMTitle, ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM),
-    ListItemData(R.string.chads2Title, ActionType.NAVIGATE_TO_CHADS2),
+    ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2),
 )
 
 @Composable

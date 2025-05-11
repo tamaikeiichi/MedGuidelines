@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
 import com.keiichi.medguidelines.ui.component.Dimensions
+import com.keiichi.medguidelines.ui.component.FactorAlerts
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
@@ -406,38 +407,7 @@ fun calculateElfScore(
     return score
 }
 
-@Composable
-fun FactorAlerts(
-    text: Int,
-    factor: Double
-) {
-    val color = if (factor != 0.0) {
-        MaterialTheme.colorScheme.onSecondary
-    } else {
-        MaterialTheme.colorScheme.onError
-    }
-    Surface(
-        color = color, // Set the background color to white
-        shadowElevation = 2.dp,
-        shape = RoundedCornerShape(10.dp),
-        modifier = Modifier
-            .padding(4.dp) // Optional: Add padding around the text
-    ) {
-        if (factor != 0.0) {
-            Text(
-                text = stringResource(text),
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(2.dp)
-            )
-        } else {
-            Text(
-                text = stringResource(text),
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(2.dp)
-            )
-        }
-    }
-}
+
 
 @Composable
 fun PopupClickable(text: String, onClick: () -> Unit) {

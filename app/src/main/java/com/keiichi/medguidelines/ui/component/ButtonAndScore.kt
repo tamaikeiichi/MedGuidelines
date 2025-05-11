@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import com.keiichi.medguidelines.R
 
 @Composable
 fun buttonAndScore(
@@ -12,7 +14,7 @@ fun buttonAndScore(
     title: Int,
     titleNote: Int,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
-    appendixLabel: @Composable (() -> Unit)? = null
+    appendixLabel: @Composable () -> Unit = {}
 ): Int {
     val radioOptions: List<Int> = factor
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
@@ -20,9 +22,17 @@ fun buttonAndScore(
         factor,
         selectedOption,
         onOptionSelected, title, titleNote, cardColor,
-        appendixLabel= {appendixLabel} //as (() -> Unit)?
+        appendixLabel= appendixLabel
         )
     val score: Int =
         radioOptions.indexOf(selectedOption).coerceAtLeast(0)
     return score
 }
+
+@Preview
+@Composable
+fun ButtonAndScorePreview(
+    factor: List<Int> = listOf(1, 2, 3),
+    title: Int = R.string.congestiveHearFaiLureHistoryTitle,
+    titleNote: Int = R.string.space
+) {}
