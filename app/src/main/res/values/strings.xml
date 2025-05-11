@@ -311,4 +311,7 @@
     <string name="extremeElderly">Extreme Elderly, Age ≥ 85 years</string>
     <string name="previousStroke">Previous Stroke</string>
     <string name="perYear">/year</string>
+    <string name="manegementAntithromboticsForEndoscopy">Management of antithrombotic agents for endoscopic procedures</string>
+    <string name="antithromboticsUrl">https://pubmed.ncbi.nlm.nih.gov/34362780/</string>
+    <string name="BsgAndESGE">BSG and ESGE</string>
 </resources>
