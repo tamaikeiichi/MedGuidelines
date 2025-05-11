@@ -150,10 +150,10 @@ fun Chads2Screen(navController: NavController) {
                 containerColor = MaterialTheme.colorScheme.onError,
                 contentColor = MaterialTheme.colorScheme.error
             ) {
-                    Text(
-                        text = helte2s2Result,
-                        modifier = Modifier.padding(Dimensions.textPadding)
-                    )
+                Text(
+                    text = helte2s2Result,
+                    modifier = Modifier.padding(Dimensions.textPadding)
+                )
                 //}
             }
         }
@@ -168,20 +168,19 @@ private fun totalScore(): TotalScore {
 //        factor = 1.0)
     val scoreCongestiveHeartFailure =
         buttonAndScore(
-        noYes,
-        R.string.congestiveHearFaiLureHistoryTitle,
-        R.string.space,
+            noYes,
+            R.string.congestiveHearFaiLureHistoryTitle,
+            R.string.space,
             appendixLabel = {FactorAlerts(
                 text = R.string.chads2,
                 factor = 1.0
             )}
-    )
+        )
     val scoreHypertension = buttonAndScore(
         noYes,
         R.string.hepertensionHistoryTitle,
         R.string.space,
-
-                appendixLabel = {
+        appendixLabel = {
             Row(){
                 FactorAlerts(
                     text = R.string.chads2,
@@ -198,7 +197,6 @@ private fun totalScore(): TotalScore {
         noYes,
         R.string.age75Title,
         R.string.space,
-
         appendixLabel = {
             Row(){
                 FactorAlerts(
@@ -282,7 +280,6 @@ private fun totalScore(): TotalScore {
     )
     return totalScore
 }
-
 
 @Preview
 @Composable

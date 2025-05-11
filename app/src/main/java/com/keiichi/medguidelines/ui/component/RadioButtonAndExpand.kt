@@ -47,21 +47,21 @@ fun RadioButtonAndExpand(
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
     appendixLabel: @Composable (() -> Unit)? = null
 ) {
-    Column() {
-        var expanded by remember { mutableStateOf(false) }
-        val cardModifier = Modifier
-            .padding(vertical = 4.dp, horizontal = 4.dp)
-            .then(
-                if (titleNote != R.string.space) {
-                    Modifier.clickable { expanded = !expanded }
-                } else {
-                    Modifier
-                }
-            )
-        Card(
-            modifier = cardModifier,
-            colors = CardDefaults.cardColors(cardColor)
-        ) {
+    var expanded by remember { mutableStateOf(false) }
+    val cardModifier = Modifier
+        .padding(Dimensions.cardPadding)
+        .then(
+            if (titleNote != R.string.space) {
+                Modifier.clickable { expanded = !expanded }
+            } else {
+                Modifier
+            }
+        )
+    Card(
+        modifier = cardModifier,
+        colors = CardDefaults.cardColors(cardColor)
+    ) {
+        Column() {
             Row(
                 modifier = Modifier
                     .padding(2.dp)
@@ -86,7 +86,7 @@ fun RadioButtonAndExpand(
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
-                    appendixLabel?.invoke()
+
                 }
                 if (titleNote != R.string.space) {
                     IconButton(onClick = { expanded = !expanded }) {
@@ -101,37 +101,39 @@ fun RadioButtonAndExpand(
             }
         }
 
-    }
-    // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
-    FlowRow(
-        Modifier
-            .selectableGroup()
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start
-    ) {
-        radioOptions.forEach { text ->
-            Row(
-                Modifier//.fillMaxWidth()
-                    .selectable(
+
+        // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
+        FlowRow(
+            Modifier
+                .selectableGroup()
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            radioOptions.forEach { text ->
+                Row(
+                    Modifier//.fillMaxWidth()
+                        .selectable(
+                            selected = (text == selectedOption),
+                            onClick = { onOptionSelected(text) },
+                            role = Role.RadioButton
+                        )
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
                         selected = (text == selectedOption),
-                        onClick = { onOptionSelected(text) },
-                        role = Role.RadioButton
+                        onClick = null
                     )
-                    .padding(horizontal = 4.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RadioButton(
-                    selected = (text == selectedOption),
-                    onClick = null
-                )
-                Text(
-                    text = stringResource(id = text),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(start = 4.dp),
-                    softWrap = true,
-                )
+                    Text(
+                        text = stringResource(id = text),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(start = 4.dp),
+                        softWrap = true,
+                    )
+                }
             }
         }
+        appendixLabel?.invoke()
     }
 }
 
