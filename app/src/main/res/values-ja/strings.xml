@@ -170,7 +170,7 @@
     <string name="TfactorTitleNoteIntrahepaticCholangiocarcinoma">&lt;b>Tis&lt;/b> 上皮内癌（胆管内腫瘍）\n&lt;b>T1a&lt;/b> 血管侵襲を伴わず、最大径が5cm以下の単発腫瘍\n&lt;b>T1b&lt;/b> 血管侵襲を伴わず、最大径が5cmをこえる単発腫瘍 \n&lt;b>T2&lt;/b> 肝内血管侵襲を伴う単発腫瘍、または血管侵襲の有無に関係なく多発腫瘍\n&lt;b>T3&lt;/b> 臓側腹膜を貫通する腫瘍\n&lt;b>T4&lt;/b> 直接的な肝浸潤により局所的肝外構造に浸潤する腫瘍</string>
     <string name="NfactorTitleNoteIntrahepaticCholangiocarcinoma">N0 リンパ節転移を認めない\n&lt;b>M1&lt;/b> 所属リンパ節転移を認める</string>
     <string name="MfactorTitleNoteIntrahepaticCholangiocarcinoma">M0  遠隔転移なし\n&lt;b>M1&lt;/b> 遠隔転移あり</string>
-    <string name="previousStroke">脳卒中、TIAの既往</string>
+    <string name="previousStroke">脳卒中の既往</string>
     <string name="elderly">年齢 75-84歳</string>
     <string name="lowBmi">BMI (&lt;18.5 kg/m<sup>2</sup>)</string>
     <string name="typeOfAf">持続性／永続性心房細動</string>
@@ -178,6 +178,8 @@
     <string name="congestiveHearFaiLureHistoryTitle">うっ血性心不全の既往</string>
     <string name="hepertensionHistoryTitle">高血圧症の既往</string>
     <string name="age75Title">75歳以上</string>
-    <string name="diabetesMellitusHistoryTitle">Diabetes mellitus history</string>
+    <string name="diabetesMellitusHistoryTitle">糖尿病の既往</string>
     <string name="prognosticFactor">予後因子</string>
+    <string name="strokeOrTIASymptomsPreviouslyTitle">脳卒中、TIAの既往</string>
+
 </resources>
