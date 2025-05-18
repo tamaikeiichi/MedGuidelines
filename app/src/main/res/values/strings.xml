@@ -306,7 +306,7 @@
     <string name="chads2">CHADS2</string>
     <string name="helte2s2Url">https://pubmed.ncbi.nlm.nih.gov/33762526/</string>
     <string name="elderly">Elderly, Age 75-84 years</string>
-    <string name="lowBmi"><![CDATA[Low BMI (<18.5 kg/m<sup>2</sup>)]]></string>
+    <string name="lowBmi">Low BMI (&lt;18.5 kg/m<sup>2</sup>)</string>
     <string name="typeOfAf">Type of AF (persistent/permanent)</string>
     <string name="extremeElderly">Extreme Elderly, Age ≥ 85 years</string>
     <string name="previousStroke">Previous Stroke</string>
