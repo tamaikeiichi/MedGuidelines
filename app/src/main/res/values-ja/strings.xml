@@ -181,5 +181,6 @@
     <string name="diabetesMellitusHistoryTitle">糖尿病の既往</string>
     <string name="prognosticFactor">予後因子</string>
     <string name="strokeOrTIASymptomsPreviouslyTitle">脳卒中、TIAの既往</string>
+    <string name="bCellDysfunction">β細胞機能不全</string>
 
 </resources>

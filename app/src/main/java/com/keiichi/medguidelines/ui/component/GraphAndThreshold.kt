@@ -307,44 +307,49 @@ fun GraphAndThreshold(
                     style = TextStyle(fontSize = 10.sp, color = Color.Gray)
                 )
             }
-            rotate(
-                degrees = -90F,
-                pivot = Offset(
-                    x = (((secondThreshold - minValue)
-                            / (maxValue - minValue)) * size.width), y = (size.height / 2)
-                )
-            ) {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = secondThreshold.toString(),
-                    topLeft = Offset(
-                        x = (((secondThreshold - minValue) / (maxValue - minValue)) * size.width)
-                                + (textMeasurer.measure(text = secondThreshold.toString()).size.height) / 4,
-                        y = (size.height / 2)
-                                - (textMeasurer.measure(text = secondThreshold.toString()).size.height / 2)
-                    ),
-                    style = TextStyle(fontSize = 10.sp, color = Color.Gray)
-                )
+            if (secondThreshold != 0F){
+                rotate(
+                    degrees = -90F,
+                    pivot = Offset(
+                        x = (((secondThreshold - minValue)
+                                / (maxValue - minValue)) * size.width), y = (size.height / 2)
+                    )
+                ) {
+                    drawText(
+                        textMeasurer = textMeasurer,
+                        text = secondThreshold.toString(),
+                        topLeft = Offset(
+                            x = (((secondThreshold - minValue) / (maxValue - minValue)) * size.width)
+                                    + (textMeasurer.measure(text = secondThreshold.toString()).size.height) / 4,
+                            y = (size.height / 2)
+                                    - (textMeasurer.measure(text = secondThreshold.toString()).size.height / 2)
+                        ),
+                        style = TextStyle(fontSize = 10.sp, color = Color.Gray)
+                    )
+                }
             }
-            rotate(
-                degrees = -90F,
-                pivot = Offset(
-                    x = (((thirdThreshold - minValue)
-                            / (maxValue - minValue)) * size.width), y = (size.height / 2)
-                )
-            ) {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = thirdThreshold.toString(),
-                    topLeft = Offset(
-                        x = (((thirdThreshold - minValue) / (maxValue - minValue)) * size.width)
-                                + (textMeasurer.measure(text = thirdThreshold.toString()).size.height) / 4,
-                        y = (size.height / 2)
-                                - (textMeasurer.measure(text = thirdThreshold.toString()).size.height / 2)
-                    ),
-                    style = TextStyle(fontSize = 10.sp, color = Color.Gray)
-                )
+            if (thirdThreshold != 0F){
+                rotate(
+                    degrees = -90F,
+                    pivot = Offset(
+                        x = (((thirdThreshold - minValue)
+                                / (maxValue - minValue)) * size.width), y = (size.height / 2)
+                    )
+                ) {
+                    drawText(
+                        textMeasurer = textMeasurer,
+                        text = thirdThreshold.toString(),
+                        topLeft = Offset(
+                            x = (((thirdThreshold - minValue) / (maxValue - minValue)) * size.width)
+                                    + (textMeasurer.measure(text = thirdThreshold.toString()).size.height) / 4,
+                            y = (size.height / 2)
+                                    - (textMeasurer.measure(text = thirdThreshold.toString()).size.height / 2)
+                        ),
+                        style = TextStyle(fontSize = 10.sp, color = Color.Gray)
+                    )
+                }
             }
+
         }
     }
     if (thirdLabelTapped) {

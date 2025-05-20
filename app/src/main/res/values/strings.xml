@@ -314,4 +314,9 @@
     <string name="manegementAntithromboticsForEndoscopy">Management of antithrombotic agents for endoscopic procedures</string>
     <string name="antithromboticsUrl">https://pubmed.ncbi.nlm.nih.gov/34362780/</string>
     <string name="BsgAndESGE">BSG and ESGE</string>
+    <string name="bCellDysfunction">β-cell dysfunction</string>
+    <string name="homab">HOMA-β</string>
+    <string name="present">present</string>
+    <string name="absent">absent</string>
+    <string name="homairhomabetaTitle">HOMA-IR/HOMA-β</string>
 </resources>

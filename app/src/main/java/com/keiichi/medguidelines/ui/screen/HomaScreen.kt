@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,16 +41,36 @@ import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 
+data class HomaScore(
+    val ir: Double,
+    val beta: Double
+)
+
+data class HomaGrade(
+    var ir: String,
+    var beta: String
+)
+
 @Composable
 fun HomaIRScreen(navController: NavController) {
-    var grade by remember { mutableStateOf("") }
-    var score by remember { mutableDoubleStateOf(0.0) }
-    var scoreRound by remember { mutableDoubleStateOf(0.0) }
+    var grade by remember { mutableStateOf(
+        HomaGrade(
+            ir = "",
+            beta = ""
+        )
+    ) }
+    var score by remember { mutableStateOf(
+        HomaScore(ir = 0.0, beta = 0.0)
+    )
+    }
+    var scoreRound by remember { mutableStateOf(
+        HomaScore(ir = 0.0, beta = 0.0)
+    )}
     val focusManager = LocalFocusManager.current
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
-                title = R.string.homairTitle,
+                title = R.string.homairhomabetaTitle,
                 navController = navController,
                 references = listOf(
                     TextAndUrl(R.string.space, R.string.space)
@@ -60,7 +79,6 @@ fun HomaIRScreen(navController: NavController) {
         },
         bottomBar = {
             ResultBottomAppBar {
-
                 Text(
                     buildAnnotatedString {
                         append(stringResource(R.string.insulinResistance))
@@ -68,9 +86,17 @@ fun HomaIRScreen(navController: NavController) {
                         withStyle(
                             style = SpanStyle(fontWeight = FontWeight.Bold)
                         ) {
-                            append(" $grade ")
+                            append(" ${grade.ir} ")
                         }
-                        append("HOMA-IR=$scoreRound")
+                        append("\n")
+                        append(stringResource(R.string.bCellDysfunction))
+                        append(" ")
+                        withStyle(
+                            style = SpanStyle(fontWeight = FontWeight.Bold)
+                        ) {
+                            append(" ${grade.beta} ")
+                        }
+                        //append("HOMA-IR=$scoreRound")
                     },
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center,
@@ -96,18 +122,21 @@ fun HomaIRScreen(navController: NavController) {
             state = rememberLazyListState()
         ) {
             item {
-                score = homaIRInput()
-                grade = when {
-                    score <= 1.6 -> stringResource(R.string.absence)
-                    score < 2.5 -> stringResource(R.string.boaderline)
+                score = homaInput()
+                grade.ir = when {
+                    score.ir <= 1.6 -> stringResource(R.string.absence)
+                    score.ir < 2.5 -> stringResource(R.string.boaderline)
                     else -> stringResource(R.string.presence)
                 }
-                scoreRound = Math.round(score * 100.0) / 100.0
+                grade.beta = when {
+                    score.beta < 30 -> stringResource(R.string.presence)
+                    else -> stringResource(R.string.absence)
+                }
+                scoreRound = HomaScore(
+                    ir = Math.round(score.ir * 100.0) / 100.0,
+                    beta = Math.round(score.beta * 100.0) / 100.0
+                )
                 MedGuidelinesCard (
-//                    modifier = Modifier
-//                        .padding(4.dp)
-//                        .fillMaxWidth()
-
                 ) {
                     Text(
                         text = stringResource(R.string.homairTitle),
@@ -121,7 +150,23 @@ fun HomaIRScreen(navController: NavController) {
                         firstLabel = stringResource(R.string.normal),
                         secondLabel = stringResource(R.string.space),
                         thirdLabel = stringResource(R.string.insulinResistance),
-                        score = scoreRound
+                        score = scoreRound.ir
+                    )
+                }
+                MedGuidelinesCard {
+                    Text(
+                        text = stringResource(R.string.homab),
+                        modifier = Modifier.textModifier()
+                    )
+                    GraphAndThreshold(
+                        maxValue = 100F,
+                        minValue = -10F,
+                        firstThreshold = 30F,
+                        //secondThreshold = -10F,
+                        firstLabel = stringResource(R.string.bCellDysfunction),
+                        secondLabel = stringResource(R.string.normal),
+                        //thirdLabel = stringResource(R.string.space),
+                        score = scoreRound.beta
                     )
                 }
             }
@@ -131,18 +176,13 @@ fun HomaIRScreen(navController: NavController) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun homaIRInput(): Double {
+fun homaInput(): HomaScore {
     val insulin = remember { mutableDoubleStateOf(5.0) }
-    val glucose = remember { mutableDoubleStateOf(100.0) }
+    val glucose = remember { mutableDoubleStateOf(90.0) }
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
 
-
     MedGuidelinesCard (
-//        modifier = Modifier
-//            .padding(4.dp)
-//            .fillMaxWidth()
-
     ) {
         FlowRow(
             modifier = Modifier
@@ -169,9 +209,11 @@ fun homaIRInput(): Double {
                 changedUnit = R.string.mmoll
             )
         }
-
     }
-    val score = insulin.doubleValue * glucose.doubleValue / 405
+    val score = HomaScore(
+        ir = insulin.doubleValue * glucose.doubleValue / 405,
+        beta = 360 * insulin.doubleValue / (glucose.doubleValue - 63)
+    )
     return score
 }
 

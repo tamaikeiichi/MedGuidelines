@@ -62,7 +62,7 @@ val itemsList = listOf(
         R.string.liverFibrosisScoreSystemTitle,
         ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM
     ),
-    ListItemData(R.string.homairTitle, ActionType.NAVIGATE_TO_HOMAIR),
+    ListItemData(R.string.homairhomabetaTitle, ActionType.NAVIGATE_TO_HOMAIR),
     ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM),
     ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
     ListItemData(R.string.intrahepaticCholangiocarcinomaTNMTitle, ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM),
