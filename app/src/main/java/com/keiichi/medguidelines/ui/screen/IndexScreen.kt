@@ -67,6 +67,8 @@ val itemsList = listOf(
     ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
     ListItemData(R.string.intrahepaticCholangiocarcinomaTNMTitle, ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM),
     ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2),
+    ListItemData(R.string.glasgowComaScaleTitle, ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE),
+
 )
 
 @Composable
@@ -87,6 +89,7 @@ fun IndexScreen(
     navigateToHccTNM: () -> Unit,
     navigateToIntrahepaticCholangiocarcinomaTNM: () -> Unit,
     navigateToCHADS2: () -> Unit,
+    navigateToGlasgowComaScale: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -230,6 +233,7 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_HCC_TNM -> navigateToHccTNM()
                             ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM -> navigateToIntrahepaticCholangiocarcinomaTNM()
                             ActionType.NAVIGATE_TO_CHADS2 -> navigateToCHADS2()
+                            ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE -> navigateToGlasgowComaScale()
                         }
                     }
                 )
@@ -258,5 +262,6 @@ fun IndexScreenPreview() {
         navigateToHccTNM = {},
         navigateToIntrahepaticCholangiocarcinomaTNM = {},
         navigateToCHADS2 = {},
+        navigateToGlasgowComaScale = {}
     )
 }

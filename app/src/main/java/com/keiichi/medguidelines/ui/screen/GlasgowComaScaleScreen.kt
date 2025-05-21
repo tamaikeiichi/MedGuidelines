@@ -8,11 +8,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -26,9 +31,15 @@ import com.keiichi.medguidelines.data.motorGrade
 import com.keiichi.medguidelines.data.verbalGrade
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 
+data class glasgowComaScale(
+    val e: Int,
+    val v: Int,
+    val m: Int
+)
+
 @Composable
 fun GlasgowComaScaleScreen(navController: NavController) {
-    var totalScore by remember { mutableIntStateOf(0) }
+    var score by remember { mutableStateOf(glasgowComaScale(0, 0, 0)) }
 
     MedGuidelinesScaffold(
         topBar = {
@@ -43,7 +54,24 @@ fun GlasgowComaScaleScreen(navController: NavController) {
         bottomBar = {
             ResultBottomAppBar {
                 Text(
-                    text = "Glasgow Coma Scale ($totalScore)",
+                    text = buildAnnotatedString {
+                        append("E")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(score.e.toString())
+                        }
+                        append("V")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(score.v.toString())
+                        }
+                        append("M")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(score.m.toString())
+                        }
+                        append(", Total ")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append((score.e + score.v + score.m).toString())
+                        }
+                    },
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center
                 )
@@ -55,29 +83,52 @@ fun GlasgowComaScaleScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            totalScore = glasgowComaScaleTotalScore()
+            score = glasgowComaScaleScore()
         }
 
 }
 }
 
 @Composable
-fun glasgowComaScaleTotalScore(): Int{
-    val eye = buttonAndScore(
-        factor = eyeGrade,
-        title = R.string.eye,
+fun glasgowComaScaleScore(): glasgowComaScale {
+    val eye = invertNumberHorizontally(
+        number = buttonAndScore(
+            factor = eyeGrade,
+            title = R.string.eye,
+        ) + 1,
+        list = eyeGrade
+    )
+    val verbal = invertNumberHorizontally(
+        number =  buttonAndScore(
+            factor = verbalGrade,
+            title = R.string.verbal,
+        ) + 1,
+        list = verbalGrade
+    )
+    val motor = invertNumberHorizontally(
+        number =  buttonAndScore(
+            factor = motorGrade,
+            title = R.string.motor,
+        ) + 1,
+        list = motorGrade
+    )
+    val score = glasgowComaScale(
+        e = eye,
+        v = verbal,
+        m = motor
+    )
+    return score
+    Text(text = motorGrade.size.toString())
+}
 
-    ) + 1
-    val verbal = buttonAndScore(
-        factor = verbalGrade,
-        title = R.string.verbal,
-    ) + 1
-    val motor = buttonAndScore(
-        factor = motorGrade,
-        title = R.string.motor
-    )+ 1
-    val totalScore = eye + verbal + motor
-    return totalScore
+private fun invertNumberHorizontally(
+    number: Int,
+    list: List<Int>,
+): Int{
+    val maxNumber = list.size.toDouble()
+    val minNumber = 1.0
+    val invertedNumber = ((number - ((maxNumber + minNumber)/2)) * (-1)) + ((maxNumber + minNumber)/2)
+    return invertedNumber.toInt()
 }
 
 @Preview

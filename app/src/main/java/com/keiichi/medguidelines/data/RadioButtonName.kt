@@ -200,25 +200,25 @@ val CTGradePoorContrast = listOf(
 )
 
 val eyeGrade = listOf(
-    R.string.none,
-    R.string.openinresponsetopainappliedtothelimbsorsternum,
+    R.string.openspontaneously,
     R.string.opentoverbalcommand,
-    R.string.openspontaneously
+    R.string.openinresponsetopainappliedtothelimbsorsternum,
+    R.string.none,
 )
 
 val verbalGrade = listOf(
-    R.string.none,
-    R.string.incomprehensiblespeech,
-    R.string.inappropriateanswerstoquestionswordsdiscernible,
+    R.string.oriented,
     R.string.disorientedbutabletoanswerquestions,
-    R.string.oriented
+    R.string.inappropriateanswerstoquestionswordsdiscernible,
+    R.string.incomprehensiblespeech,
+    R.string.none,
 )
 
 val motorGrade = listOf(
-    R.string.none,
-    R.string.respondstopainwithabnormalrigidextensiondecerebrateposture,
-    R.string.respondstopainwithabnormalflexiondecorticateposture,
-    R.string.withdrawsfrompainstimuli,
+    R.string.obeyscommands,
     R.string.respondstopainwithpurposefulmovement,
-    R.string.obeyscommands
+    R.string.withdrawsfrompainstimuli,
+    R.string.respondstopainwithabnormalflexiondecorticateposture,
+    R.string.respondstopainwithabnormalrigidextensiondecerebrateposture,
+    R.string.none,
 )

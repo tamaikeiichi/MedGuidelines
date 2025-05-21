@@ -182,5 +182,19 @@
     <string name="prognosticFactor">予後因子</string>
     <string name="strokeOrTIASymptomsPreviouslyTitle">脳卒中、TIAの既往</string>
     <string name="bCellDysfunction">β細胞機能不全</string>
-
+    <string name="openinresponsetopainappliedtothelimbsorsternum">四肢または胸骨に加えた疼痛刺激に対して開眼</string>
+    <string name="opentoverbalcommand">言語による指示で開眼</string>
+    <string name="openspontaneously">自発的に開眼</string>
+    <string name="eye">開眼</string>
+    <string name="verbal">言語</string>
+    <string name="incomprehensiblespeech">理解不能な発話</string>
+    <string name="inappropriateanswerstoquestionswordsdiscernible">質問に対して不適切な返答；単語は識別可能</string>
+    <string name="disorientedbutabletoanswerquestions">見当識障害があるが，質問に返答できる</string>
+    <string name="oriented">見当識正常</string>
+    <string name="motor">運動</string>
+    <string name="respondstopainwithabnormalrigidextensiondecerebrateposture">疼痛刺激に対して異常な（硬直した）伸展反応（除脳硬直）を示す</string>
+    <string name="respondstopainwithabnormalflexiondecorticateposture">疼痛刺激に対して異常な屈曲反応（除皮質硬直）を示す</string>
+    <string name="withdrawsfrompainstimuli">疼痛刺激から回避する</string>
+    <string name="respondstopainwithpurposefulmovement">疼痛刺激に対して意図的な動きで反応する</string>
+    <string name="obeyscommands">指示に従う</string>
 </resources>

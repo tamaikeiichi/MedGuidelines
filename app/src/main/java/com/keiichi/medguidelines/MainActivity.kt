@@ -37,6 +37,7 @@ import com.keiichi.medguidelines.ui.screen.Chads2Screen
 import com.keiichi.medguidelines.ui.screen.ChildPughScreen
 import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
 import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
+import com.keiichi.medguidelines.ui.screen.GlasgowComaScaleScreen
 import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
 import com.keiichi.medguidelines.ui.screen.HomaIRScreen
 import com.keiichi.medguidelines.ui.screen.IndexScreen
@@ -91,7 +92,10 @@ class MainActivity : ComponentActivity() {
                                                 "IntrahepaticCholangiocarcinomaTNM"
                                             )
                                         },
-                                        navigateToCHADS2 = { controller.navigate("CHADS2") }
+                                        navigateToCHADS2 = { controller.navigate("CHADS2") },
+                                        navigateToGlasgowComaScale = {
+                                            controller.navigate("GlasgowComaScaleScreen")
+                                        }
                                     )
                                 }
                             }
@@ -175,6 +179,11 @@ class MainActivity : ComponentActivity() {
                                     Chads2Screen(controller)
                                 }
                             }
+                            composable("GlasgowComaScaleScreen") {
+                                ChildComposable {
+                                   GlasgowComaScaleScreen(controller)
+                                }
+                            }
                         }
                     }
                 }
@@ -199,31 +208,3 @@ fun ChildComposable(childScreen: @Composable () -> Unit) {
     }
 }
 
-
-//@OptIn(ExperimentalAnimationApi::class)
-//@Composable
-//fun NavGraph(navController: NavHostController) {
-//    AnimatedNavHost(
-//        navController = navController,
-//        startDestination = "IndexScreen",
-//        enterTransition = { fadeIn(animationSpec = tween(700)) },
-//        exitTransition = { fadeOut(animationSpec = tween(700)) },
-//        popEnterTransition = {
-//            fadeIn(animationSpec = tween(700))
-//        },
-//        popExitTransition = {
-//            fadeOut(animationSpec = tween(700))
-//        }
-//    ) {
-//        composable(
-//            route = Screen.IndexScreen.route + "/{key}",
-//            arguments = listOf(navArgument("key") { type = NavType.StringType }),
-//        ) { entry ->
-//            val key = entry.arguments?.getString("key")
-//            IndexScreen(navController = navController, key = key)
-//        }
-//        composable(route = Screen.ChildScreen.route) {
-//            ChildScreen(navController = navController)
-//        }
-//    }
-//}
