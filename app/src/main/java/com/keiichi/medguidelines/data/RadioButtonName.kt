@@ -198,3 +198,27 @@ val CTGradePoorContrast = listOf(
     R.string.lessThanTwoSegments,
     R.string.twoSengemtsOrMore,
 )
+
+val eyeGrade = listOf(
+    R.string.none,
+    R.string.openinresponsetopainappliedtothelimbsorsternum,
+    R.string.opentoverbalcommand,
+    R.string.openspontaneously
+)
+
+val verbalGrade = listOf(
+    R.string.none,
+    R.string.incomprehensiblespeech,
+    R.string.inappropriateanswerstoquestionswordsdiscernible,
+    R.string.disorientedbutabletoanswerquestions,
+    R.string.oriented
+)
+
+val motorGrade = listOf(
+    R.string.none,
+    R.string.respondstopainwithabnormalrigidextensiondecerebrateposture,
+    R.string.respondstopainwithabnormalflexiondecorticateposture,
+    R.string.withdrawsfrompainstimuli,
+    R.string.respondstopainwithpurposefulmovement,
+    R.string.obeyscommands
+)

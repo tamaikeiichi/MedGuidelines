@@ -319,4 +319,20 @@
     <string name="present">present</string>
     <string name="absent">absent</string>
     <string name="homairhomabetaTitle">HOMA-IR/HOMA-β</string>
+    <string name="glasgowComaScaleTitle">Glasgow Coma Scale</string>
+    <string name="openinresponsetopainappliedtothelimbsorsternum">Open in response to pain applied to the limbs or sternum</string>
+    <string name="opentoverbalcommand">Open to verbal command</string>
+    <string name="openspontaneously">Open spontaneously</string>
+    <string name="eye">Eye opening</string>
+    <string name="verbal">Verbal</string>
+    <string name="incomprehensiblespeech">Incomprehensible speech</string>
+    <string name="inappropriateanswerstoquestionswordsdiscernible">Inappropriate answers to questions; words discernible</string>
+    <string name="disorientedbutabletoanswerquestions">Disoriented, but able to answer questions</string>
+    <string name="oriented">Oriented</string>
+    <string name="motor">Motor</string>
+    <string name="respondstopainwithabnormalrigidextensiondecerebrateposture">Responds to pain with abnormal (rigid) extension (decerebrate posture)</string>
+    <string name="respondstopainwithabnormalflexiondecorticateposture">Responds to pain with abnormal flexion (decorticate posture)</string>
+    <string name="withdrawsfrompainstimuli">Withdraws from pain stimuli</string>
+    <string name="respondstopainwithpurposefulmovement">Responds to pain with purposeful movement</string>
+    <string name="obeyscommands">Obeys commands</string>
 </resources>

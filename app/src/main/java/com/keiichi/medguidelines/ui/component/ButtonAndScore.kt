@@ -12,7 +12,7 @@ import com.keiichi.medguidelines.R
 fun buttonAndScore(
     factor: List<Int>,
     title: Int,
-    titleNote: Int,
+    titleNote: Int = R.string.space,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
     appendixLabel: @Composable () -> Unit = {}
 ): Int {
