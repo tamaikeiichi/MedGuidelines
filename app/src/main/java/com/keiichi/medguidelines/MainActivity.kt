@@ -56,8 +56,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             MedGuidelinesTheme {
                 CompositionLocalProvider(LocalAppDimensions provides AppDimensions()) {
-                    // Your main navigation and screen content goes here
-                    // All composables
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.surfaceVariant
