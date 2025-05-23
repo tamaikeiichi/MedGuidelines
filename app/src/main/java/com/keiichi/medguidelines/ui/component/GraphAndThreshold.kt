@@ -1,6 +1,7 @@
 package com.keiichi.medguidelines.ui.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -65,9 +66,22 @@ fun GraphAndThreshold(
         ContextCompat.getDrawable(context, R.drawable.baseline_help_24)
             ?.toBitmap(width = helpImageWidth, height = helpImageHeight)?.asImageBitmap()
 
-    val greenColor = Color(0xFF1BFF0B)
-    val yellowColor = Color(0xFFFFE30B)
-    val redColor = Color(0xFFFF0180)
+    val isDarkTheme = isSystemInDarkTheme() // Call it once
+
+    // Declare variables before the if-else
+    val greenColor: Color
+    val yellowColor: Color
+    val redColor: Color
+
+    if (isDarkTheme) {
+        greenColor = Color(0xFF109A07)
+        yellowColor = Color(0xFF968607)
+        redColor = Color(0xFF8B0045)
+    } else {
+        greenColor = Color(0xFF1BFF0B)
+        yellowColor = Color(0xFFFFE30B)
+        redColor = Color(0xFFFF0180)
+    }
 
     val labelTextStyle = TextStyle(
         color = MaterialTheme.colorScheme.tertiary

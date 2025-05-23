@@ -197,4 +197,5 @@
     <string name="withdrawsfrompainstimuli">疼痛刺激から回避する</string>
     <string name="respondstopainwithpurposefulmovement">疼痛刺激に対して意図的な動きで反応する</string>
     <string name="obeyscommands">指示に従う</string>
+    <string name="fibrosisStage1">線維化 (ステージ1以上)</string>
 </resources>

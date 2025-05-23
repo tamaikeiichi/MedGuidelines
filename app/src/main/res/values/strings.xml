@@ -335,4 +335,8 @@
     <string name="withdrawsfrompainstimuli">Withdraws from pain stimuli</string>
     <string name="respondstopainwithpurposefulmovement">Responds to pain with purposeful movement</string>
     <string name="obeyscommands">Obeys commands</string>
+    <string name="caIndex">CA index</string>
+    <string name="caIndexUrl">https://pubmed.ncbi.nlm.nih.gov/31538241/</string>
+    <string name="type4collagen7S">Type IV collagen 7S</string>
+    <string name="fibrosisStage1">Fibrosis (stage ≥ 1)</string>
 </resources>

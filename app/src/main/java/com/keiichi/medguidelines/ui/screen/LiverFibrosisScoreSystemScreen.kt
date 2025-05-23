@@ -61,7 +61,8 @@ val references = listOf(
     TextAndUrl(R.string.shearWaveElastography, R.string.shearWaveElastographyUrl),
     TextAndUrl(R.string.nafldFibrosisScore, R.string.nafldFibrosisScoreUrl),
     TextAndUrl(R.string.elfScore, R.string.elfScoreUrl),
-    TextAndUrl(R.string.m2bpgi, R.string.m2bpgiUrl)
+    TextAndUrl(R.string.m2bpgi, R.string.m2bpgiUrl),
+    TextAndUrl(R.string.caIndex, R.string.caIndexUrl),
 )
 
 data class Scores(
@@ -70,7 +71,8 @@ data class Scores(
     var swe: Double,
     var nfs: Double,
     var elfScore: Double,
-    var m2bpgi: Double
+    var m2bpgi: Double,
+    var caIndex: Double
 ) {
     fun roundToTwoDecimals() {
         fib4score = roundDouble(fib4score)
@@ -79,17 +81,13 @@ data class Scores(
         nfs = roundDouble(nfs)
         elfScore = roundDouble(elfScore)
     }
-
     private fun roundDouble(value: Double): Double {
         return Math.round(value * 100.0) / 100.0
     }
 }
 
-
-
 fun Modifier.textModifier(): Modifier =
     this.padding(5.dp)
-
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -111,10 +109,11 @@ fun LiverFibrosisScoreSystemScreen(
     val timp1 = remember { mutableDoubleStateOf(0.0) }
     val elfScore = remember { mutableDoubleStateOf(0.0) }
     val m2bpgi = remember { mutableDoubleStateOf(0.0) }
+    val t4c7score = remember { mutableDoubleStateOf(0.0) }
     var allScores by remember {
         mutableStateOf(
             Scores(
-                0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
             )
         )
     }
@@ -182,6 +181,7 @@ fun LiverFibrosisScoreSystemScreen(
                     timp1 = timp1,
                     elfScore = elfScore,
                     m2bpgi = m2bpgi,
+                    t4c7score = t4c7score,
                     //calculatedElfScore = calculatedElfScore
                 )
                 allScores.roundToTwoDecimals()
@@ -370,6 +370,33 @@ fun LiverFibrosisScoreSystemScreen(
                     modifier = Modifier.cardModifier()
                 ) {
                     Text(
+                        text = stringResource(R.string.caIndex),
+                        modifier = Modifier.textModifier()
+                    )
+                    GraphAndThreshold(
+                        maxValue = 15F,
+                        minValue = 0.01F,
+                        firstThreshold = 8.723F,
+                        //secondThreshold = 2.1F,
+                        firstLabel = stringResource(R.string.normal),
+                        secondLabel = stringResource(R.string.fibrosisStage1),
+                        score = allScores.caIndex
+                    )
+                    FlowRow {
+                        FactorAlerts(
+                            text = R.string.ast,
+                            factor = ast.doubleValue
+                        )
+                        FactorAlerts(
+                            text = R.string.type4collagen7S,
+                            factor = t4c7score.doubleValue
+                        )
+                    }
+                }
+                MedGuidelinesCard(
+                    modifier = Modifier.cardModifier()
+                ) {
+                    Text(
                         text = stringResource(R.string.shearWaveElastography),
                         modifier = Modifier.textModifier()
                     )
@@ -406,8 +433,6 @@ fun calculateElfScore(
             0.394 * ln(timp1)
     return score
 }
-
-
 
 @Composable
 fun PopupClickable(text: String, onClick: () -> Unit) {
@@ -455,6 +480,7 @@ fun inputAndCalculate(
     timp1: MutableDoubleState,
     elfScore: MutableDoubleState,
     m2bpgi: MutableDoubleState,
+    t4c7score: MutableDoubleState,
     //calculatedElfScore: Double
 ): Scores {
     MedGuidelinesCard(
@@ -508,6 +534,10 @@ fun inputAndCalculate(
                 label = R.string.m2bpgi, value = m2bpgi,
                 unit = R.string.coi, //changeUnit = false
             )
+            InputValue(
+                label = R.string.type4collagen7S, value = t4c7score,
+                unit = R.string.ngml, //changeUnit = false
+            )
             dmPresence.intValue = buttonAndScore(
                 factor = noYes,
                 title = R.string.dmPresence,
@@ -539,8 +569,16 @@ fun inputAndCalculate(
             0.99 * ast.doubleValue / alt.doubleValue -
             0.013 * platelet.doubleValue -
             0.66 * albumin.doubleValue
+    val caIndex = 1.5 * t4c7score.doubleValue + 0.0264 * ast.doubleValue
     val allScores =
-        Scores(fib4score, apri, swe.doubleValue, nfs, elfScore.doubleValue, m2bpgi.doubleValue)
+        Scores(
+            fib4score,
+            apri,
+            swe.doubleValue,
+            nfs,
+            elfScore.doubleValue,
+            m2bpgi.doubleValue,
+            caIndex)
     //allScores.roundToTwoDecimals()
     return allScores
 }
