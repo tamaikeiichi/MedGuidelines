@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MedGuidelinesCard (
     modifier: Modifier = Modifier,
+        //.cardModifier(),
     containerColor: Color = MaterialTheme.colorScheme.onPrimary,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     content: @Composable () -> Unit,

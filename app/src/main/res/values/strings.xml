@@ -339,4 +339,17 @@
     <string name="caIndexUrl">https://pubmed.ncbi.nlm.nih.gov/31538241/</string>
     <string name="type4collagen7S">Type IV collagen 7S</string>
     <string name="fibrosisStage1">Fibrosis (stage ≥ 1)</string>
+    <string name="disorderOfSerumSodium">Disorder of serum sodium</string>
+    <string name="disorderOfSerumSodiumReference">Hyponatremia</string>
+    <string name="disorderOfSerumSodiumReferenceUrl">https://pubmed.ncbi.nlm.nih.gov/24569125/</string>
+    <string name="sodium"><![CDATA[Na<sup>+</sup>]]></string>
+    <string name="hyponatremia">Hyponatremia</string>
+    <string name="normonatremia">Normonatremia</string>
+    <string name="hypernatremia">Hypernatremia</string>
+    <string name="mOsmKg">mOsm/kg</string>
+    <string name="serumOsmolality">Serum osmolality</string>
+    <string name="lowOsmolality">Low osmolality</string>
+    <string name="IsotonicHyponatraemia">Isotonic hyponatraemia</string>
+    <string name="highOsmolality">High osmolality</string>
+    <string name="HyperglycemiaMannitolAndGlycinByIrrigationFluids">Hyperglycemia  due to uncontrolled diabetes mellitus, mannitol and glycin by irrigation fluids</string>
 </resources>
