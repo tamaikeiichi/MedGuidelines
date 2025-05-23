@@ -374,7 +374,7 @@ fun LiverFibrosisScoreSystemScreen(
                         modifier = Modifier.textModifier()
                     )
                     GraphAndThreshold(
-                        maxValue = 15F,
+                        maxValue = 20F,
                         minValue = 0.01F,
                         firstThreshold = 8.723F,
                         //secondThreshold = 2.1F,
