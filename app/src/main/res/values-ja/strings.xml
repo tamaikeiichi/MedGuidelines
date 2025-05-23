@@ -197,5 +197,10 @@
     <string name="withdrawsfrompainstimuli">疼痛刺激から回避する</string>
     <string name="respondstopainwithpurposefulmovement">疼痛刺激に対して意図的な動きで反応する</string>
     <string name="obeyscommands">指示に従う</string>
+    <string name="type4collagen7S">IV型コラーゲン7S</string>
     <string name="fibrosisStage1">線維化 (ステージ1以上)</string>
+    <string name="caIndex">CAインデックス</string>
+    <string name="perYear">/年</string>
+    <string name="strokeRateWithoutAnticoagulant">抗凝固薬なしの場合の脳卒中発症率</string>
+    <string name="per100PatientYears">/100人年</string>
 </resources>

@@ -293,17 +293,17 @@
     <string name="NfactorTitleNoteIntrahepaticCholangiocarcinoma">N0 No regional lymph node metastasis N1 Regional lymph node metastasis</string>
     <string name="MfactorTitleNoteIntrahepaticCholangiocarcinoma">M0 No distant metastasis M1 Distant metastasis</string>
     <string name="prognosticFactor">Prognostic Factors</string>
-    <string name="chads2AndHelte2s2Title">CHADS2/HELT-E&lt;sub>2&lt;/sub>S&lt;sub>2&lt;/sub> Score</string>
+    <string name="chads2AndHelte2s2Title" translatable="false">CHADS2/HELT-E&lt;sub>2&lt;/sub>S&lt;sub>2&lt;/sub> Score</string>
     <string name="congestiveHearFaiLureHistoryTitle">Congestive heart failure history</string>
     <string name="hepertensionHistoryTitle">Hypertension history</string>
     <string name="age75Title">Age ≥ 75</string>
     <string name="diabetesMellitusHistoryTitle">Diabetes mellitus history</string>
     <string name="strokeOrTIASymptomsPreviouslyTitle">Stroke or TIA symptoms previously</string>
-    <string name="helte2s2">HELT-E&lt;sub>2&lt;/sub>S&lt;sub>2&lt;/sub></string>
-    <string name="chads2Url">https://pubmed.ncbi.nlm.nih.gov/11401607/</string>
+    <string name="helte2s2" translatable="false">HELT-E&lt;sub>2&lt;/sub>S&lt;sub>2&lt;/sub></string>
+    <string name="chads2Url" translatable="false">https://pubmed.ncbi.nlm.nih.gov/11401607/</string>
     <string name="strokeRateWithoutAnticoagulant">Stroke rate without anticoagulant</string>
-    <string name="per100PatientYears">/100 patient-years</string>
-    <string name="chads2">CHADS2</string>
+    <string name="per100PatientYears" translatable="false">/100 patient-years</string>
+    <string name="chads2" translatable="false">CHADS2</string>
     <string name="helte2s2Url">https://pubmed.ncbi.nlm.nih.gov/33762526/</string>
     <string name="elderly">Elderly, Age 75-84 years</string>
     <string name="lowBmi">Low BMI (&lt;18.5 kg/m<sup>2</sup>)</string>
@@ -315,11 +315,11 @@
     <string name="antithromboticsUrl">https://pubmed.ncbi.nlm.nih.gov/34362780/</string>
     <string name="BsgAndESGE">BSG and ESGE</string>
     <string name="bCellDysfunction">β-cell dysfunction</string>
-    <string name="homab">HOMA-β</string>
+    <string name="homab" translatable="false">HOMA-β</string>
     <string name="present">present</string>
     <string name="absent">absent</string>
-    <string name="homairhomabetaTitle">HOMA-IR/HOMA-β</string>
-    <string name="glasgowComaScaleTitle">Glasgow Coma Scale</string>
+    <string name="homairhomabetaTitle" translatable="false">HOMA-IR/HOMA-β</string>
+    <string name="glasgowComaScaleTitle" translatable="false">Glasgow Coma Scale</string>
     <string name="openinresponsetopainappliedtothelimbsorsternum">Open in response to pain applied to the limbs or sternum</string>
     <string name="opentoverbalcommand">Open to verbal command</string>
     <string name="openspontaneously">Open spontaneously</string>
