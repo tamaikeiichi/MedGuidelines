@@ -99,7 +99,8 @@ fun IndexScreen(
     var animationCount by remember { mutableStateOf(0) }
     var hasBeenVisited by rememberSaveable { mutableStateOf(false) }
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    val lazyListState = LazyListState()//rememberLazyListState()
+    //val lazyListState = LazyListState()//rememberLazyListState()
+    val lazyListState = remember(calculation = { LazyListState() })
     val alpha: Float by animateFloatAsState(
         targetValue = if (animateFirstItem) 0.5f else 1f,
         animationSpec = tween(durationMillis = 200), label = ""
@@ -118,26 +119,64 @@ fun IndexScreen(
     }
 
     // Track the item that was clicked for later processing
-    var clickedItem by remember { mutableStateOf<ListItemData?>(null) }
+    //var clickedItem by remember { mutableStateOf<ListItemData?>(null) }
+    var clickedItemForNavigation by remember { mutableStateOf<ListItemData?>(null) } // Renamed for clarity
+
+    // Function to reorder items and save
+    fun updateAndSaveItems(updatedList: List<ListItemData>) {
+        originalItems.clear()
+        originalItems.addAll(updatedList)
+        scope.launch {
+            saveListItemData(context, originalItems.toList() as MutableList<ListItemData>)
+        }
+    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    // This is where we handle the item movement and saving when returning
-                    clickedItem?.let { item ->
-                        val updatedItems = originalItems.toMutableList()
-                        if (updatedItems.remove(item)) {
-                            updatedItems.add(0, item)
-                            scope.launch {
-                                saveListItemData(context, updatedItems)
+                    //clickedItem?.let { item ->
+                    clickedItemForNavigation?.let { item ->
+//                        val updatedItems = originalItems.toMutableList()
+//                        if (updatedItems.remove(item)) {
+//                            updatedItems.add(0, item)
+//                            scope.launch {
+//                                saveListItemData(context, updatedItems)
+//                            }
+//                            // Update the originalItems state to trigger recomposition
+//                            originalItems.clear()
+//                            originalItems.addAll(updatedItems)
+//                        }
+//                        // Clear the clickedItem after processing
+//                        clickedItem = null
+//                    }
+                        val currentList = originalItems.toMutableList()
+                        if (currentList.remove(item)) {
+                            // Only move to top if not a favorite, favorites have their own ordering
+                            if (!item.isFavorite) {
+                                val firstFavoriteIndex = currentList.indexOfFirst { it.isFavorite }
+                                if (firstFavoriteIndex != -1) {
+                                    currentList.add(firstFavoriteIndex, item) // Add below favorites
+                                } else {
+                                    currentList.add(0, item) // Add to top if no favorites
+                                }
+                            } else {
+                                // If it was a favorite, it might have been clicked for navigation.
+                                // Its position within favorites block is already handled.
+                                // We might re-insert it at its original favorite position if needed,
+                                // but for now, if it's a favorite, removing and re-adding at 0 among favorites is fine.
+                                val favorites = currentList.filter { it.isFavorite }.toMutableList()
+                                val nonFavorites = currentList.filterNot { it.isFavorite }
+                                if (favorites.remove(item)) { // Should always be true if it was clicked
+                                    favorites.add(0, item)
+                                }
+                                currentList.clear()
+                                currentList.addAll(favorites)
+                                currentList.addAll(nonFavorites)
                             }
-                            // Update the originalItems state to trigger recomposition
-                            originalItems.clear()
-                            originalItems.addAll(updatedItems)
+                            updateAndSaveItems(currentList)
                         }
-                        // Clear the clickedItem after processing
-                        clickedItem = null
+                        clickedItemForNavigation = null
                     }
 
                     if (hasBeenVisited) {
@@ -178,6 +217,20 @@ fun IndexScreen(
         }
     }
 
+    val displayedItems = remember(searchQuery, originalItems) {
+        val itemsToFilter = originalItems.toList() // Work with a snapshot for filtering
+        val filtered = if (searchQuery.isBlank()) {
+            originalItems
+        } else {
+            originalItems.toList().filter { itemData ->
+                val name = context.getString(itemData.nameResId)
+                name.contains(searchQuery, ignoreCase = true)
+            }
+        }
+        // Sort: Favorites first, then by their original order (or last interaction for non-favorites)
+        filtered//.sortedWith(compareByDescending<ListItemData> { it.isFavorite })
+    }
+
     LaunchedEffect(Unit) {
         loadListItemData(context, expectedItemCount).collect { loadedItems ->
                 originalItems.clear()
@@ -200,22 +253,24 @@ fun IndexScreen(
             contentPadding = PaddingValues(10.dp),
         ) {
             items(
-                filteredItems//items
+                //filteredItems//items
+                items = displayedItems, // Use the sorted and filtered list
+                key = { item -> item.nameResId } // Provide a stable key
             ) { itemData ->
 
-                val isFirstItem = lazyListState.firstVisibleItemIndex == filteredItems.indexOf(itemData)
-                val currentAlpha = if (isFirstItem) alpha else 1f
+//                val isFirstItem = lazyListState.firstVisibleItemIndex == filteredItems.indexOf(itemData)
+//                val currentAlpha = if (isFirstItem) alpha else 1f
+                val isFirstNonFavoriteVisible = lazyListState.firstVisibleItemIndex == displayedItems.indexOf(itemData) && !itemData.isFavorite
+                val currentAlpha = if (isFirstNonFavoriteVisible && animateFirstItem) alpha else 1f
+
 
                 IndexScreenItemCard(
                     currentAlpha = currentAlpha,
                     name = itemData.nameResId,
-                    onClick = {
-                        val updatedItems = originalItems.toMutableList()//items.toMutableList()
-                        updatedItems.remove(itemData)
-                        updatedItems.add(0, itemData)
-                        scope.launch {
-                            saveListItemData(context, updatedItems)
-                        }
+                    isFavorite = itemData.isFavorite,
+                    onItemClick = {
+                        clickedItemForNavigation = itemData // Set item for ON_RESUME handling
+                        // Navigation logic (remains the same)
                         when (itemData.actionType) {
                             ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()
                             ActionType.NAVIGATE_TO_ADROP -> navigateToAdrop()
@@ -235,6 +290,65 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_CHADS2 -> navigateToCHADS2()
                             ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE -> navigateToGlasgowComaScale()
                         }
+                    },
+                    onFavoriteClick = {
+                        val currentList = originalItems.toMutableList()
+                        val itemIndex =
+                            currentList.indexOfFirst { it.nameResId == itemData.nameResId }
+                        if (itemIndex != -1) {
+                            val clickedItem = currentList[itemIndex]
+                            clickedItem.isFavorite = !clickedItem.isFavorite // Toggle favorite
+
+                            currentList.removeAt(itemIndex) // Remove from current position
+
+                            if (clickedItem.isFavorite) {
+                                // Add to the top of the list (or top of favorites section)
+                                currentList.add(0, clickedItem)
+                            } else {
+                                // Add back after all favorites, or maintain original relative order (simpler for now: add after favorites)
+                                val firstNonFavoriteIndex =
+                                    currentList.indexOfFirst { !it.isFavorite }
+                                if (firstNonFavoriteIndex != -1) {
+                                    currentList.add(firstNonFavoriteIndex, clickedItem)
+                                } else {
+                                    currentList.add(clickedItem) // Add to end if all were favorites
+                                }
+                            }
+                            // Re-sort to ensure all favorites are grouped at the top
+                            val sortedList = currentList.sortedWith(
+                                compareByDescending<ListItemData> { it.isFavorite }
+                                // You might want a secondary sort criteria here if needed
+                            )
+                            updateAndSaveItems(sortedList)
+                        }
+//                    onClick = {
+//                        val updatedItems = originalItems.toMutableList()//items.toMutableList()
+//                        updatedItems.remove(itemData)
+//                        updatedItems.add(0, itemData)
+//                        scope.launch {
+//                            saveListItemData(context, updatedItems)
+//                        }
+//                        when (itemData.actionType) {
+//                            ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()
+//                            ActionType.NAVIGATE_TO_ADROP -> navigateToAdrop()
+//                            ActionType.NAVIGATE_TO_COLORECTAL_TNM -> navigateToColorectalTNM()
+//                            ActionType.NAVIGATE_TO_ACUTE_TONSILLITIS_ALGORITHM -> navigateToAcuteTonsillitisAlgorithm()
+//                            ActionType.NAVIGATE_TO_BLOOD_GAS_ANALYSIS -> navigateToBloodGasAnalysis()
+//                            ActionType.NAVIGATE_TO_ACUTE_PANCREATITIS -> navigateToAcutePancreatitis()
+//                            ActionType.NAVIGATE_TO_NETAKIRIDO -> navigateToNetakirido()
+//                            ActionType.NAVIGATE_TO_PANCREATITIS_TNM -> navigateToPancreaticTNM()
+//                            ActionType.NAVIGATE_TO_ESOPAGEAL_TNM -> navigateToEsophagealTNM()
+//                            ActionType.NAVIGATE_TO_MALBI -> navigateToMALBI()
+//                            ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM -> navigateToLiverFibrosisScoreSystem()
+//                            ActionType.NAVIGATE_TO_HOMAIR -> navigateToHomaIR()
+//                            ActionType.NAVIGATE_TO_LUNG_TNM -> navigateToLungTNM()
+//                            ActionType.NAVIGATE_TO_HCC_TNM -> navigateToHccTNM()
+//                            ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM -> navigateToIntrahepaticCholangiocarcinomaTNM()
+//                            ActionType.NAVIGATE_TO_CHADS2 -> navigateToCHADS2()
+//                            ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE -> navigateToGlasgowComaScale()
+//                        }
+//                    }
+//                )
                     }
                 )
             }
@@ -242,7 +356,7 @@ fun IndexScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun IndexScreenPreview() {
     IndexScreen(

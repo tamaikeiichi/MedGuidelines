@@ -1,6 +1,7 @@
 package com.keiichi.medguidelines.data
 
 import android.os.Parcelable
+import androidx.annotation.StringRes
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -25,9 +26,17 @@ enum class ActionType {
     NAVIGATE_TO_GLASGOW_COMA_SCALE
 }
 
-@Parcelize
-@Serializable
+//@Parcelize
+//@Serializable
+//data class ListItemData(
+//    @StringRes val nameResId: Int,
+//    val actionType: ActionType,
+//    var isFavorite: Boolean = false
+//) : Parcelable
+
+@Serializable // Only for kotlinx.serialization
 data class ListItemData(
-    val nameResId: Int,
-    val actionType: ActionType
-) : Parcelable
+    @StringRes val nameResId: Int,
+    val actionType: ActionType, // ActionType still needs @Serializable
+    var isFavorite: Boolean = false
+)
