@@ -127,7 +127,7 @@ fun IndexScreen(
         originalItems.clear()
         originalItems.addAll(updatedList)
         scope.launch {
-            saveListItemData(context, originalItems.toList() as MutableList<ListItemData>)
+            saveListItemData(context, originalItems)//.toList())// as MutableList<ListItemData>)
         }
     }
 
@@ -297,6 +297,8 @@ fun IndexScreen(
                             currentList.indexOfFirst { it.nameResId == itemData.nameResId }
                         if (itemIndex != -1) {
                             val clickedItem = currentList[itemIndex]
+                            val oldFavoriteState = clickedItem.isFavorite // Store old state
+
                             clickedItem.isFavorite = !clickedItem.isFavorite // Toggle favorite
 
                             currentList.removeAt(itemIndex) // Remove from current position
@@ -320,6 +322,12 @@ fun IndexScreen(
                                 // You might want a secondary sort criteria here if needed
                             )
                             updateAndSaveItems(sortedList)
+                            // Scroll to top IF an item was newly favorited and thus moved up
+                            if (clickedItem.isFavorite && !oldFavoriteState) { // Check if it became a favorite
+                                scope.launch {
+                                    lazyListState.animateScrollToItem(index = 0) // Animate scroll to the top
+                                }
+                            }
                         }
 //                    onClick = {
 //                        val updatedItems = originalItems.toMutableList()//items.toMutableList()
