@@ -193,16 +193,16 @@ fun IndexScreen(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-    LaunchedEffect(animateFirstItem) {
-        if (animateFirstItem) {
-            while (animationCount < 3) {
-                kotlinx.coroutines.delay(200)
-                animationCount++
-            }
-            animateFirstItem = false
-            animationCount = 0
-        }
-    }
+//    LaunchedEffect(animateFirstItem) {
+//        if (animateFirstItem) {
+//            while (animationCount < 3) {
+//                kotlinx.coroutines.delay(200)
+//                animationCount++
+//            }
+//            animateFirstItem = false
+//            animationCount = 0
+//        }
+//    }
 
     val expectedItemCount = itemsList.size
 
@@ -270,6 +270,13 @@ fun IndexScreen(
                     isFavorite = itemData.isFavorite,
                     onItemClick = {
                         clickedItemForNavigation = itemData // Set item for ON_RESUME handling
+                                                var updatedItems = originalItems.toMutableList()//items.toMutableList()
+                        updatedItems.remove(itemData)
+                        updatedItems.add(0, itemData)
+                        updatedItems = updatedItems.sortedWith(compareByDescending<ListItemData> { it.isFavorite }).toMutableList()
+                        scope.launch {
+                            saveListItemData(context, updatedItems)
+                        }
                         // Navigation logic (remains the same)
                         when (itemData.actionType) {
                             ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()

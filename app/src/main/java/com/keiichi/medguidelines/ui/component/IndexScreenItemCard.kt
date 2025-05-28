@@ -2,6 +2,7 @@ package com.keiichi.medguidelines.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.tv.material3.CardDefaults
+import com.keiichi.compose.DarkYellow
+import com.keiichi.compose.Yellow
 import com.keiichi.medguidelines.R
 
 @Composable
@@ -51,7 +54,10 @@ fun IndexScreenItemCard(
 //                .alpha(currentAlpha)
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
+                .padding(
+                    Dimensions.cardPadding
+                    //vertical = 2.dp
+                )
                 .alpha(currentAlpha)
                 .clickable(onClick = onItemClick), // Keep the main item clickable
             //elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -75,17 +81,26 @@ fun IndexScreenItemCard(
                     text = parseStyledString(name),
                     fontSize = 25.sp,
                     modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()
+                        .padding(8.dp)
+                        .fillMaxWidth()
                         .weight(1f)
                     //style = MaterialTheme.typography.titleMedium,
                     //modifier = Modifier.weight(1f) // Text takes available space
                 )
                 IconButton(onClick = onFavoriteClick) { // Star icon
+                    val starColor = if (isFavorite) {
+                        if (isSystemInDarkTheme()) {
+                            DarkYellow // Use your defined dark yellow for dark theme
+                        } else {
+                            Yellow // Standard yellow for light theme
+                        }
+                    } else {
+                        LocalContentColor.current // Or MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+                    }
                     Icon(
                         imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
                         contentDescription = if (isFavorite) "Unmark as favorite" else "Mark as favorite",
-                        tint = if (isFavorite) Color.Yellow else LocalContentColor.current
+                        tint = if (isFavorite) starColor else LocalContentColor.current
                     )
                 }
             }

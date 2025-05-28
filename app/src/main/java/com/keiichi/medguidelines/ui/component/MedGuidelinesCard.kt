@@ -21,7 +21,7 @@ fun MedGuidelinesCard (
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(Dimensions.cardPadding),
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
             contentColor = contentColor
