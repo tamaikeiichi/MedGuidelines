@@ -58,7 +58,7 @@ fun IndexScreenItemCard(
                     Dimensions.cardPadding
                     //vertical = 2.dp
                 )
-                .alpha(currentAlpha)
+                //.alpha(currentAlpha)
                 .clickable(onClick = onItemClick), // Keep the main item clickable
             //elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
