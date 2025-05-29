@@ -1,5 +1,6 @@
 package com.keiichi.medguidelines.ui.screen
 
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -27,6 +29,7 @@ import com.keiichi.medguidelines.ui.component.parseStyledString
 fun SodiumDifferentialDiagnosisScreen(navController: NavController){
     val listState = rememberLazyListState()
     val na = remember { mutableDoubleStateOf(120.0) }
+    val serumGlucose = remember { mutableDoubleStateOf(90.0) }
     val serumOsmolality = remember { mutableDoubleStateOf(290.0) }
 
     MedGuidelinesScaffold (
@@ -52,19 +55,27 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController){
         ) {
             item {
                 MedGuidelinesCard {
-                    InputValue(
-                        label = R.string.sodium,
-                        value = na,
-                        unit = R.string.mmoll,
-                    )
+                    FlowRow {
+                        InputValue(
+                            label = R.string.sodium,
+                            value = na,
+                            unit = R.string.mmoll,
+                        )
+                        InputValue(
+                            label = R.string.serumGlucose,
+                            value = serumGlucose,
+                            unit = R.string.mgdl,
+                            changedValueRate = 1/18.0,
+                            changedUnit = R.string.mmoll
+                        )
+                    }
+
                 }
                 when (na.doubleValue) {
                     in 0.0..< 135.0 -> {
                         MedGuidelinesCard {
-                            Text(
+                            MedGuidelinesText(
                                 text = parseStyledString(R.string.hyponatremia),
-                                modifier = Modifier
-                                    .padding(Dimensions.textPadding)
                             )
                         }
                         MedGuidelinesCard {
@@ -77,35 +88,27 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController){
                         when (serumOsmolality.doubleValue) {
                             in 0.0 ..< 280.0 -> {
                                 MedGuidelinesCard {
-                                    Text(
+                                    MedGuidelinesText(
                                         text = parseStyledString(R.string.lowOsmolality),
-                                        modifier = Modifier
-                                            .padding(Dimensions.textPadding)
                                     )
                                 }
                             }
                             in 280.0 ..< 295.0 -> {
                                 MedGuidelinesCard {
-                                    Text(
+                                    MedGuidelinesText(
                                         text = parseStyledString(R.string.IsotonicHyponatraemia),
-                                        modifier = Modifier
-                                            .padding(Dimensions.textPadding)
                                     )
                                 }
                                 MedGuidelinesCard {
-                                    Text(
+                                    MedGuidelinesText(
                                         text = parseStyledString(R.string.HyperglycemiaMannitolAndGlycinByIrrigationFluids),
-                                        modifier = Modifier
-                                            .padding(Dimensions.textPadding)
                                     )
                                 }
                             }
                             else -> {
                                 MedGuidelinesCard {
-                                    Text(
+                                    MedGuidelinesText(
                                         text = parseStyledString(R.string.highOsmolality),
-                                        modifier = Modifier
-                                            .padding(Dimensions.textPadding)
                                     )
                                 }
                             }
@@ -113,14 +116,14 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController){
                     }
                     in 135.0 .. 145.0 -> {
                         MedGuidelinesCard {
-                            Text(
+                            MedGuidelinesText(
                                 text = parseStyledString(R.string.normonatremia),
                             )
                         }
                     }
                     else -> {
                         MedGuidelinesCard {
-                            Text(
+                            MedGuidelinesText(
                                 text = parseStyledString(R.string.hypernatremia),
                             )
                         }
@@ -129,6 +132,15 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController){
             }
         }
     }
+}
+
+@Composable
+private fun MedGuidelinesText(text: AnnotatedString) {
+    Text(
+        text = text,
+        modifier = Modifier
+            .padding(Dimensions.textPadding)
+    )
 }
 
 @Preview
