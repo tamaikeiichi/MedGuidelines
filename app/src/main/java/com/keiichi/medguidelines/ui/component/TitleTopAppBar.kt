@@ -1,8 +1,6 @@
 package com.keiichi.medguidelines.ui.component
 
-import androidx.activity.result.launch
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -20,22 +18,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.debounce
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,24 +34,47 @@ fun TitleTopAppBar(
     references: List<TextAndUrl>
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
     var lastClickTime by remember { mutableStateOf(0L) }
     val debounceTime = 300L // Adjust as needed
+    var alreadyClicked = false
     CenterAlignedTopAppBar(
         title = { Text(text = parseStyledString(title)) },
         navigationIcon = {
+            var navigateBackEvent by remember { mutableStateOf(false) }
+
+            if (navigateBackEvent) {
+                LaunchedEffect(Unit) { // Use a constant key like Unit for one-shot
+                    if (navController.previousBackStackEntry != null) {
+                        navController.popBackStack()
+                    } else {
+                        Log.w("TitleTopAppBar", "No previous back stack entry to pop.")
+                        // Handle case where there's nothing to pop (e.g., close activity)
+                        // (LocalContext.current as? Activity)?.finish()
+                    }
+                    navigateBackEvent = false // Reset the event
+                }
+            }
             IconButton(
                 onClick = {
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastClickTime > debounceTime) {
-                        lastClickTime = currentTime // Update the last click time
-                        navController.popBackStack() // Perform the navigation
+//                    val currentTime = System.currentTimeMillis()
+//
+//                    if (
+//                        //currentTime - lastClickTime > debounceTime &&
+//                    !alreadyClicked) {
+//                        //lastClickTime = currentTime // Update the last click time
+//                        navController.popBackStack() // Perform the navigation
+//                        alreadyClicked = true
+//                    }
+                    Log.d("TitleTopAppBar", "Navigation icon clicked.")
+                    // Only trigger the event if not already processing or if there's something to pop
+                    if (!navigateBackEvent && navController.previousBackStackEntry != null) {
+                        navigateBackEvent = true
+                    } else if (navController.previousBackStackEntry == null) {
+                        Log.w("TitleTopAppBar", "Clicked, but nothing to pop.")
+                        // Optionally, still trigger navigation to close activity if it's the root
+                        // navigateBackEvent = true // If you want to handle closing activity via the LaunchedEffect
                     }
                 },
-//                modifier = Modifier
-//                    .debouncedClick(coroutineScope = coroutineScope, onClick = {
-//                    navController.popBackStack()
-                //})
                 ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -94,56 +106,10 @@ fun TitleTopAppBar(
                             },
                             onClick = {
                                 expanded = false
-                            })
+                            }
+                        )
                     }
                 }
-            }
-        }
-    )
-}
-
-// Extension function for debounced clicks
-//fun Modifier.singleClick(
-//    onClick: () -> Unit,
-//    debounceTime: Long = 300L // Adjust the debounce time as needed (milliseconds)
-//): Modifier = composed {
-//    var lastClickTime by remember { mutableStateOf(0L) }
-//    clickable(
-//        indication = null, // Or provide your desired indication
-//        interactionSource = remember { MutableInteractionSource() }
-//    ) {
-//        val currentTime = System.currentTimeMillis()
-//        if (currentTime - lastClickTime > debounceTime) {
-//            lastClickTime = currentTime
-//            onClick()
-//        }
-//    }
-//}
-
-// Custom modifier for debounced clicks using SharedFlow
-fun Modifier.debouncedClick(
-    coroutineScope: CoroutineScope,
-    debounceTime: Long = 300L,
-    onClick: () -> Unit
-): Modifier = composed {
-    val interactionSource = remember { MutableInteractionSource() }
-    val clicks = remember { MutableSharedFlow<Unit>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    ) }
-
-    LaunchedEffect(clicks) {
-        clicks.debounce(debounceTime).collect {
-            onClick()
-        }
-    }
-
-    clickable(
-        interactionSource = interactionSource,
-        indication = null, // Or your desired indication
-        onClick = {
-            coroutineScope.launch {
-                clicks.emit(Unit)
             }
         }
     )
