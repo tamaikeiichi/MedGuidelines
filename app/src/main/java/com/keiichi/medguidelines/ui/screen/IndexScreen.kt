@@ -190,19 +190,7 @@ fun IndexScreen(
 
     val expectedItemCount = itemsList.size
 
-    val filteredItems = remember(searchQuery, originalItems) {
-        if (searchQuery.isBlank()) {
-            originalItems
-        } else {
-            originalItems.toList().filter { itemData ->
-                val name = context.getString(itemData.nameResId)
-                name.contains(searchQuery, ignoreCase = true)
-            }
-        }
-    }
-
     val displayedItems = remember(searchQuery, originalItems) {
-        val itemsToFilter = originalItems.toList() // Work with a snapshot for filtering
         val filtered = if (searchQuery.isBlank()) {
             originalItems
         } else {
@@ -211,8 +199,7 @@ fun IndexScreen(
                 name.contains(searchQuery, ignoreCase = true)
             }
         }
-        // Sort: Favorites first, then by their original order (or last interaction for non-favorites)
-        filtered//.sortedWith(compareByDescending<ListItemData> { it.isFavorite })
+        filtered
     }
 
     LaunchedEffect(Unit) {
@@ -237,7 +224,6 @@ fun IndexScreen(
             contentPadding = PaddingValues(10.dp),
         ) {
             items(
-                //filteredItems//items
                 items = displayedItems, // Use the sorted and filtered list
                 key = { item -> item.nameResId } // Provide a stable key
             ) { itemData ->
