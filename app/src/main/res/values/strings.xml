@@ -353,4 +353,14 @@
     <string name="highOsmolality">High osmolality</string>
     <string name="HyperglycemiaMannitolAndGlycinByIrrigationFluids">Hyperglycemia  due to uncontrolled diabetes mellitus, mannitol and glycin by irrigation fluids</string>
     <string name="serumGlucose">Serum glucose</string>
+    <string name="hypertonicHyponatremia">Hypertonic hyponatremia</string>
+    <string name="HyperglycemiaMayBePresent">Hyperglycemia may be present</string>
+    <string name="hypotonicHyponatremia">Hypotonic hyponatremia</string>
+    <string name="acuteOrSevereSymptoms">Acute or severe symptoms?</string>
+    <string name="considerImmediateTreatmentWithHypertonicSaline">Consider immediate treatment with hypertonic saline</string>
+    <string name="urineOsmolality">Urine Osmolarity</string>
+    <string name="primaryPolydipsia">Primary polydipsia</string>
+    <string name="lowSoluteIntake">Low solute intake</string>
+    <string name="beerPotomania">Beer potomania</string>
+    <string name="urineSodiumConcentration">Urine sodium concentration</string>
 </resources>

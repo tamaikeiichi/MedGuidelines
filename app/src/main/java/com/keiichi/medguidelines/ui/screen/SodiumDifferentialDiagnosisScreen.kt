@@ -1,5 +1,6 @@
 package com.keiichi.medguidelines.ui.screen
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,7 +9,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,17 +24,24 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.noYes
 import com.keiichi.medguidelines.ui.component.Dimensions
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
+import com.keiichi.medguidelines.ui.component.RadioButtonAndExpand
+import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.parseStyledString
 
 @Composable
 fun SodiumDifferentialDiagnosisScreen(navController: NavController){
     val listState = rememberLazyListState()
-    val na = remember { mutableDoubleStateOf(120.0) }
+    val na = remember { mutableDoubleStateOf(140.0) }
+    val k = remember { mutableDoubleStateOf(4.5) }
     val serumGlucose = remember { mutableDoubleStateOf(90.0) }
     val serumOsmolality = remember { mutableDoubleStateOf(290.0) }
+    val urineOsmolality = remember { mutableDoubleStateOf(100.0) }
+    val urineSodiumConc = remember { mutableDoubleStateOf(0.0) }
+    var acuteOrSevere = remember { mutableIntStateOf(0) }
 
     MedGuidelinesScaffold (
         topBar = {
@@ -61,6 +72,11 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController){
                             value = na,
                             unit = R.string.mmoll,
                         )
+//                        InputValue(
+//                            label = R.string.k,
+//                            value = k,
+//                            unit = R.string.mmoll,
+//                        )
                         InputValue(
                             label = R.string.serumGlucose,
                             value = serumGlucose,
@@ -89,8 +105,52 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController){
                             in 0.0 ..< 280.0 -> {
                                 MedGuidelinesCard {
                                     MedGuidelinesText(
-                                        text = parseStyledString(R.string.lowOsmolality),
+                                        text = parseStyledString(R.string.hypotonicHyponatremia),
                                     )
+                                }
+                                MedGuidelinesCard {
+                                    acuteOrSevere.intValue = buttonAndScore(
+                                        factor = noYes,
+                                        title = R.string.acuteOrSevereSymptoms,
+                                    )
+                                }
+                                if (acuteOrSevere.intValue == 1) {
+                                    MedGuidelinesCard {
+                                        MedGuidelinesText(
+                                            text = parseStyledString(R.string.considerImmediateTreatmentWithHypertonicSaline),
+                                        )
+                                    }
+                                } else {
+                                    MedGuidelinesCard {
+                              InputValue(
+                                  label = R.string.urineOsmolality,
+                                  value = urineOsmolality,
+                                  unit = R.string.mOsmKg,
+                              )
+                                    }
+                                    if (urineOsmolality.doubleValue <= 100.0) {
+                                        MedGuidelinesCard {
+                                            Column {
+                                                MedGuidelinesText(
+                                                    text = parseStyledString(R.string.primaryPolydipsia),
+                                                )
+                                                MedGuidelinesText(
+                                                    text = parseStyledString(R.string.lowSoluteIntake),
+                                                )
+                                                MedGuidelinesText(
+                                                    text = parseStyledString(R.string.beerPotomania),
+                                                )
+                                            }
+                                        }
+                                    } else {
+                                        MedGuidelinesCard {
+                                            InputValue(
+                                                label = R.string.urineSodiumConcentration,
+                                                value = urineSodiumConc,
+                                                unit = R.string.mOsmKg,
+                                            )
+                                        }
+                                    }
                                 }
                             }
                             in 280.0 ..< 295.0 -> {
@@ -107,9 +167,14 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController){
                             }
                             else -> {
                                 MedGuidelinesCard {
-                                    MedGuidelinesText(
-                                        text = parseStyledString(R.string.highOsmolality),
-                                    )
+                                    Column{
+                                        MedGuidelinesText(
+                                            text = parseStyledString(R.string.hypertonicHyponatremia),
+                                        )
+                                        MedGuidelinesText(
+                                            text = parseStyledString(R.string.HyperglycemiaMayBePresent),
+                                        )
+                                    }
                                 }
                             }
                         }
