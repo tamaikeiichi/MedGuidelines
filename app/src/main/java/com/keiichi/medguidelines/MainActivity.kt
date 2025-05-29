@@ -47,6 +47,34 @@ import com.keiichi.medguidelines.ui.screen.LungTNMScreen
 import com.keiichi.medguidelines.ui.screen.MALBIScreen
 import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
 import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
+import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
+
+data class ScreenRoute(
+    val route: String,
+    val content: @Composable (NavHostController) -> Unit
+)
+
+val appScreens = listOf(
+    ScreenRoute("ChildPughScreen") { navController -> ChildPughScreen(navController) },
+    ScreenRoute("AdropScreen") { navController -> AdropScreen(navController) },
+    ScreenRoute("ColorectalTNMScreen") { navController -> ColorectalTNMScreen(navController) },
+    ScreenRoute("AcuteTonsillitisAlgorithmScreen") { navController -> AcuteTonsillitisAlgorithmScreen(navController) },
+    ScreenRoute("BloodGasAnalysisScreen") { navController -> BloodGasAnalysisScreen(navController) },
+    ScreenRoute("AcutePancreatitisScreen") { navController -> AcutePancreatitisScreen(navController) },
+    ScreenRoute("NetakiridoScreen") { navController -> NetakiridoScreen(navController) },
+    ScreenRoute("PancreaticTNMScreen") { navController -> PancreaticTNMScreen(navController) },
+    ScreenRoute("EsophagealTNMScreen") { navController -> EsophagealTNMScreen(navController) },
+    ScreenRoute("MALBIScreen") { navController -> MALBIScreen(navController) },
+    ScreenRoute("LiverFibrosisScoreSystemScreen") { navController -> LiverFibrosisScoreSystemScreen(navController) },
+    ScreenRoute("HomaIRScreen") { navController -> HomaIRScreen(navController) },
+    ScreenRoute("LungTNM") { navController -> LungTNMScreen(navController) },
+    ScreenRoute("HccTNM") { navController -> HCCTNMScreen(navController) },
+    ScreenRoute("IntrahepaticCholangiocarcinomaTNM") { navController -> IntrahepaticCholangiocarcinomaTNMScreen(navController) },
+    ScreenRoute("CHADS2") { navController -> Chads2Screen(navController) },
+    ScreenRoute("GlasgowComaScaleScreen") { navController -> GlasgowComaScaleScreen(navController) },
+    ScreenRoute("SodiumDifferentialDiagnosisScreen") { navController -> SodiumDifferentialDiagnosisScreen(navController) }
+    // Add other screens here
+)
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
@@ -93,95 +121,110 @@ class MainActivity : ComponentActivity() {
                                         navigateToCHADS2 = { controller.navigate("CHADS2") },
                                         navigateToGlasgowComaScale = {
                                             controller.navigate("GlasgowComaScaleScreen")
+                                        },
+                                        navigateToSodiumDifferentialDiagnosis = {
+                                            controller.navigate("SodiumDifferentialDiagnosisScreen")
                                         }
                                     )
                                 }
                             }
-                            composable("ChildPughScreen") {
-                                ChildComposable {
-                                    ChildPughScreen(controller)
+                            appScreens.forEach { screenRoute ->
+                                composable(screenRoute.route) {
+                                    ChildComposable {
+                                        screenRoute.content(controller)
+                                    }
                                 }
                             }
-                            composable("AdropScreen") {
-                                ChildComposable {
-                                    AdropScreen(controller)
-                                }
-                            }
-                            composable("ColorectalTNMScreen") {
-                                ChildComposable {
-                                    ColorectalTNMScreen(controller)
-                                }
-                            }
-                            composable("AcuteTonsillitisAlgorithmScreen") {
-                                ChildComposable {
-                                    AcuteTonsillitisAlgorithmScreen(controller)
-                                }
-                            }
-                            composable("BloodGasAnalysisScreen") {
-                                ChildComposable {
-                                    BloodGasAnalysisScreen(controller)
-                                }
-                            }
-                            composable("AcutePancreatitisScreen") {
-                                ChildComposable {
-                                    AcutePancreatitisScreen(controller)
-                                }
-                            }
-                            composable("NetakiridoScreen") {
-                                ChildComposable {
-                                    NetakiridoScreen(controller)
-                                }
-                            }
-                            composable("PancreaticTNMScreen") {
-                                ChildComposable {
-                                    PancreaticTNMScreen(controller)
-                                }
-                            }
-                            composable("EsophagealTNMScreen") {
-                                ChildComposable {
-                                    EsophagealTNMScreen(controller)
-                                }
-                            }
-                            composable("MALBIScreen") {
-                                ChildComposable {
-                                    MALBIScreen(controller)
-                                }
-                            }
-                            composable("LiverFibrosisScoreSystemScreen") {
-                                ChildComposable {
-                                    LiverFibrosisScoreSystemScreen(controller)
-                                }
-                            }
-                            composable("HomaIRScreen") {
-                                ChildComposable {
-                                    HomaIRScreen(controller)
-                                }
-                            }
-                            composable("LungTNM") {
-                                ChildComposable {
-                                    LungTNMScreen(controller)
-                                }
-                            }
-                            composable("HccTNM") {
-                                ChildComposable {
-                                    HCCTNMScreen(controller)
-                                }
-                            }
-                            composable("IntrahepaticCholangiocarcinomaTNM") {
-                                ChildComposable {
-                                    IntrahepaticCholangiocarcinomaTNMScreen(controller)
-                                }
-                            }
-                            composable("CHADS2") {
-                                ChildComposable {
-                                    Chads2Screen(controller)
-                                }
-                            }
-                            composable("GlasgowComaScaleScreen") {
-                                ChildComposable {
-                                   GlasgowComaScaleScreen(controller)
-                                }
-                            }
+//                            composable("ChildPughScreen") {
+//                                ChildComposable {
+//                                    ChildPughScreen(controller)
+//                                }
+//                            }
+//                            composable("AdropScreen") {
+//                                ChildComposable {
+//                                    AdropScreen(controller)
+//                                }
+//                            }
+//                            composable("ColorectalTNMScreen") {
+//                                ChildComposable {
+//                                    ColorectalTNMScreen(controller)
+//                                }
+//                            }
+//                            composable("AcuteTonsillitisAlgorithmScreen") {
+//                                ChildComposable {
+//                                    AcuteTonsillitisAlgorithmScreen(controller)
+//                                }
+//                            }
+//                            composable("BloodGasAnalysisScreen") {
+//                                ChildComposable {
+//                                    BloodGasAnalysisScreen(controller)
+//                                }
+//                            }
+//                            composable("AcutePancreatitisScreen") {
+//                                ChildComposable {
+//                                    AcutePancreatitisScreen(controller)
+//                                }
+//                            }
+//                            composable("NetakiridoScreen") {
+//                                ChildComposable {
+//                                    NetakiridoScreen(controller)
+//                                }
+//                            }
+//                            composable("PancreaticTNMScreen") {
+//                                ChildComposable {
+//                                    PancreaticTNMScreen(controller)
+//                                }
+//                            }
+//                            composable("EsophagealTNMScreen") {
+//                                ChildComposable {
+//                                    EsophagealTNMScreen(controller)
+//                                }
+//                            }
+//                            composable("MALBIScreen") {
+//                                ChildComposable {
+//                                    MALBIScreen(controller)
+//                                }
+//                            }
+//                            composable("LiverFibrosisScoreSystemScreen") {
+//                                ChildComposable {
+//                                    LiverFibrosisScoreSystemScreen(controller)
+//                                }
+//                            }
+//                            composable("HomaIRScreen") {
+//                                ChildComposable {
+//                                    HomaIRScreen(controller)
+//                                }
+//                            }
+//                            composable("LungTNM") {
+//                                ChildComposable {
+//                                    LungTNMScreen(controller)
+//                                }
+//                            }
+//                            composable("HccTNM") {
+//                                ChildComposable {
+//                                    HCCTNMScreen(controller)
+//                                }
+//                            }
+//                            composable("IntrahepaticCholangiocarcinomaTNM") {
+//                                ChildComposable {
+//                                    IntrahepaticCholangiocarcinomaTNMScreen(controller)
+//                                }
+//                            }
+//                            composable("CHADS2") {
+//                                ChildComposable {
+//                                    Chads2Screen(controller)
+//                                }
+//                            }
+//                            composable("GlasgowComaScaleScreen") {
+//                                ChildComposable {
+//                                   GlasgowComaScaleScreen(controller)
+//                                }
+//                            }
+//                            composable("SodiumDifferentialDiagnosisScreen") {
+//                                ChildComposable {
+//                                    SodiumDifferentialDiagnosisScreen(controller)
+//                                }
+//                            }
                         }
                     }
                 }

@@ -68,6 +68,7 @@ val itemsList = listOf(
     ListItemData(R.string.intrahepaticCholangiocarcinomaTNMTitle, ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM),
     ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2),
     ListItemData(R.string.glasgowComaScaleTitle, ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE),
+    ListItemData(R.string.sodiumDifferentialDiagnosisTitle, ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS),
 
 )
 
@@ -90,6 +91,7 @@ fun IndexScreen(
     navigateToIntrahepaticCholangiocarcinomaTNM: () -> Unit,
     navigateToCHADS2: () -> Unit,
     navigateToGlasgowComaScale: () -> Unit,
+    navigateToSodiumDifferentialDiagnosis: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -135,21 +137,7 @@ fun IndexScreen(
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    //clickedItem?.let { item ->
                     clickedItemForNavigation?.let { item ->
-//                        val updatedItems = originalItems.toMutableList()
-//                        if (updatedItems.remove(item)) {
-//                            updatedItems.add(0, item)
-//                            scope.launch {
-//                                saveListItemData(context, updatedItems)
-//                            }
-//                            // Update the originalItems state to trigger recomposition
-//                            originalItems.clear()
-//                            originalItems.addAll(updatedItems)
-//                        }
-//                        // Clear the clickedItem after processing
-//                        clickedItem = null
-//                    }
                         val currentList = originalItems.toMutableList()
                         if (currentList.remove(item)) {
                             // Only move to top if not a favorite, favorites have their own ordering
@@ -161,10 +149,6 @@ fun IndexScreen(
                                     currentList.add(0, item) // Add to top if no favorites
                                 }
                             } else {
-                                // If it was a favorite, it might have been clicked for navigation.
-                                // Its position within favorites block is already handled.
-                                // We might re-insert it at its original favorite position if needed,
-                                // but for now, if it's a favorite, removing and re-adding at 0 among favorites is fine.
                                 val favorites = currentList.filter { it.isFavorite }.toMutableList()
                                 val nonFavorites = currentList.filterNot { it.isFavorite }
                                 if (favorites.remove(item)) { // Should always be true if it was clicked
@@ -257,13 +241,8 @@ fun IndexScreen(
                 items = displayedItems, // Use the sorted and filtered list
                 key = { item -> item.nameResId } // Provide a stable key
             ) { itemData ->
-
-//                val isFirstItem = lazyListState.firstVisibleItemIndex == filteredItems.indexOf(itemData)
-//                val currentAlpha = if (isFirstItem) alpha else 1f
                 val isFirstNonFavoriteVisible = lazyListState.firstVisibleItemIndex == displayedItems.indexOf(itemData) && !itemData.isFavorite
                 val currentAlpha = if (isFirstNonFavoriteVisible && animateFirstItem) alpha else 1f
-
-
                 IndexScreenItemCard(
                     currentAlpha = currentAlpha,
                     name = itemData.nameResId,
@@ -296,6 +275,7 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM -> navigateToIntrahepaticCholangiocarcinomaTNM()
                             ActionType.NAVIGATE_TO_CHADS2 -> navigateToCHADS2()
                             ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE -> navigateToGlasgowComaScale()
+                            ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS -> navigateToSodiumDifferentialDiagnosis()
                         }
                     },
                     onFavoriteClick = {
@@ -336,34 +316,6 @@ fun IndexScreen(
                                 }
                             }
                         }
-//                    onClick = {
-//                        val updatedItems = originalItems.toMutableList()//items.toMutableList()
-//                        updatedItems.remove(itemData)
-//                        updatedItems.add(0, itemData)
-//                        scope.launch {
-//                            saveListItemData(context, updatedItems)
-//                        }
-//                        when (itemData.actionType) {
-//                            ActionType.NAVIGATE_TO_CHILD_PUGH -> navigateToChildPugh()
-//                            ActionType.NAVIGATE_TO_ADROP -> navigateToAdrop()
-//                            ActionType.NAVIGATE_TO_COLORECTAL_TNM -> navigateToColorectalTNM()
-//                            ActionType.NAVIGATE_TO_ACUTE_TONSILLITIS_ALGORITHM -> navigateToAcuteTonsillitisAlgorithm()
-//                            ActionType.NAVIGATE_TO_BLOOD_GAS_ANALYSIS -> navigateToBloodGasAnalysis()
-//                            ActionType.NAVIGATE_TO_ACUTE_PANCREATITIS -> navigateToAcutePancreatitis()
-//                            ActionType.NAVIGATE_TO_NETAKIRIDO -> navigateToNetakirido()
-//                            ActionType.NAVIGATE_TO_PANCREATITIS_TNM -> navigateToPancreaticTNM()
-//                            ActionType.NAVIGATE_TO_ESOPAGEAL_TNM -> navigateToEsophagealTNM()
-//                            ActionType.NAVIGATE_TO_MALBI -> navigateToMALBI()
-//                            ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM -> navigateToLiverFibrosisScoreSystem()
-//                            ActionType.NAVIGATE_TO_HOMAIR -> navigateToHomaIR()
-//                            ActionType.NAVIGATE_TO_LUNG_TNM -> navigateToLungTNM()
-//                            ActionType.NAVIGATE_TO_HCC_TNM -> navigateToHccTNM()
-//                            ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM -> navigateToIntrahepaticCholangiocarcinomaTNM()
-//                            ActionType.NAVIGATE_TO_CHADS2 -> navigateToCHADS2()
-//                            ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE -> navigateToGlasgowComaScale()
-//                        }
-//                    }
-//                )
                     }
                 )
             }
@@ -391,6 +343,7 @@ fun IndexScreenPreview() {
         navigateToHccTNM = {},
         navigateToIntrahepaticCholangiocarcinomaTNM = {},
         navigateToCHADS2 = {},
-        navigateToGlasgowComaScale = {}
+        navigateToGlasgowComaScale = {},
+        navigateToSodiumDifferentialDiagnosis = {},
     )
 }

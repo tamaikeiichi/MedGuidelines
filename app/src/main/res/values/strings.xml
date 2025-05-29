@@ -304,7 +304,7 @@
     <string name="strokeRateWithoutAnticoagulant">Stroke rate without anticoagulant</string>
     <string name="per100PatientYears" translatable="false">/100 patient-years</string>
     <string name="chads2" translatable="false">CHADS2</string>
-    <string name="helte2s2Url">https://pubmed.ncbi.nlm.nih.gov/33762526/</string>
+    <string name="helte2s2Url" translatable="false">https://pubmed.ncbi.nlm.nih.gov/33762526/</string>
     <string name="elderly">Elderly, Age 75-84 years</string>
     <string name="lowBmi">Low BMI (&lt;18.5 kg/m<sup>2</sup>)</string>
     <string name="typeOfAf">Type of AF (persistent/permanent)</string>
@@ -312,7 +312,7 @@
     <string name="previousStroke">Previous Stroke</string>
     <string name="perYear">/year</string>
     <string name="manegementAntithromboticsForEndoscopy">Management of antithrombotic agents for endoscopic procedures</string>
-    <string name="antithromboticsUrl">https://pubmed.ncbi.nlm.nih.gov/34362780/</string>
+    <string name="antithromboticsUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/34362780/</string>
     <string name="BsgAndESGE">BSG and ESGE</string>
     <string name="bCellDysfunction">β-cell dysfunction</string>
     <string name="homab" translatable="false">HOMA-β</string>
@@ -341,17 +341,17 @@
     <string name="fibrosisStage1">Fibrosis (stage ≥ 1)</string>
     <string name="disorderOfSerumSodium">Disorder of serum sodium</string>
     <string name="disorderOfSerumSodiumReference">Hyponatremia</string>
-    <string name="disorderOfSerumSodiumReferenceUrl">https://pubmed.ncbi.nlm.nih.gov/24569125/</string>
-    <string name="sodium"><![CDATA[Na<sup>+</sup>]]></string>
+    <string name="disorderOfSerumSodiumReferenceUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/24569125/</string>
+    <string name="sodium">Na&lt;sup>+&lt;/sup>></string>
     <string name="hyponatremia">Hyponatremia</string>
     <string name="normonatremia">Normonatremia</string>
     <string name="hypernatremia">Hypernatremia</string>
-    <string name="mOsmKg">mOsm/kg</string>
+    <string name="mOsmKg" translatable="false">mOsm/kg</string>
     <string name="serumOsmolality">Serum osmolality</string>
     <string name="lowOsmolality">Low osmolality</string>
     <string name="IsotonicHyponatraemia">Isotonic hyponatraemia</string>
     <string name="highOsmolality">High osmolality</string>
-    <string name="HyperglycemiaMannitolAndGlycinByIrrigationFluids">Hyperglycemia  due to uncontrolled diabetes mellitus, mannitol and glycin by irrigation fluids</string>
+    <string name="HyperglycemiaMannitolAndGlycinByIrrigationFluids">Hyperglycemia due to uncontrolled diabetes mellitus, mannitol and glycin by irrigation fluids</string>
     <string name="serumGlucose">Serum glucose</string>
     <string name="hypertonicHyponatremia">Hypertonic hyponatremia</string>
     <string name="HyperglycemiaMayBePresent">Hyperglycemia may be present</string>
@@ -361,6 +361,30 @@
     <string name="urineOsmolality">Urine Osmolarity</string>
     <string name="primaryPolydipsia">Primary polydipsia</string>
     <string name="lowSoluteIntake">Low solute intake</string>
-    <string name="beerPotomania">Beer potomania</string>
+    <string name="beerPotomania" translatable="false">Beer potomania</string>
     <string name="urineSodiumConcentration">Urine sodium concentration</string>
+    <string name="lowEffectiveArterialBloodVolume">Low effective arterial blood volume</string>
+    <string name="ifEcfExpadedConsider">If ECF expaded consider</string>
+    <string name="hearFailure">Heart failure</string>
+    <string name="liverCirrhosis">Liver cirrhosis</string>
+    <string name="nephroticSyndrome">Nephrotic syndrome</string>
+    <string name="ifEcfReducedConsider">If ECF reduced consider</string>
+    <string name="diarrheaAndVomiting">Diarrhea and vomiting</string>
+    <string name="thirdSpacing">Third spacing</string>
+    <string name="remoteDiuretics">Remote Diuretics</string>
+    <string name="diureticsOrKidneyDisease">Diuretics or kidney disease?</string>
+    <string name="consider">Consider</string>
+    <string name="diuretics">Diuretics</string>
+    <string name="kidneyDisease">Kidney disease</string>
+    <string name="allOtherCauses">All other causes</string>
+    <string name="vomiting">Vomiting</string>
+    <string name="primaryAdrenalInsufficiency">Primary adrena insufficiency</string>
+    <string name="renalSaltWasting" translatable="false">Renal salt wasting</string>
+    <string name="cerebralSaltWasting" translatable="false">Cerebral salt wasting</string>
+    <string name="occultDiuretics">Occult diuretics</string>
+    <string name="ifEcfNormalConsider">If ECF normal consider</string>
+    <string name="siad">SIAD</string>
+    <string name="secondaryAdrenalInsufficiency">Secondary adrenal insufficiency</string>
+    <string name="hypothyroidism">Hypothyroidism</string>
+    <string name="sodiumDifferentialDiagnosisTitle">Sodium disorder algorithm</string>
 </resources>
