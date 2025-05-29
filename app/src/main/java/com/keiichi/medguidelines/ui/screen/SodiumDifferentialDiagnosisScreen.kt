@@ -79,13 +79,13 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController) {
 //                            value = k,
 //                            unit = R.string.mmoll,
 //                        )
-                        InputValue(
-                            label = R.string.serumGlucose,
-                            value = serumGlucose,
-                            unit = R.string.mgdl,
-                            changedValueRate = 1 / 18.0,
-                            changedUnit = R.string.mmoll
-                        )
+//                        InputValue(
+//                            label = R.string.serumGlucose,
+//                            value = serumGlucose,
+//                            unit = R.string.mgdl,
+//                            changedValueRate = 1 / 18.0,
+//                            changedUnit = R.string.mmoll
+//                        )
                     }
 
                 }

@@ -342,7 +342,7 @@
     <string name="disorderOfSerumSodium">Disorder of serum sodium</string>
     <string name="disorderOfSerumSodiumReference">Hyponatremia</string>
     <string name="disorderOfSerumSodiumReferenceUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/24569125/</string>
-    <string name="sodium">Na&lt;sup>+&lt;/sup>></string>
+    <string name="sodium">Na&lt;sup>+&lt;/sup></string>
     <string name="hyponatremia">Hyponatremia</string>
     <string name="normonatremia">Normonatremia</string>
     <string name="hypernatremia">Hypernatremia</string>
