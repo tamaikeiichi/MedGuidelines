@@ -386,5 +386,5 @@
     <string name="siad">SIAD</string>
     <string name="secondaryAdrenalInsufficiency">Secondary adrenal insufficiency</string>
     <string name="hypothyroidism">Hypothyroidism</string>
-    <string name="sodiumDifferentialDiagnosisTitle">Sodium disorder algorithm</string>
+    <string name="sodiumDifferentialDiagnosisTitle">Hyponatremia algorithm</string>
 </resources>

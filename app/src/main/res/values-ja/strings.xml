@@ -243,5 +243,5 @@
     <string name="siad">不適切抗利尿症候群</string>
     <string name="secondaryAdrenalInsufficiency">続発性副腎不全</string>
     <string name="hypothyroidism">甲状腺機能低下症</string>
-    <string name="sodiumDifferentialDiagnosisTitle">血中ナトリウム異常鑑別診断</string>
+    <string name="sodiumDifferentialDiagnosisTitle">低ナトリウム血症鑑別診断</string>
 </resources>
