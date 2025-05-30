@@ -7,8 +7,9 @@ import androidx.compose.ui.unit.dp
 
 data class AppDimensions(
     val lazyColumnPadding: Dp = 4.dp,
-    val cardPadding: Dp = 2.dp,
-    val textPadding: Dp = 4.dp
+    val cardPadding: Dp = 4.dp,
+    val textPadding: Dp = 4.dp,
+    val cardElevation: Dp = 4.dp
 )
 
 // Provide a CompositionLocal to access AppDimensions throughout your app

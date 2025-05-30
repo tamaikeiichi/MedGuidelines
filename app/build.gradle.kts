@@ -13,10 +13,10 @@ android {
 
     defaultConfig {
         applicationId = "com.keiichi.medguidelines"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 35
-        versionCode = 26
-        versionName = "1.23"
+        versionCode = 27
+        versionName = "1.24"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -87,6 +87,8 @@ dependencies {
     implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.material.icons.extended)
     implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
+    val work_version = "2.10.1"
+    implementation("androidx.work:work-runtime-ktx:$work_version")
 
 }
 

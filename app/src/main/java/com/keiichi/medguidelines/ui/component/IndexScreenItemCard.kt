@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -50,7 +51,10 @@ fun IndexScreenItemCard(
                 .padding(
                     Dimensions.cardPadding
                 )
-                .clickable(onClick = onItemClick), // Keep the main item clickable
+                .clickable(onClick = onItemClick),
+//            elevation = CardDefaults.cardElevation(
+//                defaultElevation = Dimensions.cardElevation
+//            )
         ) {
             Row(
                 modifier = Modifier
@@ -61,6 +65,7 @@ fun IndexScreenItemCard(
                 Text(
                     text = parseStyledString(name),
                     fontSize = 25.sp,
+                    lineHeight = 29.sp,
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth()
@@ -85,9 +90,9 @@ fun IndexScreenItemCard(
                 }
             }
         }
-        Spacer(
-            modifier = Modifier.height(4.dp)
-        )
+//        Spacer(
+//            modifier = Modifier.height(4.dp)
+//        )
     }
 }
 
