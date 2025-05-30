@@ -70,7 +70,7 @@ fun HomaIRScreen(navController: NavController) {
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
-                title = R.string.homairhomabetaTitle,
+                title = R.string.homaIrHomaBetaTitle,
                 navController = navController,
                 references = listOf(
                     TextAndUrl(R.string.space, R.string.space)

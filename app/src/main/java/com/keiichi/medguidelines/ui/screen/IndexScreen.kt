@@ -229,7 +229,7 @@ fun IndexScreen(
                             ActionType.NAVIGATE_TO_BLOOD_GAS_ANALYSIS -> navigateToBloodGasAnalysis()
                             ActionType.NAVIGATE_TO_ACUTE_PANCREATITIS -> navigateToAcutePancreatitis()
                             ActionType.NAVIGATE_TO_NETAKIRIDO -> navigateToNetakirido()
-                            ActionType.NAVIGATE_TO_PANCREATITIS_TNM -> navigateToPancreaticTNM()
+                            ActionType.NAVIGATE_TO_PANCREASE_TNM -> navigateToPancreaticTNM()
                             ActionType.NAVIGATE_TO_ESOPAGEAL_TNM -> navigateToEsophagealTNM()
                             ActionType.NAVIGATE_TO_MALBI -> navigateToMALBI()
                             ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM -> navigateToLiverFibrosisScoreSystem()

@@ -318,7 +318,7 @@
     <string name="homab" translatable="false">HOMA-β</string>
     <string name="present">present</string>
     <string name="absent">absent</string>
-    <string name="homairhomabetaTitle" translatable="false">HOMA-IR/HOMA-β</string>
+    <string name="homaIrHomaBetaTitle" translatable="false">HOMA-IR/HOMA-β</string>
     <string name="glasgowComaScaleTitle" translatable="false">Glasgow Coma Scale</string>
     <string name="openinresponsetopainappliedtothelimbsorsternum">Open in response to pain applied to the limbs or sternum</string>
     <string name="opentoverbalcommand">Open to verbal command</string>
@@ -387,4 +387,9 @@
     <string name="secondaryAdrenalInsufficiency">Secondary adrenal insufficiency</string>
     <string name="hypothyroidism">Hypothyroidism</string>
     <string name="sodiumDifferentialDiagnosisTitle">Hyponatremia algorithm</string>
+    <string name="lung">Lung</string>
+    <string name="pneumonia">Pneumonia</string>
+    <string name="liver">Liver</string>
+    <string name="af">AF</string>
+    <string name="stroke">Stroke</string>
 </resources>

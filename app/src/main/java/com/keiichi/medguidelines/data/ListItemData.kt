@@ -15,7 +15,7 @@ enum class ActionType {
     NAVIGATE_TO_BLOOD_GAS_ANALYSIS,
     NAVIGATE_TO_ACUTE_PANCREATITIS,
     NAVIGATE_TO_NETAKIRIDO,
-    NAVIGATE_TO_PANCREATITIS_TNM,
+    NAVIGATE_TO_PANCREASE_TNM,
     NAVIGATE_TO_ESOPAGEAL_TNM,
     NAVIGATE_TO_MALBI,
     NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM,
@@ -28,14 +28,6 @@ enum class ActionType {
     NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS
 }
 
-//@Parcelize
-//@Serializable
-//data class ListItemData(
-//    @StringRes val nameResId: Int,
-//    val actionType: ActionType,
-//    var isFavorite: Boolean = false
-//) : Parcelable
-
 @Serializable // Only for kotlinx.serialization
 data class ListItemData(
     @StringRes val nameResId: Int,
@@ -46,7 +38,12 @@ data class ListItemData(
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
-    ListItemData(R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP),
+    ListItemData(R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP,
+        keywords = listOf(
+            R.string.lung,
+            R.string.pneumonia
+        ),
+    ),
     ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM),
     ListItemData(
         R.string.acuteTonsillitisAlgorithmTitle,
@@ -55,9 +52,13 @@ val itemsList = listOf(
     ListItemData(R.string.bloodGasAnalysisTitle, ActionType.NAVIGATE_TO_BLOOD_GAS_ANALYSIS),
     ListItemData(R.string.acutePancreatitisTitle, ActionType.NAVIGATE_TO_ACUTE_PANCREATITIS),
     ListItemData(R.string.netakiridoTitle, ActionType.NAVIGATE_TO_NETAKIRIDO),
-    ListItemData(R.string.pancreaticTNMTitle, ActionType.NAVIGATE_TO_PANCREATITIS_TNM),
+    ListItemData(R.string.pancreaticTNMTitle, ActionType.NAVIGATE_TO_PANCREASE_TNM),
     ListItemData(R.string.esophagealTNMTitle, ActionType.NAVIGATE_TO_ESOPAGEAL_TNM),
-    ListItemData(R.string.mALBITitle, ActionType.NAVIGATE_TO_MALBI),
+    ListItemData(R.string.mALBITitle, ActionType.NAVIGATE_TO_MALBI,
+        keywords = listOf(
+            R.string.liver
+        ),
+    ),
     ListItemData(
         nameResId = R.string.liverFibrosisScoreSystemTitle,
         actionType = ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM,
@@ -71,18 +72,22 @@ val itemsList = listOf(
             R.string.shearWaveElastography
         )
     ),
-    ListItemData(R.string.homairhomabetaTitle, ActionType.NAVIGATE_TO_HOMAIR),
+    ListItemData(R.string.homaIrHomaBetaTitle, ActionType.NAVIGATE_TO_HOMAIR),
     ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM),
     ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
     ListItemData(
         R.string.intrahepaticCholangiocarcinomaTNMTitle,
         ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM
     ),
-    ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2),
+    ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2,
+        keywords = listOf(
+            R.string.af,
+            R.string.stroke
+        )
+    ),
     ListItemData(R.string.glasgowComaScaleTitle, ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE),
     ListItemData(
         R.string.sodiumDifferentialDiagnosisTitle,
         ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS
     ),
-
-    )
+)
