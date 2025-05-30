@@ -1,18 +1,15 @@
 package com.keiichi.medguidelines.data
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.keiichi.medguidelines.ui.screen.itemsList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.collections.remove
 
 
 // Usage with DataStore:
@@ -67,7 +64,7 @@ fun doAnyDecodeStringsMatchAnyItemsStrings(
     itemsList: List<ListItemData>
 ): Boolean {
     // Get the set of strings from decodeList.nameResID (Set A)
-    val decodeStrings = decodeList.mapNotNull { listItem ->
+    val decodeNameResIdStrings = decodeList.mapNotNull { listItem ->
         try {
             context.getString(listItem.nameResId)
         } catch (e: Exception) {
@@ -77,8 +74,19 @@ fun doAnyDecodeStringsMatchAnyItemsStrings(
         }
     }.toSet()
 
+    val decodeKeywordStrings: Set<String> = decodeList.flatMap { listItem ->
+        // listItem.keywords is now List<Int>
+        listItem.keywords.mapNotNull { keywordResId -> // Iterate over each keyword ID in the list
+            try {
+                context.getString(keywordResId)
+            } catch (e: Exception) {
+                println("Error: Invalid resource ID in decodeList keywords: $keywordResId")
+                null
+            }
+        }
+    }.toSet()
     // Get the set of strings from itemsList.nameResID (Set B)
-    val itemStrings = itemsList.mapNotNull { listItem ->
+    val itemNameResIdStrings = itemsList.mapNotNull { listItem ->
         try {
             context.getString(listItem.nameResId)
         } catch (e: Exception) {
@@ -88,7 +96,20 @@ fun doAnyDecodeStringsMatchAnyItemsStrings(
         }
     }.toSet()
 
+    val itemKeywordStrings: Set<String> = itemsList.flatMap { listItem ->
+        // listItem.keywords is now List<Int>
+        listItem.keywords.mapNotNull { keywordResId -> // Iterate over each keyword ID in the list
+            try {
+                context.getString(keywordResId)
+            } catch (e: Exception) {
+                println("Error: Invalid resource ID in decodeList keywords: $keywordResId")
+                null
+            }
+        }
+    }.toSet()
     // Check if there is any intersection between the two sets of strings
-    return decodeStrings == itemStrings
+    val checkName = decodeNameResIdStrings == itemNameResIdStrings
+    val checkKeywords = decodeKeywordStrings == itemKeywordStrings
+    return checkName && checkKeywords
 }
 

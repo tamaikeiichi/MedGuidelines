@@ -1,6 +1,5 @@
 package com.keiichi.medguidelines.ui.screen
 
-import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
@@ -28,9 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.ActionType
 import com.keiichi.medguidelines.data.ListItemData
+import com.keiichi.medguidelines.data.itemsList
 import com.keiichi.medguidelines.data.loadListItemData
 import com.keiichi.medguidelines.data.saveListItemData
 import com.keiichi.medguidelines.ui.component.IndexScreenItemCard
@@ -39,38 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.collections.toMutableList
-
-fun getStringFromResourceId(context: Context, resourceId: Int): String {
-    return context.getString(resourceId)
-}
-
-val itemsList = listOf(
-    ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
-    ListItemData(R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP),
-    ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM),
-    ListItemData(
-        R.string.acuteTonsillitisAlgorithmTitle,
-        ActionType.NAVIGATE_TO_ACUTE_TONSILLITIS_ALGORITHM
-    ),
-    ListItemData(R.string.bloodGasAnalysisTitle, ActionType.NAVIGATE_TO_BLOOD_GAS_ANALYSIS),
-    ListItemData(R.string.acutePancreatitisTitle, ActionType.NAVIGATE_TO_ACUTE_PANCREATITIS),
-    ListItemData(R.string.netakiridoTitle, ActionType.NAVIGATE_TO_NETAKIRIDO),
-    ListItemData(R.string.pancreaticTNMTitle, ActionType.NAVIGATE_TO_PANCREATITIS_TNM),
-    ListItemData(R.string.esophagealTNMTitle, ActionType.NAVIGATE_TO_ESOPAGEAL_TNM),
-    ListItemData(R.string.mALBITitle, ActionType.NAVIGATE_TO_MALBI),
-    ListItemData(
-        R.string.liverFibrosisScoreSystemTitle,
-        ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM
-    ),
-    ListItemData(R.string.homairhomabetaTitle, ActionType.NAVIGATE_TO_HOMAIR),
-    ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM),
-    ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
-    ListItemData(R.string.intrahepaticCholangiocarcinomaTNMTitle, ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM),
-    ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2),
-    ListItemData(R.string.glasgowComaScaleTitle, ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE),
-    ListItemData(R.string.sodiumDifferentialDiagnosisTitle, ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS),
-
-)
+import kotlin.text.contains
 
 @Composable
 fun IndexScreen(
@@ -98,10 +66,8 @@ fun IndexScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     var animateFirstItem by remember { mutableStateOf(false) }
-    var animationCount by remember { mutableStateOf(0) }
     var hasBeenVisited by rememberSaveable { mutableStateOf(false) }
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    //val lazyListState = LazyListState()//rememberLazyListState()
     val lazyListState = remember(calculation = { LazyListState() })
     val alpha: Float by animateFloatAsState(
         targetValue = if (animateFirstItem) 0.5f else 1f,
@@ -111,7 +77,7 @@ fun IndexScreen(
     val originalItems = rememberSaveable(
         saver = listSaver(
             save = { it.map { item -> Json.encodeToString(item) } },
-            restore = {restored ->
+            restore = { restored ->
                 restored.map { item -> Json.decodeFromString<ListItemData>(item) }
                     .toMutableStateList()
             }
@@ -120,11 +86,8 @@ fun IndexScreen(
         mutableStateListOf<ListItemData>()
     }
 
-    // Track the item that was clicked for later processing
-    //var clickedItem by remember { mutableStateOf<ListItemData?>(null) }
     var clickedItemForNavigation by remember { mutableStateOf<ListItemData?>(null) } // Renamed for clarity
 
-    // Function to reorder items and save
     fun updateAndSaveItems(updatedList: List<ListItemData>) {
         originalItems.clear()
         originalItems.addAll(updatedList)
@@ -140,7 +103,6 @@ fun IndexScreen(
                     clickedItemForNavigation?.let { item ->
                         val currentList = originalItems.toMutableList()
                         if (currentList.remove(item)) {
-                            // Only move to top if not a favorite, favorites have their own ordering
                             if (!item.isFavorite) {
                                 val firstFavoriteIndex = currentList.indexOfFirst { it.isFavorite }
                                 if (firstFavoriteIndex != -1) {
@@ -162,12 +124,12 @@ fun IndexScreen(
                         }
                         clickedItemForNavigation = null
                     }
-
                     if (hasBeenVisited) {
                         animateFirstItem = true
                     }
                     hasBeenVisited = true
                 }
+
                 else -> {
                 }
             }
@@ -177,29 +139,45 @@ fun IndexScreen(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-//    LaunchedEffect(animateFirstItem) {
-//        if (animateFirstItem) {
-//            while (animationCount < 3) {
-//                kotlinx.coroutines.delay(200)
-//                animationCount++
-//            }
-//            animateFirstItem = false
-//            animationCount = 0
-//        }
-//    }
 
     val expectedItemCount = itemsList.size
-
     val displayedItems = remember(searchQuery, originalItems) {
-        val filtered = if (searchQuery.isBlank()) {
+        if (searchQuery.isBlank()) {
             originalItems
         } else {
-            originalItems.toList().filter { itemData ->
-                val name = context.getString(itemData.nameResId)
-                name.contains(searchQuery, ignoreCase = true)
+//            originalItems.toList().filter { itemData ->
+//                val name = context.getString(itemData.nameResId)
+//                val nameMatches = name.contains(searchQuery, ignoreCase = true)
+//
+//                val keywordsMatch = itemData.keywords.any { keywordResId ->
+//                    context.getString(keywordResId).lowercase().contains(searchQuery)
+//                }
+//                nameMatches || keywordsMatch
+//            }
+//        }
+//    }
+            val lowerCaseSearchQuery = searchQuery.lowercase()
+            // 1. Items matching by name
+            val nameMatchingItems = originalItems.filter { itemData ->
+                context.getString(itemData.nameResId).lowercase().contains(lowerCaseSearchQuery)
             }
+            // Create a set of nameResIds from nameMatchingItems for efficient lookup
+            val nameMatchIds = nameMatchingItems.map { it.nameResId }.toSet()
+            // 2. Items matching by keywords (and not already in nameMatchingItems)
+            val keywordOnlyMatchingItems = originalItems.filter { itemData ->
+                // Check if it's NOT a name match
+                if (itemData.nameResId in nameMatchIds) {
+                    false // Already included
+                } else {
+                    // Check if any keyword matches
+                    itemData.keywords.any { keywordResId ->
+                        context.getString(keywordResId).lowercase().contains(lowerCaseSearchQuery)
+                    }
+                }
+            }
+            // 3. Concatenate
+            nameMatchingItems + keywordOnlyMatchingItems
         }
-        filtered
     }
 
     LaunchedEffect(Unit) {
