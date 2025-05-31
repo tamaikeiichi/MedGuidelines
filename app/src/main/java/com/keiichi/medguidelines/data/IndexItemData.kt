@@ -26,6 +26,7 @@ import com.keiichi.medguidelines.ui.screen.MALBIScreen
 import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
 import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
 import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
+import com.keiichi.medguidelines.ui.screen.LilleModelScreen
 
 
 @Serializable
@@ -47,7 +48,8 @@ enum class ActionType {
     NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM,
     NAVIGATE_TO_CHADS2,
     NAVIGATE_TO_GLASGOW_COMA_SCALE,
-    NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS
+    NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS,
+    NAVIGATE_TO_LILLE_MODEL,
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -114,6 +116,7 @@ val itemsList = listOf(
         R.string.sodiumDifferentialDiagnosisTitle,
         ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS
     ),
+    ListItemData(R.string.lilleModelInr, ActionType.NAVIGATE_TO_LILLE_MODEL)
 )
 
 data class IndexScreenActions(
@@ -134,7 +137,8 @@ data class IndexScreenActions(
     val navigateToIntrahepaticCholangiocarcinomaTNM: () -> Unit,
     val navigateToCHADS2: () -> Unit,
     val navigateToGlasgowComaScale: () -> Unit,
-    val navigateToSodiumDifferentialDiagnosis: () -> Unit
+    val navigateToSodiumDifferentialDiagnosis: () -> Unit,
+    val navigateToLilleModel: () -> Unit,
 )
 
 @Composable
@@ -163,7 +167,8 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToGlasgowComaScale = { navController.navigate("GlasgowComaScaleScreen") },
         navigateToSodiumDifferentialDiagnosis = {
             navController.navigate("SodiumDifferentialDiagnosisScreen")
-        }
+        },
+        navigateToLilleModel = { navController.navigate("LilleModelScreen") }
     )
 }
 
@@ -194,7 +199,8 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("GlasgowComaScaleScreen") { navController -> GlasgowComaScaleScreen(navController) },
         ScreenRoute("SodiumDifferentialDiagnosisScreen") { navController ->
             SodiumDifferentialDiagnosisScreen(navController)
-        }
+        },
+        ScreenRoute("LilleModelScreen") { navController -> LilleModelScreen(navController) }
     )
 }
 
@@ -218,6 +224,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_CHADS2 -> this.navigateToCHADS2()
         ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE -> this.navigateToGlasgowComaScale()
         ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS -> this.navigateToSodiumDifferentialDiagnosis()
+        ActionType.NAVIGATE_TO_LILLE_MODEL -> this.navigateToLilleModel()
         // Consider adding an else branch for robustness, especially if ActionType might expand
         // else -> { Log.w("Navigation", "Unhandled action type: $actionType") }
     }

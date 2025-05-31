@@ -335,6 +335,7 @@ fun IndexScreenPreview() {
         navigateToCHADS2 = {},
         navigateToGlasgowComaScale = {},
         navigateToSodiumDifferentialDiagnosis = {},
+            navigateToLilleModel = {}
     )
     )
 }
