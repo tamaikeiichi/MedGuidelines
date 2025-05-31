@@ -27,6 +27,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.keiichi.compose.MedGuidelinesTheme
+import com.keiichi.medguidelines.data.IndexScreenActions
+import com.keiichi.medguidelines.data.getAppScreens
+import com.keiichi.medguidelines.data.rememberIndexScreenActions
 import com.keiichi.medguidelines.ui.component.AppDimensions
 import com.keiichi.medguidelines.ui.component.LocalAppDimensions
 import com.keiichi.medguidelines.ui.screen.AcutePancreatitisScreen
@@ -54,27 +57,43 @@ data class ScreenRoute(
     val content: @Composable (NavHostController) -> Unit
 )
 
-val appScreens = listOf(
-    ScreenRoute("ChildPughScreen") { navController -> ChildPughScreen(navController) },
-    ScreenRoute("AdropScreen") { navController -> AdropScreen(navController) },
-    ScreenRoute("ColorectalTNMScreen") { navController -> ColorectalTNMScreen(navController) },
-    ScreenRoute("AcuteTonsillitisAlgorithmScreen") { navController -> AcuteTonsillitisAlgorithmScreen(navController) },
-    ScreenRoute("BloodGasAnalysisScreen") { navController -> BloodGasAnalysisScreen(navController) },
-    ScreenRoute("AcutePancreatitisScreen") { navController -> AcutePancreatitisScreen(navController) },
-    ScreenRoute("NetakiridoScreen") { navController -> NetakiridoScreen(navController) },
-    ScreenRoute("PancreaticTNMScreen") { navController -> PancreaticTNMScreen(navController) },
-    ScreenRoute("EsophagealTNMScreen") { navController -> EsophagealTNMScreen(navController) },
-    ScreenRoute("MALBIScreen") { navController -> MALBIScreen(navController) },
-    ScreenRoute("LiverFibrosisScoreSystemScreen") { navController -> LiverFibrosisScoreSystemScreen(navController) },
-    ScreenRoute("HomaIRScreen") { navController -> HomaIRScreen(navController) },
-    ScreenRoute("LungTNM") { navController -> LungTNMScreen(navController) },
-    ScreenRoute("HccTNM") { navController -> HCCTNMScreen(navController) },
-    ScreenRoute("IntrahepaticCholangiocarcinomaTNM") { navController -> IntrahepaticCholangiocarcinomaTNMScreen(navController) },
-    ScreenRoute("CHADS2") { navController -> Chads2Screen(navController) },
-    ScreenRoute("GlasgowComaScaleScreen") { navController -> GlasgowComaScaleScreen(navController) },
-    ScreenRoute("SodiumDifferentialDiagnosisScreen") { navController -> SodiumDifferentialDiagnosisScreen(navController) }
-    // Add other screens here
-)
+//val appScreens = listOf(
+//    ScreenRoute("ChildPughScreen") { navController -> ChildPughScreen(navController) },
+//    ScreenRoute("AdropScreen") { navController -> AdropScreen(navController) },
+//    ScreenRoute("ColorectalTNMScreen") { navController -> ColorectalTNMScreen(navController) },
+//    ScreenRoute("AcuteTonsillitisAlgorithmScreen") { navController ->
+//        AcuteTonsillitisAlgorithmScreen(
+//            navController
+//        )
+//    },
+//    ScreenRoute("BloodGasAnalysisScreen") { navController -> BloodGasAnalysisScreen(navController) },
+//    ScreenRoute("AcutePancreatitisScreen") { navController -> AcutePancreatitisScreen(navController) },
+//    ScreenRoute("NetakiridoScreen") { navController -> NetakiridoScreen(navController) },
+//    ScreenRoute("PancreaticTNMScreen") { navController -> PancreaticTNMScreen(navController) },
+//    ScreenRoute("EsophagealTNMScreen") { navController -> EsophagealTNMScreen(navController) },
+//    ScreenRoute("MALBIScreen") { navController -> MALBIScreen(navController) },
+//    ScreenRoute("LiverFibrosisScoreSystemScreen") { navController ->
+//        LiverFibrosisScoreSystemScreen(
+//            navController
+//        )
+//    },
+//    ScreenRoute("HomaIRScreen") { navController -> HomaIRScreen(navController) },
+//    ScreenRoute("LungTNM") { navController -> LungTNMScreen(navController) },
+//    ScreenRoute("HccTNM") { navController -> HCCTNMScreen(navController) },
+//    ScreenRoute("IntrahepaticCholangiocarcinomaTNM") { navController ->
+//        IntrahepaticCholangiocarcinomaTNMScreen(
+//            navController
+//        )
+//    },
+//    ScreenRoute("CHADS2") { navController -> Chads2Screen(navController) },
+//    ScreenRoute("GlasgowComaScaleScreen") { navController -> GlasgowComaScaleScreen(navController) },
+//    ScreenRoute("SodiumDifferentialDiagnosisScreen") { navController ->
+//        SodiumDifferentialDiagnosisScreen(
+//            navController
+//        )
+//    }
+//    // Add other screens here
+//)
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
@@ -90,41 +109,76 @@ class MainActivity : ComponentActivity() {
                     )
                     {
                         val controller = rememberNavController()
-
+                        val appScreens = getAppScreens()
+                        val indexScreenActions = rememberIndexScreenActions(navController = controller)
+//                            IndexScreenActions(
+//                            navigateToChildPugh = { controller.navigate("ChildPughScreen") },
+//                            navigateToAdrop = { controller.navigate("AdropScreen") },
+//                            navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
+//                            navigateToAcuteTonsillitisAlgorithm = {
+//                                controller.navigate(
+//                                    "AcuteTonsillitisAlgorithmScreen"
+//                                )
+//                            },
+//                            navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen") },
+//                            navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen") },
+//                            navigateToNetakirido = { controller.navigate("NetakiridoScreen") },
+//                            navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen") },
+//                            navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen") },
+//                            navigateToMALBI = { controller.navigate("MALBIScreen") },
+//                            navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
+//                            navigateToHomaIR = { controller.navigate("HomaIRScreen") },
+//                            navigateToLungTNM = { controller.navigate("LungTNM") },
+//                            navigateToHccTNM = { controller.navigate("HccTNM") },
+//                            navigateToIntrahepaticCholangiocarcinomaTNM = {
+//                                controller.navigate(
+//                                    "IntrahepaticCholangiocarcinomaTNM"
+//                                )
+//                            },
+//                            navigateToCHADS2 = { controller.navigate("CHADS2") },
+//                            navigateToGlasgowComaScale = {
+//                                controller.navigate("GlasgowComaScaleScreen")
+//                            },
+//                            navigateToSodiumDifferentialDiagnosis = {
+//                                controller.navigate("SodiumDifferentialDiagnosisScreen")
+//                            }
+                        //)
                         NavHost(controller, startDestination = "IndexScreen") {
                             composable("IndexScreen") {
                                 ChildComposable {
                                     IndexScreen(
-                                        navigateToChildPugh = { controller.navigate("ChildPughScreen") },
-                                        navigateToAdrop = { controller.navigate("AdropScreen") },
-                                        navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
-                                        navigateToAcuteTonsillitisAlgorithm = {
-                                            controller.navigate(
-                                                "AcuteTonsillitisAlgorithmScreen"
-                                            )
-                                        },
-                                        navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen") },
-                                        navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen") },
-                                        navigateToNetakirido = { controller.navigate("NetakiridoScreen") },
-                                        navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen") },
-                                        navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen") },
-                                        navigateToMALBI = { controller.navigate("MALBIScreen") },
-                                        navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
-                                        navigateToHomaIR = { controller.navigate("HomaIRScreen") },
-                                        navigateToLungTNM = { controller.navigate("LungTNM") },
-                                        navigateToHccTNM = { controller.navigate("HccTNM") },
-                                        navigateToIntrahepaticCholangiocarcinomaTNM = {
-                                            controller.navigate(
-                                                "IntrahepaticCholangiocarcinomaTNM"
-                                            )
-                                        },
-                                        navigateToCHADS2 = { controller.navigate("CHADS2") },
-                                        navigateToGlasgowComaScale = {
-                                            controller.navigate("GlasgowComaScaleScreen")
-                                        },
-                                        navigateToSodiumDifferentialDiagnosis = {
-                                            controller.navigate("SodiumDifferentialDiagnosisScreen")
-                                        }
+                                        actions = indexScreenActions
+//                                        navigateToChildPugh = { controller.navigate("ChildPughScreen") },
+//                                        navigateToAdrop = { controller.navigate("AdropScreen") },
+//                                        navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
+//                                        navigateToAcuteTonsillitisAlgorithm = {
+//                                            controller.navigate(
+//                                                "AcuteTonsillitisAlgorithmScreen"
+//                                            )
+//                                        },
+//                                        navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen") },
+//                                        navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen") },
+//                                        navigateToNetakirido = { controller.navigate("NetakiridoScreen") },
+//                                        navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen") },
+//                                        navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen") },
+//                                        navigateToMALBI = { controller.navigate("MALBIScreen") },
+//                                        navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
+//                                        navigateToHomaIR = { controller.navigate("HomaIRScreen") },
+//                                        navigateToLungTNM = { controller.navigate("LungTNM") },
+//                                        navigateToHccTNM = { controller.navigate("HccTNM") },
+//                                        navigateToIntrahepaticCholangiocarcinomaTNM = {
+//                                            controller.navigate(
+//                                                "IntrahepaticCholangiocarcinomaTNM"
+//                                            )
+//                                        },
+//                                        navigateToCHADS2 = { controller.navigate("CHADS2") },
+//                                        navigateToGlasgowComaScale = {
+//                                            controller.navigate("GlasgowComaScaleScreen")
+//                                        },
+//                                        navigateToSodiumDifferentialDiagnosis = {
+//                                            controller.navigate("SodiumDifferentialDiagnosisScreen")
+//                                        }
+
                                     )
                                 }
                             }
@@ -135,96 +189,6 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             }
-//                            composable("ChildPughScreen") {
-//                                ChildComposable {
-//                                    ChildPughScreen(controller)
-//                                }
-//                            }
-//                            composable("AdropScreen") {
-//                                ChildComposable {
-//                                    AdropScreen(controller)
-//                                }
-//                            }
-//                            composable("ColorectalTNMScreen") {
-//                                ChildComposable {
-//                                    ColorectalTNMScreen(controller)
-//                                }
-//                            }
-//                            composable("AcuteTonsillitisAlgorithmScreen") {
-//                                ChildComposable {
-//                                    AcuteTonsillitisAlgorithmScreen(controller)
-//                                }
-//                            }
-//                            composable("BloodGasAnalysisScreen") {
-//                                ChildComposable {
-//                                    BloodGasAnalysisScreen(controller)
-//                                }
-//                            }
-//                            composable("AcutePancreatitisScreen") {
-//                                ChildComposable {
-//                                    AcutePancreatitisScreen(controller)
-//                                }
-//                            }
-//                            composable("NetakiridoScreen") {
-//                                ChildComposable {
-//                                    NetakiridoScreen(controller)
-//                                }
-//                            }
-//                            composable("PancreaticTNMScreen") {
-//                                ChildComposable {
-//                                    PancreaticTNMScreen(controller)
-//                                }
-//                            }
-//                            composable("EsophagealTNMScreen") {
-//                                ChildComposable {
-//                                    EsophagealTNMScreen(controller)
-//                                }
-//                            }
-//                            composable("MALBIScreen") {
-//                                ChildComposable {
-//                                    MALBIScreen(controller)
-//                                }
-//                            }
-//                            composable("LiverFibrosisScoreSystemScreen") {
-//                                ChildComposable {
-//                                    LiverFibrosisScoreSystemScreen(controller)
-//                                }
-//                            }
-//                            composable("HomaIRScreen") {
-//                                ChildComposable {
-//                                    HomaIRScreen(controller)
-//                                }
-//                            }
-//                            composable("LungTNM") {
-//                                ChildComposable {
-//                                    LungTNMScreen(controller)
-//                                }
-//                            }
-//                            composable("HccTNM") {
-//                                ChildComposable {
-//                                    HCCTNMScreen(controller)
-//                                }
-//                            }
-//                            composable("IntrahepaticCholangiocarcinomaTNM") {
-//                                ChildComposable {
-//                                    IntrahepaticCholangiocarcinomaTNMScreen(controller)
-//                                }
-//                            }
-//                            composable("CHADS2") {
-//                                ChildComposable {
-//                                    Chads2Screen(controller)
-//                                }
-//                            }
-//                            composable("GlasgowComaScaleScreen") {
-//                                ChildComposable {
-//                                   GlasgowComaScaleScreen(controller)
-//                                }
-//                            }
-//                            composable("SodiumDifferentialDiagnosisScreen") {
-//                                ChildComposable {
-//                                    SodiumDifferentialDiagnosisScreen(controller)
-//                                }
-//                            }
                         }
                     }
                 }

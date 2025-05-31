@@ -384,12 +384,12 @@ fun LiverFibrosisScoreSystemScreen(
                     )
                     FlowRow {
                         FactorAlerts(
-                            text = R.string.ast,
-                            factor = ast.doubleValue
-                        )
-                        FactorAlerts(
                             text = R.string.type4collagen7S,
                             factor = t4c7score.doubleValue
+                        )
+                        FactorAlerts(
+                            text = R.string.ast,
+                            factor = ast.doubleValue
                         )
                     }
                 }
