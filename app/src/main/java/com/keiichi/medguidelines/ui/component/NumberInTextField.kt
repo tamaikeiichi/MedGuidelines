@@ -15,6 +15,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,17 +37,30 @@ fun NumberInTextField(
     value: MutableDoubleState,
     width: Int,
     multiplier: Double = 1.0,
-    formatter: DecimalFormat = remember { DecimalFormat("#.##") }
+    isJapaneseUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
+    formatter: DecimalFormat = remember { DecimalFormat("#.##") },
+    changeValueRate: Double = 1.0
 ) {
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    LaunchedEffect(isFocused, multiplier) {
+    LaunchedEffect(isJapaneseUnit.value) {
+        if (isJapaneseUnit.value) {
+            value.doubleValue = (value.doubleValue / changeValueRate)
+        } else {
+            value.doubleValue = (value.doubleValue * changeValueRate)
+        }
+    }
+    LaunchedEffect(isFocused//, multiplier
+         ) {
         if (!isFocused) {
+            //if (isJapaneseUnit) {
             text =
                 formatter.format(
-                    (value.doubleValue * multiplier)//.toString()
+                    (value.doubleValue
+                            //* multiplier
+                            )
                 )
         }
     }

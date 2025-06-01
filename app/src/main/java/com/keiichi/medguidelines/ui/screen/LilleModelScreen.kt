@@ -138,10 +138,10 @@ private fun score(): Double {
 
     val r = 3.19 -
             (0.101 * age.doubleValue) +
-            (1.47 * albumin.doubleValue) +
-            (0.28215 * bilirubinDay7.doubleValue) -
+            (0.147 * 10 * albumin.doubleValue) +
+            (0.0165 * 17.1 * (bilirubinDay7.doubleValue - bilirubinDay0.doubleValue)) -
             (0.206 * renalInsufficiencyNumericValue) -
-            (0.11115 * bilirubinDay0.doubleValue) -
+            (0.0065 * 17.1 * bilirubinDay0.doubleValue) -
             (0.0096 * ptInr.doubleValue)
     score = (exp(-r) / (1 + exp(-r)))
     return score

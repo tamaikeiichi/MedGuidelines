@@ -30,7 +30,7 @@ fun InputValue(
     label: Int,
     value: MutableDoubleState,
     unit: Int,
-    changeUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
+    isJapaneseUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
     changedValueRate: Double = 1.0,
     changedUnit: Int = R.string.space,
     ) {
@@ -66,8 +66,10 @@ fun InputValue(
         NumberInTextField(
             label = label, value = value,
             width = (textWidth * 0.3).roundToInt() + 90,//(labelWidth * 0.5).roundToInt()+50,
-            multiplier = if (changeUnit.value) 1.0 else changedValueRate,
-            formatter = formatter
+            multiplier = if (isJapaneseUnit.value) 1.0 else changedValueRate,
+            formatter = formatter,
+            isJapaneseUnit = isJapaneseUnit,
+            changeValueRate = changedValueRate
         )
         if (changedValueRate == 1.0) {
             Column(
@@ -83,9 +85,9 @@ fun InputValue(
                 verticalArrangement = Arrangement.Bottom
             ) {
                 ClickableText(
-                    text = if (changeUnit.value) unit else changedUnit,
-                    onChanged = { changeUnit.value = !changeUnit.value },
-                    changed = changeUnit.value
+                    text = if (isJapaneseUnit.value) unit else changedUnit,
+                    onChanged = { isJapaneseUnit.value = !isJapaneseUnit.value },
+                    changed = isJapaneseUnit.value
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
