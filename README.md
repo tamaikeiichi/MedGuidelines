@@ -20,11 +20,11 @@ Acute tonsillitis/pharyngitis algorithm
 Blood Gas Analysis  
 Severity of Acute Pancreatitis  
 Liver Fibrosis Score System (FIB4, NAFLD Fibrosis Score, ELF Score, APRI, Shear Wave Elastography)  
-HOMA-IR
-CHADS2/HELT-E2S2
-Glasgow Coma Scale
-Lille model
-Hyponatremia differential diagnosis
+HOMA-IR  
+CHADS2/HELT-E2S2  
+Glasgow Coma Scale  
+Lille model  
+Hyponatremia differential diagnosis  
 
 ## Welcom to your requests!
 
