@@ -29,7 +29,7 @@ import kotlin.math.roundToInt
 fun InputValue(
     label: Int,
     value: MutableDoubleState,
-    unit: Int,
+    japaneseUnit: Int,
     isJapaneseUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
     changedValueRate: Double = 1.0,
     changedUnit: Int = R.string.space,
@@ -76,7 +76,7 @@ fun InputValue(
                 verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
-                    text = parseStyledString(unit),
+                    text = parseStyledString(japaneseUnit),
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -85,7 +85,7 @@ fun InputValue(
                 verticalArrangement = Arrangement.Bottom
             ) {
                 ClickableText(
-                    text = if (isJapaneseUnit.value) unit else changedUnit,
+                    text = if (isJapaneseUnit.value) japaneseUnit else changedUnit,
                     onChanged = { isJapaneseUnit.value = !isJapaneseUnit.value },
                     changed = isJapaneseUnit.value
                 )

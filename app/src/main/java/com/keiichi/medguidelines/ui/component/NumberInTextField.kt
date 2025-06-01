@@ -28,6 +28,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.collect
 
 //@SuppressLint("RememberReturnType")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,23 +48,45 @@ fun NumberInTextField(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    LaunchedEffect(isJapaneseUnit.value) {
-        if (isJapaneseUnit.value) {
-            value.doubleValue = (value.doubleValue / changeValueRate)
-        } else {
-            value.doubleValue = (value.doubleValue * changeValueRate)
-        }
+//    LaunchedEffect(isJapaneseUnit.value) {
+//        if (isJapaneseUnit.value) {
+//            value.doubleValue = (value.doubleValue / changeValueRate)
+//        } else {
+//            value.doubleValue = (value.doubleValue * changeValueRate)
+//        }
+//    }
+    LaunchedEffect(Unit) { // Runs once to set up the flow collection
+        snapshotFlow { isJapaneseUnit.value } // Create a flow that emits when isJapaneseUnit.value changes
+            .drop(1) // Important: Skip the initial emission of isJapaneseUnit.value
+            .collect { currentIsJapaneseUnitValue ->
+                // This block will only execute when isJapaneseUnit.value changes,
+                // not on the initial composition.
+                if (currentIsJapaneseUnitValue) {
+                    text = formatter.format((value.doubleValue))
+                } else {
+                    text = formatter.format((value.doubleValue * changeValueRate))
+                }
+            }
     }
-    LaunchedEffect(isFocused//, multiplier
+
+    LaunchedEffect(isFocused//, isJapaneseUnit.value//, multiplier
          ) {
         if (!isFocused) {
             //if (isJapaneseUnit) {
             text =
-                formatter.format(
-                    (value.doubleValue
-                            //* multiplier
-                            )
-                )
+                if (isJapaneseUnit.value) {
+                    formatter.format(
+                        (value.doubleValue
+                                //* multiplier
+                                )
+                    )
+                } else {
+                    formatter.format(
+                        (value.doubleValue
+                                //* multiplier
+                                ) * changeValueRate
+                    )
+                }
         }
     }
     LaunchedEffect(isFocused) {
@@ -75,7 +100,11 @@ fun NumberInTextField(
         value = text,
         onValueChange = { newText ->
             text = newText
-            value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) // multiplier
+            if (isJapaneseUnit.value) {
+                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) // multiplier
+            } else {
+                value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) / changeValueRate// changeValueRate
+            }
         },
         modifier = Modifier
             .padding(5.dp)

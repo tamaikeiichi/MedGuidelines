@@ -393,11 +393,12 @@
     <string name="af">AF</string>
     <string name="stroke">Stroke</string>
     <string name="search">Search</string>
-    <string name="lilleModel">Lille model</string>
-    <string name="lilleModelUrl">https://pubmed.ncbi.nlm.nih.gov/17518367/</string>
+    <string name="lilleModel" translatable="false">Lille model</string>
+    <string name="lilleModelUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/17518367/</string>
     <string name="bilirubinDay0">Bilirubin day 0</string>
     <string name="bilirubinDay7">Bilirubin day 7</string>
     <string name="creatinine">Creatinine</string>
-    <string name="ptInr">PT-INR</string>
+    <string name="ptInr" translatable="false">PT-INR</string>
     <string name="lilleModelInr">Lille model-INR</string>
+    <string name="alcoholicHepatitis">Alcoholic Hepatitis</string>
 </resources>

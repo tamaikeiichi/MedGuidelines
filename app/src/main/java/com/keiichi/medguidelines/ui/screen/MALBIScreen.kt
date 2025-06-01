@@ -1,7 +1,6 @@
 package com.keiichi.medguidelines.ui.screen
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +38,6 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
-import com.keiichi.medguidelines.ui.component.cardModifier
 import kotlin.math.log10
 
 @Composable
@@ -149,16 +146,17 @@ fun mALBIInput(): Double {
             itemVerticalAlignment = Alignment.Bottom,
         ) {
             InputValue(
-                label = R.string.totalBilirubin, value = totalBilirubin, unit = R.string.mgdl,
+                label = R.string.totalBilirubin, value = totalBilirubin, japaneseUnit = R.string.mgdl,
                 changedValueRate = 17.1, changedUnit = R.string.umolL
             )
             InputValue(
-                label = R.string.albumin, value = albumin, unit = R.string.gdL,
+                label = R.string.albumin, value = albumin, japaneseUnit = R.string.gdL,
                 changedValueRate = 10.0, changedUnit = R.string.gL
             )
         }
     }
-    val score =
+    var score by remember { mutableDoubleStateOf(0.0) }
+    score =
         (log10(17.1 * totalBilirubin.doubleValue)) * 0.66 + (10 * albumin.doubleValue * (-0.085))
     return score
 }

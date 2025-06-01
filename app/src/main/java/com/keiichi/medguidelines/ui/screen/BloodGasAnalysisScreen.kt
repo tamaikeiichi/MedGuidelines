@@ -97,25 +97,25 @@ fun BloodGasAnalysisInput() {
                         label = R.string.ph, value = ph, unit = R.string.space
                     )
                     InputValue(
-                        label = R.string.po2, value = paO2, unit = R.string.mmhg
+                        label = R.string.po2, value = paO2, japaneseUnit = R.string.mmhg
                     )
                     InputValue(
-                        label = R.string.pco2, value = paCo2, unit = R.string.mmhg
+                        label = R.string.pco2, value = paCo2, japaneseUnit = R.string.mmhg
                     )
                     InputValue(
-                        label = R.string.hco3, value = hco3, unit = R.string.meql
+                        label = R.string.hco3, value = hco3, japaneseUnit = R.string.meql
                     )
                     InputValue(
-                        label = R.string.na, value = na, unit = R.string.meql
+                        label = R.string.na, value = na, japaneseUnit = R.string.meql
                     )
                     InputValue(
-                        label = R.string.k, value = k, unit = R.string.meql
+                        label = R.string.k, value = k, japaneseUnit = R.string.meql
                     )
                     InputValue(
-                        label = R.string.cl, value = cl, unit = R.string.meql
+                        label = R.string.cl, value = cl, japaneseUnit = R.string.meql
                     )
                     InputValue(
-                        label = R.string.albumin, value = albumin, unit = R.string.mgdl
+                        label = R.string.albumin, value = albumin, japaneseUnit = R.string.mgdl
                     )
                 }
             }

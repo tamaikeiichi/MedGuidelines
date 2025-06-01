@@ -194,14 +194,14 @@ fun homaInput(): HomaScore {
         ) {
             InputValue(
                 label = R.string.fastingInsulin, value = insulin,
-                unit = R.string.uUml,
+                japaneseUnit = R.string.uUml,
                 isJapaneseUnit = remember { mutableStateOf(changedFactor1Unit) }.also {
                     changedFactor1Unit = it.value
                 }
             )
             InputValue(
                 label = R.string.fastingGlucose, value = glucose,
-                unit = R.string.mgdl,
+                japaneseUnit = R.string.mgdl,
                 isJapaneseUnit = remember { mutableStateOf(changedFactor2Unit) }.also {
                     changedFactor2Unit = it.value
                 },

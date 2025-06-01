@@ -4,35 +4,34 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
-import com.keiichi.medguidelines.ui.component.Dimensions
+import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
+import com.keiichi.medguidelines.ui.component.MedGuidelinesFlowRow
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import kotlin.math.exp
-import kotlin.math.roundToInt
 
 @SuppressLint("DefaultLocale")
 @Composable
@@ -40,6 +39,7 @@ fun LilleModelScreen(navController: NavController) {
     val focusManager = LocalFocusManager.current
     var score by remember { mutableDoubleStateOf(0.000) }
     var scoreRound by remember { mutableStateOf("0.00") }
+    var sixMonthSurvival: String = ""
 
     MedGuidelinesScaffold(
         topBar = {
@@ -54,6 +54,8 @@ fun LilleModelScreen(navController: NavController) {
         bottomBar = {
             ScoreBottomAppBar(displayText = buildAnnotatedString {
                 append(scoreRound)
+                append(" 6-month survival is ")
+                append(sixMonthSurvival)
             }
             )
         },
@@ -75,6 +77,7 @@ fun LilleModelScreen(navController: NavController) {
             ) {
             score = score()
             scoreRound = String.format("%.2f", score)
+            sixMonthSurvival = if (score >= 0.45) "25%" else "85%"
         }
 
     }
@@ -92,46 +95,57 @@ private fun score(): Double {
     var score by remember { mutableDoubleStateOf(0.0) }
 
     MedGuidelinesCard {
-        FlowRow {
+        MedGuidelinesFlowRow {
             InputValue(
                 label = R.string.age,
                 value = age,
-                unit = R.string.years
+                japaneseUnit = R.string.years
             )
             InputValue(
                 label = R.string.albumin,
                 value = albumin,
-                unit = R.string.gdL,
+                japaneseUnit = R.string.gdL,
                 changedValueRate = 10.0,
                 changedUnit = R.string.gL
             )
             InputValue(
                 label = R.string.bilirubinDay0,
                 value = bilirubinDay0,
-                unit = R.string.mgdl,
+                japaneseUnit = R.string.mgdl,
                 changedValueRate = 17.1,
                 changedUnit = R.string.umolL
             )
             InputValue(
                 label = R.string.bilirubinDay7,
                 value = bilirubinDay7,
-                unit = R.string.mgdl,
+                japaneseUnit = R.string.mgdl,
                 changedValueRate = 17.1,
                 changedUnit = R.string.umolL
             )
             InputValue(
                 label = R.string.creatinine,
                 value = creatinine,
-                unit = R.string.mgdl,
+                japaneseUnit = R.string.mgdl,
                 changedValueRate = 88.4,
                 changedUnit = R.string.mmoll
             )
             InputValue(
                 label = R.string.ptInr,
                 value = ptInr,
-                unit = R.string.space
+                japaneseUnit = R.string.space
             )
         }
+    }
+    MedGuidelinesCard {
+        GraphAndThreshold(
+            maxValue = 1.0F,
+            minValue = 0.0F,
+            firstThreshold = 0.45F,
+            //secondThreshold = 0.0F,
+            firstLabel = stringResource(R.string.lowRisk),
+            secondLabel = stringResource(R.string.highRisk),
+            score = (score * 100).toInt().toDouble() / 100.0,
+        )
     }
     renalInsufficiency.value = creatinine.doubleValue > 1.3
     val renalInsufficiencyNumericValue = if (renalInsufficiency.value) 1.0 else 0.0

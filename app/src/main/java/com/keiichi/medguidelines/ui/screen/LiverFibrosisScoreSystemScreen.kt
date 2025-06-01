@@ -496,47 +496,47 @@ fun inputAndCalculate(
         ) {
             InputValue(
                 label = R.string.age, value = age,
-                unit = R.string.years, //changeUnit = changedFactor1Unit
+                japaneseUnit = R.string.years, //changeUnit = changedFactor1Unit
             )
             InputValue(
                 label = R.string.bodyHeight, value = bodyHeight,
-                unit = R.string.cm, //changeUnit = false
+                japaneseUnit = R.string.cm, //changeUnit = false
             )
             InputValue(
                 label = R.string.bodyWeight, value = bodyWeight,
-                unit = R.string.kg, //changeUnit = false
+                japaneseUnit = R.string.kg, //changeUnit = false
             )
             InputValue(
                 label = R.string.ast, value = ast,
-                unit = R.string.iul, //changeUnit = changedFactor2Unit
+                japaneseUnit = R.string.iul, //changeUnit = changedFactor2Unit
             )
             InputValue(
                 label = R.string.alt, value = alt,
-                unit = R.string.iul, //changeUnit = changedFactor4Unit
+                japaneseUnit = R.string.iul, //changeUnit = changedFactor4Unit
             )
             InputValue(
                 label = R.string.plateletCount, value = platelet,
-                unit = R.string.unit109L, //changeUnit = changedFactor3Unit
+                japaneseUnit = R.string.unit109L, //changeUnit = changedFactor3Unit
             )
             InputValue(
                 label = R.string.albumin, value = albumin,
-                unit = R.string.gdL, //changeUnit = false
+                japaneseUnit = R.string.gdL, //changeUnit = false
             )
             InputValue(
                 label = R.string.shearWaveElastography, value = swe,
-                unit = R.string.ms, //changeUnit = changeFactor5Unit
+                japaneseUnit = R.string.ms, //changeUnit = changeFactor5Unit
             )
             InputValue(
                 label = R.string.elfScore, value = elfScore,
-                unit = R.string.space, //changeUnit = false
+                japaneseUnit = R.string.space, //changeUnit = false
             )
             InputValue(
                 label = R.string.m2bpgi, value = m2bpgi,
-                unit = R.string.coi, //changeUnit = false
+                japaneseUnit = R.string.coi, //changeUnit = false
             )
             InputValue(
                 label = R.string.type4collagen7S, value = t4c7score,
-                unit = R.string.ngml, //changeUnit = false
+                japaneseUnit = R.string.ngml, //changeUnit = false
             )
             dmPresence.intValue = buttonAndScore(
                 factor = noYes,
@@ -546,15 +546,15 @@ fun inputAndCalculate(
             )
             InputValue(
                 label = R.string.hyaluronicAcid, value = hyaluronicAcid,
-                unit = R.string.ngml, //changeUnit = false
+                japaneseUnit = R.string.ngml, //changeUnit = false
             )
             InputValue(
                 label = R.string.piiip, value = piiinp,
-                unit = R.string.ngml, //changeUnit = false
+                japaneseUnit = R.string.ngml, //changeUnit = false
             )
             InputValue(
                 label = R.string.timp1, value = timp1,
-                unit = R.string.ngml, //changeUnit = false
+                japaneseUnit = R.string.ngml, //changeUnit = false
             )
         }
     }

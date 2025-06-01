@@ -72,7 +72,7 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController) {
                         InputValue(
                             label = R.string.sodium,
                             value = na,
-                            unit = R.string.mmoll,
+                            japaneseUnit = R.string.mmoll,
                         )
 //                        InputValue(
 //                            label = R.string.k,
@@ -100,7 +100,7 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController) {
                             InputValue(
                                 label = R.string.serumOsmolality,
                                 value = serumOsmolality,
-                                unit = R.string.mOsmKg,
+                                japaneseUnit = R.string.mOsmKg,
                             )
                         }
                         when (serumOsmolality.doubleValue) {
@@ -127,7 +127,7 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController) {
                                         InputValue(
                                             label = R.string.urineOsmolality,
                                             value = urineOsmolality,
-                                            unit = R.string.mOsmKg,
+                                            japaneseUnit = R.string.mOsmKg,
                                         )
                                     }
                                     if (urineOsmolality.doubleValue <= 100.0) {
@@ -149,7 +149,7 @@ fun SodiumDifferentialDiagnosisScreen(navController: NavController) {
                                             InputValue(
                                                 label = R.string.urineSodiumConcentration,
                                                 value = urineSodiumConc,
-                                                unit = R.string.mOsmKg,
+                                                japaneseUnit = R.string.mOsmKg,
                                             )
                                         }
                                             if (urineSodiumConc.doubleValue <= 30.0) {

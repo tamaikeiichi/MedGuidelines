@@ -244,5 +244,12 @@
     <string name="secondaryAdrenalInsufficiency">続発性副腎不全</string>
     <string name="hypothyroidism">甲状腺機能低下症</string>
     <string name="sodiumDifferentialDiagnosisTitle">低ナトリウム血症鑑別診断</string>
+    <string name="lung">肺</string>
+    <string name="pneumonia">肺炎</string>
+    <string name="liver">肝</string>
+    <string name="af">心房細動</string>
+    <string name="stroke">脳卒中</string>
     <string name="search">検索</string>
+    <string name="creatinine">クレアチニン</string>
+    <string name="alcoholicHepatitis">アルコール性肝炎</string>
 </resources>

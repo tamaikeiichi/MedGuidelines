@@ -116,7 +116,11 @@ val itemsList = listOf(
         R.string.sodiumDifferentialDiagnosisTitle,
         ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS
     ),
-    ListItemData(R.string.lilleModelInr, ActionType.NAVIGATE_TO_LILLE_MODEL)
+    ListItemData(R.string.lilleModelInr, ActionType.NAVIGATE_TO_LILLE_MODEL,
+        keywords = listOf(
+            R.string.alcoholicHepatitis,
+        )
+    )
 )
 
 data class IndexScreenActions(
