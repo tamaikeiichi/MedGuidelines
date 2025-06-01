@@ -1,5 +1,9 @@
 # MedGuidelines
 
+## Now in Google Play Store!
+
+<https://play.google.com/store/apps/details?id=com.keiichi.medguidelines>
+
 ## Summary
 
 Easy to access medical guidelines everywhere in your smartphone.
