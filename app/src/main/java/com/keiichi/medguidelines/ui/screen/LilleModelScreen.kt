@@ -39,7 +39,7 @@ fun LilleModelScreen(navController: NavController) {
     val focusManager = LocalFocusManager.current
     var score by remember { mutableDoubleStateOf(0.000) }
     var scoreRound by remember { mutableStateOf("0.00") }
-    var sixMonthSurvival: String = ""
+    var sixMonthSurvival: String = "85%"
 
     MedGuidelinesScaffold(
         topBar = {
