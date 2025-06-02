@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -48,24 +49,6 @@ import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 @Composable
 fun IndexScreen(
     actions: IndexScreenActions
-//    navigateToChildPugh: () -> Unit,
-//    navigateToAdrop: () -> Unit,
-//    navigateToColorectalTNM: () -> Unit,
-//    navigateToAcuteTonsillitisAlgorithm: () -> Unit,
-//    navigateToBloodGasAnalysis: () -> Unit,
-//    navigateToAcutePancreatitis: () -> Unit,
-//    navigateToNetakirido: () -> Unit,
-//    navigateToPancreaticTNM: () -> Unit,
-//    navigateToEsophagealTNM: () -> Unit,
-//    navigateToMALBI: () -> Unit,
-//    navigateToLiverFibrosisScoreSystem: () -> Unit,
-//    navigateToHomaIR: () -> Unit,
-//    navigateToLungTNM: () -> Unit,
-//    navigateToHccTNM: () -> Unit,
-//    navigateToIntrahepaticCholangiocarcinomaTNM: () -> Unit,
-//    navigateToCHADS2: () -> Unit,
-//    navigateToGlasgowComaScale: () -> Unit,
-//    navigateToSodiumDifferentialDiagnosis: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -216,7 +199,10 @@ fun IndexScreen(
                 // This is called when the user submits the search (e.g., presses Enter)
                 // performActualSearch(query)
                 println("Search submitted: $query")
-            }
+            },
+//            modifier = Modifier
+//                .safeDrawingPadding()
+
         )
         LazyColumn(
             state = lazyListState,
@@ -245,26 +231,6 @@ fun IndexScreen(
                             saveListItemData(context, updatedItems)
                         }
                         actions.executeNavigation(itemData.actionType)
-//                        when (itemData.actionType) {
-//                            ActionType.NAVIGATE_TO_CHILD_PUGH -> actions.navigateToChildPugh()//IndexScreenActions //navigateToChildPugh()
-//                            ActionType.NAVIGATE_TO_ADROP -> actions.navigateToAdrop()//navigateToAdrop()
-//                            ActionType.NAVIGATE_TO_COLORECTAL_TNM -> actions.navigateToColorectalTNM()// navigateToColorectalTNM()
-//                            ActionType.NAVIGATE_TO_ACUTE_TONSILLITIS_ALGORITHM -> actions.navigateToAcuteTonsillitisAlgorithm()
-//                            ActionType.NAVIGATE_TO_BLOOD_GAS_ANALYSIS -> actions.navigateToBloodGasAnalysis()
-//                            ActionType.NAVIGATE_TO_ACUTE_PANCREATITIS -> actions.navigateToAcutePancreatitis()
-//                            ActionType.NAVIGATE_TO_NETAKIRIDO -> actions.navigateToNetakirido()
-//                            ActionType.NAVIGATE_TO_PANCREASE_TNM -> actions.navigateToPancreaticTNM()
-//                            ActionType.NAVIGATE_TO_ESOPAGEAL_TNM -> actions.navigateToEsophagealTNM()
-//                            ActionType.NAVIGATE_TO_MALBI -> actions.navigateToMALBI()
-//                            ActionType.NAVIGATE_TO_LIVERFIBROSISSCORESYSTEM -> actions.navigateToLiverFibrosisScoreSystem()
-//                            ActionType.NAVIGATE_TO_HOMAIR -> actions.navigateToHomaIR()
-//                            ActionType.NAVIGATE_TO_LUNG_TNM -> actions.navigateToLungTNM()
-//                            ActionType.NAVIGATE_TO_HCC_TNM -> actions.navigateToHccTNM()
-//                            ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM -> actions.navigateToIntrahepaticCholangiocarcinomaTNM()
-//                            ActionType.NAVIGATE_TO_CHADS2 -> actions.navigateToCHADS2()
-//                            ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE -> actions.navigateToGlasgowComaScale()
-//                            ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS -> actions.navigateToSodiumDifferentialDiagnosis()
-//                        }
                     },
                     onFavoriteClick = {
                         val currentList = originalItems.toMutableList()

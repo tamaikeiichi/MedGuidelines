@@ -26,15 +26,21 @@ import androidx.compose.ui.tooling.preview.Preview
 @OptIn(ExperimentalMaterial3Api::class) // SearchBar is experimental in M3
 @Composable
 fun MyCustomSearchBar(
+    modifier: Modifier = Modifier,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit, // Callback for when search is triggered (e.g., keyboard action)
-    placeholderText: Int = R.string.search // Placeholder text
+    placeholderText: Int = R.string.search, // Placeholder text
 ) {
     val focusManager = LocalFocusManager.current
 
     //SearchView(){}
     SearchBar(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+                then(modifier)
+        ,
         query = searchQuery,
         onQueryChange = onSearchQueryChange, // Renamed for clarity with M3 SearchBar API
         onSearch = {
@@ -43,9 +49,7 @@ fun MyCustomSearchBar(
         },
         active = false, // Set to true if you want a separate search results screen
         onActiveChange = { /* Handle active state change if needed */ },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+
         placeholder = { Text(parseStyledString(placeholderText)) },
         trailingIcon = {
             if (searchQuery.isNotEmpty()) {

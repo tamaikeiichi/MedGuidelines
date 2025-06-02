@@ -9,9 +9,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -57,128 +60,35 @@ data class ScreenRoute(
     val content: @Composable (NavHostController) -> Unit
 )
 
-//val appScreens = listOf(
-//    ScreenRoute("ChildPughScreen") { navController -> ChildPughScreen(navController) },
-//    ScreenRoute("AdropScreen") { navController -> AdropScreen(navController) },
-//    ScreenRoute("ColorectalTNMScreen") { navController -> ColorectalTNMScreen(navController) },
-//    ScreenRoute("AcuteTonsillitisAlgorithmScreen") { navController ->
-//        AcuteTonsillitisAlgorithmScreen(
-//            navController
-//        )
-//    },
-//    ScreenRoute("BloodGasAnalysisScreen") { navController -> BloodGasAnalysisScreen(navController) },
-//    ScreenRoute("AcutePancreatitisScreen") { navController -> AcutePancreatitisScreen(navController) },
-//    ScreenRoute("NetakiridoScreen") { navController -> NetakiridoScreen(navController) },
-//    ScreenRoute("PancreaticTNMScreen") { navController -> PancreaticTNMScreen(navController) },
-//    ScreenRoute("EsophagealTNMScreen") { navController -> EsophagealTNMScreen(navController) },
-//    ScreenRoute("MALBIScreen") { navController -> MALBIScreen(navController) },
-//    ScreenRoute("LiverFibrosisScoreSystemScreen") { navController ->
-//        LiverFibrosisScoreSystemScreen(
-//            navController
-//        )
-//    },
-//    ScreenRoute("HomaIRScreen") { navController -> HomaIRScreen(navController) },
-//    ScreenRoute("LungTNM") { navController -> LungTNMScreen(navController) },
-//    ScreenRoute("HccTNM") { navController -> HCCTNMScreen(navController) },
-//    ScreenRoute("IntrahepaticCholangiocarcinomaTNM") { navController ->
-//        IntrahepaticCholangiocarcinomaTNMScreen(
-//            navController
-//        )
-//    },
-//    ScreenRoute("CHADS2") { navController -> Chads2Screen(navController) },
-//    ScreenRoute("GlasgowComaScaleScreen") { navController -> GlasgowComaScaleScreen(navController) },
-//    ScreenRoute("SodiumDifferentialDiagnosisScreen") { navController ->
-//        SodiumDifferentialDiagnosisScreen(
-//            navController
-//        )
-//    }
-//    // Add other screens here
-//)
-
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MedGuidelinesTheme {
+            MedGuidelinesTheme(
+                //enableEdgeToEdge = true
+            ) {
                 CompositionLocalProvider(LocalAppDimensions provides AppDimensions()) {
                     Surface(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+//                            .windowInsetsPadding(
+//                                WindowInsets.safeDrawing
+//                            )
+                        ,
                         color = MaterialTheme.colorScheme.surfaceVariant
                     )
                     {
                         val controller = rememberNavController()
                         val appScreens = getAppScreens()
                         val indexScreenActions = rememberIndexScreenActions(navController = controller)
-//                            IndexScreenActions(
-//                            navigateToChildPugh = { controller.navigate("ChildPughScreen") },
-//                            navigateToAdrop = { controller.navigate("AdropScreen") },
-//                            navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
-//                            navigateToAcuteTonsillitisAlgorithm = {
-//                                controller.navigate(
-//                                    "AcuteTonsillitisAlgorithmScreen"
-//                                )
-//                            },
-//                            navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen") },
-//                            navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen") },
-//                            navigateToNetakirido = { controller.navigate("NetakiridoScreen") },
-//                            navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen") },
-//                            navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen") },
-//                            navigateToMALBI = { controller.navigate("MALBIScreen") },
-//                            navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
-//                            navigateToHomaIR = { controller.navigate("HomaIRScreen") },
-//                            navigateToLungTNM = { controller.navigate("LungTNM") },
-//                            navigateToHccTNM = { controller.navigate("HccTNM") },
-//                            navigateToIntrahepaticCholangiocarcinomaTNM = {
-//                                controller.navigate(
-//                                    "IntrahepaticCholangiocarcinomaTNM"
-//                                )
-//                            },
-//                            navigateToCHADS2 = { controller.navigate("CHADS2") },
-//                            navigateToGlasgowComaScale = {
-//                                controller.navigate("GlasgowComaScaleScreen")
-//                            },
-//                            navigateToSodiumDifferentialDiagnosis = {
-//                                controller.navigate("SodiumDifferentialDiagnosisScreen")
-//                            }
-                        //)
+
                         NavHost(controller, startDestination = "IndexScreen") {
                             composable("IndexScreen") {
                                 ChildComposable {
                                     IndexScreen(
                                         actions = indexScreenActions
-//                                        navigateToChildPugh = { controller.navigate("ChildPughScreen") },
-//                                        navigateToAdrop = { controller.navigate("AdropScreen") },
-//                                        navigateToColorectalTNM = { controller.navigate("ColorectalTNMScreen") },
-//                                        navigateToAcuteTonsillitisAlgorithm = {
-//                                            controller.navigate(
-//                                                "AcuteTonsillitisAlgorithmScreen"
-//                                            )
-//                                        },
-//                                        navigateToBloodGasAnalysis = { controller.navigate("BloodGasAnalysisScreen") },
-//                                        navigateToAcutePancreatitis = { controller.navigate("AcutePancreatitisScreen") },
-//                                        navigateToNetakirido = { controller.navigate("NetakiridoScreen") },
-//                                        navigateToPancreaticTNM = { controller.navigate("PancreaticTNMScreen") },
-//                                        navigateToEsophagealTNM = { controller.navigate("EsophagealTNMScreen") },
-//                                        navigateToMALBI = { controller.navigate("MALBIScreen") },
-//                                        navigateToLiverFibrosisScoreSystem = { controller.navigate("LiverFibrosisScoreSystemScreen") },
-//                                        navigateToHomaIR = { controller.navigate("HomaIRScreen") },
-//                                        navigateToLungTNM = { controller.navigate("LungTNM") },
-//                                        navigateToHccTNM = { controller.navigate("HccTNM") },
-//                                        navigateToIntrahepaticCholangiocarcinomaTNM = {
-//                                            controller.navigate(
-//                                                "IntrahepaticCholangiocarcinomaTNM"
-//                                            )
-//                                        },
-//                                        navigateToCHADS2 = { controller.navigate("CHADS2") },
-//                                        navigateToGlasgowComaScale = {
-//                                            controller.navigate("GlasgowComaScaleScreen")
-//                                        },
-//                                        navigateToSodiumDifferentialDiagnosis = {
-//                                            controller.navigate("SodiumDifferentialDiagnosisScreen")
-//                                        }
-
                                     )
                                 }
                             }
