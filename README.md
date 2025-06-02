@@ -1,5 +1,9 @@
 # MedGuidelines
 
+## Now in Google Play Store!
+
+<https://play.google.com/store/apps/details?id=com.keiichi.medguidelines>
+
 ## Summary
 
 Easy to access medical guidelines everywhere in your smartphone.
@@ -16,7 +20,11 @@ Acute tonsillitis/pharyngitis algorithm
 Blood Gas Analysis  
 Severity of Acute Pancreatitis  
 Liver Fibrosis Score System (FIB4, NAFLD Fibrosis Score, ELF Score, APRI, Shear Wave Elastography)  
-HOMA-IR
+HOMA-IR  
+CHADS2/HELT-E2S2  
+Glasgow Coma Scale  
+Lille model  
+Hyponatremia differential diagnosis  
 
 ## Welcom to your requests!
 

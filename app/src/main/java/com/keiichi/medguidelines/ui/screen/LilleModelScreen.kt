@@ -39,7 +39,7 @@ fun LilleModelScreen(navController: NavController) {
     val focusManager = LocalFocusManager.current
     var score by remember { mutableDoubleStateOf(0.000) }
     var scoreRound by remember { mutableStateOf("0.00") }
-    var sixMonthSurvival: String = ""
+    var sixMonthSurvival: String = "85%"
 
     MedGuidelinesScaffold(
         topBar = {
@@ -153,7 +153,7 @@ private fun score(): Double {
     val r = 3.19 -
             (0.101 * age.doubleValue) +
             (0.147 * 10 * albumin.doubleValue) +
-            (0.0165 * 17.1 * (bilirubinDay7.doubleValue - bilirubinDay0.doubleValue)) -
+            (0.0165 * 17.1 * ((bilirubinDay0.doubleValue - bilirubinDay7.doubleValue)  )) -
             (0.206 * renalInsufficiencyNumericValue) -
             (0.0065 * 17.1 * bilirubinDay0.doubleValue) -
             (0.0096 * ptInr.doubleValue)
