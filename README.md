@@ -12,7 +12,7 @@ Easy to access medical guidelines everywhere in your smartphone.
 
 Child-Pugh Score  
 A-Drop  
-Coloretal Cancer TNM classification  
+Colorectal Cancer TNM classification  
 Pancreatic Cancer TNM classification  
 Esophageal Cancer TNM classification  
 mALBI  
@@ -26,6 +26,6 @@ Glasgow Coma Scale
 Lille model  
 Hyponatremia differential diagnosis  
 
-## Welcom to your requests!
+## Welcome to your requests!
 
 <img src="https://github.com/user-attachments/assets/11e947c3-9704-4732-8b66-f3a0ac0fd256" width="200">
