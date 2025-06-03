@@ -319,6 +319,7 @@ fun IndexScreenPreview() {
             navigateToSodiumDifferentialDiagnosis = {},
             navigateToLilleModel = {},
             navigateToEcog = {},
+            navigateToInfusionCalculator = {}
         )
     )
 }

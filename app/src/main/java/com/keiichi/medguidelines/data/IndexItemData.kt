@@ -28,7 +28,7 @@ import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
 import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
 import com.keiichi.medguidelines.ui.screen.LilleModelScreen
 import com.keiichi.medguidelines.ui.screen.EcogScreen
-
+import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
 
 @Serializable
 enum class ActionType {
@@ -52,6 +52,7 @@ enum class ActionType {
     NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS,
     NAVIGATE_TO_LILLE_MODEL,
     NAVIGATE_TO_ECOG,
+    NAVIGATE_TO_INFUSION_CALCULATOR
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -127,6 +128,7 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.Ps,
         )),
+    ListItemData(R.string.infusionCalculator, ActionType.NAVIGATE_TO_INFUSION_CALCULATOR)
 )
 
 data class IndexScreenActions(
@@ -150,6 +152,7 @@ data class IndexScreenActions(
     val navigateToSodiumDifferentialDiagnosis: () -> Unit,
     val navigateToLilleModel: () -> Unit,
     val navigateToEcog: () -> Unit,
+    val navigateToInfusionCalculator: () -> Unit,
 )
 
 @Composable
@@ -181,6 +184,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         },
         navigateToLilleModel = { navController.navigate("LilleModelScreen") },
         navigateToEcog = { navController.navigate("EcogScreen") },
+        navigateToInfusionCalculator = { navController.navigate("GammaCalculateScreen") }
     )
 }
 
@@ -214,6 +218,7 @@ fun getAppScreens(): List<ScreenRoute> {
         },
         ScreenRoute("LilleModelScreen") { navController -> LilleModelScreen(navController) },
         ScreenRoute("EcogScreen") { navController -> EcogScreen(navController) },
+        ScreenRoute("GammaCalculateScreen") { navController -> GammaCalculateScreen(navController) }
     )
 }
 
@@ -239,6 +244,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS -> this.navigateToSodiumDifferentialDiagnosis()
         ActionType.NAVIGATE_TO_LILLE_MODEL -> this.navigateToLilleModel()
         ActionType.NAVIGATE_TO_ECOG -> this.navigateToEcog()
+        ActionType.NAVIGATE_TO_INFUSION_CALCULATOR -> this.navigateToInfusionCalculator()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

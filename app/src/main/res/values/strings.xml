@@ -411,4 +411,15 @@
     <string name="ecog4">Completely disabled. Cannot carry on any selfcare.  Totally confined to bed or chair.</string>
     <string name="EcogEasternCooperativeOncologyGroup">ECOG（Eastern Cooperative Oncology Group）</string>
     <string name="Ps">PS</string>
+    <string name="infusionCalculator">Infusion calculator</string>
+    <string name="ugkgmin">μg/kg/min</string>
+    <string name="mlhr">mL/hr</string>
+    <string name="totalVolume">Total volume</string>
+    <string name="flowRate">Flow rate</string>
+    <string name="ml">mL</string>
+    <string name="saline">saline</string>
+    <string name="Drug">Drug</string>
+    <string name="mg">mg</string>
+    <string name="targetDosageOfDrug">Target dosage of drug</string>
+    <string name="totalDrugDose">Total drug dose</string>
 </resources>
