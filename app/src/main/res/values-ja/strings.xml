@@ -252,4 +252,9 @@
     <string name="search">検索</string>
     <string name="creatinine">クレアチニン</string>
     <string name="alcoholicHepatitis">アルコール性肝炎</string>
+    <string name="ecog0">全く問題なく活動できる。発病前と同じ日常生活が制限なく行える。</string>
+    <string name="ecog1">肉体的に激しい活動は制限されるが、歩行可能で、軽作業や座っての作業は行うことができる。例：軽い家事、事務作業</string>
+    <string name="ecog2">歩行可能で自分の身の回りのことはすべて可能だが作業はできない。日中の50%以上はベッド外で過ごす。</string>
+    <string name="ecog3">限られた自分の身の回りのことしかできない。日中の50%以上をベッドか椅子で過ごす。</string>
+    <string name="ecog4">全く動けない。自分の身の回りのことは全くできない。完全にベッドか椅子で過ごす。</string>
 </resources>

@@ -72,12 +72,14 @@ fun RadioButtonAndExpand(
                         .weight(1f)
                         .padding(3.dp)
                 ) {
-                    Text(
-                        text = parseStyledString(title),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier
-                            .padding(4.dp)
-                    )
+                    if (titleNote != R.string.space) {
+                        Text(
+                            text = parseStyledString(title),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier
+                                .padding(4.dp)
+                        )
+                    }
                     if (expanded) {
                         Text(
                             text = parseStyledString(titleNote),

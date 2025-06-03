@@ -27,6 +27,7 @@ import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
 import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
 import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
 import com.keiichi.medguidelines.ui.screen.LilleModelScreen
+import com.keiichi.medguidelines.ui.screen.EcogScreen
 
 
 @Serializable
@@ -50,6 +51,7 @@ enum class ActionType {
     NAVIGATE_TO_GLASGOW_COMA_SCALE,
     NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS,
     NAVIGATE_TO_LILLE_MODEL,
+    NAVIGATE_TO_ECOG,
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -120,7 +122,11 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.alcoholicHepatitis,
         )
-    )
+    ),
+    ListItemData(R.string.ecogPerformanceStatus, ActionType.NAVIGATE_TO_ECOG,
+        keywords = listOf(
+            R.string.Ps,
+        )),
 )
 
 data class IndexScreenActions(
@@ -143,6 +149,7 @@ data class IndexScreenActions(
     val navigateToGlasgowComaScale: () -> Unit,
     val navigateToSodiumDifferentialDiagnosis: () -> Unit,
     val navigateToLilleModel: () -> Unit,
+    val navigateToEcog: () -> Unit,
 )
 
 @Composable
@@ -172,7 +179,8 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToSodiumDifferentialDiagnosis = {
             navController.navigate("SodiumDifferentialDiagnosisScreen")
         },
-        navigateToLilleModel = { navController.navigate("LilleModelScreen") }
+        navigateToLilleModel = { navController.navigate("LilleModelScreen") },
+        navigateToEcog = { navController.navigate("EcogScreen") },
     )
 }
 
@@ -204,7 +212,8 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("SodiumDifferentialDiagnosisScreen") { navController ->
             SodiumDifferentialDiagnosisScreen(navController)
         },
-        ScreenRoute("LilleModelScreen") { navController -> LilleModelScreen(navController) }
+        ScreenRoute("LilleModelScreen") { navController -> LilleModelScreen(navController) },
+        ScreenRoute("EcogScreen") { navController -> EcogScreen(navController) },
     )
 }
 
@@ -229,6 +238,9 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE -> this.navigateToGlasgowComaScale()
         ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS -> this.navigateToSodiumDifferentialDiagnosis()
         ActionType.NAVIGATE_TO_LILLE_MODEL -> this.navigateToLilleModel()
+        ActionType.NAVIGATE_TO_ECOG -> this.navigateToEcog()
+        // Add more cases for other ActionType if needed
+
         // Consider adding an else branch for robustness, especially if ActionType might expand
         // else -> { Log.w("Navigation", "Unhandled action type: $actionType") }
     }

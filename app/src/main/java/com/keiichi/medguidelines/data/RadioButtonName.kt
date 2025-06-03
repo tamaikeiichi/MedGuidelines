@@ -222,3 +222,11 @@ val motorGrade = listOf(
     R.string.respondstopainwithabnormalrigidextensiondecerebrateposture,
     R.string.none,
 )
+
+val ecog = listOf(
+    R.string.ecog0,
+    R.string.ecog1,
+    R.string.ecog2,
+    R.string.ecog3,
+    R.string.ecog4
+)

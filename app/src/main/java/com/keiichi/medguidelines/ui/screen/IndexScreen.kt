@@ -118,6 +118,7 @@ fun IndexScreen(
                     }
                     hasBeenVisited = true
                 }
+
                 else -> {
                 }
             }
@@ -146,14 +147,20 @@ fun IndexScreen(
                 val japaneseLocale = Locale.JAPANESE
 
                 val nameMatchingItems = originalItems.filter { itemData ->
-                    val itemNameEn = getStringOfSpecificLocale(context, itemData.nameResId, englishLocale)
-                    val itemNameJa = getStringOfSpecificLocale(context, itemData.nameResId, japaneseLocale)
+                    val itemNameEn =
+                        getStringOfSpecificLocale(context, itemData.nameResId, englishLocale)
+                    val itemNameJa =
+                        getStringOfSpecificLocale(context, itemData.nameResId, japaneseLocale)
 
                     val normalizedItemNameEn = normalizeTextForSearch(itemNameEn)
                     val normalizedItemNameJa = normalizeTextForSearch(itemNameJa)
 
-                    (normalizedItemNameEn.isNotBlank() && normalizedItemNameEn.contains(normalizedSearchQuery)) ||
-                            (normalizedItemNameJa.isNotBlank() && normalizedItemNameJa.contains(normalizedSearchQuery))
+                    (normalizedItemNameEn.isNotBlank() && normalizedItemNameEn.contains(
+                        normalizedSearchQuery
+                    )) ||
+                            (normalizedItemNameJa.isNotBlank() && normalizedItemNameJa.contains(
+                                normalizedSearchQuery
+                            ))
                 }
 
                 val nameMatchIds = nameMatchingItems.map { it.nameResId }.toSet()
@@ -163,14 +170,20 @@ fun IndexScreen(
                         false // Already included as a name match
                     } else {
                         itemData.keywords.any { keywordResId ->
-                            val keywordEn = getStringOfSpecificLocale(context, keywordResId, englishLocale)
-                            val keywordJa = getStringOfSpecificLocale(context, keywordResId, japaneseLocale)
+                            val keywordEn =
+                                getStringOfSpecificLocale(context, keywordResId, englishLocale)
+                            val keywordJa =
+                                getStringOfSpecificLocale(context, keywordResId, japaneseLocale)
 
                             val normalizedKeywordEn = normalizeTextForSearch(keywordEn)
                             val normalizedKeywordJa = normalizeTextForSearch(keywordJa)
 
-                            (normalizedKeywordEn.isNotBlank() && normalizedKeywordEn.contains(normalizedSearchQuery)) ||
-                                    (normalizedKeywordJa.isNotBlank() && normalizedKeywordJa.contains(normalizedSearchQuery))
+                            (normalizedKeywordEn.isNotBlank() && normalizedKeywordEn.contains(
+                                normalizedSearchQuery
+                            )) ||
+                                    (normalizedKeywordJa.isNotBlank() && normalizedKeywordJa.contains(
+                                        normalizedSearchQuery
+                                    ))
                         }
                     }
                 }
@@ -183,8 +196,8 @@ fun IndexScreen(
 
     LaunchedEffect(Unit) {
         loadListItemData(context, expectedItemCount).collect { loadedItems ->
-                originalItems.clear()
-                originalItems.addAll(loadedItems)
+            originalItems.clear()
+            originalItems.addAll(loadedItems)
         }
     }
     Column {
@@ -215,7 +228,8 @@ fun IndexScreen(
                 items = displayedItems, // Use the sorted and filtered list
                 key = { item -> item.nameResId } // Provide a stable key
             ) { itemData ->
-                val isFirstNonFavoriteVisible = lazyListState.firstVisibleItemIndex == displayedItems.indexOf(itemData) && !itemData.isFavorite
+                val isFirstNonFavoriteVisible =
+                    lazyListState.firstVisibleItemIndex == displayedItems.indexOf(itemData) && !itemData.isFavorite
                 val currentAlpha = if (isFirstNonFavoriteVisible && animateFirstItem) alpha else 1f
                 IndexScreenItemCard(
                     currentAlpha = currentAlpha,
@@ -223,10 +237,12 @@ fun IndexScreen(
                     isFavorite = itemData.isFavorite,
                     onItemClick = {
                         clickedItemForNavigation = itemData // Set item for ON_RESUME handling
-                                                var updatedItems = originalItems.toMutableList()//items.toMutableList()
+                        var updatedItems = originalItems.toMutableList()//items.toMutableList()
                         updatedItems.remove(itemData)
                         updatedItems.add(0, itemData)
-                        updatedItems = updatedItems.sortedWith(compareByDescending<ListItemData> { it.isFavorite }).toMutableList()
+                        updatedItems =
+                            updatedItems.sortedWith(compareByDescending<ListItemData> { it.isFavorite })
+                                .toMutableList()
                         scope.launch {
                             saveListItemData(context, updatedItems)
                         }
@@ -283,25 +299,26 @@ fun IndexScreen(
 fun IndexScreenPreview() {
     IndexScreen(
         actions = IndexScreenActions(
-        navigateToChildPugh = {},
-        navigateToAdrop = {},
-        navigateToColorectalTNM = {},
-        navigateToAcuteTonsillitisAlgorithm = {},
-        navigateToBloodGasAnalysis = {},
-        navigateToAcutePancreatitis = {},
-        navigateToNetakirido = {},
-        navigateToPancreaticTNM = {},
-        navigateToEsophagealTNM = {},
-        navigateToMALBI = {},
-        navigateToLiverFibrosisScoreSystem = {},
-        navigateToHomaIR = {},
-        navigateToLungTNM = {},
-        navigateToHccTNM = {},
-        navigateToIntrahepaticCholangiocarcinomaTNM = {},
-        navigateToCHADS2 = {},
-        navigateToGlasgowComaScale = {},
-        navigateToSodiumDifferentialDiagnosis = {},
-            navigateToLilleModel = {}
-    )
+            navigateToChildPugh = {},
+            navigateToAdrop = {},
+            navigateToColorectalTNM = {},
+            navigateToAcuteTonsillitisAlgorithm = {},
+            navigateToBloodGasAnalysis = {},
+            navigateToAcutePancreatitis = {},
+            navigateToNetakirido = {},
+            navigateToPancreaticTNM = {},
+            navigateToEsophagealTNM = {},
+            navigateToMALBI = {},
+            navigateToLiverFibrosisScoreSystem = {},
+            navigateToHomaIR = {},
+            navigateToLungTNM = {},
+            navigateToHccTNM = {},
+            navigateToIntrahepaticCholangiocarcinomaTNM = {},
+            navigateToCHADS2 = {},
+            navigateToGlasgowComaScale = {},
+            navigateToSodiumDifferentialDiagnosis = {},
+            navigateToLilleModel = {},
+            navigateToEcog = {},
+        )
     )
 }
