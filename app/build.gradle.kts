@@ -1,10 +1,14 @@
+//import androidx.glance.appwidget.compose
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
+    //alias(libs.plugins.kotlin.compose)
+    //id("org.jetbrains.kotlin.plugin.compose") version "2.2.0-RC2"// apply false
     id("kotlin-parcelize")
     id("com.google.protobuf") version "0.9.3" // Or latest version
-
-    kotlin("plugin.serialization") version "1.9.22" // Use the latest version
+    kotlin("plugin.serialization") version "2.2.0-RC2" //"1.9.22" // Use the latest version
 }
 
 android {
@@ -15,8 +19,8 @@ android {
         applicationId = "com.keiichi.medguidelines"
         minSdk = 29
         targetSdk = 35
-        versionCode = 31
-        versionName = "1.28"
+        versionCode = 32
+        versionName = "1.29"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -44,9 +48,11 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
+//    composeOptions {
+//        kotlinCompilerExtensionVersion = "1.5.15"
+//        //kotlinCompilerExtensionVersion = libs.versions.composeCompilerVersion.get() // Use the version from TOML
+//
+//    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -56,6 +62,7 @@ android {
 
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -70,6 +77,7 @@ dependencies {
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.graphics.shapes.android)
     implementation(libs.androidx.room.compiler.processing.testing)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -86,9 +94,12 @@ dependencies {
     implementation(libs.accompanist.flowlayout)
     implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.material.icons.extended)
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
-    val work_version = "2.10.1"
-    implementation("androidx.work:work-runtime-ktx:$work_version")
+    implementation(libs.accompanist.navigation.animation)
+    //val work_version = "2.10.1"
+    implementation(libs.androidx.work.runtime.ktx)
+    //implementation(libs.kotlinx.dataframe)
+    implementation("org.jetbrains.kotlinx:dataframe:0.15.0")
+    //implementation("org.jetbrains.kotlinx:dataframe-excel:0.13.1")
 
 }
 
@@ -112,5 +123,25 @@ configurations.implementation {
     exclude(group = "com.intellij", module = "annotations")
     exclude(group = "com.google.auto.value", module = "auto-value")
     exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
+    exclude(group = "io.swagger", module = "swagger-parser-safe-url-resolver")
+    exclude(group = "commons-logging", module = "commons-logging")
+    exclude(group = "org.eclipse.collections", module = "eclipse-collections")
+    exclude(group = "com.github.java-json-tools", module = "btf")
+    exclude(group = "com.github.java-json-tools", module = "msg-simple")
+    exclude(group = "com.github.java-json-tools", module = "jackson-coreutils")
+    exclude(group = "com.github.java-json-tools", module = "json-patch")
+    exclude(group = "com.github.java-json-tools", module = "uri-template")
+    exclude(group = "com.github.java-json-tools", module = "son-schema-core")
+    exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
+    //exclude(group = "org.jetbrains.kotlinx", module = "dataframe-core")
+    exclude(group = "org.jetbrains.kotlinx", module = "dataframe-jdbc")
+    exclude(group = "org.jetbrains.kotlinx", module = "dataframe-openapi")
+    exclude(group = "org.apache.arrow", module = "arrow-memory-unsafe")
+    exclude(group = "org.apache.arrow", module = "arrow-memory-core")
+    exclude(group = "org.apache.arrow", module = "arrow-format")
+    exclude(group = "org.apache.arrow", module = "arrow-vector")
+    exclude(group = "org.jetbrains.kotlinx", module = "dataframe-csv")
+    exclude(group = "com.google.devtools.ksp", module = "symbol-processing-aa-embeddable")
+
 }
 

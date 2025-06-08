@@ -2,30 +2,33 @@
 accompanistFlowlayout = "0.36.0"
 accompanistNavigationAnimation = "0.34.0"
 agp = "8.10.1"
-androidxDatastorePreferences = "1.0.0"
-datastorePreferencesVersion = "1.1.1"
-foundationLayout = "1.8.0-rc03"
-kotlin = "1.9.0"
-coreKtx = "1.15.0"
+androidxDatastorePreferences = "1.1.7"
+dataframeVersion = "1.0.0-Beta2"
+datastorePreferencesVersion = "1.1.7"
+foundationLayout = "1.8.2"
+kotlin = "2.1.10"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-kotlinxSerializationJson = "1.6.3"
-lifecycleRuntimeKtx = "2.8.6"
-activityCompose = "1.9.3"
-composeBom = "2024.04.01"
-navigationCompose = "2.6.0"
+kotlinxSerializationJson = "1.7.3"
+lifecycleRuntimeKtx = "2.9.1"
+activityCompose = "1.10.1"
+composeBom = "2025.06.00"
+navigationCompose = "2.9.0"
 datastorePreferences = "1.0.0"
 datastoreCoreAndroid = "1.1.1"
 datastoreCoreJvm = "1.1.1"
-navigationComposeVersion = "2.8.4"
-datastoreCoreAndroidVersion = "1.1.1"
+navigationComposeVersion = "2.9.0"
+datastoreCoreAndroidVersion = "1.1.7"
 preference = "1.2.1"
 protobufJavalite = "3.21.9"
-uiTestAndroid = "1.7.2"
+uiTestAndroid = "1.8.2"
 tvMaterial = "1.0.0"
 graphicsShapesAndroid = "1.0.1"
-roomCompilerProcessingTesting = "2.6.1"
+roomCompilerProcessingTesting = "2.7.1"
+composeCompilerVersion = "1.5.13-rc01"
+workRuntimeKtx = "2.10.1"
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
@@ -38,6 +41,7 @@ androidx-foundation-layout = { module = "androidx.compose.foundation:foundation-
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-navigation-compose-v284 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-preference = { module = "androidx.preference:preference", version.ref = "preference" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.0" }
@@ -53,6 +57,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroidVersion" }
+kotlinx-dataframe = { module = "org.jetbrains.kotlinx:dataframe", version.ref = "dataframeVersion" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
 androidx-ui-test-android = { group = "androidx.compose.ui", name = "ui-test-android", version.ref = "uiTestAndroid" }
@@ -63,4 +68,4 @@ androidx-room-compiler-processing-testing = { group = "androidx.room", name = "r
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

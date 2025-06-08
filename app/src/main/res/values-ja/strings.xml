@@ -250,6 +250,7 @@
     <string name="af">心房細動</string>
     <string name="stroke">脳卒中</string>
     <string name="search">検索</string>
+    <string name="bilirubinDay7">7日目のビリルビン</string>
     <string name="creatinine">クレアチニン</string>
     <string name="alcoholicHepatitis">アルコール性肝炎</string>
     <string name="ecog0">全く問題なく活動できる。発病前と同じ日常生活が制限なく行える。</string>
@@ -257,4 +258,14 @@
     <string name="ecog2">歩行可能で自分の身の回りのことはすべて可能だが作業はできない。日中の50%以上はベッド外で過ごす。</string>
     <string name="ecog3">限られた自分の身の回りのことしかできない。日中の50%以上をベッドか椅子で過ごす。</string>
     <string name="ecog4">全く動けない。自分の身の回りのことは全くできない。完全にベッドか椅子で過ごす。</string>
+    <string name="infusionCalculator">ガンマ計算</string>
+    <string name="totalVolume">総量</string>
+    <string name="flowRate">点滴速度</string>
+    <string name="saline">生食</string>
+    <string name="Drug">薬剤</string>
+    <string name="targetDosageOfDrug">ガンマ</string>
+    <string name="totalDrugDose">薬剤量</string>
+    <string name="findDrugDosage">薬剤量を求める</string>
+    <string name="findFlowRate">点滴速度を求める</string>
+    <string name="bilirubinDay0">0日目のビリルビン</string>
 </resources>

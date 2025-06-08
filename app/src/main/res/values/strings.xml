@@ -401,25 +401,27 @@
     <string name="ptInr" translatable="false">PT-INR</string>
     <string name="lilleModelInr">Lille model-INR</string>
     <string name="alcoholicHepatitis">Alcoholic Hepatitis</string>
-    <string name="ecog">ECOG</string>
-    <string name="ecogPerformanceStatus">ECOG Performance status</string>
-    <string name="ecogUrl">https://jcog.jp/assets/ctcv20_4-30-992.pdf</string>
+    <string name="ecog" translatable="false">ECOG</string>
+    <string name="ecogPerformanceStatus" translatable="false">ECOG Performance status</string>
+    <string name="ecogUrl" translatable="false">https://jcog.jp/assets/ctcv20_4-30-992.pdf</string>
     <string name="ecog0">Fully active, able to carry on all pre-disease performance without restriction.</string>
     <string name="ecog1">Restricted in physically strenuous activity but ambulatory and able to carry out work of a light or sedentary nature, e.g., light housework, office work.</string>
     <string name="ecog2">Ambulatory and capable of all selfcare but unable to carry out any work activities. Up and about more than 50% of waking hours.</string>
     <string name="ecog3">Capable of only limited selfcare, confined to bed or chair more than 50% of waking hours.</string>
     <string name="ecog4">Completely disabled. Cannot carry on any selfcare.  Totally confined to bed or chair.</string>
     <string name="EcogEasternCooperativeOncologyGroup">ECOG（Eastern Cooperative Oncology Group）</string>
-    <string name="Ps">PS</string>
+    <string name="Ps" translatable="false">PS</string>
     <string name="infusionCalculator">Infusion calculator</string>
-    <string name="ugkgmin">μg/kg/min</string>
-    <string name="mlhr">mL/hr</string>
+    <string name="ugkgmin" translatable="false">μg/kg/min</string>
+    <string name="mlhr" translatable="false">mL/hr</string>
     <string name="totalVolume">Total volume</string>
     <string name="flowRate">Flow rate</string>
-    <string name="ml">mL</string>
+    <string name="ml" translatable="false">mL</string>
     <string name="saline">saline</string>
     <string name="Drug">Drug</string>
-    <string name="mg">mg</string>
+    <string name="mg" translatable="false">mg</string>
     <string name="targetDosageOfDrug">Target dosage of drug</string>
     <string name="totalDrugDose">Total drug dose</string>
+    <string name="findDrugDosage">Find drug dosage</string>
+    <string name="findFlowRate">Find flow rate</string>
 </resources>

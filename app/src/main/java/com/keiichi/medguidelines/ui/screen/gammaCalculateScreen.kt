@@ -9,6 +9,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,33 +39,28 @@ import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.buttonAndScore
+import com.keiichi.medguidelines.ui.component.parseStyledString
 
 @Composable
 fun GammaCalculateScreen(navController: NavController) {
     val focusManager = LocalFocusManager.current
-    val gamma = remember { mutableDoubleStateOf(0.05) }
-    val totalVolume = remember { mutableDoubleStateOf(50.0) }
-    val bodyWeight = remember { mutableDoubleStateOf(60.0) }
-    val flowRate = remember { mutableDoubleStateOf(2.0) }
-    val totalDrugDose = remember { mutableDoubleStateOf(0.0) }
-    val totalDrugDoseRound = Math.round(totalDrugDose.doubleValue * 100.0) / 100.0
-    val totalVolumeRound = totalVolume.doubleValue.toInt()
+    var gamma1 = remember { mutableDoubleStateOf(0.05) }
+    var totalVolume1 = remember { mutableDoubleStateOf(50.0) }
+    var bodyWeight1 = remember { mutableDoubleStateOf(60.0) }
+    var flowRate1 = remember { mutableDoubleStateOf(2.0) }
+    var totalDrugDose1 = remember { mutableDoubleStateOf(4.5) }
+    var totalDrugDoseRound1 = Math.round(totalDrugDose1.doubleValue * 100.0) / 100.0
+    var flowRateRound1 = Math.round(flowRate1.doubleValue * 100.0) / 100.0
+    var totalVolumeRound1 = totalVolume1.doubleValue.toInt()
 
-    LaunchedEffect(gamma.doubleValue, bodyWeight.doubleValue, flowRate.doubleValue) {
-        totalDrugDose.doubleValue =
-            (gamma.doubleValue * bodyWeight.doubleValue * 60 // ug/hr
-                    / flowRate.doubleValue)* totalVolume.doubleValue / 1000
-    }
-//
-//    LaunchedEffect(gamma, bodyWeight, totalDrugDose, flowRate) {
-//        totalVolume.doubleValue =
-//            (totalDrugDose.doubleValue / 1000) / (gamma.doubleValue * bodyWeight.doubleValue * 60 / flowRate.doubleValue)
-//    }
-
-    LaunchedEffect(gamma, bodyWeight, totalVolume, totalDrugDose) {
-        flowRate.doubleValue =
-            (gamma.doubleValue * bodyWeight.doubleValue * 60) /1000 / totalVolume.doubleValue * totalVolume.doubleValue
-    }
+    var gamma2 = remember { mutableDoubleStateOf(0.05) }
+    var totalVolume2 = remember { mutableDoubleStateOf(50.0) }
+    var bodyWeight2 = remember { mutableDoubleStateOf(50.0) }
+    var flowRate2 = remember { mutableDoubleStateOf(1.5) }
+    var totalDrugDose2 = remember { mutableDoubleStateOf(5.0) }
+    var totalDrugDoseRound2 = Math.round(totalDrugDose2.doubleValue * 100.0) / 100.0
+    var flowRateRound2 = Math.round(flowRate2.doubleValue * 100.0) / 100.0
+    var totalVolumeRound2 = totalVolume2.doubleValue.toInt()
 
     MedGuidelinesScaffold(
         topBar = {
@@ -76,41 +72,7 @@ fun GammaCalculateScreen(navController: NavController) {
                 )
             )
         },
-        bottomBar = {
-            ResultBottomAppBar {
-                Text(
-                    buildAnnotatedString {
-                        append(stringResource(R.string.Drug))
-                        append(" ")
-                        withStyle(
-                            style = SpanStyle(fontWeight = FontWeight.Bold)
-                        ) {
-                            append(totalDrugDoseRound.toString())
-                        }
-                        append(" ")
-                        append(stringResource(R.string.mg))
-                        append(" / ")
-                        append(stringResource(R.string.saline))
-                        append(" ")
-                        withStyle(
-                            style = SpanStyle(fontWeight = FontWeight.Bold)
-                        ) {
-                            append(totalVolumeRound.toString())
-                        }
-                        append(" ")
-                        append(stringResource(R.string.ml))
 
-
-                    },
-                    fontSize = 30.sp,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 1.2.em,
-                    modifier = Modifier.padding(
-                        Dimensions.textPadding
-                    )
-                )
-            }
-        },
         modifier = Modifier
             .pointerInput(Unit) { // Use pointerInput with detectTapGestures
                 detectTapGestures(
@@ -128,81 +90,161 @@ fun GammaCalculateScreen(navController: NavController) {
 
             ) {
             MedGuidelinesCard {
-                MedGuidelinesFlowRow {
-                    InputValue(
-                        label = R.string.targetDosageOfDrug,
-                        value = gamma,
-                        japaneseUnit = R.string.ugkgmin
-                    )
-                    InputValue(
-                        label = R.string.bodyWeight,
-                        value = bodyWeight,
-                        japaneseUnit = R.string.kg
-                    )
-                }
-            }
-            MedGuidelinesCard {
-                MedGuidelinesFlowRow {
-                    InputValue(
-                        label = R.string.totalDrugDose,
-                        value = totalDrugDose,
-                        japaneseUnit = R.string.mg
-                    )
-                    InputValue(
-                        label = R.string.totalVolume,
-                        value = totalVolume,
-                        japaneseUnit = R.string.ml
+                Column() {
+                    Text(
+                        text = parseStyledString(R.string.findDrugDosage),
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Left,
+                        lineHeight = 1.2.em,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                Dimensions.textPadding
+                            )
                     )
 
-                    InputValue(
-                        label = R.string.flowRate,
-                        value = flowRate,
-                        japaneseUnit = R.string.mlhr
-                    )
+                    MedGuidelinesFlowRow {
+                        InputValue(
+                            label = R.string.bodyWeight,
+                            value = bodyWeight1,
+                            japaneseUnit = R.string.kg
+                        )
+                        InputValue(
+                            label = R.string.targetDosageOfDrug,
+                            value = gamma1,
+                            japaneseUnit = R.string.ugkgmin
+                        )
+                        InputValue(
+                            label = R.string.flowRate,
+                            value = flowRate1,
+                            japaneseUnit = R.string.mlhr
+                        )
+                        InputValue(
+                            label = R.string.totalVolume,
+                            value = totalVolume1,
+                            japaneseUnit = R.string.ml
+                        )
+                    }
                 }
+            //}
+            if (flowRate1.doubleValue != 0.0) {
+                totalDrugDose1.doubleValue =
+                    (gamma1.doubleValue * bodyWeight1.doubleValue * 60 / flowRate1.doubleValue) *
+                            totalVolume1.doubleValue / 1000
+            } else {
+                totalDrugDose1.doubleValue = 0.0
             }
-//            totalDrugDose.doubleValue =
-//                (gamma.doubleValue * bodyWeight.doubleValue * 60 / flowRate.doubleValue) * totalVolume.doubleValue / 1000
-//            MedGuidelinesCard {
-//                Text(
-//                    buildAnnotatedString {
-//                        append(stringResource(R.string.Drug))
-//                        append(" ")
-//                        withStyle(
-//                            style = SpanStyle(fontWeight = FontWeight.Bold)
-//                        ) {
-//                            append(totalDrugDoseRound.toString())
-//                        }
-//                        append(" ")
-//                        append(stringResource(R.string.mg))
-//                        append(" / ")
-//                        append(stringResource(R.string.saline))
-//                        append(" ")
-//                        withStyle(
-//                            style = SpanStyle(fontWeight = FontWeight.Bold)
-//                        ) {
-//                            append(totalVolumeRound.toString())
-//                        }
-//                        append(" ")
-//                        append(stringResource(R.string.ml))
-//
-//
-//                    },
-//                    modifier = Modifier.padding(
-//                        Dimensions.textPadding
-//                    )
-//                )
-//
-//
-//            }
+            //MedGuidelinesCard {
+                Text(
+                    buildAnnotatedString {
+                        append(stringResource(R.string.Drug))
+                        append(" ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.error,
+                                fontWeight = FontWeight.Bold)
+                        ) {
+                            append(totalDrugDoseRound1.toString())
+                        }
+                        append(" ")
+                        append(stringResource(R.string.mg))
+                        append(" / ")
+                        append(stringResource(R.string.saline))
+                        append(" ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.error,
+                                fontWeight = FontWeight.Bold)
+                        ) {
+                            append(totalVolumeRound1.toString())
+                        }
+                        append(" ")
+                        append(stringResource(R.string.ml))
+                    },
+                    fontSize = 25.sp,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 1.2.em,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            Dimensions.textPadding
+                        )
+                )
+            }
+            MedGuidelinesCard {
+                Column() {
+                    Text(
+                        text = parseStyledString(R.string.findFlowRate),
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Left,
+                        lineHeight = 1.2.em,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                Dimensions.textPadding
+                            )
+                    )
+                    MedGuidelinesFlowRow {
+                        InputValue(
+                            label = R.string.bodyWeight,
+                            value = bodyWeight2,
+                            japaneseUnit = R.string.kg
+                        )
+                        InputValue(
+                            label = R.string.targetDosageOfDrug,
+                            value = gamma2,
+                            japaneseUnit = R.string.ugkgmin
+                        )
+                        InputValue(
+                            label = R.string.totalDrugDose,
+                            value = totalDrugDose2,
+                            japaneseUnit = R.string.mg
+                        )
+                        InputValue(
+                            label = R.string.totalVolume,
+                            value = totalVolume2,
+                            japaneseUnit = R.string.ml
+                        )
+                    }
+                }
+            //}
+            flowRate2.doubleValue =
+                (gamma2.doubleValue * bodyWeight2.doubleValue * 60) / 1000 /
+                        (totalDrugDose2.doubleValue) * totalVolume2.doubleValue
+            //MedGuidelinesCard {
+                Text(
+                    buildAnnotatedString {
+                        append(stringResource(R.string.flowRate))
+                        append(" ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.error
+                                ,fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(flowRateRound2.toString())
+                        }
+                        append(" ")
+                        append(stringResource(R.string.mlhr))
+                    },
+                    fontSize = 25.sp,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 1.2.em,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            Dimensions.textPadding
+                        )
+                )
+            }
         }
     }
 }
 
 @Preview
 @Composable
-fun gammaCalculateScreenPreview() {
-        GammaCalculateScreen(
-            navController = NavController(LocalContext.current)
+fun GammaCalculateScreenPreview() {
+    GammaCalculateScreen(
+        navController = NavController(LocalContext.current)
     )
 }
