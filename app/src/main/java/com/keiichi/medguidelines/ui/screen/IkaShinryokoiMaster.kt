@@ -18,19 +18,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
-import org.jetbrains.kotlinx.dataframe.DataFrame
-import org.jetbrains.kotlinx.dataframe.io.readCSV
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
-import org.jetbrains.kotlinx.dataframe.AnyFrame
-import org.jetbrains.kotlinx.dataframe.api.head
-import org.jetbrains.kotlinx.dataframe.api.print
 import java.io.InputStream
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
-import java.io.InputStreamReader
+import com.keiichi.medguidelines.ui.component.Dimensions
 import java.nio.charset.Charset
-
+import org.jetbrains.kotlinx.dataframe.*
+import org.jetbrains.kotlinx.dataframe.api.*
+import org.jetbrains.kotlinx.dataframe.io.*
 
 // Define a simple wrapper class
 data class IndexedItem<T>(val index: Int, val data: T)
@@ -40,14 +36,18 @@ fun IkaShinryokoiMasterScreen() {
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     val lazyListState = remember(calculation = { LazyListState() })
+    val numberOfColumns = 50
 
     val master: AnyFrame? = try {
         val inputStream: InputStream = context.resources.openRawResource(R.raw.s_20250602)
         inputStream.use { stream -> // Ensures inputStream is closed automatically
             DataFrame.readCSV(
                 stream = stream, // Pass the InputStream
-                charset = Charset.forName("Shift-JIS") // Specify the charset directly
+                header = (1..numberOfColumns).map { it.toString() },
+                charset = Charset.forName("Shift-JIS"), // Specify the charset directly
                 // You can add other parameters like delimiter if needed, but they have defaults
+                parserOptions = ParserOptions(),
+
             )
         }
     } catch (e: Exception) {
@@ -73,7 +73,6 @@ fun IkaShinryokoiMasterScreen() {
                 },
             )
 
-
 // Prepare your list
             val indexedShinryoKoiShoryakuKanjiMeisho: List<IndexedItem<Any?>> = remember(master) {
                 val fifthColumnData = master?.let { df ->
@@ -98,7 +97,7 @@ fun IkaShinryokoiMasterScreen() {
                 modifier = Modifier
                     .padding(2.dp)
                     .fillMaxWidth(),
-                contentPadding = PaddingValues(10.dp),
+                contentPadding = PaddingValues(2.dp),
             ) {
                 items(
                     items = indexedShinryoKoiShoryakuKanjiMeisho,
@@ -107,13 +106,16 @@ fun IkaShinryokoiMasterScreen() {
                     }
                 ) { indexedItem ->
                     val cellValue = indexedItem.data
-                    MedGuidelinesCard(modifier = Modifier.padding(vertical = 4.dp)) {
+                    MedGuidelinesCard(
+                        modifier = Modifier
+                        .padding(Dimensions.cardPadding)
+                    ) {
                         Text(
                             text = cellValue?.toString()
                                 ?: "NULL",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp)
+                                .padding(Dimensions.textPadding)
                         )
                     }
                 }

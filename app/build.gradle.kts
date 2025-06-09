@@ -98,6 +98,8 @@ dependencies {
     //val work_version = "2.10.1"
     implementation(libs.androidx.work.runtime.ktx)
     //implementation(libs.kotlinx.dataframe)
+    //implementation("org.jetbrains.kotlinx:dataframe:1.0.0-Beta2")
+    //implementation("org.jetbrains.kotlinx:dataframe-csv:1.0.0-Beta2")
     implementation("org.jetbrains.kotlinx:dataframe:0.15.0")
     //implementation("org.jetbrains.kotlinx:dataframe-excel:0.13.1")
 
