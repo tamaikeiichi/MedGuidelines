@@ -33,7 +33,8 @@ fun loadListItemData(context: Context, expectedItemCount: Int): Flow<List<ListIt
             val decodedList = Json.decodeFromString<List<ListItemData>>(jsonString)
             if (
                 decodedList.size == expectedItemCount
-                && doAnyDecodeStringsMatchAnyItemsStrings(context, decodedList, itemsList)
+                && doAnyDecodeStringsMatchAnyItemsStrings(
+                    context, decodedList, itemsList)
                 ) {
                 //if (areAnyDecodeNamesInItemsList(decodedList, itemsList)) {
                     decodedList

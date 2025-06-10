@@ -141,9 +141,6 @@ fun IndexScreen(
                 originalItems
             } else {
                 val englishLocale = Locale.ENGLISH
-                // For Japanese, you might use Locale.JAPANESE (general)
-                // or new Locale("ja") for more specificity if needed.
-                // Locale.JAPAN is for the country, Locale.JAPANESE is for the language.
                 val japaneseLocale = Locale.JAPANESE
 
                 val nameMatchingItems = originalItems.filter { itemData ->
