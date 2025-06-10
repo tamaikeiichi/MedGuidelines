@@ -319,7 +319,8 @@ fun IndexScreenPreview() {
             navigateToSodiumDifferentialDiagnosis = {},
             navigateToLilleModel = {},
             navigateToEcog = {},
-            navigateToInfusionCalculator = {}
+            navigateToInfusionCalculator = {},
+            navigateToIkaShinryokoiMaster = {}
         )
     )
 }

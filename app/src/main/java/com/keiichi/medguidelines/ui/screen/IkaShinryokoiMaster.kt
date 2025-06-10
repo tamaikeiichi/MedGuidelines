@@ -2,8 +2,11 @@ package com.keiichi.medguidelines.ui.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Text
@@ -22,17 +25,28 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
 import java.io.InputStream
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.Alignment
+import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.ui.component.Dimensions
 import java.nio.charset.Charset
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.*
+import org.jetbrains.kotlinx.dataframe.io.ColType
 
 // Define a simple wrapper class
 data class IndexedItem<T>(val index: Int, val data: T)
 
+// Define a data class to hold the paired data for clarity (optional but recommended)
+data class PairedTextItem(
+    val shinryoKoiKanjiMeisho: Any?,
+    val tensuShikibetsu: String,
+    val tensu: String, val originalIndex: Int
+)
+
+
 @Composable
-fun IkaShinryokoiMasterScreen() {
+fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     val lazyListState = remember(calculation = { LazyListState() })
@@ -40,25 +54,22 @@ fun IkaShinryokoiMasterScreen() {
 
     val master: AnyFrame? = try {
         val inputStream: InputStream = context.resources.openRawResource(R.raw.s_20250602)
-        inputStream.use { stream -> // Ensures inputStream is closed automatically
-            DataFrame.readCSV(
-                stream = stream, // Pass the InputStream
-                header = (1..numberOfColumns).map { it.toString() },
-                charset = Charset.forName("Shift-JIS"), // Specify the charset directly
-                // You can add other parameters like delimiter if needed, but they have defaults
-                parserOptions = ParserOptions(),
+        val headerNames = (1..numberOfColumns).map { it.toString() }
+        val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
 
+        inputStream.use { stream ->
+            DataFrame.readCSV(
+                stream = stream,
+                header = headerNames,
+                charset = Charset.forName("Shift-JIS"),
+                colTypes = columnTypes, // Specify that all columns should be read as String
+                parserOptions = ParserOptions() // Keep default or adjust as needed
             )
         }
     } catch (e: Exception) {
         e.printStackTrace()
         null
     }finally {
-        // inputStream is closed by openRawResource().use {} or by the reader if that's how you used it
-        // If you passed the reader directly without a .use block on the stream, ensure it's closed.
-        // However, DataFrame.readCSV(reader) should ideally handle closing the reader it's given
-        // if it consumes it fully. If using inputStream.use { ... DataFrame.readCSV(InputStreamReader(it, ...)) },
-        // the 'use' block handles closing the inputStream.
     }
 
     MedGuidelinesScaffold {
@@ -72,24 +83,61 @@ fun IkaShinryokoiMasterScreen() {
                     println("Search submitted: $query")
                 },
             )
+            //val numberFormatter = remember { DecimalFormat("#.##") }
+            // Prepare your list of paired data
+            val pairedDataList: List<PairedTextItem> = remember(master) {
+                if (master == null) return@remember emptyList()
 
-// Prepare your list
-            val indexedShinryoKoiShoryakuKanjiMeisho: List<IndexedItem<Any?>> = remember(master) {
-                val fifthColumnData = master?.let { df ->
-                    val targetColumnIndex = 4
-                    if (df.columnsCount() > targetColumnIndex) {
-                        try {
-                            df.columns()[targetColumnIndex].toList()
-                        } catch (e: IndexOutOfBoundsException) {
-                            emptyList()
+                // Adjust indices if your header generation (1..50) means columns are 0-indexed internally
+                // If header = listOf("1", "2", ...), then "5" is at index 4, "10" is at index 9.
+                val shinryoKoiKanjiMeishoIndex = 4  // Column "5"
+                val tensuShikibetsuIndex = 10
+                val tensuIndex = 11 // Column "10"
+
+                if (master.columnsCount() > shinryoKoiKanjiMeishoIndex &&
+                    master.columnsCount() > tensuShikibetsuIndex && // Check new column index
+                    master.columnsCount() > tensuIndex) {
+                    try {
+                        val shinryoKoiKanjiMeishoList = master.columns()[shinryoKoiKanjiMeishoIndex].toList()
+
+                        // Extract the tensuShikibetsu column and map to String (or desired type)
+                        val tensuShikibetsuList = master.columns()[tensuShikibetsuIndex].toList().map { value ->
+                            value?.toString() ?: "" // Or parse to Int if needed: value.toString().toIntOrNull()
                         }
-                    } else {
+
+                        val tensuList = master.columns()[tensuIndex].toList().map { value ->
+                            value?.toString() ?: ""
+                        }
+
+                        // Combine the three lists
+                        // First, zip shinryoKoiKanjiMeishoList and tensuShikibetsuList
+                        shinryoKoiKanjiMeishoList.zip(tensuShikibetsuList)
+                            // Result: List<Pair<Any?, String>> (shinryoKoiKanjiMeisho, tensuShikibetsu)
+                            // Then, zip this result with tensuList
+                            .zip(tensuList)
+                            // Result: List<Pair<Pair<Any?, String>, String>>
+                            // ((shinryoKoiKanjiMeisho, tensuShikibetsu), tensu)
+                            .mapIndexed { index, nestedPair ->
+                                val firstPair = nestedPair.first // This is Pair(shinryoKoiKanjiMeisho, tensuShikibetsu)
+                                val kanjiMeisho = firstPair.first
+                                val shikibetsu = firstPair.second
+                                val currentTensu = nestedPair.second // This is tensu
+
+                                PairedTextItem(
+                                    shinryoKoiKanjiMeisho = kanjiMeisho,
+                                    tensuShikibetsu = shikibetsu,
+                                    tensu = currentTensu,
+                                    originalIndex = index
+                                )
+                            }
+                    } catch (e: IndexOutOfBoundsException) {
+                        println("Error accessing columns for paired data: ${e.message}")
                         emptyList()
                     }
-                } ?: emptyList()
-
-                // Wrap each item with its index
-                fifthColumnData.mapIndexed { index, item -> IndexedItem(index, item) }
+                } else {
+                    println("Not enough columns in DataFrame for paired data.")
+                    emptyList()
+                }
             }
 
             LazyColumn(
@@ -100,23 +148,31 @@ fun IkaShinryokoiMasterScreen() {
                 contentPadding = PaddingValues(2.dp),
             ) {
                 items(
-                    items = indexedShinryoKoiShoryakuKanjiMeisho,
-                    key = { indexedItem: IndexedItem<Any?> ->
-                        indexedItem.index
+                    items = pairedDataList,
+                    key = { pairedItem ->
+                        pairedItem.originalIndex // Use the original row index as a stable key
                     }
-                ) { indexedItem ->
-                    val cellValue = indexedItem.data
+                ) { pairedItem ->
                     MedGuidelinesCard(
-                        modifier = Modifier
-                        .padding(Dimensions.cardPadding)
+                        modifier = Modifier.padding(Dimensions.cardPadding)
                     ) {
-                        Text(
-                            text = cellValue?.toString()
-                                ?: "NULL",
+                        // Use a Row to display items side-by-side
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(Dimensions.textPadding)
-                        )
+                                .padding(Dimensions.textPadding),
+                            verticalAlignment = Alignment.CenterVertically // Optional: align items vertically
+                        ) {
+                            Text(
+                                text = pairedItem.shinryoKoiKanjiMeisho?.toString() ?: "N/A",
+                                modifier = Modifier.weight(4f),
+                            )
+                            Spacer(modifier = Modifier.width(8.dp)) // Space between headline and supporting text
+                            Text(
+                                text = pairedItem.tensu,
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
                     }
                 }
             }
@@ -151,5 +207,5 @@ fun IkaShinryokoiMasterScreen() {
 @Preview
 @Composable
 fun IkaShinryokoiMasterScreenPreview(){
-    IkaShinryokoiMasterScreen()
+    IkaShinryokoiMasterScreen(navController = NavHostController(LocalContext.current))
 }
