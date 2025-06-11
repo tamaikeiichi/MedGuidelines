@@ -4,10 +4,8 @@ import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Text
@@ -37,16 +35,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.data.LIST_ITEM_DATA_KEY
-import com.keiichi.medguidelines.data.ListItemData
 import com.keiichi.medguidelines.data.dataStore
-import com.keiichi.medguidelines.data.doAnyDecodeStringsMatchAnyItemsStrings
-import com.keiichi.medguidelines.data.itemsList
-import com.keiichi.medguidelines.data.loadListItemData
-import com.keiichi.medguidelines.data.saveListItemData
 import com.keiichi.medguidelines.ui.component.Dimensions
 import com.keiichi.medguidelines.ui.component.getStringOfSpecificLocale
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
@@ -61,7 +52,6 @@ import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.*
 import org.jetbrains.kotlinx.dataframe.io.ColType
 import java.util.Locale
-import kotlin.collections.any
 import kotlin.collections.map
 import kotlin.text.contains
 
@@ -70,9 +60,11 @@ data class IndexedItem<T>(val index: Int, val data: T)
 
 // Define a data class to hold the paired data for clarity (optional but recommended)
 data class PairedTextItem(
-    val shinryoKoiKanjiMeisho: Any?,
+    val kanjiMeisho: Any?,
     val tensuShikibetsu: String,
-    val tensu: String, val originalIndex: Int
+    val tensu: String,
+    val kanaMeisho: Any?,
+    val originalIndex: Int
 )
 
 var pairedDataList: List<PairedTextItem> = listOf()
@@ -86,6 +78,19 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     val scope = rememberCoroutineScope()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var hasBeenVisited by rememberSaveable { mutableStateOf(false) }
+    val expectedItemCount = pairedDataList.size
+
+    val originalItems = rememberSaveable(
+        saver = listSaver(
+            save = { it.map { item -> Json.encodeToString(item) } },
+            restore = { restored ->
+                restored.map { item -> Json.decodeFromString<PairedTextItem>(item) }
+                    .toMutableStateList()
+            }
+        )
+    ) {
+        mutableStateListOf<PairedTextItem>()
+    }
 
     val master: AnyFrame? = try {
         val inputStream: InputStream = context.resources.openRawResource(R.raw.s_20250602)
@@ -104,7 +109,22 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     } catch (e: Exception) {
         e.printStackTrace()
         null
-    }finally {
+    } finally {
+    }
+
+    LaunchedEffect(Unit) {
+        loadListPairedData(context, expectedItemCount).collect { loadedItems ->
+            originalItems.clear()
+            originalItems.addAll(loadedItems)
+        }
+    }
+
+    fun updateAndSaveItems(updatedList: List<PairedTextItem>) {
+        originalItems.clear()
+        originalItems.addAll(updatedList)
+        scope.launch {
+            saveListPairedData(context, originalItems)
+        }
     }
 
     MedGuidelinesScaffold {
@@ -120,48 +140,47 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
             )
             //val numberFormatter = remember { DecimalFormat("#.##") }
             // Prepare your list of paired data
+
             pairedDataList = remember(master) {
                 if (master == null) return@remember emptyList()
 
-                // Adjust indices if your header generation (1..50) means columns are 0-indexed internally
-                // If header = listOf("1", "2", ...), then "5" is at index 4, "10" is at index 9.
-                val shinryoKoiKanjiMeishoIndex = 4  // Column "5"
+                val kanjiMeishoIndex = 4  // Column "5"
                 val tensuShikibetsuIndex = 10
                 val tensuIndex = 11 // Column "10"
+                val kanaMeishoIndex = 6
 
-                if (master.columnsCount() > shinryoKoiKanjiMeishoIndex &&
-                    master.columnsCount() > tensuShikibetsuIndex && // Check new column index
-                    master.columnsCount() > tensuIndex) {
+                if (master.columnsCount() > kanjiMeishoIndex &&
+                    master.columnsCount() > tensuShikibetsuIndex &&
+                    master.columnsCount() > tensuIndex &&
+                    master.columnsCount() > kanaMeishoIndex
+                ) {
                     try {
-                        val shinryoKoiKanjiMeishoList = master.columns()[shinryoKoiKanjiMeishoIndex].toList()
-
-                        // Extract the tensuShikibetsu column and map to String (or desired type)
-                        val tensuShikibetsuList = master.columns()[tensuShikibetsuIndex].toList().map { value ->
-                            value?.toString() ?: "" // Or parse to Int if needed: value.toString().toIntOrNull()
-                        }
-
+                        val kanjiMeishoList = master.columns()[kanjiMeishoIndex].toList()
+                        val tensuShikibetsuList =
+                            master.columns()[tensuShikibetsuIndex].toList().map { value ->
+                                value?.toString()
+                                    ?: "" // Or parse to Int if needed: value.toString().toIntOrNull()
+                            }
                         val tensuList = master.columns()[tensuIndex].toList().map { value ->
                             value?.toString() ?: ""
                         }
+                        val kanaMeishoList = master.columns()[kanaMeishoIndex].toList()
 
-                        // Combine the three lists
-                        // First, zip shinryoKoiKanjiMeishoList and tensuShikibetsuList
-                        shinryoKoiKanjiMeishoList.zip(tensuShikibetsuList)
-                            // Result: List<Pair<Any?, String>> (shinryoKoiKanjiMeisho, tensuShikibetsu)
-                            // Then, zip this result with tensuList
+                        kanjiMeishoList.zip(tensuShikibetsuList)
                             .zip(tensuList)
-                            // Result: List<Pair<Pair<Any?, String>, String>>
-                            // ((shinryoKoiKanjiMeisho, tensuShikibetsu), tensu)
+                            .zip(kanaMeishoList)
                             .mapIndexed { index, nestedPair ->
-                                val firstPair = nestedPair.first // This is Pair(shinryoKoiKanjiMeisho, tensuShikibetsu)
+                                val firstPair = nestedPair.first.first
                                 val kanjiMeisho = firstPair.first
                                 val shikibetsu = firstPair.second
-                                val currentTensu = nestedPair.second // This is tensu
+                                val currentTensu = nestedPair.first.second
+                                val kanaMeisho = nestedPair.second
 
                                 PairedTextItem(
-                                    shinryoKoiKanjiMeisho = kanjiMeisho,
+                                    kanjiMeisho = kanjiMeisho,
                                     tensuShikibetsu = shikibetsu,
                                     tensu = currentTensu,
+                                    kanaMeisho = kanaMeisho,
                                     originalIndex = index
                                 )
                             }
@@ -175,74 +194,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                 }
             }
 
-            val originalItems = rememberSaveable(
-                saver = listSaver(
-                    save = { it.map { item -> Json.encodeToString(item) } },
-                    restore = { restored ->
-                        restored.map { item -> Json.decodeFromString<PairedTextItem>(item) }
-                            .toMutableStateList()
-                    }
-                )
-            ) {
-                mutableStateListOf<PairedTextItem>()
-            }
-
             var clickedItemForNavigation by remember { mutableStateOf<PairedTextItem?>(null) }
-
-            fun updateAndSaveItems(updatedList: List<PairedTextItem>) {
-                originalItems.clear()
-                originalItems.addAll(updatedList)
-                scope.launch {
-                    saveListPairedData(context, originalItems)
-                }
-            }
-
-            val expectedItemCount = pairedDataList.size
-
-            DisposableEffect(lifecycleOwner) {
-                val observer = LifecycleEventObserver { _, event ->
-                    when (event) {
-                        Lifecycle.Event.ON_RESUME -> {
-                            clickedItemForNavigation?.let { item ->
-                                val currentList = originalItems.toMutableList()
-                                if (currentList.remove(item)) {
-                                    if (!item.isFavorite) {
-                                        val firstFavoriteIndex = currentList.indexOfFirst { it.isFavorite }
-                                        if (firstFavoriteIndex != -1) {
-                                            currentList.add(firstFavoriteIndex, item) // Add below favorites
-                                        } else {
-                                            currentList.add(0, item) // Add to top if no favorites
-                                        }
-                                    } else {
-                                        val favorites = currentList.filter { it.isFavorite }.toMutableList()
-                                        val nonFavorites = currentList.filterNot { it.isFavorite }
-                                        if (favorites.remove(item)) { // Should always be true if it was clicked
-                                            favorites.add(0, item)
-                                        }
-                                        currentList.clear()
-                                        currentList.addAll(favorites)
-                                        currentList.addAll(nonFavorites)
-                                    }
-                                    updateAndSaveItems(currentList)
-                                }
-                                clickedItemForNavigation = null
-                            }
-                            if (hasBeenVisited) {
-                                animateFirstItem = true
-                            }
-                            hasBeenVisited = true
-                        }
-
-                        else -> {
-                        }
-                    }
-                }
-                lifecycleOwner.lifecycle.addObserver(observer)
-                onDispose {
-                    lifecycleOwner.lifecycle.removeObserver(observer)
-                }
-            }
-
             val displayedItems = remember(searchQuery, originalItems, context) {
                 if (searchQuery.isBlank()) {
                     originalItems
@@ -257,9 +209,17 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
 
                         val nameMatchingItems = originalItems.filter { itemData ->
                             val itemNameEn =
-                                getStringOfSpecificLocale(context, itemData.originalIndex, englishLocale)
+                                getStringOfSpecificLocale(
+                                    context,
+                                    itemData.originalIndex,
+                                    englishLocale
+                                )
                             val itemNameJa =
-                                getStringOfSpecificLocale(context, itemData.originalIndex, japaneseLocale)
+                                getStringOfSpecificLocale(
+                                    context,
+                                    itemData.originalIndex,
+                                    japaneseLocale
+                                )
 
                             val normalizedItemNameEn = normalizeTextForSearch(itemNameEn)
                             val normalizedItemNameJa = normalizeTextForSearch(itemNameJa)
@@ -278,41 +238,36 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                             if (itemData.originalIndex in nameMatchIds) {
                                 false // Already included as a name match
                             } else {
-                                itemData.keywords.any { keywordResId ->
-                                    val keywordEn =
-                                        getStringOfSpecificLocale(context, keywordResId, englishLocale)
-                                    val keywordJa =
-                                        getStringOfSpecificLocale(context, keywordResId, japaneseLocale)
+//                                itemData.kanaMeisho.any { keywordResId ->
+//                                    val keywordEn =
+//                                        getStringOfSpecificLocale(context, keywordResId, englishLocale)
+//                                    val keywordJa =
+//                                        getStringOfSpecificLocale(context, keywordResId, japaneseLocale)
 
-                                    val normalizedKeywordEn = normalizeTextForSearch(keywordEn)
-                                    val normalizedKeywordJa = normalizeTextForSearch(keywordJa)
+                                //val normalizedKeywordEn = normalizeTextForSearch(keywordEn)
+                                val normalizedKeywordJa =
+                                    normalizeTextForSearch(itemData.kanaMeisho.toString())
 
-                                    (normalizedKeywordEn.isNotBlank() && normalizedKeywordEn.contains(
-                                        normalizedSearchQuery
-                                    )) ||
-                                            (normalizedKeywordJa.isNotBlank() && normalizedKeywordJa.contains(
-                                                normalizedSearchQuery
-                                            ))
-                                }
+//                                    (normalizedKeywordEn.isNotBlank() && normalizedKeywordEn.contains(
+//                                        normalizedSearchQuery
+//                                    )) ||
+                                (normalizedKeywordJa.isNotBlank() && normalizedKeywordJa.contains(
+                                    normalizedSearchQuery
+                                )
+                                        )
                             }
                         }
-                        // Combine and ensure no duplicates if an item could match by name in one lang and keyword in another
-                        // (though your current logic for keywordOnlyMatchingItems handles this part)
-                        nameMatchingItems + keywordOnlyMatchingItems
                     }
-                }
-            }
-
-            LaunchedEffect(Unit) {
-                loadListItemData(context, expectedItemCount).collect { loadedItems ->
-                    originalItems.clear()
-                    originalItems.addAll(loadedItems)
+                    // Combine and ensure no duplicates if an item could match by name in one lang and keyword in another
+                    // (though your current logic for keywordOnlyMatchingItems handles this part)
+                    //nameMatchingItems// + keywordOnlyMatchingItems
                 }
             }
 
             LazyColumn(
                 state = lazyListState,
                 modifier = Modifier
+                    //.weight(1f)
                     .padding(2.dp)
                     .fillMaxWidth(),
                 contentPadding = PaddingValues(2.dp),
@@ -334,7 +289,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                             verticalAlignment = Alignment.CenterVertically // Optional: align items vertically
                         ) {
                             Text(
-                                text = pairedItem.shinryoKoiKanjiMeisho?.toString() ?: "N/A",
+                                text = pairedItem.kanjiMeisho?.toString() ?: "N/A",
                                 modifier = Modifier
                                     .weight(4f)
                                     .padding(Dimensions.textPadding),
@@ -342,8 +297,11 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                             val displayTensu = pairedItem.tensu.removeSuffix(".00")
                             Text(
                                 text = "${displayTensu}" +
-                                        if (pairedItem.tensuShikibetsu == "1"){
-                                        "円"} else {"点"},
+                                        if (pairedItem.tensuShikibetsu == "1") {
+                                            "円"
+                                        } else {
+                                            "点"
+                                        },
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(Dimensions.textPadding),
@@ -353,33 +311,10 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                     }
                 }
             }
-            MedGuidelinesCard {
-                if (master != null) {
-                    // Now you can work with 'master' DataFrame
-                    // Example: Display the number of rows
-                    Text("Number of rows: ${master.rowsCount()}")
-
-                    // Example: Print the first 5 rows to logcat (for debugging)
-                    master.head().print()
-
-                    // Example: Get a specific column as a list
-                    // val firstColumnData = master.columns().firstOrNull()?.toList()
-
-                    // Example: Filter and display
-                    // val filteredData = master.filter { it["SomeColumnName"] > someValue }
-                    // LazyColumn {
-                    //     items(filteredData.rows().toList()) { row ->
-                    //         Text(row.toString()) // Customize how you display each row
-                    //     }
-                    // }
-
-                } else {
-                    Text("Could not load data.")
-                }
-            }
         }
     }
 }
+
 
 private suspend fun saveListPairedData(context: Context, item: MutableList<PairedTextItem>) {
     context.dataStore.edit { settings ->
