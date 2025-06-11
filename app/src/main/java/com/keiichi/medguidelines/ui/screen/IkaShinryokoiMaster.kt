@@ -201,6 +201,8 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                 } else {
                     val normalizedSearchQuery = normalizeTextForSearch(searchQuery)
 
+                    //originalItems.filter(normalizedSearchQuery)
+
                     if (normalizedSearchQuery.isBlank()) {
                         originalItems
                     } else {
@@ -233,34 +235,8 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                         }
 
                         val nameMatchIds = nameMatchingItems.map { it.originalIndex }.toSet()
-
-                        val keywordOnlyMatchingItems = originalItems.filter { itemData ->
-                            if (itemData.originalIndex in nameMatchIds) {
-                                false // Already included as a name match
-                            } else {
-//                                itemData.kanaMeisho.any { keywordResId ->
-//                                    val keywordEn =
-//                                        getStringOfSpecificLocale(context, keywordResId, englishLocale)
-//                                    val keywordJa =
-//                                        getStringOfSpecificLocale(context, keywordResId, japaneseLocale)
-
-                                //val normalizedKeywordEn = normalizeTextForSearch(keywordEn)
-                                val normalizedKeywordJa =
-                                    normalizeTextForSearch(itemData.kanaMeisho.toString())
-
-//                                    (normalizedKeywordEn.isNotBlank() && normalizedKeywordEn.contains(
-//                                        normalizedSearchQuery
-//                                    )) ||
-                                (normalizedKeywordJa.isNotBlank() && normalizedKeywordJa.contains(
-                                    normalizedSearchQuery
-                                )
-                                        )
-                            }
-                        }
+                        nameMatchingItems
                     }
-                    // Combine and ensure no duplicates if an item could match by name in one lang and keyword in another
-                    // (though your current logic for keywordOnlyMatchingItems handles this part)
-                    //nameMatchingItems// + keywordOnlyMatchingItems
                 }
             }
 
@@ -273,7 +249,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                 contentPadding = PaddingValues(2.dp),
             ) {
                 items(
-                    items = pairedDataList,
+                    items = displayedItems,
                     key = { pairedItem ->
                         pairedItem.originalIndex // Use the original row index as a stable key
                     }
