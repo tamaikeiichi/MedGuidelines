@@ -1,5 +1,6 @@
 package com.keiichi.medguidelines.ui.component
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -13,7 +14,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.em
 
 @Composable
-fun parseStyledString(stringResId: Int): AnnotatedString {
+fun parseStyledString(@StringRes stringResId: Int): AnnotatedString {
     val fullString = stringResource(id = stringResId)
     return buildAnnotatedString {
         val tagRegexes = listOf(
