@@ -131,7 +131,7 @@ val itemsList = listOf(
             R.string.Ps,
         )),
     ListItemData(R.string.infusionCalculator, ActionType.NAVIGATE_TO_INFUSION_CALCULATOR),
-    ListItemData(R.string.ikashiRinryokuMaster, ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER)
+    ListItemData(R.string.ikashiRinryokuMasterKensaku, ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER)
 )
 
 data class IndexScreenActions(

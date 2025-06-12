@@ -268,4 +268,6 @@
     <string name="findDrugDosage">薬剤量を求める</string>
     <string name="findFlowRate">点滴速度を求める</string>
     <string name="bilirubinDay0">0日目のビリルビン</string>
+    <string name="IkaShinryokoiMaster">医科診療行為マスター</string>
+    <string name="ikashiRinryokuMasterKensaku">医科診療行為マスター検索</string>
 </resources>

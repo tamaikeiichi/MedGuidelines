@@ -424,5 +424,7 @@
     <string name="totalDrugDose">Total drug dose</string>
     <string name="findDrugDosage">Find drug dosage</string>
     <string name="findFlowRate">Find flow rate</string>
-    <string name="ikashiRinryokuMaster">医科診療行為マスター検索（Japanese Only）</string>
+    <string name="ikashiRinryokuMasterKensaku">医科診療行為マスター検索（Japanese Only）</string>
+    <string name="IkaShinryokoiMaster">医科診療行為マスター</string>
+    <string name="IkaShinryokoiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
 </resources>
