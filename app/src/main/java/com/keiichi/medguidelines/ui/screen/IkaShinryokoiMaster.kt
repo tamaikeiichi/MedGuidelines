@@ -74,10 +74,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
-// Define a simple wrapper class
-data class IndexedItem<T>(val index: Int, val data: T)
-
-// Define a data class to hold the paired data for clarity (optional but recommended)
 @Serializable
 data class PairedTextItem(
     val kanjiMeisho: String?,

@@ -35,4 +35,6 @@ fun ButtonAndScorePreview(
     factor: List<Int> = listOf(1, 2, 3),
     title: Int = R.string.congestiveHearFaiLureHistoryTitle,
     titleNote: Int = R.string.space
-) {}
+) {
+    buttonAndScore(factor, title, titleNote)
+}

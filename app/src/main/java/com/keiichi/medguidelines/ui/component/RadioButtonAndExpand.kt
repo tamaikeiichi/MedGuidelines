@@ -72,7 +72,7 @@ fun RadioButtonAndExpand(
                         .weight(1f)
                         .padding(3.dp)
                 ) {
-                    if (titleNote != R.string.space) {
+                    if (title != R.string.space) {
                         Text(
                             text = parseStyledString(title),
                             style = MaterialTheme.typography.titleMedium,
@@ -148,4 +148,11 @@ fun RadioButtonAndExpandPreview(
     title: Int = R.string.congestiveHearFaiLureHistoryTitle,
     titleNote: Int = R.string.space
 
-) {}
+) {
+    RadioButtonAndExpand(
+        radioOptions,
+        selectedOption,
+        onOptionSelected,
+        title,
+        titleNote)
+}
