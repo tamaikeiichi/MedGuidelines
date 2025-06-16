@@ -427,4 +427,6 @@
     <string name="ikashiRinryokuMasterKensaku">医科診療行為マスター検索（Japanese Only）</string>
     <string name="IkaShinryokoiMaster">医科診療行為マスター</string>
     <string name="IkaShinryokoiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
+    <string name="icd10">ICD10</string>
+    <string name="icd10Url">https://www.cdc.gov/nchs/icd/icd-10-cm/files.html</string>
 </resources>

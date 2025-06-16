@@ -123,35 +123,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         effectiveSearchQuery = searchQuery
     }
 
-    // Perform filtering in the background when effectiveSearchQuery or originalItems change
-//    LaunchedEffect(effectiveSearchQuery, originalItems.toList()) { // Use .toList() to react to content changes
-//        if (effectiveSearchQuery.isBlank()) {
-//            displayedItems = originalItems.toList() // Show all if query is blank
-//            isFiltering = false
-//            return@LaunchedEffect
-//        }
-//
-//        isFiltering = true
-//        val currentQuery = effectiveSearchQuery // Capture current query
-//        val currentList = originalItems.toList() // Capture current list
-//
-//        val filtered = withContext(Dispatchers.Default) {
-//            val normalizedQuery = normalizeTextForSearch(currentQuery)
-//            if (normalizedQuery.isBlank()){
-//                currentList // Should be handled by outer if, but good to be safe
-//            } else {
-//                currentList.filter { itemData ->
-//                    // Assuming normalizeTextForSearch handles nulls gracefully (e.g. returns "")
-//                    val kanjiText = normalizeTextForSearch(itemData.kanjiMeisho?.toString().toString())
-//                    val kanaText = normalizeTextForSearch(itemData.kanaMeisho?.toString().toString())
-//
-//                    kanjiText.contains(normalizedQuery) || kanaText.contains(normalizedQuery)
-//                }
-//            }
-//        }
-//        displayedItems = filtered
-//        isFiltering = false
-//    }
+
 
     LaunchedEffect(effectiveSearchQuery, originalItems.toList()) {
         if (effectiveSearchQuery.isBlank()) {
@@ -314,24 +286,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
             emptyList()
         }
     }
-
-
-//    val displayedItems = remember(searchQuery, originalItems, context) {
-//        if (searchQuery.isBlank()) {
-//            originalItems
-//        } else {
-//            val normalizedSearchQuery = normalizeTextForSearch(searchQuery)
-//            originalItems.filter { itemData ->
-//                val kanjiText =
-//                    normalizeTextForSearch(itemData.kanjiMeisho?.toString().toString())
-//                val kanaText =
-//                    normalizeTextForSearch(itemData.kanaMeisho?.toString().toString())
-//                kanjiText.contains(normalizedSearchQuery) || kanaText.contains(
-//                    normalizedSearchQuery
-//                )
-//            }
-//        }
-//    }
 
     LaunchedEffect(Unit) {
         loadListPairedData(context, expectedItemCount).collect { loadedItems ->
@@ -512,7 +466,7 @@ private suspend fun saveListPairedData(context: Context, item: MutableList<Paire
     }
 }
 
-fun doAnyDecodeStringsMatchAnyPairedItemsStrings(
+private fun doAnyDecodeStringsMatchAnyPairedItemsStrings(
     context: Context,
     decodeList: List<PairedTextItem>,
     itemsList: List<PairedTextItem>
