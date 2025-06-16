@@ -337,49 +337,99 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                     IkaShinryokoiMasterScreenItemCard(
                         pairedItem = pairedItem,
                         isFavorite = pairedItem.isFavorite,
-                        onFavoriteClick = {
-                            val currentList = originalItems.toMutableList()
-                            val itemIndex =
-                                currentList.indexOfFirst { it.originalIndex == pairedItem.originalIndex }
-                            if (itemIndex != -1) {
-                                val clickedItem = currentList[itemIndex]
-                                val oldFavoriteState = clickedItem.isFavorite // Store old state
+                        onFavoriteClick = { clickedPairedItem: PairedTextItem -> // Pass the actual item
+                            // Find the item in the *originalItems* list
+                            val itemIndexInOriginal =
+                                originalItems.indexOfFirst { it.originalIndex == clickedPairedItem.originalIndex }
 
-                                clickedItem.isFavorite = !clickedItem.isFavorite // Toggle favorite
+                            if (itemIndexInOriginal != -1) {
+                                val itemToUpdate = originalItems[itemIndexInOriginal]
+                                val oldFavoriteState = itemToUpdate.isFavorite
 
+                                // 1. Create a new item with the toggled favorite state
+                                // This is important if PairedTextItem is a data class and you want to ensure recomposition
+                                // for changes to its properties.
+                                val updatedItem =
+                                    itemToUpdate.copy(isFavorite = !itemToUpdate.isFavorite)
 
+                                // 2. Create a new list based on the updated item and re-sort
+                                val newList = originalItems.toMutableList()
+                                newList[itemIndexInOriginal] =
+                                    updatedItem // Replace with the updated item
 
-                                currentList.removeAt(itemIndex) // Remove from current position
-
-                                if (clickedItem.isFavorite) {
-                                    // Add to the top of the list (or top of favorites section)
-                                    currentList.add(0, clickedItem)
-                                } else {
-                                    // Add back after all favorites, or maintain original relative order (simpler for now: add after favorites)
-                                    val firstNonFavoriteIndex =
-                                        currentList.indexOfFirst { !it.isFavorite }
-                                    if (firstNonFavoriteIndex != -1) {
-                                        currentList.add(firstNonFavoriteIndex, clickedItem)
-                                    } else {
-                                        currentList.add(clickedItem) // Add to end if all were favorites
-                                    }
-                                }
-                                // Re-sort to ensure all favorites are grouped at the top
-                                val sortedList = currentList.sortedWith(
+                                // 3. Sort the new list: favorites first, then by original order or another criteria
+                                val sortedList = newList.sortedWith(
                                     compareByDescending<PairedTextItem> { it.isFavorite }
-                                    // You might want a secondary sort criteria here if needed
+                                        // Optional: then by original index to keep non-favorites in their loaded order
+                                        .thenBy { it.originalIndex }
                                 )
-                                updateAndSaveItems(sortedList)
-                                // Scroll to top IF an item was newly favorited and thus moved up
 
-                                if (clickedItem.isFavorite && !oldFavoriteState) { // Check if it became a favorite
-                                    scope.launch {
-                                        lazyListState.animateScrollToItem(index = 0) // Animate scroll to the top
+                                // 4. Update the state and save
+                                updateAndSaveItems(sortedList) // This function should update originalItems
+
+                                // 5. Scroll if it became a favorite
+                                if (updatedItem.isFavorite && !oldFavoriteState) {
+                                    // Find the new index of the item in the *displayedItems* list to scroll to it
+                                    // This is more robust if the item is visible after filtering
+                                    val displayIndex =
+                                        displayedItems.indexOfFirst { it.originalIndex == updatedItem.originalIndex }
+                                    if (displayIndex != -1) {
+                                        scope.launch {
+                                            lazyListState.animateScrollToItem(index = displayIndex)
+                                        }
+                                    } else {
+                                        // If it became favorite but isn't in displayedItems (due to search),
+                                        // scrolling to top might still be desired.
+                                        scope.launch {
+                                            lazyListState.animateScrollToItem(index = 0)
+                                        }
                                     }
                                 }
+                    //                            val currentList = originalItems.toMutableList()
+                    //                            val itemIndex =
+                    //                                currentList.indexOfFirst { it.originalIndex == pairedItem.originalIndex }
+                    //                            if (itemIndex != -1) {
+                    //                                val clickedItem = currentList[itemIndex]
+                    //                                val oldFavoriteState = clickedItem.isFavorite // Store old state
+                    //
+                    //                                clickedItem.isFavorite = !clickedItem.isFavorite // Toggle favorite
+                    //
+                    //
+                    //
+                    //                                currentList.removeAt(itemIndex) // Remove from current position
+                    //
+                    //                                if (clickedItem.isFavorite) {
+                    //                                    // Add to the top of the list (or top of favorites section)
+                    //                                    currentList.add(0, clickedItem)
+                    //                                } else {
+                    //                                    // Add back after all favorites, or maintain original relative order (simpler for now: add after favorites)
+                    //                                    val firstNonFavoriteIndex =
+                    //                                        currentList.indexOfFirst { !it.isFavorite }
+                    //                                    if (firstNonFavoriteIndex != -1) {
+                    //                                        currentList.add(firstNonFavoriteIndex, clickedItem)
+                    //                                    } else {
+                    //                                        currentList.add(clickedItem) // Add to end if all were favorites
+                    //                                    }
+                    //                                }
+                    //                                // Re-sort to ensure all favorites are grouped at the top
+                    //                                val sortedList = currentList.sortedWith(
+                    //                                    compareByDescending<PairedTextItem> { it.isFavorite }
+                    //                                    // You might want a secondary sort criteria here if needed
+                    //                                )
+                    //                                updateAndSaveItems(sortedList)
+                    //                                // Scroll to top IF an item was newly favorited and thus moved up
+                    //
+                    //                                if (clickedItem.isFavorite && !oldFavoriteState) { // Check if it became a favorite
+                    //                                    scope.launch {
+                    //                                        lazyListState.animateScrollToItem(index = 0) // Animate scroll to the top
+                    //                                    }
+                    //                                }
+                    //                            }
                             }
-                        }
+                        } //as () -> Unit
+
                     )
+
                 }
             }
         }
@@ -390,7 +440,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
 fun IkaShinryokoiMasterScreenItemCard(
     pairedItem: PairedTextItem,
     isFavorite: Boolean,
-    onFavoriteClick: () -> Unit, // Callback for star click
+    onFavoriteClick: (item: PairedTextItem) -> Unit, // Callback for star click
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.onPrimary,
     contentColor: Color = MaterialTheme.colorScheme.primary,
@@ -430,7 +480,7 @@ fun IkaShinryokoiMasterScreenItemCard(
                         .padding(Dimensions.textPadding),
                     textAlign = TextAlign.End
                 )
-                IconButton(onClick = onFavoriteClick) { // Star icon
+                IconButton(onClick = { onFavoriteClick(pairedItem) }) { // Star icon
                     val starColor = if (isFavorite) {
                         if (isSystemInDarkTheme()) {
                             DarkYellow // Use your defined dark yellow for dark theme
