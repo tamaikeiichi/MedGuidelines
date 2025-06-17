@@ -123,8 +123,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         effectiveSearchQuery = searchQuery
     }
 
-
-
     LaunchedEffect(effectiveSearchQuery, originalItems.toList()) {
         if (effectiveSearchQuery.isBlank()) {
             displayedItems = originalItems.toList()
