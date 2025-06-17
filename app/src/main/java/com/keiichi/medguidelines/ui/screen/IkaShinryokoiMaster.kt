@@ -135,7 +135,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
 
         isFiltering = true
         val currentRawQuery = effectiveSearchQuery
-        val currentList = originalItems.toList()
+        val currentList = originalItems.toList()//displayedItems.toList()//originalItems.toList()
 
         val filtered = withContext(Dispatchers.Default) {
             val spaceRegex = Regex("[ 　]+")
@@ -288,7 +288,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         }
     }
 
-
     val expectedItemCount = pairedDataList.size
 
     LaunchedEffect(Unit) {
@@ -393,51 +392,9 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                                         }
                                     }
                                 }
-                    //                            val currentList = originalItems.toMutableList()
-                    //                            val itemIndex =
-                    //                                currentList.indexOfFirst { it.originalIndex == pairedItem.originalIndex }
-                    //                            if (itemIndex != -1) {
-                    //                                val clickedItem = currentList[itemIndex]
-                    //                                val oldFavoriteState = clickedItem.isFavorite // Store old state
-                    //
-                    //                                clickedItem.isFavorite = !clickedItem.isFavorite // Toggle favorite
-                    //
-                    //
-                    //
-                    //                                currentList.removeAt(itemIndex) // Remove from current position
-                    //
-                    //                                if (clickedItem.isFavorite) {
-                    //                                    // Add to the top of the list (or top of favorites section)
-                    //                                    currentList.add(0, clickedItem)
-                    //                                } else {
-                    //                                    // Add back after all favorites, or maintain original relative order (simpler for now: add after favorites)
-                    //                                    val firstNonFavoriteIndex =
-                    //                                        currentList.indexOfFirst { !it.isFavorite }
-                    //                                    if (firstNonFavoriteIndex != -1) {
-                    //                                        currentList.add(firstNonFavoriteIndex, clickedItem)
-                    //                                    } else {
-                    //                                        currentList.add(clickedItem) // Add to end if all were favorites
-                    //                                    }
-                    //                                }
-                    //                                // Re-sort to ensure all favorites are grouped at the top
-                    //                                val sortedList = currentList.sortedWith(
-                    //                                    compareByDescending<PairedTextItem> { it.isFavorite }
-                    //                                    // You might want a secondary sort criteria here if needed
-                    //                                )
-                    //                                updateAndSaveItems(sortedList)
-                    //                                // Scroll to top IF an item was newly favorited and thus moved up
-                    //
-                    //                                if (clickedItem.isFavorite && !oldFavoriteState) { // Check if it became a favorite
-                    //                                    scope.launch {
-                    //                                        lazyListState.animateScrollToItem(index = 0) // Animate scroll to the top
-                    //                                    }
-                    //                                }
-                    //                            }
                             }
-                        } //as () -> Unit
-
+                        }
                     )
-
                 }
             }
         }
