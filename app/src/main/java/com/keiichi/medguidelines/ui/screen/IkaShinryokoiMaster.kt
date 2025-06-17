@@ -84,17 +84,18 @@ data class PairedTextItem(
     var isFavorite: Boolean = false,
 )
 
-var pairedDataList: List<PairedTextItem> = listOf()
+//var pairedDataList: List<PairedTextItem> = listOf()
 
 @Composable
 fun IkaShinryokoiMasterScreen(navController: NavHostController) {
+
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     val lazyListState = remember(calculation = { LazyListState() })
     val numberOfColumns = 50
     val scope = rememberCoroutineScope()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    val expectedItemCount = pairedDataList.size
+
     var clickedItemForNavigation by remember { mutableStateOf<PairedTextItem?>(null) } // Renamed for clarity
 
     val originalItems = rememberSaveable(
@@ -113,7 +114,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     // State for the query that actually triggers filtering
     var effectiveSearchQuery by remember { mutableStateOf("") }
     // State for the items to be displayed by LazyColumn
-    var displayedItems by remember { mutableStateOf<List<PairedTextItem>>(emptyList()) }
     // State for loading indicator
     var isFiltering by remember { mutableStateOf(false) }
 
@@ -123,7 +123,10 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         effectiveSearchQuery = searchQuery
     }
 
+    var displayedItems by remember { mutableStateOf<List<PairedTextItem>>(emptyList()) }
+
     LaunchedEffect(effectiveSearchQuery, originalItems.toList()) {
+        //var displayedItems: List<PairedTextItem> = emptyList() //by remember { mutableStateOf<List<PairedTextItem>>(emptyList()) }
         if (effectiveSearchQuery.isBlank()) {
             displayedItems = originalItems.toList()
             isFiltering = false
@@ -232,7 +235,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     } finally {
     }
 
-    pairedDataList = remember(master) {
+    val pairedDataList: List<PairedTextItem> = remember(master) {
         if (master == null) return@remember emptyList()
 
         val kanjiMeishoIndex = 4  // Column "5"
@@ -285,8 +288,15 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         }
     }
 
+
+    val expectedItemCount = pairedDataList.size
+
     LaunchedEffect(Unit) {
-        loadListPairedData(context, expectedItemCount).collect { loadedItems ->
+        loadListPairedData(
+            context = context,
+            expectedItemCount = expectedItemCount,
+            pairedDataList = pairedDataList
+        ).collect { loadedItems ->
             originalItems.clear()
             originalItems.addAll(loadedItems)
         }
@@ -553,7 +563,8 @@ val LIST_PAIRED_DATA_KEY = stringPreferencesKey("list_paired_data")
 
 private fun loadListPairedData(
     context: Context,
-    expectedItemCount: Int
+    expectedItemCount: Int,
+    pairedDataList: List<PairedTextItem>
 ): Flow<List<PairedTextItem>> {
 
     return context.dataStore.data.map { preferences ->

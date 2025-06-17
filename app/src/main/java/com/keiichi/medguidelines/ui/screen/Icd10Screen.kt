@@ -93,7 +93,7 @@ fun Icd10EnglishScreen(navController: NavHostController){
     val numberOfColumns = 2
     val scope = rememberCoroutineScope()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-    val expectedItemCount = pairedDataList.size
+    val expectedItemCount = icd10ItemList.size
     var clickedItemForNavigation by remember { mutableStateOf<Icd10Item?>(null) } // Renamed for clarity
 
     val originalItems = rememberSaveable(
