@@ -65,11 +65,13 @@ import kotlin.collections.map
 import kotlin.text.contains
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
-import com.keiichi.medguidelines.ui.component.saveListToDataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -83,9 +85,7 @@ data class PairedTextItem(
     val kanaMeisho: String?,
     val originalIndex: Int,
     var isFavorite: Boolean = false,
-)
-
-//var pairedDataList: List<PairedTextItem> = listOf()
+)// : IndexableItem
 
 @Composable
 fun IkaShinryokoiMasterScreen(navController: NavHostController) {
@@ -96,7 +96,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     val numberOfColumns = 50
     val scope = rememberCoroutineScope()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
-
     var clickedItemForNavigation by remember { mutableStateOf<PairedTextItem?>(null) } // Renamed for clarity
 
     val originalItems = rememberSaveable(
@@ -110,7 +109,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     ) {
         mutableStateListOf<PairedTextItem>()
     }
-
 
     // State for the query that actually triggers filtering
     var effectiveSearchQuery by remember { mutableStateOf("") }
@@ -327,6 +325,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                 onSearch = { query ->
                     println("Search submitted: $query")
                 },
+                isLoading = isFiltering
             )
             LazyColumn(
                 state = lazyListState,
@@ -483,20 +482,20 @@ private fun normalizeTextForSearchForMaster(text: String?): String {
     // Every operation here is magnified by the number of items * number of fields.
 }
 
-//private suspend fun saveListData(context: Context, item: MutableList<PairedTextItem>) {
-//    context.dataStore.edit { settings ->
-//        val jsonString = Json.encodeToString(item)
-//        settings[LIST_PAIRED_DATA_KEY] = jsonString
-//    }
-//}
+val Context.dataStoreIka: DataStore<Preferences> by preferencesDataStore(name = "settings_ika")
+val LIST_PAIRED_DATA_KEY = stringPreferencesKey("list_paired_data")
 
 suspend fun saveListData(context: Context, items: MutableList<PairedTextItem>) {
-    saveListToDataStore(
-        context = context,
-        dataStoreKey = LIST_PAIRED_DATA_KEY,
-        items = items,
-        //serializer = ListSerializer(PairedTextItem.serializer()) // Provide the serializer
-    )
+//    saveListToDataStore(
+//        context = context,
+//        dataStoreKey = LIST_PAIRED_DATA_KEY,
+//        items = items,
+//        //serializer = ListSerializer(PairedTextItem.serializer()) // Provide the serializer
+//    )
+    context.dataStore.edit { settings ->
+        val jsonString = Json.encodeToString(items)
+        settings[LIST_PAIRED_DATA_KEY] = jsonString
+    }
 }
 
 private fun doAnyDecodeStringsMatchAnyPairedItemsStrings(
@@ -504,6 +503,11 @@ private fun doAnyDecodeStringsMatchAnyPairedItemsStrings(
     decodeList: List<PairedTextItem>,
     itemsList: List<PairedTextItem>
 ): Boolean {
+//    return compareResourceStringSetsFromIndexable(
+//        context = context,
+//        listA = decodeList,
+//        listB = itemsList
+//    )
     // Get the set of strings from decodeList.nameResID (Set A)
     val decodeNameResIdStrings = decodeList.mapNotNull { listItem ->
         try {
@@ -514,8 +518,6 @@ private fun doAnyDecodeStringsMatchAnyPairedItemsStrings(
             null // Exclude this string from the set
         }
     }.toSet()
-
-
     // Get the set of strings from itemsList.nameResID (Set B)
     val itemNameResIdStrings = itemsList.mapNotNull { listItem ->
         try {
@@ -526,23 +528,18 @@ private fun doAnyDecodeStringsMatchAnyPairedItemsStrings(
             null // Exclude this string from the set
         }
     }.toSet()
-
-
     // Check if there is any intersection between the two sets of strings
     val checkName = decodeNameResIdStrings == itemNameResIdStrings
     //val checkKeywords = decodeKeywordStrings == itemKeywordStrings
     return checkName //&& checkKeywords
 }
 
-val LIST_PAIRED_DATA_KEY = stringPreferencesKey("list_paired_data")
-
 private fun loadListPairedData(
     context: Context,
     expectedItemCount: Int,
     pairedDataList: List<PairedTextItem>
 ): Flow<List<PairedTextItem>> {
-
-    return context.dataStore.data.map { preferences ->
+    return context.dataStoreIka.data.map { preferences ->
         val jsonString = preferences[LIST_PAIRED_DATA_KEY]
 
         if (jsonString != null) {
@@ -560,13 +557,13 @@ private fun loadListPairedData(
                     decodedList
                     //}
                 } else {
-                    context.dataStore.edit { mutablePreferences ->
+                    context.dataStoreIka.edit { mutablePreferences ->
                         mutablePreferences.remove(LIST_PAIRED_DATA_KEY)
                     }
                     pairedDataList
                 }
             } catch (e: kotlinx.serialization.SerializationException) {
-                context.dataStore.edit { mutablePreferences ->
+                context.dataStoreIka.edit { mutablePreferences ->
                     mutablePreferences.remove(LIST_PAIRED_DATA_KEY)
                 }
                 pairedDataList

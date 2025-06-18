@@ -24,7 +24,6 @@ suspend fun saveListItemData(context: Context, item: MutableList<ListItemData>) 
 }
 
 fun loadListItemData(context: Context, expectedItemCount: Int): Flow<List<ListItemData>> {
-
     return context.dataStore.data.map { preferences ->
         val jsonString = preferences[LIST_ITEM_DATA_KEY]
 
