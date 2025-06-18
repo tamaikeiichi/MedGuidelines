@@ -482,7 +482,7 @@ private fun normalizeTextForSearchForMaster(text: String?): String {
     // Every operation here is magnified by the number of items * number of fields.
 }
 
-val Context.dataStoreIka: DataStore<Preferences> by preferencesDataStore(name = "settings_ika")
+//val Context.dataStoreIka: DataStore<Preferences> by preferencesDataStore(name = "settings_ika")
 val LIST_PAIRED_DATA_KEY = stringPreferencesKey("list_paired_data")
 
 suspend fun saveListData(context: Context, items: MutableList<PairedTextItem>) {
@@ -539,7 +539,7 @@ private fun loadListPairedData(
     expectedItemCount: Int,
     pairedDataList: List<PairedTextItem>
 ): Flow<List<PairedTextItem>> {
-    return context.dataStoreIka.data.map { preferences ->
+    return context.dataStore.data.map { preferences ->
         val jsonString = preferences[LIST_PAIRED_DATA_KEY]
 
         if (jsonString != null) {
@@ -557,13 +557,13 @@ private fun loadListPairedData(
                     decodedList
                     //}
                 } else {
-                    context.dataStoreIka.edit { mutablePreferences ->
+                    context.dataStore.edit { mutablePreferences ->
                         mutablePreferences.remove(LIST_PAIRED_DATA_KEY)
                     }
                     pairedDataList
                 }
             } catch (e: kotlinx.serialization.SerializationException) {
-                context.dataStoreIka.edit { mutablePreferences ->
+                context.dataStore.edit { mutablePreferences ->
                     mutablePreferences.remove(LIST_PAIRED_DATA_KEY)
                 }
                 pairedDataList
