@@ -69,6 +69,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
+import com.keiichi.medguidelines.ui.component.saveListToDataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -171,7 +172,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         originalItems.clear()
         originalItems.addAll(updatedList)
         scope.launch {
-            saveListPairedData(context, originalItems//.toMutableList()
+            saveListData(context, originalItems//.toMutableList()
         )
         }
     }
@@ -353,33 +354,41 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                                 val itemToUpdate = originalItems[itemIndexInOriginal]
                                 val oldFavoriteState = itemToUpdate.isFavorite
 
-                                // 1. Create a new item with the toggled favorite state
-                                // This is important if PairedTextItem is a data class and you want to ensure recomposition
-                                // for changes to its properties.
-                                val updatedItem =
-                                    itemToUpdate.copy(isFavorite = !itemToUpdate.isFavorite)
+                                itemToUpdate.isFavorite = !itemToUpdate.isFavorite // Toggle favorite
 
-                                // 2. Create a new list based on the updated item and re-sort
-                                val newList = originalItems.toMutableList()
-                                newList[itemIndexInOriginal] =
-                                    updatedItem // Replace with the updated item
+                                originalItems.removeAt(itemIndexInOriginal) // Remove from current position
+
+                                if (itemToUpdate.isFavorite) {
+                                    // Add to the top of the list (or top of favorites section)
+                                    originalItems.add(0, itemToUpdate)
+                                } else {
+                                    // Add back after all favorites, or maintain original relative order (simpler for now: add after favorites)
+                                    val firstNonFavoriteIndex =
+                                        originalItems.indexOfFirst { !it.isFavorite }
+                                    if (firstNonFavoriteIndex != -1) {
+                                        originalItems.add(firstNonFavoriteIndex, itemToUpdate)
+                                    } else {
+                                        originalItems.add(itemToUpdate) // Add to end if all were favorites
+                                    }
+                                }
 
                                 // 3. Sort the new list: favorites first, then by original order or another criteria
-                                val sortedList = newList.sortedWith(
+                                val sortedList = originalItems.sortedWith(
                                     compareByDescending<PairedTextItem> { it.isFavorite }
                                         // Optional: then by original index to keep non-favorites in their loaded order
-                                        .thenBy { it.originalIndex }
+                                        //.thenBy { it.originalIndex }
                                 )
 
                                 // 4. Update the state and save
                                 updateAndSaveItems(sortedList) // This function should update originalItems
 
+                                displayedItems = sortedList
                                 // 5. Scroll if it became a favorite
-                                if (updatedItem.isFavorite && !oldFavoriteState) {
+                                if (itemToUpdate.isFavorite && !oldFavoriteState) {
                                     // Find the new index of the item in the *displayedItems* list to scroll to it
                                     // This is more robust if the item is visible after filtering
                                     val displayIndex =
-                                        displayedItems.indexOfFirst { it.originalIndex == updatedItem.originalIndex }
+                                        displayedItems.indexOfFirst { it.originalIndex == itemToUpdate.originalIndex }
                                     if (displayIndex != -1) {
                                         scope.launch {
                                             lazyListState.animateScrollToItem(index = displayIndex)
@@ -474,11 +483,20 @@ private fun normalizeTextForSearchForMaster(text: String?): String {
     // Every operation here is magnified by the number of items * number of fields.
 }
 
-private suspend fun saveListPairedData(context: Context, item: MutableList<PairedTextItem>) {
-    context.dataStore.edit { settings ->
-        val jsonString = Json.encodeToString(item)
-        settings[LIST_PAIRED_DATA_KEY] = jsonString
-    }
+//private suspend fun saveListData(context: Context, item: MutableList<PairedTextItem>) {
+//    context.dataStore.edit { settings ->
+//        val jsonString = Json.encodeToString(item)
+//        settings[LIST_PAIRED_DATA_KEY] = jsonString
+//    }
+//}
+
+suspend fun saveListData(context: Context, items: MutableList<PairedTextItem>) {
+    saveListToDataStore(
+        context = context,
+        dataStoreKey = LIST_PAIRED_DATA_KEY,
+        items = items,
+        //serializer = ListSerializer(PairedTextItem.serializer()) // Provide the serializer
+    )
 }
 
 private fun doAnyDecodeStringsMatchAnyPairedItemsStrings(
