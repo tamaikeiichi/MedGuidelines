@@ -150,8 +150,8 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
             } else {
                 currentList.filter { itemData ->
                     // Normalize the item's text fields once
-                    val kanjiText = normalizeTextForSearch(itemData.kanjiMeisho.toString().toString()) // Use direct property if String?
-                    val kanaText = normalizeTextForSearch(itemData.kanaMeisho.toString().toString())   // Use direct property if String?
+                    val kanjiText = normalizeTextForSearch(itemData.kanjiMeisho.toString()) // Use direct property if String?
+                    val kanaText = normalizeTextForSearch(itemData.kanaMeisho.toString())   // Use direct property if String?
 
                     // Check if ALL search terms are found in the item's text fields.
                     searchTerms.all { term -> // <<< Key change: using .all {}
