@@ -125,7 +125,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     var displayedItems by remember { mutableStateOf<List<PairedTextItem>>(emptyList()) }
 
     LaunchedEffect(effectiveSearchQuery, originalItems.toList()) {
-        //var displayedItems: List<PairedTextItem> = emptyList() //by remember { mutableStateOf<List<PairedTextItem>>(emptyList()) }
         if (effectiveSearchQuery.isBlank()) {
             displayedItems = originalItems.toList()
             isFiltering = false

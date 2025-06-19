@@ -29,6 +29,7 @@ import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
 import com.keiichi.medguidelines.ui.screen.LilleModelScreen
 import com.keiichi.medguidelines.ui.screen.EcogScreen
 import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
+import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
 import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
 
 @Serializable
@@ -55,6 +56,7 @@ enum class ActionType {
     NAVIGATE_TO_ECOG,
     NAVIGATE_TO_INFUSION_CALCULATOR,
     NAVIGATE_TO_IKASHINRYOKOIMASTER,
+    NAVIGATE_TO_ICD10,
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -131,7 +133,8 @@ val itemsList = listOf(
             R.string.Ps,
         )),
     ListItemData(R.string.infusionCalculator, ActionType.NAVIGATE_TO_INFUSION_CALCULATOR),
-    ListItemData(R.string.ikashiRinryokuMasterKensaku, ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER)
+    ListItemData(R.string.ikashiRinryokuMasterKensaku, ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER),
+    ListItemData(R.string.icd10, ActionType.NAVIGATE_TO_ICD10),
 )
 
 data class IndexScreenActions(
@@ -157,6 +160,7 @@ data class IndexScreenActions(
     val navigateToEcog: () -> Unit,
     val navigateToInfusionCalculator: () -> Unit,
     val navigateToIkaShinryokoiMaster: () -> Unit,
+    val navigateToIcd10: () -> Unit,
 )
 
 @Composable
@@ -189,7 +193,8 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToLilleModel = { navController.navigate("LilleModelScreen") },
         navigateToEcog = { navController.navigate("EcogScreen") },
         navigateToInfusionCalculator = { navController.navigate("GammaCalculateScreen") },
-        navigateToIkaShinryokoiMaster = { navController.navigate("IkaShinryokoiMaster") }
+        navigateToIkaShinryokoiMaster = { navController.navigate("IkaShinryokoiMaster") },
+        navigateToIcd10 = { navController.navigate("Icd10EnglishScreen") },
     )
 }
 
@@ -224,7 +229,8 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("LilleModelScreen") { navController -> LilleModelScreen(navController) },
         ScreenRoute("EcogScreen") { navController -> EcogScreen(navController) },
         ScreenRoute("GammaCalculateScreen") { navController -> GammaCalculateScreen(navController) },
-        ScreenRoute("IkaShinryokoiMaster") { navController -> IkaShinryokoiMasterScreen(navController) }
+        ScreenRoute("IkaShinryokoiMaster") { navController -> IkaShinryokoiMasterScreen(navController) },
+        ScreenRoute("Icd10EnglishScreen") { navController -> Icd10EnglishScreen(navController) },
     )
 }
 
@@ -252,6 +258,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_ECOG -> this.navigateToEcog()
         ActionType.NAVIGATE_TO_INFUSION_CALCULATOR -> this.navigateToInfusionCalculator()
         ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER -> this.navigateToIkaShinryokoiMaster()
+        ActionType.NAVIGATE_TO_ICD10 -> this.navigateToIcd10()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

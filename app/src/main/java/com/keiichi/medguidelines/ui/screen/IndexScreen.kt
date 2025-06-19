@@ -315,7 +315,8 @@ fun IndexScreenPreview() {
             navigateToLilleModel = {},
             navigateToEcog = {},
             navigateToInfusionCalculator = {},
-            navigateToIkaShinryokoiMaster = {}
+            navigateToIkaShinryokoiMaster = {},
+            navigateToIcd10 = {},
         )
     )
 }
