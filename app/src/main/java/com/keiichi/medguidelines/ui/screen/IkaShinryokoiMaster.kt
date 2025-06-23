@@ -85,11 +85,12 @@ data class PairedTextItem(
     val kanaMeisho: String?,
     val originalIndex: Int,
     var isFavorite: Boolean = false,
+    val kanjiText: String,
+    val kanaText: String
 )// : IndexableItem
 
 @Composable
 fun IkaShinryokoiMasterScreen(navController: NavHostController) {
-
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     val lazyListState = remember(calculation = { LazyListState() })
@@ -150,9 +151,10 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
             } else {
                 currentList.filter { itemData ->
                     // Normalize the item's text fields once
-                    val kanjiText = normalizeTextForSearch(itemData.kanjiMeisho.toString()) // Use direct property if String?
-                    val kanaText = normalizeTextForSearch(itemData.kanaMeisho.toString())   // Use direct property if String?
-
+                    //val kanjiText = normalizeTextForSearch(itemData.kanjiMeisho.toString())
+                    //val kanaText = normalizeTextForSearch(itemData.kanaMeisho.toString())
+                    val kanjiText = itemData.kanjiText
+                    val kanaText = itemData.kanaText
                     // Check if ALL search terms are found in the item's text fields.
                     searchTerms.all { term -> // <<< Key change: using .all {}
                         // An item matches if the term is in EITHER kanjiText OR kanaText
@@ -247,35 +249,78 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
             master.columnsCount() > kanaMeishoIndex
         ) {
             try {
-                val kanjiMeishoList = master.columns()[kanjiMeishoIndex].toList()
-                val tensuShikibetsuList =
-                    master.columns()[tensuShikibetsuIndex].toList().map { value ->
-                        value?.toString()
-                            ?: "" // Or parse to Int if needed: value.toString().toIntOrNull()
-                    }
-                val tensuList = master.columns()[tensuIndex].toList().map { value ->
-                    value?.toString() ?: ""
+                // Get the columns from the DataFrame
+                val kanjiMeishoCol = master.columns()[kanjiMeishoIndex]
+                val tensuShikibetsuCol = master.columns()[tensuShikibetsuIndex]
+                val tensuCol = master.columns()[tensuIndex]
+                val kanaMeishoCol = master.columns()[kanaMeishoIndex]
+
+                // Create normalized text lists
+                val kanjiTextList: List<String> = kanjiMeishoCol.values().map { item ->
+                    normalizeTextForSearch(item?.toString() ?: "")
                 }
-                val kanaMeishoList = master.columns()[kanaMeishoIndex].toList()
+                val kanaTextList: List<String> = kanaMeishoCol.values().map { item ->
+                    normalizeTextForSearch(item?.toString() ?: "")
+                }
 
-                kanjiMeishoList.zip(tensuShikibetsuList)
-                    .zip(tensuList)
-                    .zip(kanaMeishoList)
-                    .mapIndexed { index, nestedPair ->
-                        val firstPair = nestedPair.first.first
-                        val kanjiMeisho = firstPair.first
-                        val shikibetsu = firstPair.second
-                        val currentTensu = nestedPair.first.second
-                        val kanaMeisho = nestedPair.second
+                // Iterate using indices, assuming all relevant columns have the same number of rows
+                // as the DataFrame itself (master.rowsCount()).
+                // Or, if using DataFrame operations, you might construct rows or select directly.
+                (0 until master.rowsCount()).map { index ->
+                    val kanjiMeishoValue = kanjiMeishoCol[index]?.toString() // Original Kanji Meisho
+                    val tensuShikibetsuValue = tensuShikibetsuCol[index]?.toString() ?: ""
+                    val tensuValue = tensuCol[index]?.toString() ?: ""
+                    val kanaMeishoValue = kanaMeishoCol[index]?.toString()   // Original Kana Meisho
 
-                        PairedTextItem(
-                            kanjiMeisho = kanjiMeisho.toString(),
-                            tensuShikibetsu = shikibetsu,
-                            tensu = currentTensu,
-                            kanaMeisho = kanaMeisho.toString(),
-                            originalIndex = index
-                        )
-                    }
+                    PairedTextItem(
+                        kanjiMeisho = kanjiMeishoValue,
+                        tensuShikibetsu = tensuShikibetsuValue,
+                        tensu = tensuValue,
+                        kanaMeisho = kanaMeishoValue,
+                        originalIndex = index,
+                        // Assign the pre-normalized text from the lists
+                        kanjiText = kanjiTextList.getOrElse(index) { "" }, // Use getOrElse for safety
+                        kanaText = kanaTextList.getOrElse(index) { "" }    // Use getOrElse for safety
+                    )
+                }
+//                val kanjiMeishoList = master.columns()[kanjiMeishoIndex].toList()
+//                val tensuShikibetsuList =
+//                    master.columns()[tensuShikibetsuIndex].toList().map { value ->
+//                        value?.toString()
+//                            ?: "" // Or parse to Int if needed: value.toString().toIntOrNull()
+//                    }
+//                val tensuList = master.columns()[tensuIndex].toList().map { value ->
+//                    value?.toString() ?: ""
+//                }
+//                val kanaMeishoList = master.columns()[kanaMeishoIndex].toList()
+//
+//                val kanjiText = normalizeTextForSearch(kanjiMeishoList.toString())
+//                val kanaText = normalizeTextForSearch(kanaMeishoList.toString())
+//
+//                kanjiMeishoList.zip(tensuShikibetsuList)
+//                    .zip(tensuList)
+//                    .zip(kanaMeishoList)
+//                    .zip(kanjiText)
+//                    .zip(kanaText)
+//                    .mapIndexed { index, nestedPair ->
+//                        val firstPair = nestedPair.first.first.first.first
+//                        val kanjiMeisho = firstPair.first
+//                        val shikibetsu = firstPair.second
+//                        val currentTensu = nestedPair.first.first.first.second
+//                        val kanaMeisho = nestedPair.first.first.second
+//                        val kanjiText = nestedPair.first.second
+//                        val kanaText = nestedPair.second
+//
+//                        PairedTextItem(
+//                            kanjiMeisho = kanjiMeisho.toString(),
+//                            tensuShikibetsu = shikibetsu,
+//                            tensu = currentTensu,
+//                            kanaMeisho = kanaMeisho.toString(),
+//                            kanjiText = kanjiText.toString(),
+//                            kanaText = kanaText.toString(),
+//                            originalIndex = index
+//                        )
+//                    }
             } catch (e: IndexOutOfBoundsException) {
                 println("Error accessing columns for paired data: ${e.message}")
                 emptyList()
@@ -392,11 +437,17 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                                             lazyListState.animateScrollToItem(index = displayIndex)
                                         }
                                     } else {
-                                        // If it became favorite but isn't in displayedItems (due to search),
-                                        // scrolling to top might still be desired.
-                                        scope.launch {
-                                            lazyListState.animateScrollToItem(index = 0)
-                                        }
+//                                        if (!itemToUpdate.isFavorite) {
+//                                            scope.launch {
+//                                            lazyListState.animateScrollToItem(index = displayIndex)
+//                                                }
+//                                        }else {
+                                            // If it became favorite but isn't in displayedItems (due to search),
+                                            // scrolling to top might still be desired.
+                                            scope.launch {
+                                                lazyListState.animateScrollToItem(index = 0)
+                                            }
+                                       // }
                                     }
                                 }
                             }

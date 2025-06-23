@@ -1,9 +1,7 @@
 package com.keiichi.medguidelines.ui.component
 
-import androidx.appcompat.widget.SearchView
-import androidx.compose.foundation.layout.ColumnScope
+//import androidx.compose.material3.SearchView
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -12,20 +10,18 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.keiichi.medguidelines.R
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
-//import androidx.compose.material3.SearchView
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.keiichi.medguidelines.R
 
 @OptIn(ExperimentalMaterial3Api::class) // SearchBar is experimental in M3
 @Composable

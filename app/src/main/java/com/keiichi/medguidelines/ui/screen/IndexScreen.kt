@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.IndexScreenActions
 import com.keiichi.medguidelines.data.ListItemData
 import com.keiichi.medguidelines.data.executeNavigation
@@ -74,6 +75,7 @@ fun IndexScreen(
     }
 
     var clickedItemForNavigation by remember { mutableStateOf<ListItemData?>(null) } // Renamed for clarity
+    var itemLoadingForNavigation by remember { mutableStateOf<Int?>(null) } // <--- New state for loading indicator
 
     fun updateAndSaveItems(updatedList: List<ListItemData>) {
         originalItems.clear()
@@ -115,8 +117,11 @@ fun IndexScreen(
                         animateFirstItem = true
                     }
                     hasBeenVisited = true
+                    itemLoadingForNavigation = null
                 }
-
+                Lifecycle.Event.ON_PAUSE -> { // <--- Clear loader when screen is paused
+                    itemLoadingForNavigation = null
+                }
                 else -> {
                 }
             }
@@ -124,6 +129,7 @@ fun IndexScreen(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+            itemLoadingForNavigation = null
         }
     }
 
@@ -226,24 +232,41 @@ fun IndexScreen(
                 val isFirstNonFavoriteVisible =
                     lazyListState.firstVisibleItemIndex == displayedItems.indexOf(itemData) && !itemData.isFavorite
                 val currentAlpha = if (isFirstNonFavoriteVisible && animateFirstItem) alpha else 1f
+
+                // Determine if this specific item is the one loading
+                var isLoading by remember { mutableStateOf(false) }//: Boolean = false// = itemLoadingForNavigation == itemData.nameResId
                 IndexScreenItemCard(
                     currentAlpha = currentAlpha,
                     name = itemData.nameResId,
                     isFavorite = itemData.isFavorite,
+                    isLoading = isLoading,
                     onItemClick = {
-                        clickedItemForNavigation = itemData // Set item for ON_RESUME handling
-                        var updatedItems = originalItems.toMutableList()//items.toMutableList()
-                        updatedItems.remove(itemData)
-                        updatedItems.add(0, itemData)
-                        updatedItems =
-                            updatedItems.sortedWith(compareByDescending<ListItemData> { it.isFavorite })
-                                .toMutableList()
-                        scope.launch {
-                            saveListItemData(context, updatedItems)
+                        if (itemLoadingForNavigation != null) return@IndexScreenItemCard // Prevent double clicks while loading
+
+                        // Set loading state specifically for "医科診療行為マスター" or any other long-loading item
+                        // You might want a more generic way if many items have this behavior
+                        if (itemData.nameResId == R.string.ikashiRinryokuMasterKensaku) { // Check if it's the specific item
+                            //itemLoadingForNavigation = itemData.nameResId
+                            isLoading = true
                         }
+                        clickedItemForNavigation = itemData // Set item for ON_RESUME handling
+
+                        //scope.launch {
+                            var updatedItems = originalItems.toMutableList()//items.toMutableList()
+                            updatedItems.remove(itemData)
+                            updatedItems.add(0, itemData)
+                            updatedItems =
+                                updatedItems.sortedWith(compareByDescending<ListItemData> { it.isFavorite })
+                                    .toMutableList()
+                            scope.launch {
+                                saveListItemData(context, updatedItems)
+                            }
+                        //}
                         actions.executeNavigation(itemData.actionType)
                     },
                     onFavoriteClick = {
+                        if (itemLoadingForNavigation != null) return@IndexScreenItemCard // Prevent interaction while an item loads
+
                         val currentList = originalItems.toMutableList()
                         val itemIndex =
                             currentList.indexOfFirst { it.nameResId == itemData.nameResId }

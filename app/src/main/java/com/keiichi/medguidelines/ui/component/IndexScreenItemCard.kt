@@ -1,6 +1,5 @@
 package com.keiichi.medguidelines.ui.component
 
-import android.R.attr.pathData
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,17 +15,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.PathBuilder
-import androidx.compose.ui.test.moveTo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +37,7 @@ fun IndexScreenItemCard(
     @StringRes name: Int,
     currentAlpha: Float,
     isFavorite: Boolean,
+    isLoading: Boolean,
     onItemClick: () -> Unit,
     onFavoriteClick: () -> Unit, // Callback for star click
     modifier: Modifier = Modifier
@@ -71,22 +69,31 @@ fun IndexScreenItemCard(
                         .fillMaxWidth()
                         .weight(1f)
                 )
-                IconButton(onClick = onFavoriteClick) { // Star icon
-                    val starColor = if (isFavorite) {
-                        if (isSystemInDarkTheme()) {
-                            DarkYellow // Use your defined dark yellow for dark theme
-                        } else {
-                            Yellow // Standard yellow for light theme
-                        }
-                    } else {
-                        LocalContentColor.current // Or MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
-                    }
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                        contentDescription = if (isFavorite) "Unmark as favorite" else "Mark as favorite",
-                        tint = if (isFavorite) starColor else LocalContentColor.current,
-                        modifier = Modifier.size(36.dp)
+                // Conditional icon: Loading indicator or Favorite star
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(36.dp), // Match star size
+                        color = MaterialTheme.colorScheme.primary, // Or your desired color
+                        strokeWidth = 3.dp
                     )
+                } else {
+                    IconButton(onClick = onFavoriteClick) { // Star icon
+                        val starColor = if (isFavorite) {
+                            if (isSystemInDarkTheme()) {
+                                DarkYellow // Use your defined dark yellow for dark theme
+                            } else {
+                                Yellow // Standard yellow for light theme
+                            }
+                        } else {
+                            LocalContentColor.current // Or MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
+                        }
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                            contentDescription = if (isFavorite) "Unmark as favorite" else "Mark as favorite",
+                            tint = if (isFavorite) starColor else LocalContentColor.current,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
             }
         }
@@ -99,11 +106,23 @@ fun IndexScreenItemCard(
 @Preview
 @Composable
 fun IndexScreenItemCardPreview(){
-    IndexScreenItemCard(
-        name = R.string.childPughTitle,
-        currentAlpha = 1f,
-        isFavorite = false,
-        onItemClick = {},
-        onFavoriteClick = {}
-    )
+    Column {
+        IndexScreenItemCard(
+            name = R.string.childPughTitle,
+            currentAlpha = 1f,
+            isFavorite = false,
+            isLoading = false, // Preview not loading
+            onItemClick = {},
+            onFavoriteClick = {}
+        )
+        Spacer(Modifier.height(8.dp))
+        IndexScreenItemCard(
+            name = R.string.ikashiRinryokuMasterKensaku, // Example of the item that might load
+            currentAlpha = 1f,
+            isFavorite = true,
+            isLoading = true, // Preview loading
+            onItemClick = {},
+            onFavoriteClick = {}
+        )
+    }
 }
