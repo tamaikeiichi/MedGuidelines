@@ -22,6 +22,9 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.keiichi.compose.DarkYellow
 import com.keiichi.compose.Yellow
 import com.keiichi.medguidelines.R
+import androidx.compose.foundation.layout.offset
 
 
 @Composable
@@ -37,7 +41,7 @@ fun IndexScreenItemCard(
     @StringRes name: Int,
     currentAlpha: Float,
     isFavorite: Boolean,
-    isLoading: Boolean,
+    isLoading: MutableState<Boolean>,
     onItemClick: () -> Unit,
     onFavoriteClick: () -> Unit, // Callback for star click
     modifier: Modifier = Modifier
@@ -70,9 +74,11 @@ fun IndexScreenItemCard(
                         .weight(1f)
                 )
                 // Conditional icon: Loading indicator or Favorite star
-                if (isLoading) {
+                if (isLoading.value) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(36.dp), // Match star size
+                        modifier = Modifier
+                            .size(30.dp)
+                            .offset(x = (-8).dp), // Match star size
                         color = MaterialTheme.colorScheme.primary, // Or your desired color
                         strokeWidth = 3.dp
                     )
@@ -111,7 +117,7 @@ fun IndexScreenItemCardPreview(){
             name = R.string.childPughTitle,
             currentAlpha = 1f,
             isFavorite = false,
-            isLoading = false, // Preview not loading
+            isLoading = remember { mutableStateOf(false) }, // Preview not loading
             onItemClick = {},
             onFavoriteClick = {}
         )
@@ -120,7 +126,7 @@ fun IndexScreenItemCardPreview(){
             name = R.string.ikashiRinryokuMasterKensaku, // Example of the item that might load
             currentAlpha = 1f,
             isFavorite = true,
-            isLoading = true, // Preview loading
+            isLoading = remember { mutableStateOf(true) }, // Preview loading
             onItemClick = {},
             onFavoriteClick = {}
         )

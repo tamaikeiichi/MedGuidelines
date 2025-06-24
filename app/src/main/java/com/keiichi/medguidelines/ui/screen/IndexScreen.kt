@@ -1,5 +1,6 @@
 package com.keiichi.medguidelines.ui.screen
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ import kotlin.text.contains
 import java.util.Locale // For lowercase locale handling
 import com.keiichi.medguidelines.ui.component.getStringOfSpecificLocale
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
+import kotlinx.coroutines.delay
 
 @Composable
 fun IndexScreen(
@@ -61,6 +63,7 @@ fun IndexScreen(
         targetValue = if (animateFirstItem) 0.5f else 1f,
         animationSpec = tween(durationMillis = 200), label = ""
     )
+    var itemLoadingForNavigation by remember { mutableStateOf<Int?>(null) }
 
     val originalItems = rememberSaveable(
         saver = listSaver(
@@ -75,7 +78,7 @@ fun IndexScreen(
     }
 
     var clickedItemForNavigation by remember { mutableStateOf<ListItemData?>(null) } // Renamed for clarity
-    var itemLoadingForNavigation by remember { mutableStateOf<Int?>(null) } // <--- New state for loading indicator
+    //var itemLoadingForNavigation by remember { mutableStateOf<Int?>(null) } // <--- New state for loading indicator
 
     fun updateAndSaveItems(updatedList: List<ListItemData>) {
         originalItems.clear()
@@ -232,36 +235,72 @@ fun IndexScreen(
                 val isFirstNonFavoriteVisible =
                     lazyListState.firstVisibleItemIndex == displayedItems.indexOf(itemData) && !itemData.isFavorite
                 val currentAlpha = if (isFirstNonFavoriteVisible && animateFirstItem) alpha else 1f
-
+                //itemLoadingForNavigation == itemData.nameResId
+                var isLoadingForCard: Boolean = false
                 // Determine if this specific item is the one loading
-                var isLoading by remember { mutableStateOf(false) }//: Boolean = false// = itemLoadingForNavigation == itemData.nameResId
+                // isLoadingForThisCard is true if itemLoadingForNavigation matches the current item's ID
+                val isLoadingForThisCard= remember{mutableStateOf(false)}
+
+                LaunchedEffect(itemLoadingForNavigation) {
+                    isLoadingForThisCard.value = itemLoadingForNavigation == itemData.nameResId
+                }
+
+//                var clickedItem by remember { mutableStateOf<ListItemData?>(null) }
+//
+//                LaunchedEffect(clickedItem) {
+//                    clickedItem?.let { item -> // 'let' executes only if clickedItem is not null
+//                        actions.executeNavigation(item.actionType)
+//                    }
+//                }
+                //var isLoading by remember { mutableStateOf(false) }//: Boolean = false// = itemLoadingForNavigation == itemData.nameResId
                 IndexScreenItemCard(
                     currentAlpha = currentAlpha,
                     name = itemData.nameResId,
                     isFavorite = itemData.isFavorite,
-                    isLoading = isLoading,
+                    isLoading = isLoadingForThisCard,
                     onItemClick = {
-                        if (itemLoadingForNavigation != null) return@IndexScreenItemCard // Prevent double clicks while loading
-
-                        // Set loading state specifically for "医科診療行為マスター" or any other long-loading item
-                        // You might want a more generic way if many items have this behavior
-                        if (itemData.nameResId == R.string.ikashiRinryokuMasterKensaku) { // Check if it's the specific item
-                            //itemLoadingForNavigation = itemData.nameResId
-                            isLoading = true
+                        // Prevent multiple items from trying to load simultaneously or double clicks on the same item
+                        if (itemLoadingForNavigation != null && itemLoadingForNavigation != itemData.nameResId) {
+                            Log.d("IndexScreen", "Another item is already loading. Click ignored.")
+                            return@IndexScreenItemCard
                         }
-                        clickedItemForNavigation = itemData // Set item for ON_RESUME handling
+                        if (itemLoadingForNavigation == itemData.nameResId) {
+                            Log.d("IndexScreen", "This item is already loading (double click?). Click ignored.")
+                            return@IndexScreenItemCard
+                        }
 
-                        //scope.launch {
-                            var updatedItems = originalItems.toMutableList()//items.toMutableList()
-                            updatedItems.remove(itemData)
-                            updatedItems.add(0, itemData)
-                            updatedItems =
-                                updatedItems.sortedWith(compareByDescending<ListItemData> { it.isFavorite })
-                                    .toMutableList()
-                            scope.launch {
-                                saveListItemData(context, updatedItems)
-                            }
-                        //}
+                        // Set the loading state for the specific item
+                        if (itemData.nameResId == R.string.ikashiRinryokuMasterKensaku) {
+                            itemLoadingForNavigation = itemData.nameResId // <--- CORRECT STATE CHANGE
+                            //itemLoadingForNavigation = true
+                            //isLoadingForThisCard.value = true
+                            Log.d("IndexScreen", "Set itemLoadingForNavigation for ${itemData.nameResId}")
+                        }
+
+                        clickedItemForNavigation = itemData
+                        //clickedItem = itemData
+
+                        // Perform list updates (these are synchronous on the main thread)
+                        // Consider if these need to be done before navigation or can be in the scope.launch
+                        var updatedItems = originalItems.toMutableList()
+                        val originalIndex = updatedItems.indexOf(itemData)
+                        if (originalIndex != -1) {
+                            updatedItems.removeAt(originalIndex)
+                        }
+                        updatedItems.add(0, itemData) // Add to top temporarily
+                        // Re-sort ensuring favorites are first, then the clicked item, then others
+                        updatedItems = updatedItems.sortedWith(
+                            compareByDescending<ListItemData> { it.isFavorite }
+                                .thenByDescending { it.nameResId == itemData.nameResId } // Prioritize clicked item after favorites
+                        ).toMutableList()
+
+                        // Update and save items (this part is launched in a coroutine)
+                        updateAndSaveItems(updatedItems) // Replaces direct scope.launch for saveListItemData
+
+                        // Execute navigation
+//                        if (itemData.nameResId != R.string.ikashiRinryokuMasterKensaku) {
+//                            actions.executeNavigation(itemData.actionType)
+//                        }
                         actions.executeNavigation(itemData.actionType)
                     },
                     onFavoriteClick = {
