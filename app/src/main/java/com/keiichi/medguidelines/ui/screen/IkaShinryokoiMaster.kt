@@ -309,13 +309,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         isLoadingPairedData = false
     }
 
-// You can then use 'isLoadingPairedData' to show a loading indicator in your UI
-// and 'pairedDataList' will be updated once processing is done.
-
-// Your existing 'expectedItemCount' and subsequent LaunchedEffect for 'loadListPairedData'
-// would then depend on this asynchronously populated 'pairedDataList'.
-// Make sure to adjust their keys or conditions if 'pairedDataList' starts empty.
-
     val expectedItemCount = pairedDataList.size // This will update when pairedDataList updates
 
     LaunchedEffect(pairedDataList) { // Key on the processed list
@@ -335,77 +328,6 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
             // displayedItems = emptyList()
         }
     }
-//    val pairedDataList: List<PairedTextItem> = remember(master) {
-//        if (master == null) return@remember emptyList()
-//
-//        val kanjiMeishoIndex = 4  // Column "5"
-//        val tensuShikibetsuIndex = 10
-//        val tensuIndex = 11 // Column "10"
-//        val kanaMeishoIndex = 6
-//
-//        if (master.columnsCount() > kanjiMeishoIndex &&
-//            master.columnsCount() > tensuShikibetsuIndex &&
-//            master.columnsCount() > tensuIndex &&
-//            master.columnsCount() > kanaMeishoIndex
-//        ) {
-//            try {
-//                // Get the columns from the DataFrame
-//                val kanjiMeishoCol = master.columns()[kanjiMeishoIndex]
-//                val tensuShikibetsuCol = master.columns()[tensuShikibetsuIndex]
-//                val tensuCol = master.columns()[tensuIndex]
-//                val kanaMeishoCol = master.columns()[kanaMeishoIndex]
-//
-//                // Create normalized text lists
-//                val kanjiTextList: List<String> = kanjiMeishoCol.values().map { item ->
-//                    normalizeTextForSearch(item?.toString() ?: "")
-//                }
-//                val kanaTextList: List<String> = kanaMeishoCol.values().map { item ->
-//                    normalizeTextForSearch(item?.toString() ?: "")
-//                }
-//
-//                // Iterate using indices, assuming all relevant columns have the same number of rows
-//                // as the DataFrame itself (master.rowsCount()).
-//                // Or, if using DataFrame operations, you might construct rows or select directly.
-//                (0 until master.rowsCount()).map { index ->
-//                    val kanjiMeishoValue = kanjiMeishoCol[index]?.toString() // Original Kanji Meisho
-//                    val tensuShikibetsuValue = tensuShikibetsuCol[index]?.toString() ?: ""
-//                    val tensuValue = tensuCol[index]?.toString() ?: ""
-//                    val kanaMeishoValue = kanaMeishoCol[index]?.toString()   // Original Kana Meisho
-//
-//                    PairedTextItem(
-//                        kanjiMeisho = kanjiMeishoValue,
-//                        tensuShikibetsu = tensuShikibetsuValue,
-//                        tensu = tensuValue,
-//                        kanaMeisho = kanaMeishoValue,
-//                        originalIndex = index,
-//                        // Assign the pre-normalized text from the lists
-//                        kanjiText = kanjiTextList.getOrElse(index) { "" }, // Use getOrElse for safety
-//                        kanaText = kanaTextList.getOrElse(index) { "" }    // Use getOrElse for safety
-//                    )
-//                }
-//
-//            } catch (e: IndexOutOfBoundsException) {
-//                println("Error accessing columns for paired data: ${e.message}")
-//                emptyList()
-//            }
-//        } else {
-//            println("Not enough columns in DataFrame for paired data.")
-//            emptyList()
-//        }
-//    }
-//
-//    val expectedItemCount = pairedDataList.size
-//
-//    LaunchedEffect(Unit) {
-//        loadListPairedData(
-//            context = context,
-//            expectedItemCount = expectedItemCount,
-//            pairedDataList = pairedDataList
-//        ).collect { loadedItems ->
-//            originalItems.clear()
-//            originalItems.addAll(loadedItems)
-//        }
-//    }
 
     MedGuidelinesScaffold (
         topBar = {

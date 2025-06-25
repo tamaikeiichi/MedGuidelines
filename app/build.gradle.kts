@@ -9,6 +9,8 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.protobuf") version "0.9.3" // Or latest version
     kotlin("plugin.serialization") version "2.2.0-RC2" //"1.9.22" // Use the latest version
+    //id("com.google.devtools.ksp")
+    //id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -19,8 +21,8 @@ android {
         applicationId = "com.keiichi.medguidelines"
         minSdk = 29
         targetSdk = 35
-        versionCode = 36
-        versionName = "1.32"
+        versionCode = 37
+        versionName = "1.33"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -102,6 +104,8 @@ dependencies {
     //implementation("org.jetbrains.kotlinx:dataframe-csv:1.0.0-Beta2")
     implementation("org.jetbrains.kotlinx:dataframe:0.15.0")
     //implementation("org.jetbrains.kotlinx:dataframe-excel:0.13.1")
+    implementation("com.google.dagger:hilt-android:2.56.2")
+    //ksp("com.google.dagger:hilt-android-compiler:2.56.2")
 
 }
 

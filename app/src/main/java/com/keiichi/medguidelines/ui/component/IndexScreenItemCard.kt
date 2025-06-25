@@ -39,7 +39,7 @@ import androidx.compose.foundation.layout.offset
 @Composable
 fun IndexScreenItemCard(
     @StringRes name: Int,
-    currentAlpha: Float,
+    currentAlpha: Float =1f,
     isFavorite: Boolean,
     isLoading: MutableState<Boolean>,
     onItemClick: () -> Unit,

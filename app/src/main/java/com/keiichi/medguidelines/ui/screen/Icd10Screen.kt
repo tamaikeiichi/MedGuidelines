@@ -64,32 +64,248 @@ import org.jetbrains.kotlinx.dataframe.io.ColType
 import kotlin.collections.map
 import kotlin.text.contains
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import java.io.File
+import kotlin.collections.addAll
+import kotlin.collections.isNotEmpty
+import kotlin.io.path.exists
+import kotlin.io.path.readText
+import kotlin.text.clear
 
 @Serializable
 data class Icd10Item(
-    val code: String,
+    val code: String?,
     val description: String,
     val originalIndex: Int,
     var isFavorite: Boolean = false,
-    val normalizedCode: String = normalizeTextForSearch(code), // Assuming normalizeTextForSearch is accessible here
-    val normalizedDescription: String = normalizeTextForSearch(description)
+    val normalizedCode: String,// = normalizeTextForSearch(code), // Assuming normalizeTextForSearch is accessible here
+    val normalizedDescription: String// = normalizeTextForSearch(description)
 )
 
+class Icd10ViewModel(private val applicationContext: Context) : ViewModel() {
+
+    private val _icd10ItemList = MutableStateFlow<List<Icd10Item>>(emptyList())
+    val icd10ItemList: StateFlow<List<Icd10Item>> = _icd10ItemList.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val fileName = "icd10_items_cache.json"
+    private val numberOfColumns = 2 // Assuming code and description
+
+    init {
+        loadItems()
+    }
+
+    fun loadItems() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val cachedItems = loadItemsFromCache()
+            if (cachedItems.isNotEmpty()) {
+                _icd10ItemList.value = cachedItems
+                _isLoading.value = false
+                // Optionally, you might still want to refresh from master in the background
+                // or provide a manual refresh option
+            } else {
+                val processedList = loadItemsFromMaster()
+                _icd10ItemList.value = processedList
+                if (processedList.isNotEmpty()) {
+                    saveItemsToCache(processedList)
+                }
+            }
+            _isLoading.value = false
+        }
+    }
+
+    private suspend fun loadItemsFromMaster(): List<Icd10Item> = withContext(Dispatchers.IO) {
+        // Your existing logic to load and process 'master' DataFrame
+        try {
+            val inputStream: InputStream =
+                applicationContext.resources.openRawResource(R.raw.icd10cm_codes)
+            val headerNames = (1..numberOfColumns).map { it.toString() }
+            val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
+
+            val master = inputStream.use { stream ->
+                DataFrame.readCSV(
+                    stream = stream,
+                    header = headerNames,
+                    colTypes = columnTypes,
+                    parserOptions = ParserOptions()
+                )
+            }
+
+            val codeIndex = 0
+            val descriptionIndex = 1
+            if (master.columnsCount() > codeIndex && master.columnsCount() > descriptionIndex) {
+                val codeListCol = master.columns()[codeIndex]
+                val descriptionListCol = master.columns()[descriptionIndex]
+                val normalizedCodeList: List<String> = codeListCol.values().map { item ->
+                    normalizeTextForSearch(item?.toString() ?: "")
+                }
+                val normalizedDescriptionList: List<String> =
+                    descriptionListCol.values().map { item ->
+                        normalizeTextForSearch(item?.toString() ?: "")
+                    }
+
+                (0 until master.rowsCount()).map { index ->
+                    val code = codeListCol[index]?.toString()
+                    val description = descriptionListCol[index]?.toString() ?: ""
+                    Icd10Item(
+                        code = code,
+                        description = description,
+                        originalIndex = index,
+                        normalizedCode = normalizedCodeList.getOrElse(index) { "" },
+                        normalizedDescription = normalizedDescriptionList.getOrElse(index) { "" }
+                    )
+                }
+            } else {
+                println("Not enough columns in DataFrame for paired data.")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    // Placeholder for your normalization function
+    private fun normalizeTextForSearch(text: String): String {
+        return text.trim().lowercase() // Example normalization
+    }
+
+
+    private suspend fun saveItemsToCache(items: List<Icd10Item>) = withContext(Dispatchers.IO) {
+        try {
+            val file = File(applicationContext.filesDir, fileName)
+            val jsonString = Json.encodeToString(ListSerializer(Icd10Item.serializer()), items)
+            file.writeText(jsonString)
+        } catch (e: Exception) {
+            e.printStackTrace() // Handle errors (e.g., log them)
+        }
+    }
+
+    private suspend fun loadItemsFromCache(): List<Icd10Item> = withContext(Dispatchers.IO) {
+        try {
+            val file = File(applicationContext.filesDir, fileName)
+            if (file.exists()) {
+                val jsonString = file.readText()
+                Json.decodeFromString(ListSerializer(Icd10Item.serializer()), jsonString)
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // Handle errors (e.g., log them, delete corrupt cache)
+            emptyList()
+        }
+    }
+}
+
 @Composable
-fun Icd10EnglishScreen(navController: NavHostController){
+fun Icd10EnglishScreen(
+    navController: NavHostController,
+    // If using Hilt for ViewModel injection:
+    // viewModel: Icd10ViewModel = hiltViewModel()
+    // Otherwise, provide it manually (less ideal for production)
+//    viewModel: Icd10ViewModel = viewModel(
+//        factory = object : ViewModelProvider.Factory {
+//            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//                if (modelClass.isAssignableFrom(Icd10ViewModel::class.java)) {
+//                    @Suppress("UNCHECKED_CAST")
+//                    return Icd10ViewModel(LocalContext.current.applicationContext) as T
+//                }
+//                throw IllegalArgumentException("Unknown ViewModel class")
+//            }
+//        }
+//    )
+//) {
+//    val icd10ItemList by viewModel.icd10ItemList.collectAsState()
+//    val isLoading by viewModel.isLoading.collectAsState()
+//    val context = LocalContext.current
+//    val expectedItemCount = icd10ItemList.size
+//    var isFiltering by remember { mutableStateOf(false) }
+//    var displayedItems by remember { mutableStateOf<List<Icd10Item>>(emptyList()) }
+//
+//    var searchQuery by remember { mutableStateOf("") }
+//    val lazyListState = remember(calculation = { LazyListState() })
+//    val numberOfColumns = 2
+//    val scope = rememberCoroutineScope()
+//    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+//
+//    var clickedItemForNavigation by remember { mutableStateOf<Icd10Item?>(null) } // Renamed for clarity
+//
+//    //var icd10ItemList by rememberSaveable { mutableStateOf<List<Icd10Item>>(emptyList()) }
+//    var isLoadingPairedData by remember { mutableStateOf(false) } // Optional loading state
+//
+//    val originalItems = rememberSaveable(
+//        saver = listSaver(
+//            save = { it.map { item -> Json.encodeToString(item) } },
+//            restore = { restored ->
+//                restored.map { item -> Json.decodeFromString<Icd10Item>(item) }
+//                    .toMutableStateList()
+//            }
+//        )
+//    ) {
+//        mutableStateListOf<Icd10Item>()
+//    }
+//
+//    fun updateAndSaveItems(updatedList: List<Icd10Item>) {
+//        originalItems.clear()
+//        originalItems.addAll(updatedList)
+//        scope.launch {
+//            saveListIcd10Data(
+//                context, originalItems//.toMutableList()
+//            )
+//        }
+//    }
+//    // ... your existing state variables like searchQuery, originalItems, displayedItems ...
+//
+//    // `originalItems` should now be primarily driven by `icd10ItemList` from the ViewModel
+//    // You might still keep `originalItems` as a mutableStateListOf for UI interactions
+//    // that don't immediately persist back to the ViewModel's source (like reordering favorites
+//    // before saving).
+//
+//    // Remove the direct loading of 'master' and processing within the Composable.
+//    // The ViewModel handles this.
+//
+//    // Your `LaunchedEffect(icd10ItemList)` that populates `originalItems`
+//    // would now look something like:
+//    LaunchedEffect(icd10ItemList) {
+//        if (icd10ItemList.isNotEmpty()) { // Or some other condition to ensure it's ready
+//            loadListIcdPairedData(
+//                context = context,
+//                expectedItemCount = expectedItemCount, // or directly pairedDataList.size
+//                icd10ItemList = icd10ItemList
+//            ).collect { loadedItems ->
+//                originalItems.clear()
+//                originalItems.addAll(loadedItems)
+//                // displayedItems = originalItems.toList() // Consider if you need to set displayedItems here
+//            }
+//        } else if (!isLoadingPairedData && master != null) {
+//            // Handle case where processing finished but list is empty (e.g., error or no data)
+//            originalItems.clear()
+//            // displayedItems = emptyList()
+//        }
+//    }
+    ) {
     val context = LocalContext.current
-    var icd10ItemListState by remember { mutableStateOf<List<Icd10Item>>(emptyList()) }
-    var isLoadingData by remember { mutableStateOf(true) } // For loading indicator
 
     var searchQuery by remember { mutableStateOf("") }
     val lazyListState = remember(calculation = { LazyListState() })
@@ -98,6 +314,9 @@ fun Icd10EnglishScreen(navController: NavHostController){
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     var clickedItemForNavigation by remember { mutableStateOf<Icd10Item?>(null) } // Renamed for clarity
+
+    var icd10ItemList by rememberSaveable { mutableStateOf<List<Icd10Item>>(emptyList()) }
+    var isLoadingPairedData by remember { mutableStateOf(false) } // Optional loading state
 
     val originalItems = rememberSaveable(
         saver = listSaver(
@@ -171,7 +390,8 @@ fun Icd10EnglishScreen(navController: NavHostController){
         originalItems.clear()
         originalItems.addAll(updatedList)
         scope.launch {
-            saveListIcd10Data(context, originalItems//.toMutableList()
+            saveListIcd10Data(
+                context, originalItems//.toMutableList()
             )
         }
     }
@@ -205,6 +425,7 @@ fun Icd10EnglishScreen(navController: NavHostController){
                         clickedItemForNavigation = null
                     }
                 }
+
                 else -> {
                 }
             }
@@ -216,6 +437,7 @@ fun Icd10EnglishScreen(navController: NavHostController){
     }
 
     val master: AnyFrame? = try {
+        isLoadingPairedData = true
         val inputStream: InputStream = context.resources.openRawResource(R.raw.icd10cm_codes)
         val headerNames = (1..numberOfColumns).map { it.toString() }
         val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
@@ -233,118 +455,77 @@ fun Icd10EnglishScreen(navController: NavHostController){
         e.printStackTrace()
         null
     } finally {
+        isLoadingPairedData = false
     }
 //
-//    LaunchedEffect(Unit) { // Runs once when the composable enters the composition
-//        isLoadingData = true
-//        icd10ItemListState = withContext(Dispatchers.IO) { // Use Dispatchers.IO for file reading
-//            val master: AnyFrame? = try {
-//                val inputStream: InputStream =
-//                    context.resources.openRawResource(R.raw.icd10cm_codes)
-//                val headerNames =
-//                    (1..numberOfColumns).map { it.toString() } // Assuming numberOfColumns is defined
-//                val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
-//
-//                inputStream.use { stream ->
-//                    DataFrame.readCSV(
-//                        stream = stream,
-//                        header = headerNames,
-//                        colTypes = columnTypes,
-//                        parserOptions = ParserOptions()
-//                    )
-//                }
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//                null
-//            }
-//
-//            if (master == null) {
-//                emptyList()
-//            } else {
-//                // Now, the mapping which includes normalization also runs on Dispatchers.IO
-//                val codeIndex = 0
-//                val descriptionIndex = 1
-//                if (master.columnsCount() > codeIndex && master.columnsCount() > descriptionIndex) {
-//                    try {
-//                        val codeList = master.columns()[codeIndex].toList()
-//                        val descriptionList = master.columns()[descriptionIndex].toList()
-//                        codeList.zip(descriptionList)
-//                            .mapIndexed { index, nestedPair ->
-//                                val code = nestedPair.first.toString()
-//                                val description = nestedPair.second.toString()
-//                                Icd10Item( // Normalization happens here
-//                                    code = code,
-//                                    description = description,
-//                                    originalIndex = index
-//                                )
-//                            }
-//                    } catch (e: IndexOutOfBoundsException) {
-//                        println("Error accessing columns for paired data: ${e.message}")
-//                        emptyList()
-//                    }
-//                } else {
-//                    println("Not enough columns in DataFrame for paired data.")
-//                    emptyList()
-//                }
-//            }
-//        }
-//    }
-
-    val icd10ItemList: List<Icd10Item> = remember(master) {
-        if (master == null) return@remember emptyList()
-
-        val codeIndex = 0
-        val descriptionIndex = 1
-
-        if (master.columnsCount() > codeIndex &&
-            master.columnsCount() > descriptionIndex
-        ) {
-            try {
-                val codeList = master.columns()[codeIndex].toList()
-                val descriptionList =
-                    master.columns()[descriptionIndex].toList()
-                //.map { value ->
-//                        value?.toString()
-//                            ?: "" // Or parse to Int if needed: value.toString().toIntOrNull()
-//                    }
-
-
-                codeList.zip(descriptionList)
-                    .mapIndexed { index, nestedPair ->
-                        val code = nestedPair.first
-                        val description = nestedPair.second
-
-                        Icd10Item(
-                            code = code.toString(),
-                            description = description.toString(),
-                            originalIndex = index,
-                        )
-                    }
-            } catch (e: IndexOutOfBoundsException) {
-                println("Error accessing columns for paired data: ${e.message}")
-                emptyList()
-            }
-        } else {
-            println("Not enough columns in DataFrame for paired data.")
-            emptyList()
+    LaunchedEffect(master) {
+        if (master == null) {
+            icd10ItemList = emptyList()
+            isLoadingPairedData = false
+            return@LaunchedEffect
         }
+        isLoadingPairedData = true
+        val processedList =
+            withContext(Dispatchers.Default) { // Use Dispatchers.Default for CPU-bound work
+                val codeIndex = 0
+                val descriptionIndex = 1
+                if (master.columnsCount() > codeIndex &&
+                    master.columnsCount() > descriptionIndex
+                ) {
+                    try {
+                        val codeListCol = master.columns()[codeIndex]
+                        val descriptionListCol =
+                            master.columns()[descriptionIndex]
+                        val normalizedCodeList: List<String> = codeListCol.values().map { item ->
+                            normalizeTextForSearch(item?.toString() ?: "") }
+                        val normalizedDescriptionList: List<String> = descriptionListCol.values().map { item ->
+                            normalizeTextForSearch(item?.toString() ?: "") }
+
+                        (0 until master.rowsCount()).map { index ->
+                            val code = codeListCol[index]?.toString()
+                            val description = descriptionListCol[index]?.toString() ?: ""
+
+                            Icd10Item(
+                                code = code,
+                                description = description,
+                                originalIndex = index,
+                                normalizedCode = normalizedCodeList.getOrElse(index) { "" },
+                                normalizedDescription = normalizedDescriptionList.getOrElse(index) {""}
+                            )
+                        }
+                    } catch (e: IndexOutOfBoundsException) {
+                        println("Error accessing columns for paired data: ${e.message}")
+                        emptyList()
+                    }
+                } else {
+                    println("Not enough columns in DataFrame for paired data.")
+                    emptyList()
+                }
+            }
+        icd10ItemList = processedList
+        isLoadingPairedData = false
     }
 
     val expectedItemCount = icd10ItemList.size
-    //val expectedItemCount by remember(originalItems.size) { derivedStateOf { originalItems.size } }
 
-    LaunchedEffect(Unit) {
-        loadListPairedData(
-            context = context,
-            expectedItemCount,
-            icd10ItemList
-        ).collect { loadedItems ->
+    LaunchedEffect(icd10ItemList) { // Key on the processed list
+        if (icd10ItemList.isNotEmpty()) { // Or some other condition to ensure it's ready
+            loadListIcdPairedData(
+                context = context,
+                expectedItemCount = expectedItemCount, // or directly pairedDataList.size
+                icd10ItemList = icd10ItemList
+            ).collect { loadedItems ->
+                originalItems.clear()
+                originalItems.addAll(loadedItems)
+                // displayedItems = originalItems.toList() // Consider if you need to set displayedItems here
+            }
+        } else if (!isLoadingPairedData && master != null) {
+            // Handle case where processing finished but list is empty (e.g., error or no data)
             originalItems.clear()
-            originalItems.addAll(loadedItems)
+            // displayedItems = emptyList()
         }
     }
-
-    MedGuidelinesScaffold (
+    MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
                 title = R.string.icd10,
@@ -354,7 +535,7 @@ fun Icd10EnglishScreen(navController: NavHostController){
                 )
             )
         },
-    ) {innerPadding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -369,7 +550,7 @@ fun Icd10EnglishScreen(navController: NavHostController){
                 onSearch = { query ->
                     println("Search submitted: $query")
                 },
-                isLoading = isFiltering,
+                isLoading = isFiltering || isLoadingPairedData,
             )
             LazyColumn(
                 state = lazyListState,
@@ -397,8 +578,6 @@ fun Icd10EnglishScreen(navController: NavHostController){
                                 val oldFavoriteState = clickedItem.isFavorite // Store old state
 
                                 clickedItem.isFavorite = !clickedItem.isFavorite // Toggle favorite
-
-
 
                                 currentList.removeAt(itemIndex) // Remove from current position
 
@@ -437,7 +616,6 @@ fun Icd10EnglishScreen(navController: NavHostController){
     }
 }
 
-
 @Composable
 fun Icd10ScreenItemCard(
     pairedItem: Icd10Item,
@@ -448,7 +626,7 @@ fun Icd10ScreenItemCard(
     contentColor: Color = MaterialTheme.colorScheme.primary,
 ) {
     Column {
-        Card (
+        Card(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(Dimensions.cardPadding),
@@ -497,6 +675,7 @@ fun Icd10ScreenItemCard(
         }
     }
 }
+
 
 
 // Ensure normalizeTextForSearch is efficient and handles nulls:
@@ -550,7 +729,7 @@ private fun doAnyDecodeStringsMatchAnyIcd10ItemsStrings(
 
 val LIST_ICD_DATA_KEY = stringPreferencesKey("list_icd_data")
 
-private fun loadListPairedData(
+private fun loadListIcdPairedData(
     context: Context,
     expectedItemCount: Int,
     icd10ItemList: List<Icd10Item>
@@ -593,6 +772,6 @@ private fun loadListPairedData(
 
 @Preview
 @Composable
-fun Icd10ScreenPreview(){
+fun Icd10ScreenPreview() {
     Icd10EnglishScreen(navController = NavHostController(LocalContext.current))
 }
