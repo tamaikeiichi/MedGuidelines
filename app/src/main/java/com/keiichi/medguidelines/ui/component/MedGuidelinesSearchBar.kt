@@ -58,7 +58,7 @@ fun MyCustomSearchBar(
 
         placeholder = { Text(parseStyledString(placeholderText)) },
         trailingIcon = {
-            if (searchQuery.isNotEmpty()) {
+
                 if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier
@@ -67,6 +67,7 @@ fun MyCustomSearchBar(
                         strokeWidth = 2.dp // Optional: make it thinner
                     )
                 } else {
+                    if (searchQuery.isNotEmpty()) {
                     IconButton(onClick = {
                         onSearchQueryChange("") // Clear the search query
                         focusManager.clearFocus()    // Remove focus and hide keyboard

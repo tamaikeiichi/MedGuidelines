@@ -98,6 +98,9 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     val scope = rememberCoroutineScope()
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var clickedItemForNavigation by remember { mutableStateOf<PairedTextItem?>(null) } // Renamed for clarity
+    // State to hold the processed list, initialized to empty or a loading state
+    var pairedDataList by remember { mutableStateOf<List<PairedTextItem>>(emptyList()) }
+    var isLoadingPairedData by remember { mutableStateOf(true) } // Optional loading state
 
     val originalItems = rememberSaveable(
         saver = listSaver(
@@ -216,6 +219,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     }
 
     val master: AnyFrame? = try {
+        isLoadingPairedData = true
         val inputStream: InputStream = context.resources.openRawResource(R.raw.s_20250602)
         val headerNames = (1..numberOfColumns).map { it.toString() }
         val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
@@ -233,116 +237,175 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         e.printStackTrace()
         null
     } finally {
+        isLoadingPairedData = false
     }
 
-    val pairedDataList: List<PairedTextItem> = remember(master) {
-        if (master == null) return@remember emptyList()
+    // At the top level of your Composable, where 'master' is available
 
-        val kanjiMeishoIndex = 4  // Column "5"
-        val tensuShikibetsuIndex = 10
-        val tensuIndex = 11 // Column "10"
-        val kanaMeishoIndex = 6
+// Effect to process 'master' when it changes (or on initial composition)
+    LaunchedEffect(master) {
+        if (master == null) {
+            pairedDataList = emptyList()
+            isLoadingPairedData = false
+            return@LaunchedEffect
+        }
 
-        if (master.columnsCount() > kanjiMeishoIndex &&
-            master.columnsCount() > tensuShikibetsuIndex &&
-            master.columnsCount() > tensuIndex &&
-            master.columnsCount() > kanaMeishoIndex
-        ) {
-            try {
-                // Get the columns from the DataFrame
-                val kanjiMeishoCol = master.columns()[kanjiMeishoIndex]
-                val tensuShikibetsuCol = master.columns()[tensuShikibetsuIndex]
-                val tensuCol = master.columns()[tensuIndex]
-                val kanaMeishoCol = master.columns()[kanaMeishoIndex]
+        isLoadingPairedData = true
+        // Perform heavy processing in a background thread
+        val processedList = withContext(Dispatchers.Default) { // Use Dispatchers.Default for CPU-bound work
+            // Your existing logic for extracting columns and processing
+            val kanjiMeishoIndex = 4
+            val tensuShikibetsuIndex = 10
+            val tensuIndex = 11
+            val kanaMeishoIndex = 6
 
-                // Create normalized text lists
-                val kanjiTextList: List<String> = kanjiMeishoCol.values().map { item ->
-                    normalizeTextForSearch(item?.toString() ?: "")
+            if (master.columnsCount() > kanjiMeishoIndex &&
+                master.columnsCount() > tensuShikibetsuIndex &&
+                master.columnsCount() > tensuIndex &&
+                master.columnsCount() > kanaMeishoIndex
+            ) {
+                try {
+                    val kanjiMeishoCol = master.columns()[kanjiMeishoIndex]
+                    val tensuShikibetsuCol = master.columns()[tensuShikibetsuIndex]
+                    val tensuCol = master.columns()[tensuIndex]
+                    val kanaMeishoCol = master.columns()[kanaMeishoIndex]
+
+                    // --- HEAVY PART ---
+                    // This will now run on Dispatchers.Default
+                    val kanjiTextList: List<String> = kanjiMeishoCol.values().map { item ->
+                        normalizeTextForSearch(item?.toString() ?: "")
+                    }
+                    val kanaTextList: List<String> = kanaMeishoCol.values().map { item ->
+                        normalizeTextForSearch(item?.toString() ?: "")
+                    }
+                    // --- END OF HEAVY PART ---
+
+                    (0 until master.rowsCount()).map { index ->
+                        val kanjiMeishoValue = kanjiMeishoCol[index]?.toString()
+                        val tensuShikibetsuValue = tensuShikibetsuCol[index]?.toString() ?: ""
+                        val tensuValue = tensuCol[index]?.toString() ?: ""
+                        val kanaMeishoValue = kanaMeishoCol[index]?.toString()
+
+                        PairedTextItem(
+                            kanjiMeisho = kanjiMeishoValue,
+                            tensuShikibetsu = tensuShikibetsuValue,
+                            tensu = tensuValue,
+                            kanaMeisho = kanaMeishoValue,
+                            originalIndex = index,
+                            kanjiText = kanjiTextList.getOrElse(index) { "" },
+                            kanaText = kanaTextList.getOrElse(index) { "" }
+                        )
+                    }
+                } catch (e: IndexOutOfBoundsException) {
+                    println("Error accessing columns for paired data: ${e.message}")
+                    emptyList<PairedTextItem>() // Ensure type inference
                 }
-                val kanaTextList: List<String> = kanaMeishoCol.values().map { item ->
-                    normalizeTextForSearch(item?.toString() ?: "")
-                }
-
-                // Iterate using indices, assuming all relevant columns have the same number of rows
-                // as the DataFrame itself (master.rowsCount()).
-                // Or, if using DataFrame operations, you might construct rows or select directly.
-                (0 until master.rowsCount()).map { index ->
-                    val kanjiMeishoValue = kanjiMeishoCol[index]?.toString() // Original Kanji Meisho
-                    val tensuShikibetsuValue = tensuShikibetsuCol[index]?.toString() ?: ""
-                    val tensuValue = tensuCol[index]?.toString() ?: ""
-                    val kanaMeishoValue = kanaMeishoCol[index]?.toString()   // Original Kana Meisho
-
-                    PairedTextItem(
-                        kanjiMeisho = kanjiMeishoValue,
-                        tensuShikibetsu = tensuShikibetsuValue,
-                        tensu = tensuValue,
-                        kanaMeisho = kanaMeishoValue,
-                        originalIndex = index,
-                        // Assign the pre-normalized text from the lists
-                        kanjiText = kanjiTextList.getOrElse(index) { "" }, // Use getOrElse for safety
-                        kanaText = kanaTextList.getOrElse(index) { "" }    // Use getOrElse for safety
-                    )
-                }
-//                val kanjiMeishoList = master.columns()[kanjiMeishoIndex].toList()
-//                val tensuShikibetsuList =
-//                    master.columns()[tensuShikibetsuIndex].toList().map { value ->
-//                        value?.toString()
-//                            ?: "" // Or parse to Int if needed: value.toString().toIntOrNull()
-//                    }
-//                val tensuList = master.columns()[tensuIndex].toList().map { value ->
-//                    value?.toString() ?: ""
-//                }
-//                val kanaMeishoList = master.columns()[kanaMeishoIndex].toList()
-//
-//                val kanjiText = normalizeTextForSearch(kanjiMeishoList.toString())
-//                val kanaText = normalizeTextForSearch(kanaMeishoList.toString())
-//
-//                kanjiMeishoList.zip(tensuShikibetsuList)
-//                    .zip(tensuList)
-//                    .zip(kanaMeishoList)
-//                    .zip(kanjiText)
-//                    .zip(kanaText)
-//                    .mapIndexed { index, nestedPair ->
-//                        val firstPair = nestedPair.first.first.first.first
-//                        val kanjiMeisho = firstPair.first
-//                        val shikibetsu = firstPair.second
-//                        val currentTensu = nestedPair.first.first.first.second
-//                        val kanaMeisho = nestedPair.first.first.second
-//                        val kanjiText = nestedPair.first.second
-//                        val kanaText = nestedPair.second
-//
-//                        PairedTextItem(
-//                            kanjiMeisho = kanjiMeisho.toString(),
-//                            tensuShikibetsu = shikibetsu,
-//                            tensu = currentTensu,
-//                            kanaMeisho = kanaMeisho.toString(),
-//                            kanjiText = kanjiText.toString(),
-//                            kanaText = kanaText.toString(),
-//                            originalIndex = index
-//                        )
-//                    }
-            } catch (e: IndexOutOfBoundsException) {
-                println("Error accessing columns for paired data: ${e.message}")
-                emptyList()
+            } else {
+                println("Not enough columns in DataFrame for paired data.")
+                emptyList<PairedTextItem>() // Ensure type inference
             }
-        } else {
-            println("Not enough columns in DataFrame for paired data.")
-            emptyList()
         }
+        pairedDataList = processedList
+        isLoadingPairedData = false
     }
 
-    val expectedItemCount = pairedDataList.size
+// You can then use 'isLoadingPairedData' to show a loading indicator in your UI
+// and 'pairedDataList' will be updated once processing is done.
 
-    LaunchedEffect(Unit) {
-        loadListPairedData(
-            context = context,
-            expectedItemCount = expectedItemCount,
-            pairedDataList = pairedDataList
-        ).collect { loadedItems ->
+// Your existing 'expectedItemCount' and subsequent LaunchedEffect for 'loadListPairedData'
+// would then depend on this asynchronously populated 'pairedDataList'.
+// Make sure to adjust their keys or conditions if 'pairedDataList' starts empty.
+
+    val expectedItemCount = pairedDataList.size // This will update when pairedDataList updates
+
+    LaunchedEffect(pairedDataList) { // Key on the processed list
+        if (pairedDataList.isNotEmpty()) { // Or some other condition to ensure it's ready
+            loadListPairedData(
+                context = context,
+                expectedItemCount = expectedItemCount, // or directly pairedDataList.size
+                pairedDataList = pairedDataList
+            ).collect { loadedItems ->
+                originalItems.clear()
+                originalItems.addAll(loadedItems)
+                // displayedItems = originalItems.toList() // Consider if you need to set displayedItems here
+            }
+        } else if (!isLoadingPairedData && master != null) {
+            // Handle case where processing finished but list is empty (e.g., error or no data)
             originalItems.clear()
-            originalItems.addAll(loadedItems)
+            // displayedItems = emptyList()
         }
     }
+//    val pairedDataList: List<PairedTextItem> = remember(master) {
+//        if (master == null) return@remember emptyList()
+//
+//        val kanjiMeishoIndex = 4  // Column "5"
+//        val tensuShikibetsuIndex = 10
+//        val tensuIndex = 11 // Column "10"
+//        val kanaMeishoIndex = 6
+//
+//        if (master.columnsCount() > kanjiMeishoIndex &&
+//            master.columnsCount() > tensuShikibetsuIndex &&
+//            master.columnsCount() > tensuIndex &&
+//            master.columnsCount() > kanaMeishoIndex
+//        ) {
+//            try {
+//                // Get the columns from the DataFrame
+//                val kanjiMeishoCol = master.columns()[kanjiMeishoIndex]
+//                val tensuShikibetsuCol = master.columns()[tensuShikibetsuIndex]
+//                val tensuCol = master.columns()[tensuIndex]
+//                val kanaMeishoCol = master.columns()[kanaMeishoIndex]
+//
+//                // Create normalized text lists
+//                val kanjiTextList: List<String> = kanjiMeishoCol.values().map { item ->
+//                    normalizeTextForSearch(item?.toString() ?: "")
+//                }
+//                val kanaTextList: List<String> = kanaMeishoCol.values().map { item ->
+//                    normalizeTextForSearch(item?.toString() ?: "")
+//                }
+//
+//                // Iterate using indices, assuming all relevant columns have the same number of rows
+//                // as the DataFrame itself (master.rowsCount()).
+//                // Or, if using DataFrame operations, you might construct rows or select directly.
+//                (0 until master.rowsCount()).map { index ->
+//                    val kanjiMeishoValue = kanjiMeishoCol[index]?.toString() // Original Kanji Meisho
+//                    val tensuShikibetsuValue = tensuShikibetsuCol[index]?.toString() ?: ""
+//                    val tensuValue = tensuCol[index]?.toString() ?: ""
+//                    val kanaMeishoValue = kanaMeishoCol[index]?.toString()   // Original Kana Meisho
+//
+//                    PairedTextItem(
+//                        kanjiMeisho = kanjiMeishoValue,
+//                        tensuShikibetsu = tensuShikibetsuValue,
+//                        tensu = tensuValue,
+//                        kanaMeisho = kanaMeishoValue,
+//                        originalIndex = index,
+//                        // Assign the pre-normalized text from the lists
+//                        kanjiText = kanjiTextList.getOrElse(index) { "" }, // Use getOrElse for safety
+//                        kanaText = kanaTextList.getOrElse(index) { "" }    // Use getOrElse for safety
+//                    )
+//                }
+//
+//            } catch (e: IndexOutOfBoundsException) {
+//                println("Error accessing columns for paired data: ${e.message}")
+//                emptyList()
+//            }
+//        } else {
+//            println("Not enough columns in DataFrame for paired data.")
+//            emptyList()
+//        }
+//    }
+//
+//    val expectedItemCount = pairedDataList.size
+//
+//    LaunchedEffect(Unit) {
+//        loadListPairedData(
+//            context = context,
+//            expectedItemCount = expectedItemCount,
+//            pairedDataList = pairedDataList
+//        ).collect { loadedItems ->
+//            originalItems.clear()
+//            originalItems.addAll(loadedItems)
+//        }
+//    }
 
     MedGuidelinesScaffold (
         topBar = {
@@ -369,7 +432,7 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                 onSearch = { query ->
                     println("Search submitted: $query")
                 },
-                isLoading = isFiltering
+                isLoading = isFiltering || isLoadingPairedData
             )
             LazyColumn(
                 state = lazyListState,

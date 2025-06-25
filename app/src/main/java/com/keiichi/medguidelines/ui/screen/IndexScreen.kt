@@ -270,12 +270,12 @@ fun IndexScreen(
                         }
 
                         // Set the loading state for the specific item
-                        if (itemData.nameResId == R.string.ikashiRinryokuMasterKensaku) {
-                            itemLoadingForNavigation = itemData.nameResId // <--- CORRECT STATE CHANGE
-                            //itemLoadingForNavigation = true
-                            //isLoadingForThisCard.value = true
-                            Log.d("IndexScreen", "Set itemLoadingForNavigation for ${itemData.nameResId}")
-                        }
+//                        if (itemData.nameResId == R.string.ikashiRinryokuMasterKensaku) {
+//                            itemLoadingForNavigation = itemData.nameResId // <--- CORRECT STATE CHANGE
+//                            //itemLoadingForNavigation = true
+//                            //isLoadingForThisCard.value = true
+//                            Log.d("IndexScreen", "Set itemLoadingForNavigation for ${itemData.nameResId}")
+//                        }
 
                         clickedItemForNavigation = itemData
                         //clickedItem = itemData
