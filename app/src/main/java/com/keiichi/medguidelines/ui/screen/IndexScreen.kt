@@ -23,12 +23,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.ActionType
 import com.keiichi.medguidelines.data.IndexScreenActions
 import com.keiichi.medguidelines.data.ListItemData
 import com.keiichi.medguidelines.data.executeNavigation
@@ -87,6 +89,36 @@ fun IndexScreen(
             saveListItemData(context, originalItems)
         }
     }
+
+//    val configuration = LocalConfiguration.current
+//    val currentDeviceLocale = configuration.locales[0] ?: Locale.getDefault()
+//
+//    // Filter the global itemsList based on locale for the specific ICD-10 case
+//    val localeAwareAppItems = remember(currentDeviceLocale) { // Re-calculate if locale changes
+//        itemsList.filter { item ->
+//            when (item.actionType) {
+//                // This item is displayed when the primary locale is NOT Japanese.
+//                ActionType.NAVIGATE_TO_ICD10 -> {
+//                    currentDeviceLocale.language != Locale.JAPANESE.language
+//                }
+//                // This item is displayed when the primary locale IS Japanese.
+//                ActionType.NAVIGATE_TO_ICD10JAPANESE -> {
+//                    currentDeviceLocale.language == Locale.JAPANESE.language
+//                }
+//                // All other items are always displayed.
+//                else -> true
+//            }
+//        }
+//    }
+//
+//    LaunchedEffect(localeAwareAppItems) { // Keyed by the filtered list
+//        // In a real scenario, this would involve fetching favorite status, etc.
+//        // from `loadListItemData` using `localeAwareAppItems` as the base.
+////        val loadedItems = localeAwareAppItems.map { it.copy() } // Simple copy for demo
+////        originalItems.clear()
+////        originalItems.addAll(loadedItems)
+//        originalItems = localeAwareAppItems
+//    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -323,6 +355,7 @@ fun IndexScreenPreview() {
             navigateToInfusionCalculator = {},
             navigateToIkaShinryokoiMaster = {},
             navigateToIcd10 = {},
+            navigateToIcd10Japanese = {},
         )
     )
 }

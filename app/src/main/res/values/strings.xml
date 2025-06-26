@@ -429,4 +429,6 @@
     <string name="IkaShinryokoiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="icd10">ICD-10</string>
     <string name="icd10Url">https://www.cdc.gov/nchs/icd/icd-10-cm/files.html</string>
+    <string name="icd10JapaneseUrl">https://www2.medis.or.jp/stdcd/byomei/download2019.html</string>
+    <string name="icd10japanese">ICD-10（日本語）</string>
 </resources>

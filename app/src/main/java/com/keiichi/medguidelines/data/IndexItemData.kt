@@ -3,6 +3,7 @@ package com.keiichi.medguidelines.data
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
 import kotlinx.parcelize.Parcelize
@@ -30,7 +31,9 @@ import com.keiichi.medguidelines.ui.screen.LilleModelScreen
 import com.keiichi.medguidelines.ui.screen.EcogScreen
 import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
 import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
+import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
 import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
+import java.util.Locale
 
 @Serializable
 enum class ActionType {
@@ -57,6 +60,7 @@ enum class ActionType {
     NAVIGATE_TO_INFUSION_CALCULATOR,
     NAVIGATE_TO_IKASHINRYOKOIMASTER,
     NAVIGATE_TO_ICD10,
+    NAVIGATE_TO_ICD10JAPANESE
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -66,6 +70,9 @@ data class ListItemData(
     var isFavorite: Boolean = false,
     var keywords: List<Int> = emptyList()
 )
+
+//    val configuration = LocalConfiguration.current
+//    val currentDeviceLocale = configuration.locales[0] ?: Locale.getDefault()
 
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
@@ -134,7 +141,11 @@ val itemsList = listOf(
         )),
     ListItemData(R.string.infusionCalculator, ActionType.NAVIGATE_TO_INFUSION_CALCULATOR),
     ListItemData(R.string.ikashiRinryokuMasterKensaku, ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER),
-    ListItemData(R.string.icd10, ActionType.NAVIGATE_TO_ICD10),
+    //if (currentDeviceLocale.language != Locale.JAPANESE.language) {
+        ListItemData(R.string.icd10, ActionType.NAVIGATE_TO_ICD10),
+    //} else {
+        ListItemData(R.string.icd10japanese, ActionType.NAVIGATE_TO_ICD10JAPANESE)
+    //}
 )
 
 data class IndexScreenActions(
@@ -161,6 +172,7 @@ data class IndexScreenActions(
     val navigateToInfusionCalculator: () -> Unit,
     val navigateToIkaShinryokoiMaster: () -> Unit,
     val navigateToIcd10: () -> Unit,
+    val navigateToIcd10Japanese: () -> Unit,
 )
 
 @Composable
@@ -195,6 +207,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToInfusionCalculator = { navController.navigate("GammaCalculateScreen") },
         navigateToIkaShinryokoiMaster = { navController.navigate("IkaShinryokoiMaster") },
         navigateToIcd10 = { navController.navigate("Icd10EnglishScreen") },
+        navigateToIcd10Japanese = { navController.navigate("Icd10JapaneseScreen") },
     )
 }
 
@@ -231,6 +244,7 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("GammaCalculateScreen") { navController -> GammaCalculateScreen(navController) },
         ScreenRoute("IkaShinryokoiMaster") { navController -> IkaShinryokoiMasterScreen(navController) },
         ScreenRoute("Icd10EnglishScreen") { navController -> Icd10EnglishScreen(navController) },
+        ScreenRoute("Icd10JapaneseScreen") { navController -> Icd10JapaneseScreen(navController) },
     )
 }
 
@@ -259,6 +273,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_INFUSION_CALCULATOR -> this.navigateToInfusionCalculator()
         ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER -> this.navigateToIkaShinryokoiMaster()
         ActionType.NAVIGATE_TO_ICD10 -> this.navigateToIcd10()
+        ActionType.NAVIGATE_TO_ICD10JAPANESE -> this.navigateToIcd10Japanese()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand
