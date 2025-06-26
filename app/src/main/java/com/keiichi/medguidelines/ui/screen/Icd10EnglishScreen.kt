@@ -421,13 +421,13 @@ fun Icd10ScreenItemCard(
                 horizontalArrangement = Arrangement.SpaceBetween // To push star to the end
             ) {
                 Text(
-                    text = pairedItem.code?.toString() ?: "N/A",
+                    text = pairedItem.code ?: "N/A",
                     modifier = Modifier
                         .weight(2f)
                         .padding(Dimensions.textPadding),
                 )
                 Text(
-                    text = pairedItem.description?.toString() ?: "N/A",
+                    text = pairedItem.description,
                     modifier = Modifier
                         .weight(6f)
                         .padding(Dimensions.textPadding),

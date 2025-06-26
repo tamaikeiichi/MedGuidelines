@@ -1,6 +1,5 @@
 package com.keiichi.medguidelines.ui.screen
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.ActionType
 import com.keiichi.medguidelines.data.IndexScreenActions
 import com.keiichi.medguidelines.data.ListItemData
@@ -39,15 +37,12 @@ import com.keiichi.medguidelines.data.loadListItemData
 import com.keiichi.medguidelines.data.saveListItemData
 import com.keiichi.medguidelines.ui.component.IndexScreenItemCard
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
+import com.keiichi.medguidelines.ui.component.getStringOfSpecificLocale
+import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.collections.toMutableList
-import kotlin.text.contains
-import java.util.Locale // For lowercase locale handling
-import com.keiichi.medguidelines.ui.component.getStringOfSpecificLocale
-import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
-import kotlinx.coroutines.delay
+import java.util.Locale
 
 @Composable
 fun IndexScreen(
@@ -61,10 +56,6 @@ fun IndexScreen(
     var hasBeenVisited by rememberSaveable { mutableStateOf(false) }
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     val lazyListState = remember(calculation = { LazyListState() })
-    val alpha: Float by animateFloatAsState(
-        targetValue = if (animateFirstItem) 0.5f else 1f,
-        animationSpec = tween(durationMillis = 200), label = ""
-    )
     var itemLoadingForNavigation by remember { mutableStateOf<Int?>(null) }
 
     val originalItems = rememberSaveable(
@@ -90,34 +81,34 @@ fun IndexScreen(
         }
     }
 
-//    val configuration = LocalConfiguration.current
-//    val currentDeviceLocale = configuration.locales[0] ?: Locale.getDefault()
-//
-//    // Filter the global itemsList based on locale for the specific ICD-10 case
-//    val localeAwareAppItems = remember(currentDeviceLocale) { // Re-calculate if locale changes
-//        itemsList.filter { item ->
-//            when (item.actionType) {
-//                // This item is displayed when the primary locale is NOT Japanese.
-//                ActionType.NAVIGATE_TO_ICD10 -> {
-//                    currentDeviceLocale.language != Locale.JAPANESE.language
-//                }
-//                // This item is displayed when the primary locale IS Japanese.
-//                ActionType.NAVIGATE_TO_ICD10JAPANESE -> {
-//                    currentDeviceLocale.language == Locale.JAPANESE.language
-//                }
-//                // All other items are always displayed.
-//                else -> true
-//            }
-//        }
-//    }
-//
+    val configuration = LocalConfiguration.current
+    val currentDeviceLocale = configuration.locales[0] ?: Locale.getDefault()
+
+    // Filter the global itemsList based on locale for the specific ICD-10 case
+    val localeAwareAppItems = remember(currentDeviceLocale) { // Re-calculate if locale changes
+        itemsList.filter { item ->
+            when (item.actionType) {
+                // This item is displayed when the primary locale is NOT Japanese.
+                ActionType.NAVIGATE_TO_ICD10 -> {
+                    currentDeviceLocale.language != Locale.JAPANESE.language
+                }
+                // This item is displayed when the primary locale IS Japanese.
+                ActionType.NAVIGATE_TO_ICD10JAPANESE -> {
+                    currentDeviceLocale.language == Locale.JAPANESE.language
+                }
+                // All other items are always displayed.
+                else -> true
+            }
+        }
+    }
+
 //    LaunchedEffect(localeAwareAppItems) { // Keyed by the filtered list
 //        // In a real scenario, this would involve fetching favorite status, etc.
 //        // from `loadListItemData` using `localeAwareAppItems` as the base.
-////        val loadedItems = localeAwareAppItems.map { it.copy() } // Simple copy for demo
-////        originalItems.clear()
-////        originalItems.addAll(loadedItems)
-//        originalItems = localeAwareAppItems
+//        val loadedItems = localeAwareAppItems.map { it.copy() } // Simple copy for demo
+//        originalItems.clear()
+//        originalItems.addAll(loadedItems)
+//        //originalItems = localeAwareAppItems
 //    }
 
     DisposableEffect(lifecycleOwner) {
@@ -168,7 +159,7 @@ fun IndexScreen(
         }
     }
 
-    val expectedItemCount = itemsList.size
+    val expectedItemCount = localeAwareAppItems.size
 
     val displayedItems = remember(searchQuery, originalItems, context) {
         if (searchQuery.isBlank()) {
@@ -229,11 +220,16 @@ fun IndexScreen(
     }
 
     LaunchedEffect(Unit) {
-        loadListItemData(context, expectedItemCount).collect { loadedItems ->
+        loadListItemData(
+            context,
+            expectedItemCount,
+            initialItemsLists = localeAwareAppItems
+            ).collect { loadedItems ->
             originalItems.clear()
             originalItems.addAll(loadedItems)
         }
     }
+
     Column {
         MyCustomSearchBar(
             searchQuery = searchQuery,

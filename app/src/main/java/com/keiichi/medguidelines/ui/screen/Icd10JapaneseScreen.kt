@@ -159,16 +159,16 @@ fun Icd10JapaneseScreen(
                     // Normalize the item's text fields once
 //                    val code = normalizeTextForSearch(itemData.code.toString()) // Use direct property if String?
 //                    val description = normalizeTextForSearch(itemData.description.toString())   // Use direct property if String?
-                    val code = itemData.code
+                    val code = itemData.code ?: ""
                     val description = itemData.description
                     val descriptionKana = itemData.normalizedDescriptionKana
 
                     // Check if ALL search terms are found in the item's text fields.
                     searchTerms.all { term -> // <<< Key change: using .all {}
                         // An item matches if the term is in EITHER kanjiText OR kanaText
-                        code!!.contains(term)
-                                || description.contains(term)
-                                || descriptionKana.contains(term)
+                        code.contains(term) ||
+                                description.contains(term) ||
+                                descriptionKana.contains(term)
                     }
                 }
             }
@@ -332,7 +332,7 @@ fun Icd10JapaneseScreen(
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
-                title = R.string.icd10,
+                title = R.string.icd10japanese,
                 navController = navController,
                 references = listOf(
                     TextAndUrl(R.string.icd10, R.string.icd10JapaneseUrl)

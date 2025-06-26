@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
+//import com.keiichi.medguidelines.ui.screen.localeAwareAppItems
 
 // Usage with DataStore:
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -23,7 +23,11 @@ suspend fun saveListItemData(context: Context, item: MutableList<ListItemData>) 
     }
 }
 
-fun loadListItemData(context: Context, expectedItemCount: Int): Flow<List<ListItemData>> {
+fun loadListItemData(
+    context: Context,
+    expectedItemCount: Int,
+    initialItemsLists: List<ListItemData> = itemsList
+): Flow<List<ListItemData>> {
     return context.dataStore.data.map { preferences ->
         val jsonString = preferences[LIST_ITEM_DATA_KEY]
 
@@ -33,7 +37,8 @@ fun loadListItemData(context: Context, expectedItemCount: Int): Flow<List<ListIt
             if (
                 decodedList.size == expectedItemCount
                 && doAnyDecodeStringsMatchAnyItemsStrings(
-                    context, decodedList, itemsList)
+                    context, decodedList, initialItemsLists
+                 )
                 ) {
                 //if (areAnyDecodeNamesInItemsList(decodedList, itemsList)) {
                     decodedList
@@ -43,17 +48,17 @@ fun loadListItemData(context: Context, expectedItemCount: Int): Flow<List<ListIt
                     mutablePreferences ->
                     mutablePreferences.remove(LIST_ITEM_DATA_KEY)
                 }
-                itemsList
+                initialItemsLists
             }
             } catch (e: kotlinx.serialization.SerializationException) {
                 context.dataStore.edit { mutablePreferences ->
                     mutablePreferences.remove(LIST_ITEM_DATA_KEY)
                 }
-                itemsList
+                initialItemsLists
             }
         } else {
             // If jsonString is null, return the default itemsList
-            itemsList
+            initialItemsLists
         }
     }
 }
