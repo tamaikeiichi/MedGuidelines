@@ -431,4 +431,19 @@
     <string name="icd10Url">https://www.cdc.gov/nchs/icd/icd-10-cm/files.html</string>
     <string name="icd10JapaneseUrl">https://www2.medis.or.jp/stdcd/byomei/download2019.html</string>
     <string name="icd10japanese">ICD-10（日本語）</string>
+    <string name="wilsonTitle">Wilson’s disease scoring system</string>
+    <string name="normal02"><![CDATA[Normal (>0.2 g/L)]]></string>
+    <string name="between0102">0.1-0.2 g/L</string>
+    <string name="below01"><![CDATA[<0.1 g/L]]></string>
+    <string name="above4"><![CDATA[>5×ULN (>4 μmol/g)]]></string>
+    <string name="between084">0.8-4 μmol/g</string>
+    <string name="normal08"><![CDATA[Normal (<0.8 μmol/g)]]></string>
+    <string name="rhodaminePositiveGranules">Rhodamine-positive granules</string>
+    <string name="between12">1-2× ULN</string>
+    <string name="above2"><![CDATA[>2× ULN]]></string>
+    <string name="above5"><![CDATA[Normal, but >5× ULN after D-penicillamine]]></string>
+    <string name="bothChromosomes">On both chromosomes detected</string>
+    <string name="oneChromosome">On 1 chromosome detected</string>
+    <string name="noMutation">No mutations detected</string>
+    <string name="KFrings">Kayser–Fleischer rings</string>
 </resources>
