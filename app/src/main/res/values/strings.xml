@@ -409,7 +409,7 @@
     <string name="ecog2">Ambulatory and capable of all selfcare but unable to carry out any work activities. Up and about more than 50% of waking hours.</string>
     <string name="ecog3">Capable of only limited selfcare, confined to bed or chair more than 50% of waking hours.</string>
     <string name="ecog4">Completely disabled. Cannot carry on any selfcare.  Totally confined to bed or chair.</string>
-    <string name="EcogEasternCooperativeOncologyGroup">ECOG（Eastern Cooperative Oncology Group）</string>
+    <string name="EcogEasternCooperativeOncologyGroup" translatable="false">ECOG（Eastern Cooperative Oncology Group）</string>
     <string name="Ps" translatable="false">PS</string>
     <string name="infusionCalculator">Infusion calculator</string>
     <string name="ugkgmin" translatable="false">μg/kg/min</string>
@@ -427,10 +427,10 @@
     <string name="ikashiRinryokuMasterKensaku">医科診療行為マスター検索（Japanese Only）</string>
     <string name="IkaShinryokoiMaster">医科診療行為マスター</string>
     <string name="IkaShinryokoiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
-    <string name="icd10">ICD-10</string>
+    <string name="icd10" translatable="false">ICD-10</string>
     <string name="icd10Url">https://www.cdc.gov/nchs/icd/icd-10-cm/files.html</string>
     <string name="icd10JapaneseUrl">https://www2.medis.or.jp/stdcd/byomei/download2019.html</string>
-    <string name="icd10japanese">ICD-10（日本語）</string>
+    <string name="icd10japanese" translatable="false">ICD-10（日本語）</string>
     <string name="wilsonTitle">Wilson’s disease scoring system</string>
     <string name="normal02" translatable="false"><![CDATA[Normal (>0.2 g/L)]]></string>
     <string name="between0102" translatable="false">0.1-0.2 g/L</string>
