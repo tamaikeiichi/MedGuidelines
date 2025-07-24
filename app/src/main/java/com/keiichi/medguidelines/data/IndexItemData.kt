@@ -33,6 +33,7 @@ import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
 import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
 import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
 import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
+import com.keiichi.medguidelines.ui.screen.WilsonScreen
 import java.util.Locale
 
 @Serializable
@@ -60,7 +61,8 @@ enum class ActionType {
     NAVIGATE_TO_INFUSION_CALCULATOR,
     NAVIGATE_TO_IKASHINRYOKOIMASTER,
     NAVIGATE_TO_ICD10,
-    NAVIGATE_TO_ICD10JAPANESE
+    NAVIGATE_TO_ICD10JAPANESE,
+    NAVIGATE_TO_WILSON
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -144,8 +146,9 @@ val itemsList = listOf(
     //if (currentDeviceLocale.language != Locale.JAPANESE.language) {
         ListItemData(R.string.icd10, ActionType.NAVIGATE_TO_ICD10),
     //} else {
-        ListItemData(R.string.icd10japanese, ActionType.NAVIGATE_TO_ICD10JAPANESE)
+        ListItemData(R.string.icd10japanese, ActionType.NAVIGATE_TO_ICD10JAPANESE),
     //}
+    ListItemData(R.string.wilsonTitle, ActionType.NAVIGATE_TO_WILSON)
 )
 
 data class IndexScreenActions(
@@ -173,6 +176,7 @@ data class IndexScreenActions(
     val navigateToIkaShinryokoiMaster: () -> Unit,
     val navigateToIcd10: () -> Unit,
     val navigateToIcd10Japanese: () -> Unit,
+    val navigateToWilson: () -> Unit,
 )
 
 @Composable
@@ -208,6 +212,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToIkaShinryokoiMaster = { navController.navigate("IkaShinryokoiMaster") },
         navigateToIcd10 = { navController.navigate("Icd10EnglishScreen") },
         navigateToIcd10Japanese = { navController.navigate("Icd10JapaneseScreen") },
+        navigateToWilson = { navController.navigate("WilsonScreen") },
     )
 }
 
@@ -245,6 +250,7 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("IkaShinryokoiMaster") { navController -> IkaShinryokoiMasterScreen(navController) },
         ScreenRoute("Icd10EnglishScreen") { navController -> Icd10EnglishScreen(navController) },
         ScreenRoute("Icd10JapaneseScreen") { navController -> Icd10JapaneseScreen(navController) },
+        ScreenRoute("WilsonScreen") { navController -> WilsonScreen(navController) },
     )
 }
 
@@ -274,6 +280,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER -> this.navigateToIkaShinryokoiMaster()
         ActionType.NAVIGATE_TO_ICD10 -> this.navigateToIcd10()
         ActionType.NAVIGATE_TO_ICD10JAPANESE -> this.navigateToIcd10Japanese()
+        ActionType.NAVIGATE_TO_WILSON -> this.navigateToWilson()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

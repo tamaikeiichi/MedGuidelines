@@ -270,4 +270,18 @@
     <string name="bilirubinDay0">0日目のビリルビン</string>
     <string name="IkaShinryokoiMaster">医科診療行為マスター</string>
     <string name="ikashiRinryokuMasterKensaku">医科診療行為マスター検索</string>
+    <string name="wilsonTitle">ウィルソン病の診断基準</string>
+    <string name="bothChromosomes">両方の染色体</string>
+    <string name="oneChromosome">1つの染色体</string>
+    <string name="noMutation">非該当</string>
+    <string name="KFrings">Kayser–Fleischer角膜輪</string>
+    <string name="neurologicSymptoms">精神神経症状</string>
+    <string name="serumCeruloplasmin">血清セルロプラスミン</string>
+    <string name="coombsNegativeHymolyticAnemia">クームス陰性溶血性貧血</string>
+    <string name="mutationAnalysis">遺伝学的検査</string>
+    <string name="neurologicSymptomsNote">パーキンソン病に似た運動障害（振戦や構音障害を伴う）：ジストニア、筋緊張亢進や固縮、舞踏病様運動，偽硬化性運動</string>
+    <string name="kayserFleischerRingsNote">角膜のデスメ膜</string>
+    <string name="established">確診</string>
+    <string name="possible">疑診</string>
+    <string name="veryUnlikely">非常に可能性が低い</string>
 </resources>

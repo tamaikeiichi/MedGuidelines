@@ -316,8 +316,8 @@
     <string name="BsgAndESGE">BSG and ESGE</string>
     <string name="bCellDysfunction">β-cell dysfunction</string>
     <string name="homab" translatable="false">HOMA-β</string>
-    <string name="present">present</string>
-    <string name="absent">absent</string>
+    <string name="present">Present</string>
+    <string name="absent">Absent</string>
     <string name="homaIrHomaBetaTitle" translatable="false">HOMA-IR/HOMA-β</string>
     <string name="glasgowComaScaleTitle" translatable="false">Glasgow Coma Scale</string>
     <string name="openinresponsetopainappliedtothelimbsorsternum">Open in response to pain applied to the limbs or sternum</string>
@@ -432,12 +432,12 @@
     <string name="icd10JapaneseUrl">https://www2.medis.or.jp/stdcd/byomei/download2019.html</string>
     <string name="icd10japanese">ICD-10（日本語）</string>
     <string name="wilsonTitle">Wilson’s disease scoring system</string>
-    <string name="normal02"><![CDATA[Normal (>0.2 g/L)]]></string>
-    <string name="between0102">0.1-0.2 g/L</string>
-    <string name="below01"><![CDATA[<0.1 g/L]]></string>
-    <string name="above4"><![CDATA[>5×ULN (>4 μmol/g)]]></string>
-    <string name="between084">0.8-4 μmol/g</string>
-    <string name="normal08"><![CDATA[Normal (<0.8 μmol/g)]]></string>
+    <string name="normal02" translatable="false"><![CDATA[Normal (>0.2 g/L)]]></string>
+    <string name="between0102" translatable="false">0.1-0.2 g/L</string>
+    <string name="below01" translatable="false"><![CDATA[<0.1 g/L]]></string>
+    <string name="above4" translatable="false"><![CDATA[>5×ULN (>4 μmol/g)]]></string>
+    <string name="between084" translatable="false">0.8-4 μmol/g</string>
+    <string name="normal08" translatable="false"><![CDATA[Normal (<0.8 μmol/g)]]></string>
     <string name="rhodaminePositiveGranules">Rhodamine-positive granules</string>
     <string name="between12">1-2× ULN</string>
     <string name="above2"><![CDATA[>2× ULN]]></string>
@@ -446,4 +446,20 @@
     <string name="oneChromosome">On 1 chromosome detected</string>
     <string name="noMutation">No mutations detected</string>
     <string name="KFrings">Kayser–Fleischer rings</string>
+    <string name="neurologicSymptoms">Neurologic symptoms</string>
+    <string name="serumCeruloplasmin">Serum ceruloplasmin</string>
+    <string name="coombsNegativeHymolyticAnemia">Coombs-negative hemolytic anemia</string>
+    <string name="liverCopper">Liver copper (in the absence of cholestasis)</string>
+    <string name="urinaryCopper">Urinary copper (in the absence of acute hepatitis)</string>
+    <string name="mutationAnalysis">Mutation analysis</string>
+    <string name="atp7bMutation">ATP7B mutation</string>
+    <string name="urinaryCopperNote" translatable="false">1.6 μmol/24h (100 μg/24h)</string>
+    <string name="liverCopperNote" translatable="false">>250 μg/g dry weight (2), 50–250 μg/g (1), &lt;50 μg/g (0). Rhodamine can be selected if no quantitative liver copper available</string>
+    <string name="wilsonUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/22340672/</string>
+    <string name="wilsonRefTitle" translatable="false">EASL Clinical Practice Guidelines: Wilson\'s disease</string>
+    <string name="neurologicSymptomsNote">Motor abnormalities with Parkinsonian characteristics of dystonia, hypertonia and rigidity, choreic or pseudosclerotic, with tremors and dysarthria</string>
+    <string name="kayserFleischerRingsNote">in Desçemet’s membrane of the cornea</string>
+    <string name="established">established</string>
+    <string name="possible">possible</string>
+    <string name="veryUnlikely">very unlikely</string>
 </resources>

@@ -21,8 +21,8 @@ android {
         applicationId = "com.keiichi.medguidelines"
         minSdk = 29
         targetSdk = 35
-        versionCode = 39
-        versionName = "1.35"
+        versionCode = 40
+        versionName = "1.36"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

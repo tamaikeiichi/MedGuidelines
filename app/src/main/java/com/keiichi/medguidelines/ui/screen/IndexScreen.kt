@@ -352,6 +352,7 @@ fun IndexScreenPreview() {
             navigateToIkaShinryokoiMaster = {},
             navigateToIcd10 = {},
             navigateToIcd10Japanese = {},
+            navigateToWilson = {},
         )
     )
 }

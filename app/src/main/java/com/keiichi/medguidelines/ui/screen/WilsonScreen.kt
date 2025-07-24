@@ -22,14 +22,23 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.albuminGrade
 import com.keiichi.medguidelines.data.ascitesGrade
 import com.keiichi.medguidelines.data.bilirubinGrade
+import com.keiichi.medguidelines.data.coombsNegativeHemolyticAnemia
 import com.keiichi.medguidelines.data.encephalopathyGrade
 import com.keiichi.medguidelines.data.kayserFleischerRings
+import com.keiichi.medguidelines.data.liverCopper
+import com.keiichi.medguidelines.data.mutationAnalysis
+import com.keiichi.medguidelines.data.neurologicSymptoms
 import com.keiichi.medguidelines.data.ptGrade
+import com.keiichi.medguidelines.data.serumCeruloplasmin
+import com.keiichi.medguidelines.data.urinaryCopper
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.TextAndUrl
+import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScore
+import com.keiichi.medguidelines.ui.component.parseStyledString
+import org.apache.commons.math3.stat.interval.WilsonScoreInterval
 
 @Composable
 fun WilsonScreen(navController: NavController) {
@@ -42,14 +51,14 @@ fun WilsonScreen(navController: NavController) {
                 title = R.string.wilsonTitle,
                 navController = navController,
                 references = listOf(
-                    TextAndUrl(R.string.space, R.string.space)
+                    TextAndUrl(R.string.wilsonRefTitle, R.string.wilsonUrl)
                 )
             )
         },
         bottomBar = {
             ResultBottomAppBar {
                 Text(
-                    text = "Total Score: $totalScore ($diagnosis)",
+                    text = "Score: $totalScore ($diagnosis)",
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center
                 )
@@ -65,9 +74,10 @@ fun WilsonScreen(navController: NavController) {
             //Text(text = totalScore.toString())
 
             diagnosis = when (totalScore) {
-                in 4..20 -> "established"
-                in 3..3 -> "possible"
-                else -> "very unlikely"
+                in 4..20 -> parseStyledString(R.string.established).toString()
+                //"established"
+                in 3..3 -> parseStyledString(R.string.possible).toString()// "possible"
+                else -> parseStyledString(R.string.veryUnlikely).toString()// "very unlikely"
             }
         }
     }
@@ -75,41 +85,62 @@ fun WilsonScreen(navController: NavController) {
 
 @Composable
 fun wilsonTotalScore(): Int {
-    val  KayserFleischerRingsScore = buttonAndScore(
-        factor = kayserFleischerRings,
+    val  KayserFleischerRingsScore = buttonAndScoreWithScore(
+        optionsWithScores = kayserFleischerRings,
         title = R.string.KFrings,
-        titleNote = R.string.space
-    ) * (-1)
-    val albuminScore =
-        buttonAndScore(
-            albuminGrade,
-            R.string.albuminTitle,
-            R.string.space
-        ) + 1
-    val ptScore = buttonAndScore(
-        ptGrade,
-        R.string.ptTitle,
-        R.string.ptTitleNote
-    ) + 1
-    val ascitesScore =
-        buttonAndScore(
-            ascitesGrade,
-            R.string.ascitesTitle,
-            R.string.space
-        ) + 1
-    val encephalopathyScore = buttonAndScore(
-        encephalopathyGrade,
-        R.string.encephalopaphyTitle,
-        R.string.encephalopaphyTitleNote
-    ) + 1
-
+        titleNote = R.string.kayserFleischerRingsNote,
+        defaultSelectedOption = kayserFleischerRings.find {it.labelResId == R.string.absent}
+    )
+    val neurologicScore =
+        buttonAndScoreWithScore(
+            neurologicSymptoms,
+            R.string.neurologicSymptoms,
+            R.string.neurologicSymptomsNote,
+            defaultSelectedOption = neurologicSymptoms.find {it.labelResId == R.string.absent}
+        )
+    val ceruloplasminScore = buttonAndScoreWithScore(
+        serumCeruloplasmin,
+        R.string.serumCeruloplasmin,
+        R.string.space
+    )
+    val coombsScore =
+        buttonAndScoreWithScore(
+            coombsNegativeHemolyticAnemia,
+            R.string.coombsNegativeHymolyticAnemia,
+            R.string.space,
+            defaultSelectedOption = coombsNegativeHemolyticAnemia.find {it.labelResId == R.string.absent}
+        )
+    val liveCopperScore = buttonAndScoreWithScore(
+        liverCopper,
+        R.string.liverCopper,
+        R.string.liverCopperNote,
+        defaultSelectedOption = liverCopper.find {it.labelResId == R.string.normal08}
+    )
+    val urinaryCopperScore = buttonAndScoreWithScore(
+        urinaryCopper,
+        R.string.urinaryCopper,
+        R.string.urinaryCopperNote
+    )
+    val mutationScore = buttonAndScoreWithScore(
+        optionsWithScores = mutationAnalysis,
+        title = R.string.mutationAnalysis,
+        titleNote = R.string.atp7bMutation,
+        defaultSelectedOption = mutationAnalysis.find {it.labelResId == R.string.noMutation}
+    )
     val totalScore =
-        bilirubinScore + albuminScore + ptScore + ascitesScore + encephalopathyScore
+        KayserFleischerRingsScore +
+                neurologicScore +
+                ceruloplasminScore +
+                coombsScore +
+                liveCopperScore +
+                urinaryCopperScore +
+                mutationScore
+
     return totalScore
 }
 
 @Preview
 @Composable
-fun ChildPughScreenPreview() {
-    ChildPughScreen(navController = NavController(LocalContext.current))
+fun WilsonScorePreview() {
+    WilsonScreen(navController = NavController(LocalContext.current))
 }
