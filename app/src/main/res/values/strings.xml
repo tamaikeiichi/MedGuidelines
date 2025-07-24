@@ -438,7 +438,7 @@
     <string name="above4" translatable="false"><![CDATA[>5×ULN (>4 μmol/g)]]></string>
     <string name="between084" translatable="false">0.8-4 μmol/g</string>
     <string name="normal08" translatable="false"><![CDATA[Normal (<0.8 μmol/g)]]></string>
-    <string name="rhodaminePositiveGranules">Rhodamine-positive granules</string>
+    <string name="rhodaninePositiveGranules">Rhodanine-positive granules</string>
     <string name="between12">1-2× ULN</string>
     <string name="above2"><![CDATA[>2× ULN]]></string>
     <string name="above5"><![CDATA[Normal, but >5× ULN after D-penicillamine]]></string>

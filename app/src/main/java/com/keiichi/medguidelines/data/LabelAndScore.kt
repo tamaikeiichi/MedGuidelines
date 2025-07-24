@@ -35,7 +35,7 @@ val liverCopper = listOf(
     LabelAndScore(labelResId = R.string.above4, score = 2),
     LabelAndScore(labelResId = R.string.between084, score = 1),
     LabelAndScore(labelResId = R.string.normal08, score = -1),
-    LabelAndScore(labelResId = R.string.rhodaminePositiveGranules, score = 1)
+    LabelAndScore(labelResId = R.string.rhodaninePositiveGranules, score = 1)
 )
 
 val urinaryCopper = listOf(
