@@ -173,7 +173,7 @@ private fun totalScore(): TotalScore {
             R.string.space,
             appendixLabel = {FactorAlerts(
                 text = R.string.chads2,
-                factor = 1.0
+                value = 1.0
             )}
         )
     val scoreHypertension = buttonAndScore(
@@ -184,11 +184,11 @@ private fun totalScore(): TotalScore {
             Row(){
                 FactorAlerts(
                     text = R.string.chads2,
-                    factor = 1.0
+                    value = 1.0
                 )
                 FactorAlerts(
                     text = R.string.helte2s2,
-                    factor = 1.0
+                    value = 1.0
                 )
             }
         }
@@ -201,11 +201,11 @@ private fun totalScore(): TotalScore {
             Row(){
                 FactorAlerts(
                     text = R.string.chads2,
-                    factor = 1.0
+                    value = 1.0
                 )
                 FactorAlerts(
                     text = R.string.helte2s2,
-                    factor = 1.0
+                    value = 1.0
                 )
             }
         }
@@ -221,7 +221,7 @@ private fun totalScore(): TotalScore {
                 appendixLabel = {
                     FactorAlerts(
                         text = R.string.helte2s2,
-                        factor = 1.0
+                        value = 1.0
                     )
                 }
             )
@@ -233,7 +233,7 @@ private fun totalScore(): TotalScore {
         R.string.space,
         appendixLabel = {FactorAlerts(
             text = R.string.chads2,
-            factor = 1.0
+            value = 1.0
         )}
     )
     val scoreStroke = buttonAndScore(
@@ -243,11 +243,11 @@ private fun totalScore(): TotalScore {
             Row(){
                 FactorAlerts(
                     text = R.string.chads2,
-                    factor = 1.0
+                    value = 1.0
                 )
                 FactorAlerts(
                     text = R.string.helte2s2,
-                    factor = 1.0
+                    value = 1.0
                 )
             }
         }
@@ -259,7 +259,7 @@ private fun totalScore(): TotalScore {
         appendixLabel = {
             FactorAlerts(
                 text = R.string.helte2s2,
-                factor = 1.0
+                value = 1.0
             )
         }
     )
@@ -270,7 +270,7 @@ private fun totalScore(): TotalScore {
         appendixLabel = {
             FactorAlerts(
                 text = R.string.helte2s2,
-                factor = 1.0
+                value = 1.0
             )
         }
     )

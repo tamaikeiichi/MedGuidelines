@@ -7,15 +7,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
+/**
+ * value: Double // if 0.0, the color is onError. If not 0.0, the color is onSecondary.
+ */
 @Composable
 fun FactorAlerts(
     text: Int,
-    factor: Double
+    value: Double // if 0.0, the color is onError.
 ) {
-    val color = if (factor != 0.0) {
+    val color = if (value != 0.0) {
         MaterialTheme.colorScheme.onSecondary
     } else {
         MaterialTheme.colorScheme.onError
@@ -27,7 +29,7 @@ fun FactorAlerts(
         modifier = Modifier
             .padding(4.dp) // Optional: Add padding around the text
     ) {
-        if (factor != 0.0) {
+        if (value != 0.0) {
             Text(
                 text = parseStyledString(text),
                 color = MaterialTheme.colorScheme.secondary,

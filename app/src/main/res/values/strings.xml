@@ -464,4 +464,22 @@
     <string name="veryUnlikely">very unlikely</string>
     <string name="lilleModelHelp">A model for predicting survival at 6 months in patients with alcoholic hepatitis being treated with prednisolone</string>
     <string name="ok">OK</string>
+    <string name="Curb65AdropTitle">CURB-65/A-Drop</string>
+    <string name="Curb65">CURB-65</string>
+    <string name="Curb65Url">https://pubmed.ncbi.nlm.nih.gov/12728155/</string>
+    <string name="aDrop">A-drop</string>
+    <string name="curb65">CURB-65</string>
+    <string name="crb65">CRB-65</string>
+    <string name="urea7mmol"><![CDATA[Urea > 7 mmol/L (19.6 mg/dL)]]></string>
+    <string name="respirationRate30">Respiratory rate ≧ 30/min</string>
+    <string name="bloodPressure9060"><![CDATA[Blood pressure (SBP < 90 mmHg or DBP ≦ 60 mmHg)]]></string>
+    <string name="age65">Age ≧ 65 years</string>
+    <string name="curb65LiteralScoreLow">Mortality low (1.5%)</string>
+    <string name="curb65LiteralScoreIntermediage">Mortality intermediate (9.2%)</string>
+    <string name="curb65LiteralScoreHigh">Mortality high (22%)</string>
+    <string name="error">Error</string>
+    <string name="crb65LiteralScoreLow">Mortality low (1.2%)</string>
+    <string name="crb65LiteralScoreIntermediage">Mortality intermediate (8.15%)</string>
+    <string name="crb65LiteralScoreHigh">Mortality high (31%)</string>
+    <string name="curb65aDrophelp">Assessment of severity in community acquired pneumonia</string>
 </resources>

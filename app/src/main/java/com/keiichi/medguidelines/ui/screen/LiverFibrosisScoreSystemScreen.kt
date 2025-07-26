@@ -205,19 +205,19 @@ fun LiverFibrosisScoreSystemScreen(
                     Row() {
                         FactorAlerts(
                             text = R.string.age,
-                            factor = age.doubleValue
+                            value = age.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.ast,
-                            factor = ast.doubleValue
+                            value = ast.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.alt,
-                            factor = alt.doubleValue
+                            value = alt.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.platelet,
-                            factor = platelet.doubleValue
+                            value = platelet.doubleValue
                         )
                     }
                 }
@@ -240,15 +240,15 @@ fun LiverFibrosisScoreSystemScreen(
                     FlowRow {
                         FactorAlerts(
                             text = R.string.age,
-                            factor = age.doubleValue
+                            value = age.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.bodyHeight,
-                            factor = bodyHeight.doubleValue
+                            value = bodyHeight.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.bodyWeight,
-                            factor = bodyWeight.doubleValue
+                            value = bodyWeight.doubleValue
                         )
                         Surface(
                             color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
@@ -265,19 +265,19 @@ fun LiverFibrosisScoreSystemScreen(
                         }
                         FactorAlerts(
                             text = R.string.ast,
-                            factor = ast.doubleValue
+                            value = ast.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.alt,
-                            factor = alt.doubleValue
+                            value = alt.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.platelet,
-                            factor = platelet.doubleValue
+                            value = platelet.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.albumin,
-                            factor = albumin.doubleValue
+                            value = albumin.doubleValue
                         )
                     }
                 }
@@ -301,15 +301,15 @@ fun LiverFibrosisScoreSystemScreen(
                     FlowRow {
                         FactorAlerts(
                             text = R.string.hyaluronicAcid,
-                            factor = hyaluronicAcid.doubleValue
+                            value = hyaluronicAcid.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.piiip,
-                            factor = piiinp.doubleValue
+                            value = piiinp.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.timp1,
-                            factor = timp1.doubleValue
+                            value = timp1.doubleValue
                         )
                     }
                 }
@@ -332,15 +332,15 @@ fun LiverFibrosisScoreSystemScreen(
                     FlowRow {
                         FactorAlerts(
                             text = R.string.ast,
-                            factor = ast.doubleValue
+                            value = ast.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.alt,
-                            factor = alt.doubleValue
+                            value = alt.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.platelet,
-                            factor = platelet.doubleValue
+                            value = platelet.doubleValue
                         )
                     }
                 }
@@ -363,7 +363,7 @@ fun LiverFibrosisScoreSystemScreen(
                     )
                     FactorAlerts(
                         text = R.string.m2bpgi,
-                        factor = m2bpgi.doubleValue
+                        value = m2bpgi.doubleValue
                     )
                 }
                 MedGuidelinesCard(
@@ -385,11 +385,11 @@ fun LiverFibrosisScoreSystemScreen(
                     FlowRow {
                         FactorAlerts(
                             text = R.string.type4collagen7S,
-                            factor = t4c7score.doubleValue
+                            value = t4c7score.doubleValue
                         )
                         FactorAlerts(
                             text = R.string.ast,
-                            factor = ast.doubleValue
+                            value = ast.doubleValue
                         )
                     }
                 }
@@ -414,7 +414,7 @@ fun LiverFibrosisScoreSystemScreen(
                     )
                     FactorAlerts(
                         text = R.string.shearWaveElastography,
-                        factor = swe.doubleValue
+                        value = swe.doubleValue
                     )
                 }
             }
