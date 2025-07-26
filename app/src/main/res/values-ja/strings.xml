@@ -284,4 +284,5 @@
     <string name="established">確診</string>
     <string name="possible">疑診</string>
     <string name="veryUnlikely">非常に可能性が低い</string>
+    <string name="atp7bMutation">ATP7B変異</string>
 </resources>

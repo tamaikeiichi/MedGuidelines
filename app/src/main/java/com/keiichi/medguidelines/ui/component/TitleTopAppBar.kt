@@ -1,9 +1,13 @@
 package com.keiichi.medguidelines.ui.component
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -12,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -31,12 +37,13 @@ import com.keiichi.medguidelines.R
 fun TitleTopAppBar(
     title: Int,
     navController: NavController,
-    references: List<TextAndUrl>
+    references: List<TextAndUrl>,
+    @StringRes helpMessageResId: Int? = null // New: Optional help message string resource
+
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var lastClickTime by remember { mutableStateOf(0L) }
-    val debounceTime = 300L // Adjust as needed
-    var alreadyClicked = false
+    var showHelpDialog by remember { mutableStateOf(false) } // State for help dialog
+
     CenterAlignedTopAppBar(
         title = { Text(text = parseStyledString(title)) },
         navigationIcon = {
@@ -56,15 +63,6 @@ fun TitleTopAppBar(
             }
             IconButton(
                 onClick = {
-//                    val currentTime = System.currentTimeMillis()
-//
-//                    if (
-//                        //currentTime - lastClickTime > debounceTime &&
-//                    !alreadyClicked) {
-//                        //lastClickTime = currentTime // Update the last click time
-//                        navController.popBackStack() // Perform the navigation
-//                        alreadyClicked = true
-//                    }
                     Log.d("TitleTopAppBar", "Navigation icon clicked.")
                     // Only trigger the event if not already processing or if there's something to pop
                     if (!navigateBackEvent && navController.previousBackStackEntry != null) {
@@ -89,6 +87,15 @@ fun TitleTopAppBar(
             actionIconContentColor = MaterialTheme.colorScheme.primary,
         ),
         actions = {
+            // Help IconButton - will appear to the LEFT of the reference button
+            if (helpMessageResId != null) {
+                IconButton(onClick = { showHelpDialog = true }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.HelpOutline,
+                        contentDescription = "help"
+                    )
+                }
+            }
             if (references[0].url != R.string.space && references[0].text != R.string.space) {
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(
@@ -113,7 +120,30 @@ fun TitleTopAppBar(
             }
         }
     )
+    // Help Dialog
+    if (showHelpDialog && helpMessageResId != null) {
+        AlertDialog(
+            onDismissRequest = { showHelpDialog = false },
+            //title = { Text(text = stringResource(id = helpMessageResId)) }, // "Help" or similar
+            text = { Text(text = stringResource(id = helpMessageResId)) },
+            confirmButton = {
+                TextButton(onClick = { showHelpDialog = false }) {
+                    Text(stringResource(id = R.string.ok)) // "OK"
+                }
+            }
+        )
+    }
 }
+
+// Dummy UrlLinkText for preview if not available
+//@Composable
+//fun UrlLinkText(textAndUrl: TextAndUrl) {
+//    Text(text = "Link: ${stringResource(id = textAndUrl.text)} -> ${stringResource(id = textAndUrl.url)}")
+//}
+
+// Dummy TextAndUrl for preview if not available
+//data class TextAndUrl(@StringRes val text: Int, @StringRes val url: Int)
+
 
 @Preview
 @Composable
@@ -124,6 +154,8 @@ fun TitleTopAppBarPreview() {
         references = listOf(
             TextAndUrl(R.string.mALBIRef, R.string.mALBIUrl),
             TextAndUrl(R.string.space, R.string.space)
-        )
+        ),
+        helpMessageResId = R.string.wilsonTitle // Example: <string name="preview_help_message">This is helpful information about the screen title.</string>
+
     )
 }

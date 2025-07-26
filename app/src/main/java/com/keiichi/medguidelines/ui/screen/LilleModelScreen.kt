@@ -48,7 +48,8 @@ fun LilleModelScreen(navController: NavController) {
                 navController = navController,
                 references = listOf(
                     TextAndUrl(R.string.lilleModel, R.string.lilleModelUrl)
-                )
+                ),
+                helpMessageResId = R.string.lilleModelHelp
             )
         },
         bottomBar = {

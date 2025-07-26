@@ -426,10 +426,10 @@
     <string name="findFlowRate">Find flow rate</string>
     <string name="ikashiRinryokuMasterKensaku">医科診療行為マスター検索（Japanese Only）</string>
     <string name="IkaShinryokoiMaster">医科診療行為マスター</string>
-    <string name="IkaShinryokoiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
+    <string name="IkaShinryokoiMasterUrl" translatable="false">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="icd10" translatable="false">ICD-10</string>
-    <string name="icd10Url">https://www.cdc.gov/nchs/icd/icd-10-cm/files.html</string>
-    <string name="icd10JapaneseUrl">https://www2.medis.or.jp/stdcd/byomei/download2019.html</string>
+    <string name="icd10Url" translatable="false">https://www.cdc.gov/nchs/icd/icd-10-cm/files.html</string>
+    <string name="icd10JapaneseUrl" translatable="false">https://www2.medis.or.jp/stdcd/byomei/download2019.html</string>
     <string name="icd10japanese" translatable="false">ICD-10（日本語）</string>
     <string name="wilsonTitle">Wilson’s disease scoring system</string>
     <string name="normal02" translatable="false"><![CDATA[Normal (>0.2 g/L)]]></string>
@@ -462,4 +462,6 @@
     <string name="established">established</string>
     <string name="possible">possible</string>
     <string name="veryUnlikely">very unlikely</string>
+    <string name="lilleModelHelp">A model for predicting survival at 6 months in patients with alcoholic hepatitis being treated with prednisolone</string>
+    <string name="ok">OK</string>
 </resources>
