@@ -2,7 +2,9 @@ package com.keiichi.medguidelines.ui.component
 
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
@@ -24,11 +26,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 
@@ -38,11 +42,13 @@ fun TitleTopAppBar(
     title: Int,
     navController: NavController,
     references: List<TextAndUrl>,
-    @StringRes helpMessageResId: Int? = null // New: Optional help message string resource
-
+    @StringRes helpTitleResId: Int = R.string.about, // Default help title
+    @StringRes helpMessageResId: Int? = null, // New: Optional help message string resource
+    @StringRes refTitleResId: Int = R.string.reference, // Default reference title
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) } // State for help dialog
+    var showRefDialog by remember { mutableStateOf(false) }
+    var showHelpDialog by remember { mutableStateOf(false) }
 
     CenterAlignedTopAppBar(
         title = { Text(text = parseStyledString(title)) },
@@ -96,35 +102,61 @@ fun TitleTopAppBar(
                     )
                 }
             }
-            if (references[0].url != R.string.space && references[0].text != R.string.space) {
-                IconButton(onClick = { expanded = !expanded }) {
+            if ((references[0].url != R.string.space && references[0].text != R.string.space)) {
+                IconButton(onClick = { showRefDialog = true }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.quick_reference_all_24px),
                         contentDescription = "Reference",
                     )
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        DropdownMenuItem(
-                            text = {
-                                Column() {
-                                    for (reference in references) {
-                                        UrlLinkText(reference)
-                                    }
-                                }
-                            },
-                            onClick = {
-                                expanded = false
-                            }
-                        )
-                    }
+
                 }
+//                IconButton(onClick = { expanded = !expanded }) {
+//                    Icon(
+//                        imageVector = ImageVector.vectorResource(id = R.drawable.quick_reference_all_24px),
+//                        contentDescription = "Reference",
+//                    )
+//                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+//                        DropdownMenuItem(
+//                            text = {
+//                                Column() {
+//                                    for (reference in references) {
+//                                        UrlLinkText(reference)
+//                                    }
+//                                }
+//                            },
+//                            onClick = {
+//                                expanded = false
+//                            }
+//                        )
+//                    }
+//                }
             }
         }
     )
+    if (showRefDialog && (references[0].url != R.string.space && references[0].text != R.string.space)){
+        AlertDialog(
+            onDismissRequest = { showRefDialog = false },
+            title = { Text(text = stringResource(id = refTitleResId)) }, // "Help" or similar
+            text = {
+//                Column() {
+//                    for (reference in references) {
+//                        UrlLinkText(reference)
+//                    }
+//                }
+                ReferenceListWithNumbers(references)
+            },
+            confirmButton = {
+                TextButton(onClick = { showRefDialog = false }) {
+                    Text(stringResource(id = R.string.ok)) // "OK"
+                }
+            }
+        )
+    }
     // Help Dialog
     if (showHelpDialog && helpMessageResId != null) {
         AlertDialog(
             onDismissRequest = { showHelpDialog = false },
-            //title = { Text(text = stringResource(id = helpMessageResId)) }, // "Help" or similar
+            title = { Text(text = stringResource(id = helpTitleResId)) }, // "Help" or similar
             text = { Text(text = stringResource(id = helpMessageResId)) },
             confirmButton = {
                 TextButton(onClick = { showHelpDialog = false }) {
@@ -132,6 +164,29 @@ fun TitleTopAppBar(
                 }
             }
         )
+    }
+}
+
+
+@Composable
+fun ReferenceListWithNumbers(references: List<TextAndUrl>) {
+    Column (
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ){
+        if (references.isEmpty() || (references.size == 1 && references[0].text == R.string.space && references[0].url == R.string.space)) {
+            // Handle empty or placeholder references if needed, e.g., show a message
+            Text("No references available.")
+        } else {
+            references.forEachIndexed { index, reference ->
+                // Filter out placeholder "space" references if they shouldn't be numbered or displayed
+                if (reference.text != R.string.space || reference.url != R.string.space) {
+                    Row(verticalAlignment = Alignment.Top) { // Align number and text to the top
+                        Text(text = "${index + 1}) ") // Add 1 to index because it's 0-based
+                        UrlLinkText(reference)
+                    }
+                }
+            }
+        }
     }
 }
 

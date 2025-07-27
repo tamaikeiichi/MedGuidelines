@@ -7,6 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.em
 
 data class TextAndUrl(
     val text: Int,
@@ -16,7 +18,8 @@ data class TextAndUrl(
 @Composable
 fun UrlLinkText(
     reference: TextAndUrl,
-    urlHandler: UriHandler = LocalUriHandler.current
+    urlHandler: UriHandler = LocalUriHandler.current,
+    lineHeight: TextUnit = 1.2.em
 ) {
     val url = stringResource(id = reference.url)
     Text(
@@ -24,6 +27,7 @@ fun UrlLinkText(
         modifier = Modifier
             .clickable(enabled = true, onClickLabel = "Open URL") {
                 urlHandler.openUri(url)
-            }
+            },
+        lineHeight = lineHeight
     )
 }

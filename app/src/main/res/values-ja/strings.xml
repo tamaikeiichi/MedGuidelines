@@ -285,4 +285,6 @@
     <string name="possible">疑診</string>
     <string name="veryUnlikely">非常に可能性が低い</string>
     <string name="atp7bMutation">ATP7B変異</string>
+    <string name="about">この項目について</string>
+    <string name="reference">参考文献</string>
 </resources>

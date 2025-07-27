@@ -79,7 +79,7 @@ data class ListItemData(
 val itemsList = listOf(
     ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
     ListItemData(
-        R.string.aDropTitle, ActionType.NAVIGATE_TO_ADROP,
+        R.string.curb65AdropTitle, ActionType.NAVIGATE_TO_ADROP,
         keywords = listOf(
             R.string.lung,
             R.string.pneumonia

@@ -482,4 +482,7 @@
     <string name="crb65LiteralScoreIntermediage">Mortality intermediate (8.15%)</string>
     <string name="crb65LiteralScoreHigh">Mortality high (31%)</string>
     <string name="curb65aDrophelp">Assessment of severity in community acquired pneumonia</string>
+    <string name="curb65AdropTitle">CURB-65/ A-drop</string>
+    <string name="about">About</string>
+    <string name="reference">Reference</string>
 </resources>
