@@ -490,4 +490,7 @@
     <string name="ureaNitrogen">Urea Nitrogen</string>
     <string name="systolicBloodPressure">Systolic Blood Pressure</string>
     <string name="diastolicBloodPressure">Diastoic Blood Pressure</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="gender">Gender</string>
 </resources>

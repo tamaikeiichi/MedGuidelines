@@ -57,3 +57,9 @@ val yesNoUnknown = listOf(
     LabelAndScore(labelResId = R.string.no, score = 0),
     LabelAndScore(labelResId = R.string.unknown, score = 100)
 )
+
+val maleFemaleUnknown = listOf(
+    LabelAndScore(labelResId = R.string.male, score = 1),
+    LabelAndScore(labelResId = R.string.female, score = 0),
+    LabelAndScore(labelResId = R.string.unknown, score = 100)
+)

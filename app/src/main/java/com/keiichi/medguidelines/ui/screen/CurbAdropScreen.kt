@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.maleFemaleUnknown
 import com.keiichi.medguidelines.data.noYes
 import com.keiichi.medguidelines.data.yesNoUnknown
 import com.keiichi.medguidelines.ui.component.FactorAlerts
@@ -139,14 +141,32 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
     val un = remember { mutableDoubleStateOf(10.0) }
     val systolicBp = remember { mutableDoubleStateOf(120.0) }
     val diastolicBp = remember { mutableDoubleStateOf(70.0) }
+    var age = remember { mutableDoubleStateOf(60.0) }
     val unCurb: Int
     val unAdrop: Int
+    var gender: Int = 100
+    val ageAdrop: Int
+    var scoreConsciousness: Int = 100
     val systolicBpCurb: Int
     val systolicBpAdrop: Int
-    val diastolicBpCurb: Int
-    val diastolicBpAdrop: Int
+//    val diastolicBpAdrop: Int
     val bpCurb: Int
-    val scoreConsciousness = buttonAndScoreWithScore(
+
+    gender = buttonAndScoreWithScore(
+        maleFemaleUnknown,
+        R.string.gender,
+        R.string.space,
+        defaultSelectedOption = R.string.unknown,
+        appendixLabel = {
+            Row() {
+                FactorAlerts(
+                    text = R.string.aDrop,
+                    value = gender - 100.0
+                )
+            }
+        }
+    )
+    scoreConsciousness = buttonAndScoreWithScore(
         yesNoUnknown,
         R.string.orientationTitle,
         R.string.space,
@@ -155,39 +175,65 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
             Row() {
                 FactorAlerts(
                     text = R.string.aDrop,
-                    value = 1.0
+                    value = scoreConsciousness - 100.0
                 )
                 FactorAlerts(
                     text = R.string.curb65,
-                    value = 1.0
+                    value = scoreConsciousness - 100.0
                 )
                 FactorAlerts(
                     text = R.string.crb65,
-                    value = 1.0
+                    value = scoreConsciousness - 100.0
                 )
             }
         }
     )
     MedGuidelinesCard {
-        InputValue(
-            label = R.string.ureaNitrogen,
-            value = un,
-            japaneseUnit = R.string.mgdl,
-            changedValueRate = 0.357,
-            changedUnit = R.string.mmoll,
-            appendixLabel = {
-                Row() {
-                    FactorAlerts(
-                        text = R.string.aDrop,
-                        value = 1.0
-                    )
-                    FactorAlerts(
-                        text = R.string.curb65,
-                        value = 1.0
-                    )
+        Row(
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            InputValue(
+                label = R.string.age,
+                value = age,
+                japaneseUnit = R.string.years,
+                appendixLabel = {
+                    Row() {
+                        FactorAlerts(
+                            text = R.string.aDrop,
+                            value = 1.0
+                        )
+                        FactorAlerts(
+                            text = R.string.curb65,
+                            value = 1.0
+                        )
+                        FactorAlerts(
+                            text = R.string.crb65,
+                            value = 1.0
+                        )
+                    }
                 }
-            }
-        )
+            )
+            InputValue(
+                label = R.string.ureaNitrogen,
+                value = un,
+                japaneseUnit = R.string.mgdl,
+                changedValueRate = 0.357,
+                changedUnit = R.string.mmoll,
+                appendixLabel = {
+                    Row() {
+                        FactorAlerts(
+                            text = R.string.aDrop,
+                            value = 1.0
+                        )
+                        FactorAlerts(
+                            text = R.string.curb65,
+                            value = 1.0
+                        )
+                    }
+                }
+            )
+
+        }
     }
 
     if (un.doubleValue > 21.0) {
@@ -201,91 +247,19 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
         unAdrop = 0
     }
 
-    val scoreRespiratoryRate = buttonAndScore(
-        noYes,
+    ageAdrop = if ((gender == 1 && age.doubleValue >= 70.0) ||
+        (gender == 0 && age.doubleValue >= 65.0)) {
+        1
+    } else {0}
+    val ageCurb: Int = if (age.doubleValue >= 65.0){
+        1
+    } else {0}
+
+    val scoreRespiratoryRate = buttonAndScoreWithScore(
+        yesNoUnknown,
         R.string.respirationRate30,
         R.string.space,
-        appendixLabel = {
-            FactorAlerts(
-                text = R.string.curb65,
-                value = 1.0
-            )
-        }
-    )
-    MedGuidelinesCard {
-        InputValue(
-            label = R.string.systolicBloodPressure,
-            value = systolicBp,
-            japaneseUnit = R.string.mmhg,
-            appendixLabel = {
-                Row() {
-                    FactorAlerts(
-                        text = R.string.aDrop,
-                        value = 1.0
-                    )
-                    FactorAlerts(
-                        text = R.string.curb65,
-                        value = 1.0
-                    )
-                    FactorAlerts(
-                        text = R.string.crb65,
-                        value = 1.0
-                    )
-                }
-            }
-        )
-    }
-
-    if (systolicBp.doubleValue <= 90.0) {
-        systolicBpCurb = 1
-        systolicBpAdrop = 0
-    } else if (systolicBp.doubleValue < 90.0) {
-        systolicBpCurb = 1
-        systolicBpAdrop = 1
-    } else {
-        systolicBpCurb = 0
-        systolicBpAdrop = 0
-    }
-    MedGuidelinesCard {
-        InputValue(
-            label = R.string.diastolicBloodPressure,
-            value = diastolicBp,
-            japaneseUnit = R.string.mmhg,
-            appendixLabel = {
-                Row() {
-                    FactorAlerts(
-                        text = R.string.aDrop,
-                        value = 1.0
-                    )
-                    FactorAlerts(
-                        text = R.string.curb65,
-                        value = 1.0
-                    )
-                    FactorAlerts(
-                        text = R.string.crb65,
-                        value = 1.0
-                    )
-                }
-            }
-        )
-    }
-
-    if (diastolicBp.doubleValue <= 60.0) {
-        diastolicBpCurb = 1
-    }  else {
-        diastolicBpCurb = 0
-    }
-
-    if (systolicBpCurb == 1 || diastolicBpCurb == 1)
-        bpCurb = 1
-    else
-        bpCurb = 0
-
-
-    val scoreAge = buttonAndScore(
-        noYes,
-        R.string.age65,
-        R.string.space,
+        defaultSelectedOption = R.string.unknown,
         appendixLabel = {
             Row() {
                 FactorAlerts(
@@ -299,10 +273,76 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
             }
         }
     )
-    val scoreA = buttonAndScore(
-        noYes,
-        R.string.ageTitle,
+    MedGuidelinesCard {
+        Row(
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            InputValue(
+                label = R.string.systolicBloodPressure,
+                value = systolicBp,
+                japaneseUnit = R.string.mmhg,
+                appendixLabel = {
+                    Row() {
+                        FactorAlerts(
+                            text = R.string.aDrop,
+                            value = 1.0
+                        )
+                        FactorAlerts(
+                            text = R.string.curb65,
+                            value = 1.0
+                        )
+                        FactorAlerts(
+                            text = R.string.crb65,
+                            value = 1.0
+                        )
+                    }
+                }
+            )
+
+            InputValue(
+                label = R.string.diastolicBloodPressure,
+                value = diastolicBp,
+                japaneseUnit = R.string.mmhg,
+                appendixLabel = {
+                    Row() {
+                        FactorAlerts(
+                            text = R.string.curb65,
+                            value = 1.0
+                        )
+                        FactorAlerts(
+                            text = R.string.crb65,
+                            value = 1.0
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    if (systolicBp.doubleValue <= 90.0) {
+        systolicBpCurb = 1
+        systolicBpAdrop = 0
+    } else if (systolicBp.doubleValue < 90.0) {
+        systolicBpCurb = 1
+        systolicBpAdrop = 1
+    } else {
+        systolicBpCurb = 0
+        systolicBpAdrop = 0
+    }
+
+    val diastolicBpCurb: Int = if (diastolicBp.doubleValue <= 60.0) {
+        1 }  else {
+        0 }
+    bpCurb = if (systolicBpCurb == 1 || diastolicBpCurb == 1){
+        1 }
+    else {
+        0 }
+
+    val scoreC = buttonAndScoreWithScore(
+        yesNoUnknown,
+        R.string.respirationTitle,
         R.string.space,
+        defaultSelectedOption = R.string.unknown,
         appendixLabel = {
             FactorAlerts(
                 text = R.string.aDrop,
@@ -311,34 +351,12 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
         }
     )
 
-    val scoreC = buttonAndScore(
-        noYes,
-        R.string.respirationTitle,
-        R.string.space,
-        appendixLabel = {
-            FactorAlerts(
-                text = R.string.aDrop,
-                value = 1.0
-            )
-        }
-    )
-//    val scoreE = buttonAndScore(
-//        noYes,
-//        R.string.pressureTitle,
-//        R.string.space,
-//        appendixLabel = {
-//            FactorAlerts(
-//                text = R.string.aDrop,
-//                value = 1.0
-//            )
-//        }
-//    )
     val adropTotalScore =
-        scoreA + unAdrop + scoreC + scoreConsciousness + systolicBpAdrop
+        ageAdrop + unAdrop + scoreC + scoreConsciousness + systolicBpAdrop
     val curb65TotalScore =
-        scoreConsciousness + unCurb + scoreRespiratoryRate + bpCurb + scoreAge
+        scoreConsciousness + unCurb + scoreRespiratoryRate + bpCurb + ageCurb
     val crb65TotalScore =
-        scoreConsciousness + scoreRespiratoryRate + bpCurb + scoreAge
+        scoreConsciousness + scoreRespiratoryRate + bpCurb + ageCurb
     val totalScoreCurbAdrop =
         TotalScoreCurbAdrop(adropTotalScore, curb65TotalScore, crb65TotalScore)
     return totalScoreCurbAdrop
