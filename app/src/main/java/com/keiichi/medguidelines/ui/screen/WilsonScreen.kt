@@ -89,14 +89,14 @@ fun wilsonTotalScore(): Int {
         optionsWithScores = kayserFleischerRings,
         title = R.string.KFrings,
         titleNote = R.string.kayserFleischerRingsNote,
-        defaultSelectedOption = kayserFleischerRings.find {it.labelResId == R.string.absent}
+        defaultSelectedOption =  R.string.absent
     )
     val neurologicScore =
         buttonAndScoreWithScore(
             neurologicSymptoms,
             R.string.neurologicSymptoms,
             R.string.neurologicSymptomsNote,
-            defaultSelectedOption = neurologicSymptoms.find {it.labelResId == R.string.absent}
+            defaultSelectedOption =  R.string.absent
         )
     val ceruloplasminScore = buttonAndScoreWithScore(
         serumCeruloplasmin,
@@ -108,13 +108,13 @@ fun wilsonTotalScore(): Int {
             coombsNegativeHemolyticAnemia,
             R.string.coombsNegativeHymolyticAnemia,
             R.string.space,
-            defaultSelectedOption = coombsNegativeHemolyticAnemia.find {it.labelResId == R.string.absent}
+            defaultSelectedOption =  R.string.absent
         )
     val liveCopperScore = buttonAndScoreWithScore(
         liverCopper,
         R.string.liverCopper,
         R.string.liverCopperNote,
-        defaultSelectedOption = liverCopper.find {it.labelResId == R.string.normal08}
+        defaultSelectedOption =  R.string.normal08
     )
     val urinaryCopperScore = buttonAndScoreWithScore(
         urinaryCopper,
@@ -125,7 +125,7 @@ fun wilsonTotalScore(): Int {
         optionsWithScores = mutationAnalysis,
         title = R.string.mutationAnalysis,
         titleNote = R.string.atp7bMutation,
-        defaultSelectedOption = mutationAnalysis.find {it.labelResId == R.string.noMutation}
+        defaultSelectedOption =  R.string.noMutation
     )
     val totalScore =
         KayserFleischerRingsScore +

@@ -485,4 +485,6 @@
     <string name="curb65AdropTitle">CURB-65/ A-drop</string>
     <string name="about">About</string>
     <string name="reference">Reference</string>
+    <string name="unknown">Unknown</string>
+    <string name="notAssessed">NA</string>
 </resources>

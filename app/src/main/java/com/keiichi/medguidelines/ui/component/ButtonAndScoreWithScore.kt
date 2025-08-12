@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.keiichi.medguidelines.R // Assuming your R file is here
 import com.keiichi.medguidelines.data.LabelAndScore
+import com.keiichi.medguidelines.data.yesNoUnknown
 
 // Data class to hold label and score for each option
 
@@ -16,7 +17,7 @@ fun buttonAndScoreWithScore(
     optionsWithScores: List<LabelAndScore>, // Changed from factor: List<Int>
     title: Int, // R.string.xxx for the title
     titleNote: Int = R.string.space,
-    defaultSelectedOption: LabelAndScore? = null,
+    defaultSelectedOption: Int? = null,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
     appendixLabel: @Composable () -> Unit = {}
 ): Int {
@@ -26,7 +27,7 @@ fun buttonAndScoreWithScore(
         return 0 // Or some other sensible default
     }
 // Determine the initial selected option
-    val initialOption = defaultSelectedOption?.takeIf { optionsWithScores.contains(it) }
+    val initialOption = optionsWithScores.find{it.labelResId == defaultSelectedOption}?.takeIf { optionsWithScores.contains(it) }
         ?: optionsWithScores[0] // Fallback to first if default is null or not in the list
 
     // The state now holds the selected ScoreOption object

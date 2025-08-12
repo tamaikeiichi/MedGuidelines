@@ -1,6 +1,7 @@
 package com.keiichi.medguidelines.data
 
 import androidx.annotation.StringRes
+import androidx.compose.material3.Label
 import com.keiichi.medguidelines.R
 
 data class LabelAndScore(
@@ -49,4 +50,10 @@ val mutationAnalysis = listOf(
     LabelAndScore(labelResId = R.string.bothChromosomes, score = 4),
     LabelAndScore(labelResId = R.string.oneChromosome, score = 1),
     LabelAndScore(labelResId = R.string.noMutation, score = 0)
+)
+
+val yesNoUnknown = listOf(
+    LabelAndScore(labelResId = R.string.yes, score = 1),
+    LabelAndScore(labelResId = R.string.no, score = 0),
+    LabelAndScore(labelResId = R.string.unknown, score = 100)
 )

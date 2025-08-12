@@ -21,12 +21,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.noYes
+import com.keiichi.medguidelines.data.yesNoUnknown
 import com.keiichi.medguidelines.ui.component.FactorAlerts
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.TextAndUrl
+import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScore
 
 data class TotalScoreCurbAdrop(
     val adropTotalScore: Int,
@@ -36,9 +38,9 @@ data class TotalScoreCurbAdrop(
 
 @Composable
 fun AdropScreen(navController: NavController) {
-    var adropTotalScore by remember { mutableIntStateOf(0) }
-    var curb65TotalScore by remember { mutableIntStateOf(0) }
-    var crb65TotalScore by remember { mutableIntStateOf(0) }
+    var adropTotalScore: Int? by remember { mutableStateOf<Int?>(null) }
+    var curb65TotalScore: Int? by remember { mutableStateOf<Int?>(null) }
+    var crb65TotalScore: Int? by remember { mutableStateOf<Int?>(null) }
     var adropLiteralScore by remember { mutableStateOf("") }
     var curb65LiteralScore by remember { mutableStateOf("") }
     var crb65LiteralScore by remember { mutableStateOf("") }
@@ -47,21 +49,21 @@ fun AdropScreen(navController: NavController) {
     val displayString = buildAnnotatedString {
         append(stringResource(id = R.string.curb65))
         append(": ")
-        append(curb65LiteralScore)
+        append(curb65LiteralScore ?: "")
         append(" (")
         append(curb65TotalScore.toString())
         append(")")
         append("\n")
         append(stringResource(id = R.string.crb65))
         append(": ")
-        append(crb65LiteralScore)
+        append(crb65LiteralScore.toString() ?: "")
         append(" (")
         append(crb65TotalScore.toString())
         append(")")
         append("\n")
         append(stringResource(id = R.string.aDrop))
         append(": ")
-        append(adropLiteralScore)
+        append(adropLiteralScore.toString() ?: "")
         append(" (")
         append(adropTotalScore.toString())
         append(")")
@@ -96,9 +98,16 @@ fun AdropScreen(navController: NavController) {
             // Update the state variables from the single result
             // This will trigger recomposition if the currentScores object's content differs
             // from what was used to set these state variables in the previous composition.
-            adropTotalScore = currentScores.adropTotalScore
-            curb65TotalScore = currentScores.curb65TotalScore
-            crb65TotalScore = currentScores.crb65TotalScore
+            adropTotalScore = if (currentScores.adropTotalScore >= 100)
+                null
+            else
+                currentScores.adropTotalScore
+            curb65TotalScore = if (currentScores.curb65TotalScore >= 100)
+                null else
+                    currentScores.curb65TotalScore
+            crb65TotalScore = if (currentScores.crb65TotalScore >= 100)
+                null else
+                    currentScores.crb65TotalScore
 
             adropLiteralScore = when (adropTotalScore) {
                 in 0..0 -> stringResource(id = R.string.adropLiteralScoreMild)
@@ -110,13 +119,13 @@ fun AdropScreen(navController: NavController) {
                 in 0..1 -> stringResource(id = R.string.curb65LiteralScoreLow)
                 in 2..2 -> stringResource(id = R.string.curb65LiteralScoreIntermediage)
                 in 3..5 -> stringResource(id = R.string.curb65LiteralScoreHigh)
-                else -> stringResource(id = R.string.error)
+                else -> stringResource(id = R.string.notAssessed)
             }
             crb65LiteralScore = when (crb65TotalScore) {
                 in 0..0 -> stringResource(id = R.string.crb65LiteralScoreLow)
                 in 1..2 -> stringResource(id = R.string.crb65LiteralScoreIntermediage)
                 in 3..4 -> stringResource(id = R.string.crb65LiteralScoreHigh)
-                else -> stringResource(id = R.string.error)
+                else -> stringResource(id = R.string.notAssessed)
             }
         }
     }
@@ -124,10 +133,11 @@ fun AdropScreen(navController: NavController) {
 
 @Composable
 fun adropTotalScore(): TotalScoreCurbAdrop {
-    val scoreConsciousness = buttonAndScore(
-        noYes,
+    val scoreConsciousness = buttonAndScoreWithScore(
+        yesNoUnknown,
         R.string.orientationTitle,
         R.string.space,
+        defaultSelectedOption =  R.string.unknown,
         appendixLabel = {
             Row() {
                 FactorAlerts(
