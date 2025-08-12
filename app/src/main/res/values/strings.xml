@@ -488,4 +488,6 @@
     <string name="unknown">Unknown</string>
     <string name="notAssessed">NA</string>
     <string name="ureaNitrogen">Urea Nitrogen</string>
+    <string name="systolicBloodPressure">Systolic Blood Pressure</string>
+    <string name="diastolicBloodPressure">Diastoic Blood Pressure</string>
 </resources>

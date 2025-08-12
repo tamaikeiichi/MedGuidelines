@@ -33,6 +33,7 @@ fun InputValue(
     isJapaneseUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
     changedValueRate: Double = 1.0,
     changedUnit: Int = R.string.space,
+    appendixLabel: @Composable (() -> Unit)? = null
     ) {
     val textMeasurer = rememberTextMeasurer()
     val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
@@ -58,39 +59,42 @@ fun InputValue(
         }
     }
 
-    Row(
-        modifier = Modifier
-            .padding(4.dp),
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        NumberInTextField(
-            label = label, value = value,
-            width = (textWidth * 0.3).roundToInt() + 90,//(labelWidth * 0.5).roundToInt()+50,
-            multiplier = if (isJapaneseUnit.value) 1.0 else changedValueRate,
-            formatter = formatter,
-            isJapaneseUnit = isJapaneseUnit,
-            changeValueRate = changedValueRate
-        )
-        if (changedValueRate == 1.0) {
-            Column(
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Text(
-                    text = parseStyledString(japaneseUnit),
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-            }
-        } else {
-            Column(
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                ClickableText(
-                    text = if (isJapaneseUnit.value) japaneseUnit else changedUnit,
-                    onChanged = { isJapaneseUnit.value = !isJapaneseUnit.value },
-                    changed = isJapaneseUnit.value
-                )
-                Spacer(modifier = Modifier.height(10.dp))
+    Column() {
+        Row(
+            modifier = Modifier
+                .padding(4.dp),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            NumberInTextField(
+                label = label, value = value,
+                width = (textWidth * 0.3).roundToInt() + 90,//(labelWidth * 0.5).roundToInt()+50,
+                multiplier = if (isJapaneseUnit.value) 1.0 else changedValueRate,
+                formatter = formatter,
+                isJapaneseUnit = isJapaneseUnit,
+                changeValueRate = changedValueRate
+            )
+            if (changedValueRate == 1.0) {
+                Column(
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    Text(
+                        text = parseStyledString(japaneseUnit),
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            } else {
+                Column(
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    ClickableText(
+                        text = if (isJapaneseUnit.value) japaneseUnit else changedUnit,
+                        onChanged = { isJapaneseUnit.value = !isJapaneseUnit.value },
+                        changed = isJapaneseUnit.value
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
             }
         }
+        appendixLabel?.invoke()
     }
 }

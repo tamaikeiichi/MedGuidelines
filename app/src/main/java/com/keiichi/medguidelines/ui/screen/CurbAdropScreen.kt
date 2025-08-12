@@ -106,10 +106,10 @@ fun AdropScreen(navController: NavController) {
                 currentScores.adropTotalScore
             curb65TotalScore = if (currentScores.curb65TotalScore >= 100)
                 null else
-                    currentScores.curb65TotalScore
+                currentScores.curb65TotalScore
             crb65TotalScore = if (currentScores.crb65TotalScore >= 100)
                 null else
-                    currentScores.crb65TotalScore
+                currentScores.crb65TotalScore
 
             adropLiteralScore = when (adropTotalScore) {
                 in 0..0 -> stringResource(id = R.string.adropLiteralScoreMild)
@@ -137,13 +137,20 @@ fun AdropScreen(navController: NavController) {
 @Composable
 fun adropTotalScore(): TotalScoreCurbAdrop {
     val un = remember { mutableDoubleStateOf(10.0) }
+    val systolicBp = remember { mutableDoubleStateOf(120.0) }
+    val diastolicBp = remember { mutableDoubleStateOf(70.0) }
     val unCurb: Int
     val unAdrop: Int
+    val systolicBpCurb: Int
+    val systolicBpAdrop: Int
+    val diastolicBpCurb: Int
+    val diastolicBpAdrop: Int
+    val bpCurb: Int
     val scoreConsciousness = buttonAndScoreWithScore(
         yesNoUnknown,
         R.string.orientationTitle,
         R.string.space,
-        defaultSelectedOption =  R.string.unknown,
+        defaultSelectedOption = R.string.unknown,
         appendixLabel = {
             Row() {
                 FactorAlerts(
@@ -163,35 +170,37 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
     )
     MedGuidelinesCard {
         InputValue(
-        label = R.string.ureaNitrogen,
-        value = un,
-        japaneseUnit = R.string.mgdl,
-        changedValueRate = 0.357,
-        changedUnit = R.string.mmoll
-    )
+            label = R.string.ureaNitrogen,
+            value = un,
+            japaneseUnit = R.string.mgdl,
+            changedValueRate = 0.357,
+            changedUnit = R.string.mmoll,
+            appendixLabel = {
+                Row() {
+                    FactorAlerts(
+                        text = R.string.aDrop,
+                        value = 1.0
+                    )
+                    FactorAlerts(
+                        text = R.string.curb65,
+                        value = 1.0
+                    )
+                }
+            }
+        )
     }
 
-    if (un.doubleValue > 21.0){
+    if (un.doubleValue > 21.0) {
         unCurb = 1
-        unAdrop = 1}
-    else if (un.doubleValue > 19.6){
+        unAdrop = 1
+    } else if (un.doubleValue > 19.6) {
         unCurb = 1
-        unAdrop = 0}
-    else {
+        unAdrop = 0
+    } else {
         unCurb = 0
         unAdrop = 0
     }
-//    val scoreUre = buttonAndScore(
-//        noYes,
-//        R.string.urea7mmol,
-//        R.string.space,
-//        appendixLabel = {
-//            FactorAlerts(
-//                text = R.string.curb65,
-//                value = 1.0
-//            )
-//        }
-//    )
+
     val scoreRespiratoryRate = buttonAndScore(
         noYes,
         R.string.respirationRate30,
@@ -203,23 +212,76 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
             )
         }
     )
-    val scoreBloodPressure = buttonAndScore(
-        noYes,
-        R.string.bloodPressure9060,
-        R.string.space,
-        appendixLabel = {
-            Row(){
-                FactorAlerts(
-                    text = R.string.curb65,
-                    value = 1.0
-                )
-                FactorAlerts(
-                    text = R.string.crb65,
-                    value = 1.0
-                )
+    MedGuidelinesCard {
+        InputValue(
+            label = R.string.systolicBloodPressure,
+            value = systolicBp,
+            japaneseUnit = R.string.mmhg,
+            appendixLabel = {
+                Row() {
+                    FactorAlerts(
+                        text = R.string.aDrop,
+                        value = 1.0
+                    )
+                    FactorAlerts(
+                        text = R.string.curb65,
+                        value = 1.0
+                    )
+                    FactorAlerts(
+                        text = R.string.crb65,
+                        value = 1.0
+                    )
+                }
             }
-        }
-    )
+        )
+    }
+
+    if (systolicBp.doubleValue <= 90.0) {
+        systolicBpCurb = 1
+        systolicBpAdrop = 0
+    } else if (systolicBp.doubleValue < 90.0) {
+        systolicBpCurb = 1
+        systolicBpAdrop = 1
+    } else {
+        systolicBpCurb = 0
+        systolicBpAdrop = 0
+    }
+    MedGuidelinesCard {
+        InputValue(
+            label = R.string.diastolicBloodPressure,
+            value = diastolicBp,
+            japaneseUnit = R.string.mmhg,
+            appendixLabel = {
+                Row() {
+                    FactorAlerts(
+                        text = R.string.aDrop,
+                        value = 1.0
+                    )
+                    FactorAlerts(
+                        text = R.string.curb65,
+                        value = 1.0
+                    )
+                    FactorAlerts(
+                        text = R.string.crb65,
+                        value = 1.0
+                    )
+                }
+            }
+        )
+    }
+
+    if (diastolicBp.doubleValue <= 60.0) {
+        diastolicBpCurb = 1
+    }  else {
+        diastolicBpCurb = 0
+    }
+
+    if (systolicBpCurb == 1 || diastolicBpCurb == 1)
+        bpCurb = 1
+    else
+        bpCurb = 0
+
+
     val scoreAge = buttonAndScore(
         noYes,
         R.string.age65,
@@ -248,17 +310,7 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
             )
         }
     )
-//    unAdrop = buttonAndScore(
-//        noYes,
-//        R.string.dehydrationTitle,
-//        R.string.space,
-//        appendixLabel = {
-//            FactorAlerts(
-//                text = R.string.aDrop,
-//                value = 1.0
-//            )
-//        }
-//    )
+
     val scoreC = buttonAndScore(
         noYes,
         R.string.respirationTitle,
@@ -270,24 +322,25 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
             )
         }
     )
-    val scoreE = buttonAndScore(
-        noYes,
-        R.string.pressureTitle,
-        R.string.space,
-        appendixLabel = {
-            FactorAlerts(
-                text = R.string.aDrop,
-                value = 1.0
-            )
-        }
-    )
+//    val scoreE = buttonAndScore(
+//        noYes,
+//        R.string.pressureTitle,
+//        R.string.space,
+//        appendixLabel = {
+//            FactorAlerts(
+//                text = R.string.aDrop,
+//                value = 1.0
+//            )
+//        }
+//    )
     val adropTotalScore =
-        scoreA + unAdrop + scoreC + scoreConsciousness + scoreE
+        scoreA + unAdrop + scoreC + scoreConsciousness + systolicBpAdrop
     val curb65TotalScore =
-        scoreConsciousness + unCurb + scoreRespiratoryRate + scoreBloodPressure + scoreAge
+        scoreConsciousness + unCurb + scoreRespiratoryRate + bpCurb + scoreAge
     val crb65TotalScore =
-        scoreConsciousness + scoreRespiratoryRate + scoreBloodPressure + scoreAge
-    val totalScoreCurbAdrop = TotalScoreCurbAdrop(adropTotalScore, curb65TotalScore, crb65TotalScore)
+        scoreConsciousness + scoreRespiratoryRate + bpCurb + scoreAge
+    val totalScoreCurbAdrop =
+        TotalScoreCurbAdrop(adropTotalScore, curb65TotalScore, crb65TotalScore)
     return totalScoreCurbAdrop
 }
 
