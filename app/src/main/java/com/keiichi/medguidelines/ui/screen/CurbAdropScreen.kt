@@ -99,9 +99,6 @@ fun AdropScreen(navController: NavController) {
         ) {
             val currentScores: TotalScoreCurbAdrop = adropTotalScore()
 
-            // Update the state variables from the single result
-            // This will trigger recomposition if the currentScores object's content differs
-            // from what was used to set these state variables in the previous composition.
             adropTotalScore = if (currentScores.adropTotalScore >= 100)
                 null
             else
@@ -149,7 +146,6 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
     var scoreConsciousness: Int = 100
     val systolicBpCurb: Int
     val systolicBpAdrop: Int
-//    val diastolicBpAdrop: Int
     val bpCurb: Int
 
     gender = buttonAndScoreWithScore(
@@ -320,8 +316,8 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
     }
 
     if (systolicBp.doubleValue <= 90.0) {
-        systolicBpCurb = 1
-        systolicBpAdrop = 0
+        systolicBpCurb = 0
+        systolicBpAdrop = 1
     } else if (systolicBp.doubleValue < 90.0) {
         systolicBpCurb = 1
         systolicBpAdrop = 1
