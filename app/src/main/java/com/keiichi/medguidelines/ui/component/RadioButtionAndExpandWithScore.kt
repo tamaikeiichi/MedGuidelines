@@ -85,7 +85,7 @@ fun RadioButtonAndExpandWithScore(
                     // Ensure parseStyledString is available and works as expected
                     if (title != R.string.space) { // Assuming R.string.space means "no title"
                         Text(
-                            text = stringResource(id = title), // Using stringResource directly for simplicity
+                            text = parseStyledString(title), // Using stringResource directly for simplicity
                             // Replace with parseStyledString(title) if styling is needed
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(bottom = if (expanded && hasTitleNote) 4.dp else 0.dp)

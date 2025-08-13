@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 
@@ -136,13 +137,10 @@ fun TitleTopAppBar(
     if (showRefDialog && (references[0].url != R.string.space && references[0].text != R.string.space)){
         AlertDialog(
             onDismissRequest = { showRefDialog = false },
-            title = { Text(text = stringResource(id = refTitleResId)) }, // "Help" or similar
+            title = { Text(text = stringResource(id = refTitleResId),
+                fontSize = 14.sp
+            ) }, // "Help" or similar
             text = {
-//                Column() {
-//                    for (reference in references) {
-//                        UrlLinkText(reference)
-//                    }
-//                }
                 ReferenceListWithNumbers(references)
             },
             confirmButton = {
@@ -156,8 +154,11 @@ fun TitleTopAppBar(
     if (showHelpDialog && helpMessageResId != null) {
         AlertDialog(
             onDismissRequest = { showHelpDialog = false },
-            title = { Text(text = stringResource(id = helpTitleResId)) }, // "Help" or similar
-            text = { Text(text = stringResource(id = helpMessageResId)) },
+            title = { Text(text = stringResource(id = helpTitleResId),
+                fontSize = 14.sp
+            ) }, // "Help" or similar
+            text = { Text(text = stringResource(id = helpMessageResId),
+                fontSize = 22.sp) },
             confirmButton = {
                 TextButton(onClick = { showHelpDialog = false }) {
                     Text(stringResource(id = R.string.ok)) // "OK"

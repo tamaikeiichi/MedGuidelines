@@ -493,4 +493,6 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="gender">Gender</string>
+    <string name="Adrop">A-drop (Japanese)</string>
+    <string name="AdropUrl">https://www.jrs.or.jp/publication/file/adult_pneumonia1-3.pdf</string>
 </resources>

@@ -94,7 +94,7 @@ fun Modifier.textModifier(): Modifier =
 fun LiverFibrosisScoreSystemScreen(
     navController: NavController,
 ) {
-    val focusManager = LocalFocusManager.current
+    //val focusManager = LocalFocusManager.current
     val age = remember { mutableDoubleStateOf(0.00) }
     val ast = remember { mutableDoubleStateOf(0.0) }
     val platelet = remember { mutableDoubleStateOf(0.0) }
@@ -150,13 +150,14 @@ fun LiverFibrosisScoreSystemScreen(
             )
         },
         modifier = Modifier
-            .pointerInput(Unit) { // Use pointerInput with detectTapGestures
-                detectTapGestures(
-                    onTap = {
-                        focusManager.clearFocus() // Clear focus on tap outside
-                    }
-                )
-            },
+//            .pointerInput(Unit) { // Use pointerInput with detectTapGestures
+//                detectTapGestures(
+//                    onTap = {
+//                        focusManager.clearFocus() // Clear focus on tap outside
+//                    }
+//                )
+//            }
+        ,
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier

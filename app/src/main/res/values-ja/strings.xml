@@ -287,4 +287,21 @@
     <string name="atp7bMutation">ATP7B変異</string>
     <string name="about">この項目について</string>
     <string name="reference">参考文献</string>
+    <string name="notAssessed">評価不可</string>
+    <string name="ureaNitrogen">尿素窒素</string>
+    <string name="systolicBloodPressure">収縮期血圧</string>
+    <string name="diastolicBloodPressure">拡張期血圧</string>
+    <string name="male">男性</string>
+    <string name="female">女性</string>
+    <string name="gender">性別</string>
+    <string name="unknown">不明</string>
+    <string name="crb65LiteralScoreIntermediage">中程度の死亡率（8.15%）</string>
+    <string name="crb65LiteralScoreHigh">高死亡率（31%）</string>
+    <string name="curb65aDrophelp">市中肺炎の重症度評価</string>
+    <string name="crb65LiteralScoreLow">低死亡率（1.2%）</string>
+    <string name="curb65LiteralScoreIntermediage">中程度の死亡率（9.2%）</string>
+    <string name="curb65LiteralScoreHigh">高死亡率（22%）</string>
+    <string name="age65">年齢≧65歳</string>
+    <string name="curb65LiteralScoreLow">低死亡率（1.5%）</string>
+    <string name="respirationRate30">呼吸数 ≧ 30/分</string>
 </resources>

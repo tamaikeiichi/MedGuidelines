@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -17,21 +18,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.maleFemaleUnknown
-import com.keiichi.medguidelines.data.noYes
 import com.keiichi.medguidelines.data.yesNoUnknown
 import com.keiichi.medguidelines.ui.component.FactorAlerts
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
-import com.keiichi.medguidelines.ui.component.ScoreBottomAppBar
-import com.keiichi.medguidelines.ui.component.TitleTopAppBar
-import com.keiichi.medguidelines.ui.component.buttonAndScore
+import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
+import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScore
 
 data class TotalScoreCurbAdrop(
@@ -50,28 +48,30 @@ fun AdropScreen(navController: NavController) {
     var crb65LiteralScore by remember { mutableStateOf("") }
 
     // Build the display string here
-    val displayString = buildAnnotatedString {
-        append(stringResource(id = R.string.curb65))
-        append(": ")
-        append(curb65LiteralScore)
-        append(" (")
-        append(curb65TotalScore?.toString() ?: "")
-        append(")")
-        append("\n")
-        append(stringResource(id = R.string.crb65))
-        append(": ")
-        append(crb65LiteralScore)
-        append(" (")
-        append(crb65TotalScore?.toString() ?: "")
-        append(")")
-        append("\n")
-        append(stringResource(id = R.string.aDrop))
-        append(": ")
-        append(adropLiteralScore)
-        append(" (")
-        append(adropTotalScore?.toString() ?: "")
-        append(")")
-    }
+    val displayString =
+        buildAnnotatedString {
+            append(stringResource(id = R.string.curb65)) // Now called in a composable context
+            append(": ")
+            append(curb65LiteralScore)
+            append(" (")
+            append(curb65TotalScore?.toString() ?: "")
+            append(")")
+            append("\n")
+            append(stringResource(id = R.string.crb65)) // Now called in a composable context
+            append(": ")
+            append(crb65LiteralScore)
+            append(" (")
+            append(crb65TotalScore?.toString() ?: "")
+            append(")")
+            append("\n")
+            append(stringResource(id = R.string.aDrop)) // Now called in a composable context
+            append(": ")
+            append(adropLiteralScore)
+            append(" (")
+            append(adropTotalScore?.toString() ?: "")
+            append(")")
+        }
+
 
     MedGuidelinesScaffold(
         topBar = {
@@ -79,17 +79,23 @@ fun AdropScreen(navController: NavController) {
                 title = R.string.Curb65AdropTitle,
                 navController = navController,
                 references = listOf(
-                    TextAndUrl(R.string.Curb65, R.string.Curb65Url)
+                    TextAndUrl(R.string.Curb65, R.string.Curb65Url),
+                    TextAndUrl(R.string.Adrop, R.string.AdropUrl)
                 ),
                 helpMessageResId = R.string.curb65aDrophelp
             )
         },
         bottomBar = {
-            ScoreBottomAppBar(
+            ScoreBottomAppBarVariable(
                 displayText = displayString,
-                barHeight = 180.dp,
                 fontSize = 25.sp
+                // barHeight is now calculated internally by ScoreBottomAppBar
             )
+//            ScoreBottomAppBar(
+//                displayText = displayString,
+//                barHeight = 180.dp,
+//                fontSize = 25.sp
+//            )
         }
     ) { innerPadding ->
         Column(
@@ -141,12 +147,14 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
     var age = remember { mutableDoubleStateOf(60.0) }
     val unCurb: Int
     val unAdrop: Int
-    var gender: Int = 100
+    var gender by remember { mutableIntStateOf(100) }
     val ageAdrop: Int
-    var scoreConsciousness: Int = 100
+    var scoreConsciousness by remember { mutableIntStateOf(100) }
     val systolicBpCurb: Int
     val systolicBpAdrop: Int
     val bpCurb: Int
+    var scoreRespiratoryRate by remember { mutableIntStateOf(100) }
+    var scoreSpo2 by remember { mutableIntStateOf(100) }
 
     gender = buttonAndScoreWithScore(
         maleFemaleUnknown,
@@ -232,10 +240,10 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
         }
     }
 
-    if (un.doubleValue > 21.0) {
+    if (un.doubleValue >= 21.0) {
         unCurb = 1
         unAdrop = 1
-    } else if (un.doubleValue > 19.6) {
+    } else if (un.doubleValue > 19.61) {
         unCurb = 1
         unAdrop = 0
     } else {
@@ -244,14 +252,14 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
     }
 
     ageAdrop = if ((gender == 1 && age.doubleValue >= 70.0) ||
-        (gender == 0 && age.doubleValue >= 65.0)) {
+        (gender == 0 && age.doubleValue >= 75.0)) {
         1
     } else {0}
     val ageCurb: Int = if (age.doubleValue >= 65.0){
         1
     } else {0}
 
-    val scoreRespiratoryRate = buttonAndScoreWithScore(
+    scoreRespiratoryRate = buttonAndScoreWithScore(
         yesNoUnknown,
         R.string.respirationRate30,
         R.string.space,
@@ -260,11 +268,11 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
             Row() {
                 FactorAlerts(
                     text = R.string.curb65,
-                    value = 1.0
+                    value = scoreRespiratoryRate - 100.0
                 )
                 FactorAlerts(
                     text = R.string.crb65,
-                    value = 1.0
+                    value = scoreRespiratoryRate - 100.0
                 )
             }
         }
@@ -334,7 +342,7 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
     else {
         0 }
 
-    val scoreC = buttonAndScoreWithScore(
+    scoreSpo2 = buttonAndScoreWithScore(
         yesNoUnknown,
         R.string.respirationTitle,
         R.string.space,
@@ -342,13 +350,13 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
         appendixLabel = {
             FactorAlerts(
                 text = R.string.aDrop,
-                value = 1.0
+                value = scoreSpo2 - 100.0
             )
         }
     )
 
     val adropTotalScore =
-        ageAdrop + unAdrop + scoreC + scoreConsciousness + systolicBpAdrop
+        ageAdrop + unAdrop + scoreSpo2 + scoreConsciousness + systolicBpAdrop
     val curb65TotalScore =
         scoreConsciousness + unCurb + scoreRespiratoryRate + bpCurb + ageCurb
     val crb65TotalScore =
