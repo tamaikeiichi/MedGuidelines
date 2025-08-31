@@ -57,20 +57,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-//@Serializable
-//data class PairedTextItem(
-//    val kanjiMeisho: String?,
-//    val tensuShikibetsu: String,
-//    val tensu: String,
-//    val kanaMeisho: String?,
-//    val originalIndex: Int,
-//    var isFavorite: Boolean = false,
-//    val kanjiText: String,
-//    val kanaText: String
-//)// : IndexableItem
+val LIST_PAIRED_DATA_KEY_SHIKA = stringPreferencesKey("list_paired_data_shika")
 
 @Composable
-fun IkaShinryokoiMasterScreen(navController: NavHostController) {
+fun ShikaShinryokoiMasterScreen(navController: NavHostController) {
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
     val lazyListState = remember(calculation = { LazyListState() })
@@ -157,8 +147,8 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
             saveListData(
                 context,
                 originalItems,
-                dataStoreKey = LIST_PAIRED_DATA_KEY_IKA
-        )
+                LIST_PAIRED_DATA_KEY_SHIKA//.toMutableList()
+            )
         }
     }
 
@@ -202,8 +192,8 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     }
 
     val master: AnyFrame? = try {
-        isLoadingPairedData = true
-        val inputStream: InputStream = context.resources.openRawResource(R.raw.s_20250602)
+        //isLoadingPairedData = true
+        val inputStream: InputStream = context.resources.openRawResource(R.raw.h_20250808)
         val headerNames = (1..numberOfColumns).map { it.toString() }
         val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
 
@@ -237,10 +227,10 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
         // Perform heavy processing in a background thread
         val processedList = withContext(Dispatchers.Default) { // Use Dispatchers.Default for CPU-bound work
             // Your existing logic for extracting columns and processing
-            val kanjiMeishoIndex = 4
-            val tensuShikibetsuIndex = 10
-            val tensuIndex = 11
-            val kanaMeishoIndex = 6
+            val kanjiMeishoIndex = 8
+            val tensuShikibetsuIndex = 12
+            val tensuIndex = 13
+            val kanaMeishoIndex = 9
 
             if (master.columnsCount() > kanjiMeishoIndex &&
                 master.columnsCount() > tensuShikibetsuIndex &&
@@ -315,10 +305,10 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     MedGuidelinesScaffold (
         topBar = {
             TitleTopAppBar(
-                title = R.string.IkaShinryokoiMaster,
+                title = R.string.ShikaShinryokoiMaster,
                 navController = navController,
                 references = listOf(
-                    TextAndUrl(R.string.IkaShinryokoiMaster, R.string.IkaShinryokoiMasterUrl)
+                    TextAndUrl(R.string.ShikaShinryokoiMaster, R.string.ShikaShinryokoiMasterUrl)
                 )
             )
         },
@@ -386,8 +376,8 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                                 // 3. Sort the new list: favorites first, then by original order or another criteria
                                 val sortedList = originalItems.sortedWith(
                                     compareByDescending<PairedTextItem> { it.isFavorite }
-                                        // Optional: then by original index to keep non-favorites in their loaded order
-                                        //.thenBy { it.originalIndex }
+                                    // Optional: then by original index to keep non-favorites in their loaded order
+                                    //.thenBy { it.originalIndex }
                                 )
 
                                 // 4. Update the state and save
@@ -405,17 +395,12 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
                                             lazyListState.animateScrollToItem(index = displayIndex)
                                         }
                                     } else {
-//                                        if (!itemToUpdate.isFavorite) {
-//                                            scope.launch {
-//                                            lazyListState.animateScrollToItem(index = displayIndex)
-//                                                }
-//                                        }else {
-                                            // If it became favorite but isn't in displayedItems (due to search),
-                                            // scrolling to top might still be desired.
-                                            scope.launch {
-                                                lazyListState.animateScrollToItem(index = 0)
-                                            }
-                                       // }
+                                        // If it became favorite but isn't in displayedItems (due to search),
+                                        // scrolling to top might still be desired.
+                                        scope.launch {
+                                            lazyListState.animateScrollToItem(index = 0)
+                                        }
+                                        // }
                                     }
                                 }
                             }
@@ -428,48 +413,13 @@ fun IkaShinryokoiMasterScreen(navController: NavHostController) {
 }
 
 
-
-//val Context.dataStoreIka: DataStore<Preferences> by preferencesDataStore(name = "settings_ika")
-val LIST_PAIRED_DATA_KEY_IKA = stringPreferencesKey("list_paired_data")
-
-//private fun doAnyDecodeStringsMatchAnyPairedItemsStrings(
-//    context: Context,
-//    decodeList: List<PairedTextItem>,
-//    itemsList: List<PairedTextItem>
-//): Boolean {
-//    // Get the set of strings from decodeList.nameResID (Set A)
-//    val decodeNameResIdStrings = decodeList.mapNotNull { listItem ->
-//        try {
-//            context.getString(listItem.originalIndex)
-//        } catch (e: Exception) {
-//            // Handle invalid resource ID, filter out if needed
-//            println("Error: Invalid resource ID in decodeList: ${listItem.originalIndex}")
-//            null // Exclude this string from the set
-//        }
-//    }.toSet()
-//    // Get the set of strings from itemsList.nameResID (Set B)
-//    val itemNameResIdStrings = itemsList.mapNotNull { listItem ->
-//        try {
-//            context.getString(listItem.originalIndex)
-//        } catch (e: Exception) {
-//            // Handle invalid resource ID, filter out if needed
-//            println("Error: Invalid resource ID in itemsList: ${listItem.originalIndex}")
-//            null // Exclude this string from the set
-//        }
-//    }.toSet()
-//    // Check if there is any intersection between the two sets of strings
-//    val checkName = decodeNameResIdStrings == itemNameResIdStrings
-//    //val checkKeywords = decodeKeywordStrings == itemKeywordStrings
-//    return checkName //&& checkKeywords
-//}
-
 private fun loadListPairedData(
     context: Context,
     expectedItemCount: Int,
     pairedDataList: List<PairedTextItem>
 ): Flow<List<PairedTextItem>> {
     return context.dataStore.data.map { preferences ->
-        val jsonString = preferences[LIST_PAIRED_DATA_KEY_IKA]
+        val jsonString = preferences[LIST_PAIRED_DATA_KEY_SHIKA]
 
         if (jsonString != null) {
             try {
@@ -487,13 +437,13 @@ private fun loadListPairedData(
                     //}
                 } else {
                     context.dataStore.edit { mutablePreferences ->
-                        mutablePreferences.remove(LIST_PAIRED_DATA_KEY_IKA)
+                        mutablePreferences.remove(LIST_PAIRED_DATA_KEY_SHIKA)
                     }
                     pairedDataList
                 }
             } catch (e: kotlinx.serialization.SerializationException) {
                 context.dataStore.edit { mutablePreferences ->
-                    mutablePreferences.remove(LIST_PAIRED_DATA_KEY_IKA)
+                    mutablePreferences.remove(LIST_PAIRED_DATA_KEY_SHIKA)
                 }
                 pairedDataList
             }
@@ -504,8 +454,9 @@ private fun loadListPairedData(
 }
 
 
+
 @Preview
 @Composable
-fun IkaShinryokoiMasterScreenPreview() {
-    IkaShinryokoiMasterScreen(navController = NavHostController(LocalContext.current))
+fun ShikaShinryokoiMasterScreenPreview() {
+    ShikaShinryokoiMasterScreen(navController = NavHostController(LocalContext.current))
 }

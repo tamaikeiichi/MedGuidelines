@@ -1,7 +1,5 @@
 package com.keiichi.medguidelines.ui.screen
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -96,20 +94,17 @@ fun IndexScreen(
                 ActionType.NAVIGATE_TO_ICD10JAPANESE -> {
                     currentDeviceLocale.language == Locale.JAPANESE.language
                 }
+                ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER -> {
+                    currentDeviceLocale.language == Locale.JAPANESE.language
+                }
+                ActionType.NAVIGATE_TO_SHIKASHINRYOKOIMASTER -> {
+                    currentDeviceLocale.language == Locale.JAPANESE.language
+                }
                 // All other items are always displayed.
                 else -> true
             }
         }
     }
-
-//    LaunchedEffect(localeAwareAppItems) { // Keyed by the filtered list
-//        // In a real scenario, this would involve fetching favorite status, etc.
-//        // from `loadListItemData` using `localeAwareAppItems` as the base.
-//        val loadedItems = localeAwareAppItems.map { it.copy() } // Simple copy for demo
-//        originalItems.clear()
-//        originalItems.addAll(loadedItems)
-//        //originalItems = localeAwareAppItems
-//    }
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -322,7 +317,6 @@ fun IndexScreen(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun IndexScreenPreview() {
@@ -353,6 +347,7 @@ fun IndexScreenPreview() {
             navigateToIcd10 = {},
             navigateToIcd10Japanese = {},
             navigateToWilson = {},
+            navigateToShikashinryokoiMaster = {},
         )
     )
 }

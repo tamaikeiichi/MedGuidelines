@@ -495,4 +495,7 @@
     <string name="gender">Gender</string>
     <string name="Adrop">A-drop (Japanese)</string>
     <string name="AdropUrl">https://www.jrs.or.jp/publication/file/adult_pneumonia1-3.pdf</string>
+    <string name="shikashiRinryokuMasterKensaku">歯科診療行為マスター検索</string>
+    <string name="ShikaShinryokoiMaster">歯科診療行為マスター</string>
+    <string name="ShikaShinryokoiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
 </resources>

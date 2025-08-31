@@ -33,6 +33,7 @@ import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
 import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
 import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
 import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
+import com.keiichi.medguidelines.ui.screen.ShikaShinryokoiMasterScreen
 import com.keiichi.medguidelines.ui.screen.WilsonScreen
 import java.util.Locale
 
@@ -62,7 +63,8 @@ enum class ActionType {
     NAVIGATE_TO_IKASHINRYOKOIMASTER,
     NAVIGATE_TO_ICD10,
     NAVIGATE_TO_ICD10JAPANESE,
-    NAVIGATE_TO_WILSON
+    NAVIGATE_TO_WILSON,
+    NAVIGATE_TO_SHIKASHINRYOKOIMASTER,
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -77,7 +79,6 @@ data class ListItemData(
 //    val currentDeviceLocale = configuration.locales[0] ?: Locale.getDefault()
 
 val itemsList = listOf(
-    ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
     ListItemData(
         R.string.curb65AdropTitle, ActionType.NAVIGATE_TO_ADROP,
         keywords = listOf(
@@ -85,16 +86,14 @@ val itemsList = listOf(
             R.string.pneumonia
         ),
     ),
-    ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM),
     ListItemData(
         R.string.acuteTonsillitisAlgorithmTitle,
         ActionType.NAVIGATE_TO_ACUTE_TONSILLITIS_ALGORITHM
     ),
     ListItemData(R.string.bloodGasAnalysisTitle, ActionType.NAVIGATE_TO_BLOOD_GAS_ANALYSIS),
     ListItemData(R.string.acutePancreatitisTitle, ActionType.NAVIGATE_TO_ACUTE_PANCREATITIS),
-    ListItemData(R.string.netakiridoTitle, ActionType.NAVIGATE_TO_NETAKIRIDO),
-    ListItemData(R.string.pancreaticTNMTitle, ActionType.NAVIGATE_TO_PANCREASE_TNM),
-    ListItemData(R.string.esophagealTNMTitle, ActionType.NAVIGATE_TO_ESOPAGEAL_TNM),
+    ListItemData(R.string.homaIrHomaBetaTitle, ActionType.NAVIGATE_TO_HOMAIR),
+    ListItemData(R.string.childPughTitle, ActionType.NAVIGATE_TO_CHILD_PUGH),
     ListItemData(
         R.string.mALBITitle, ActionType.NAVIGATE_TO_MALBI,
         keywords = listOf(
@@ -114,13 +113,21 @@ val itemsList = listOf(
             R.string.shearWaveElastography
         )
     ),
-    ListItemData(R.string.homaIrHomaBetaTitle, ActionType.NAVIGATE_TO_HOMAIR),
+    ListItemData(R.string.lilleModelInr, ActionType.NAVIGATE_TO_LILLE_MODEL,
+        keywords = listOf(
+            R.string.alcoholicHepatitis,
+        )
+    ),
+    ListItemData(R.string.wilsonTitle, ActionType.NAVIGATE_TO_WILSON),
     ListItemData(R.string.lungTNMTitle, ActionType.NAVIGATE_TO_LUNG_TNM),
     ListItemData(R.string.hccTNMTitle, ActionType.NAVIGATE_TO_HCC_TNM),
     ListItemData(
         R.string.intrahepaticCholangiocarcinomaTNMTitle,
         ActionType.NAVIGATE_TO_INTRAHEPATICCHOLANGIOCARCINOMA_TNM
     ),
+    ListItemData(R.string.pancreaticTNMTitle, ActionType.NAVIGATE_TO_PANCREASE_TNM),
+    ListItemData(R.string.esophagealTNMTitle, ActionType.NAVIGATE_TO_ESOPAGEAL_TNM),
+    ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM),
     ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2,
         keywords = listOf(
             R.string.af,
@@ -128,27 +135,20 @@ val itemsList = listOf(
         )
     ),
     ListItemData(R.string.glasgowComaScaleTitle, ActionType.NAVIGATE_TO_GLASGOW_COMA_SCALE),
-    ListItemData(
-        R.string.sodiumDifferentialDiagnosisTitle,
-        ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS
-    ),
-    ListItemData(R.string.lilleModelInr, ActionType.NAVIGATE_TO_LILLE_MODEL,
-        keywords = listOf(
-            R.string.alcoholicHepatitis,
-        )
-    ),
     ListItemData(R.string.ecogPerformanceStatus, ActionType.NAVIGATE_TO_ECOG,
         keywords = listOf(
             R.string.Ps,
         )),
+    ListItemData(
+        R.string.sodiumDifferentialDiagnosisTitle,
+        ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS
+    ),
     ListItemData(R.string.infusionCalculator, ActionType.NAVIGATE_TO_INFUSION_CALCULATOR),
+    ListItemData(R.string.netakiridoTitle, ActionType.NAVIGATE_TO_NETAKIRIDO),
+    ListItemData(R.string.icd10, ActionType.NAVIGATE_TO_ICD10),
+    ListItemData(R.string.icd10japanese, ActionType.NAVIGATE_TO_ICD10JAPANESE),
     ListItemData(R.string.ikashiRinryokuMasterKensaku, ActionType.NAVIGATE_TO_IKASHINRYOKOIMASTER),
-    //if (currentDeviceLocale.language != Locale.JAPANESE.language) {
-        ListItemData(R.string.icd10, ActionType.NAVIGATE_TO_ICD10),
-    //} else {
-        ListItemData(R.string.icd10japanese, ActionType.NAVIGATE_TO_ICD10JAPANESE),
-    //}
-    ListItemData(R.string.wilsonTitle, ActionType.NAVIGATE_TO_WILSON)
+    ListItemData(R.string.shikashiRinryokuMasterKensaku, ActionType.NAVIGATE_TO_SHIKASHINRYOKOIMASTER),
 )
 
 data class IndexScreenActions(
@@ -177,6 +177,7 @@ data class IndexScreenActions(
     val navigateToIcd10: () -> Unit,
     val navigateToIcd10Japanese: () -> Unit,
     val navigateToWilson: () -> Unit,
+    val navigateToShikashinryokoiMaster: () -> Unit,
 )
 
 @Composable
@@ -211,8 +212,11 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToInfusionCalculator = { navController.navigate("GammaCalculateScreen") },
         navigateToIkaShinryokoiMaster = { navController.navigate("IkaShinryokoiMaster") },
         navigateToIcd10 = { navController.navigate("Icd10EnglishScreen") },
-        navigateToIcd10Japanese = { navController.navigate("Icd10JapaneseScreen") },
         navigateToWilson = { navController.navigate("WilsonScreen") },
+        navigateToIcd10Japanese = { navController.navigate("Icd10JapaneseScreen") },
+        navigateToShikashinryokoiMaster = { navController.navigate("ShikaShinryokoiMaster") },
+
+
     )
 }
 
@@ -251,6 +255,7 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("Icd10EnglishScreen") { navController -> Icd10EnglishScreen(navController) },
         ScreenRoute("Icd10JapaneseScreen") { navController -> Icd10JapaneseScreen(navController) },
         ScreenRoute("WilsonScreen") { navController -> WilsonScreen(navController) },
+        ScreenRoute("ShikaShinryokoiMaster") { navController -> ShikaShinryokoiMasterScreen(navController) },
     )
 }
 
@@ -281,6 +286,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_ICD10 -> this.navigateToIcd10()
         ActionType.NAVIGATE_TO_ICD10JAPANESE -> this.navigateToIcd10Japanese()
         ActionType.NAVIGATE_TO_WILSON -> this.navigateToWilson()
+        ActionType.NAVIGATE_TO_SHIKASHINRYOKOIMASTER -> this.navigateToShikashinryokoiMaster()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand
