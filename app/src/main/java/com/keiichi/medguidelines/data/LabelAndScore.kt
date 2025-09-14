@@ -63,3 +63,28 @@ val maleFemaleUnknown = listOf(
     LabelAndScore(labelResId = R.string.female, score = 0),
     LabelAndScore(labelResId = R.string.unknown, score = 100)
 )
+val aldreteExtremeties = listOf(
+    LabelAndScore(labelResId = R.string.fourExtremities, score = 2),
+    LabelAndScore(labelResId = R.string.twoExtremities, score = 1),
+    LabelAndScore(labelResId = R.string.noExtremities, score = 0)
+)
+val aldreteRespiration = listOf(
+    LabelAndScore(labelResId = R.string.breatheDeeply, score = 2),
+    LabelAndScore(labelResId = R.string.dyspneaOrLimited, score = 1),
+    LabelAndScore(labelResId = R.string.apneic, score = 0)
+)
+val aldreteCirculation = listOf(
+    LabelAndScore(labelResId = R.string.twentyPercent, score = 2),
+    LabelAndScore(labelResId = R.string.fortyninePercent, score = 1),
+    LabelAndScore(labelResId = R.string.fiftyPercent, score = 0)
+)
+val aldreteConsciousness = listOf(
+    LabelAndScore(labelResId = R.string.fullyAwake, score = 2),
+    LabelAndScore(labelResId = R.string.arousableOnCalling, score = 1),
+    LabelAndScore(labelResId = R.string.noResponding, score = 0)
+)
+val aldreteSaturation = listOf(
+    LabelAndScore(labelResId = R.string.roomAir, score = 2),
+    LabelAndScore(labelResId = R.string.aboveNinety, score = 1),
+    LabelAndScore(labelResId = R.string.belowNinety, score = 0)
+)

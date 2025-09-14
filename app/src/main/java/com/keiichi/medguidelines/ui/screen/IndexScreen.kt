@@ -348,6 +348,7 @@ fun IndexScreenPreview() {
             navigateToIcd10Japanese = {},
             navigateToWilson = {},
             navigateToShikashinryokoiMaster = {},
+            navigateToAldrete = {},
         )
     )
 }

@@ -93,7 +93,7 @@ fun RadioButtonAndExpandWithScore(
                     }
                     if (expanded && hasTitleNote) {
                         Text(
-                            text = stringResource(id = titleNote), // Using stringResource directly
+                            text = parseStyledString(titleNote), // Using stringResource directly
                             // Replace with parseStyledString(titleNote) if styling is needed
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = 2.dp)
@@ -135,7 +135,7 @@ fun RadioButtonAndExpandWithScore(
                             onClick = null // Recommended: onClick for RadioButton itself is null when Row is selectable
                         )
                         Text(
-                            text = stringResource(id = option.labelResId), // Use labelResId from ScoreOption
+                            text = parseStyledString(option.labelResId), // Use labelResId from ScoreOption
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(start = 8.dp), // Increased start padding
                             softWrap = true,
