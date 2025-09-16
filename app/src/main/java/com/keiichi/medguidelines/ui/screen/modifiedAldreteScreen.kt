@@ -1,23 +1,27 @@
 package com.keiichi.medguidelines.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
@@ -26,13 +30,17 @@ import com.keiichi.medguidelines.data.aldreteConsciousness
 import com.keiichi.medguidelines.data.aldreteExtremeties
 import com.keiichi.medguidelines.data.aldreteRespiration
 import com.keiichi.medguidelines.data.aldreteSaturation
+import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
-import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
+import com.keiichi.medguidelines.ui.component.buttonAndScoreExpandContentWithScore
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScore
+import com.keiichi.medguidelines.ui.component.calculateFontSize
 import com.keiichi.medguidelines.ui.component.parseStyledString
+import kotlin.math.ceil
+import kotlin.math.floor
 
 @Composable
 fun AldreteScreen(navController: NavController) {
@@ -102,10 +110,73 @@ fun aldreteTotalScore(): Int {
             //R.string.space,
             //defaultSelectedOption =  R.string.absent
         )
-    val circulationScore = buttonAndScoreWithScore(
+    val circulationScore = buttonAndScoreExpandContentWithScore(
         aldreteCirculation,
         R.string.circulation,
-        R.string.systolicBloodPressure
+        {
+            val systolicBp = remember { mutableDoubleStateOf(120.0) }
+            Column(){
+                Text(
+                    text = parseStyledString(R.string.systolicBloodPressure), // Using stringResource directly
+                    // Replace with parseStyledString(titleNote) if styling is needed
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+                Row(
+                    verticalAlignment = Alignment.Bottom,
+                ){
+                    InputValue(
+                        label = R.string.systolicBloodPressure,
+                        value = systolicBp,
+                        japaneseUnit = R.string.mmhg,
+                    )
+                    Column()
+                    {
+                        Text(
+                            text = parseStyledString(R.string.twentyTofortynine), // Using stringResource directly
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 2.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        val lower = systolicBp.value * 1.21
+                        val upper = systolicBp.value * 1.50
+
+                        val lowerResult = if (lower == floor(lower)) { // Check if it's a whole number
+                            // Decimal place is zero
+                            lower + 1.0
+                        } else {
+                            // Decimal place is not zero, round up
+                            ceil(lower)
+                        }
+
+                        val upperResult = if (upper == floor(upper)) { // Check if it's a whole number
+                            // Decimal place is zero
+                            upper - 1.0
+                        } else {
+                            // Decimal place is not zero, round up
+                            floor(upper)
+                        }
+
+                        val displayString =
+                            buildAnnotatedString {
+                                append(lowerResult.toString())
+                                append(" to ")
+                                append(upperResult.toString())
+                            }
+                        val fontSize = calculateFontSize(displayString.toString())
+                        Log.d("FontSizeDebug", "Calculated size: $fontSize, String: '${displayString.toString()}'")
+
+                        Text(
+                            text = displayString, // Using stringResource directly
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(top = 2.dp),
+                            fontSize = 22.sp //fontSize
+                        )
+                    }
+                }
+            }
+
+        }
     )
     val consciousnessScore =
         buttonAndScoreWithScore(

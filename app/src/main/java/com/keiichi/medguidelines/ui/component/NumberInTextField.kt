@@ -48,13 +48,6 @@ fun NumberInTextField(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-//    LaunchedEffect(isJapaneseUnit.value) {
-//        if (isJapaneseUnit.value) {
-//            value.doubleValue = (value.doubleValue / changeValueRate)
-//        } else {
-//            value.doubleValue = (value.doubleValue * changeValueRate)
-//        }
-//    }
     LaunchedEffect(Unit) { // Runs once to set up the flow collection
         snapshotFlow { isJapaneseUnit.value } // Create a flow that emits when isJapaneseUnit.value changes
             .drop(1) // Important: Skip the initial emission of isJapaneseUnit.value

@@ -13,10 +13,10 @@ import com.keiichi.medguidelines.data.yesNoUnknown
 
 
 @Composable
-fun buttonAndScoreWithScore(
+fun buttonAndScoreExpandContentWithScore(
     optionsWithScores: List<LabelAndScore>, // Changed from factor: List<Int>
     title: Int, // R.string.xxx for the title
-    titleNote: Int = R.string.space,
+    expandedContent: @Composable (() -> Unit)? = null,
     defaultSelectedOption: Int? = null,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
     appendixLabel: @Composable () -> Unit = {}
@@ -35,12 +35,12 @@ fun buttonAndScoreWithScore(
 
     // RadioButtonAndExpand will need to be adapted to use ScoreOption
     // It will pass the full ScoreOption object back on selection.
-    RadioButtonAndExpandWithScore( // You'll need to modify RadioButtonAndExpand
+    RadioButtonAndExpandContentWithScore( // You'll need to modify RadioButtonAndExpand
         options = optionsWithScores,
         selectedOption = selectedOption,
         onOptionSelected = onOptionSelected,
         title = title,
-        titleNote = titleNote,
+        expandedContent = expandedContent,
         cardColor = cardColor,
         appendixLabel = appendixLabel
     )

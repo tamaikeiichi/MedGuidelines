@@ -526,4 +526,5 @@
     <string name="modifiedAldreteScore">Modified Aldrete Score</string>
     <string name="aldrete">Aldrete</string>
     <string name="pacu">Post-anesthesia scoring system used in the Post-Anesthesia Care Unit</string>
+    <string name="twentyTofortynine">± 20% to 49%</string>
 </resources>
