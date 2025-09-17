@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -91,6 +92,7 @@ fun AldreteScreen(navController: NavController) {
 
 @Composable
 fun aldreteTotalScore(): Int {
+    val systolicBp = rememberSaveable { mutableDoubleStateOf(120.0) }
     val  activityScore = buttonAndScoreWithScore(
         optionsWithScores = aldreteExtremeties,
         title = R.string.acitivity,
@@ -104,7 +106,7 @@ fun aldreteTotalScore(): Int {
         aldreteCirculation,
         R.string.circulation,
         {
-            val systolicBp = remember { mutableDoubleStateOf(120.0) }
+
             Column(){
                 Text(
                     text = parseStyledString(R.string.systolicBloodPressure), // Using stringResource directly
