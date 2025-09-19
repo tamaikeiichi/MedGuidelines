@@ -314,9 +314,9 @@
     <string name="breatheDeeply">深呼吸と十分な咳ができる</string>
     <string name="dyspneaOrLimited">呼吸困難あるいは不十分な呼吸</string>
     <string name="apneic">無呼吸</string>
-    <string name="twentyPercent">血圧が処置前の値より &lt; ±20％</string>
-    <string name="fortyninePercent">血圧が処置前の値より±20—49％</string>
-    <string name="fiftyPercent">血圧が処置前の値より&#8805; ±50％</string>
+    <string name="twentyPercent">血圧が処置前の値の±20％以内</string>
+    <string name="fortyninePercent">血圧が処置前の値より±20%を超えて49％まで</string>
+    <string name="fiftyPercent">血圧が処置前の値より±50％以上</string>
     <string name="fullyAwake">全覚醒</string>
     <string name="arousableOnCalling">呼名で覚醒</string>
     <string name="noResponding">無反応</string>
