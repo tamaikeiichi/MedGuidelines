@@ -156,6 +156,25 @@ val MfactorIntrahepaticCholangiocarcinoma = listOf(
     R.string.M1,
 )
 
+val TfactorGastricCancer = listOf(
+    R.string.Tis,
+    R.string.T1,
+    R.string.T2,
+    R.string.T3,
+    R.string.T4a,
+    R.string.T4b,
+)
+val NfactorGastricCancer = listOf(
+    R.string.N0,
+    R.string.N1,
+    R.string.N2,
+    R.string.N3a,
+    R.string.N3b,
+)
+val MfactorGastricCancer = listOf(
+    R.string.M0,
+    R.string.M1,
+)
 val MfactorLung = listOf(
     R.string.M0,
     R.string.M1a,

@@ -55,3 +55,13 @@ val intrahepaticCholangiocarcinomaTNM = listOf(
     listOf("N/A", "IIIB", "IIIB", "IIIB", "IIIB", "IIIB"),//N1
     listOf("N/A", "IV", "IV", "IV", "IV", "IV"),//M1
 )
+
+val gastricCancerTNM = listOf(
+    //      Tis T1   T2     T3      T4a     T4b
+    listOf("0", "IA", "IB", "IIA", "IIB", "IIIA"), //N0
+    listOf("N/A", "IB", "IIA", "IIB", "IIIA", "IIIB"),//N1
+    listOf("N/A", "IIA", "IIB", "IIIA", "IIIA", "IIIB"),//N2
+    listOf("N/A", "IIB", "IIIA", "IIIB", "IIIB", "IIIC"),//N3a
+    listOf("N/A", "IIIB", "IIIB", "IIIC", "IIIC", "IIIC"),//N3b
+    listOf("N/A", "IV", "IV", "IV", "IV", "IV"),//M1
+)

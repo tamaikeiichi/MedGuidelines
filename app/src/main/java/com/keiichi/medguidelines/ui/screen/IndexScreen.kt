@@ -349,6 +349,7 @@ fun IndexScreenPreview() {
             navigateToWilson = {},
             navigateToShikashinryokoiMaster = {},
             navigateToAldrete = {},
+            navigateToGastricCancerTNM = {}
         )
     )
 }

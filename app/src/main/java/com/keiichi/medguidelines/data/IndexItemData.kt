@@ -31,6 +31,7 @@ import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
 import com.keiichi.medguidelines.ui.screen.LilleModelScreen
 import com.keiichi.medguidelines.ui.screen.EcogScreen
 import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
+import com.keiichi.medguidelines.ui.screen.GastricTNMScreen
 import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
 import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
 import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
@@ -67,6 +68,7 @@ enum class ActionType {
     NAVIGATE_TO_WILSON,
     NAVIGATE_TO_SHIKASHINRYOKOIMASTER,
     NAVIGATE_TO_ALDRETE,
+    NAVIGATE_TO_GASTRICCANCER_TNM
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -130,6 +132,7 @@ val itemsList = listOf(
     ListItemData(R.string.pancreaticTNMTitle, ActionType.NAVIGATE_TO_PANCREASE_TNM),
     ListItemData(R.string.esophagealTNMTitle, ActionType.NAVIGATE_TO_ESOPAGEAL_TNM),
     ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM),
+    ListItemData(R.string.gastrangercancerTNMTitle, ActionType.NAVIGATE_TO_GASTRICCANCER_TNM),
     ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2,
         keywords = listOf(
             R.string.af,
@@ -185,6 +188,7 @@ data class IndexScreenActions(
     val navigateToWilson: () -> Unit,
     val navigateToShikashinryokoiMaster: () -> Unit,
     val navigateToAldrete: () -> Unit,
+    val navigateToGastricCancerTNM: () -> Unit
 )
 
 @Composable
@@ -223,6 +227,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToIcd10Japanese = { navController.navigate("Icd10JapaneseScreen") },
         navigateToShikashinryokoiMaster = { navController.navigate("ShikaShinryokoiMaster") },
         navigateToAldrete = { navController.navigate("ModifiedAldreteScore") },
+        navigateToGastricCancerTNM = { navController.navigate("GastricCancerTNM") }
     )
 }
 
@@ -263,6 +268,7 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("WilsonScreen") { navController -> WilsonScreen(navController) },
         ScreenRoute("ShikaShinryokoiMaster") { navController -> ShikaShinryokoiMasterScreen(navController) },
         ScreenRoute("ModifiedAldreteScore") { navController -> AldreteScreen(navController) },
+        ScreenRoute("GastricCancerTNM") { navController -> GastricTNMScreen(navController) }
     )
 }
 
@@ -295,6 +301,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_WILSON -> this.navigateToWilson()
         ActionType.NAVIGATE_TO_SHIKASHINRYOKOIMASTER -> this.navigateToShikashinryokoiMaster()
         ActionType.NAVIGATE_TO_ALDRETE -> this.navigateToAldrete()
+        ActionType.NAVIGATE_TO_GASTRICCANCER_TNM -> this.navigateToGastricCancerTNM()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

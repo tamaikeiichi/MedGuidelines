@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MedGuidelines</string>
-    <string name="colorectalTNMTitle">大腸癌TNM分類（UICC第8版）</string>
+    <string name="colorectalTNMTitle">大腸癌TNM分類（第8版）</string>
     <string name="acuteTonsillitisAlgorithmTitle">急性扁桃炎治療アルゴリズム</string>
     <string name="indexScreen_searchbar">検索</string>
     <string name="ascitesGrade1">なし</string>
@@ -113,13 +113,13 @@
     <string name="acutePancreatitisCTGradePoorContrastTitle">造影CT Grade: 膵の造影不良域</string>
     <string name="acutePancreatitisBaseExcessTitle">Base Excess　≤　-3 mEq/L, or shock (収縮期血圧 ≤ 80 mmHg)</string>
     <string name="acutePancreatitisPaO2Title">PaO&lt;sub>2&lt;/sub> ≤ 60 mmHg、または呼吸不全（人工呼吸管理が必要）</string>
-    <string name="pancreaticTNMTitle">膵癌TNM分類（UICC第8版）</string>
+    <string name="pancreaticTNMTitle">膵癌TNM分類（第8版）</string>
     <string name="TfactorTitleNotePancreaticCancer">&lt;b>Tis&lt;/b>:Carcinoma in situ: 高異型度膵上皮内腫瘍性病変 (PanIn-3)、高度異形成を伴う膵管内乳頭粘液性腫瘍、高度異形成を伴うintraductal tubulopapillary neoplasm、高度異形成を伴う膵粘液性嚢胞腫瘍を含む。\n&lt;b>T1a&lt;/b>: 膵に限局する, ≤0.5 cm\n&lt;b>T1b&lt;/b>: >0.5 cm and &lt; 1 cm\n&lt;b>T1c&lt;/b>: 1–2 cm\n&lt;b>T2&lt;/b>: >2 cm and ≤4 cm\n&lt;b>T3&lt;/b>: >4 cm\n&lt;b>T4&lt;/b>: 腫瘍は腹腔動脈・上腸間膜脈動脈・総肝動脈のいずれか一つ以上に浸潤する, 大きさを問わない</string>
     <string name="netakiridoTitle">日常生活自立度</string>
     <string name="TfactorTitleNoteEsophagealCancer">&lt;b>Tis&lt;/b>: 高度異形成\n&lt;b>T1a&lt;/b>: 粘膜固有層あるいは粘膜筋板\n&lt;b>T1b&lt;/b>: 粘膜下層\n&lt;b>T2&lt;/b>: 固有筋層\n&lt;b>T3&lt;/b>: 漿膜\n&lt;b>T4a&lt;/b>: 胸膜, 心外膜, 奇静脈, 横隔膜, あるいは腹膜\n&lt;b>T4b&lt;/b>: それ以外の隣接臓器（例えば大動脈, 椎体, 気管）</string>
     <string name="NfactorTitleNoteEsophagealCancer">&lt;b>N1&lt;/b>: 1–2個の所属リンパ節\n&lt;b>N2&lt;/b>: 3–6個\n&lt;b>N3&lt;/b>: 7個以上</string>
     <string name="MfactorTitleNoteEsophagealCancer">&lt;b>M1&lt;/b>: 遠隔転移</string>
-    <string name="esophagealTNMTitle">食道癌TNM分類（UICC第8版）</string>
+    <string name="esophagealTNMTitle">食道癌TNM分類（第8版）</string>
     <string name="totalBilirubin">総ビリルビン</string>
     <string name="plateletCount">血小板数</string>
     <string name="liverFibrosisScoreSystemTitle">肝線維化指標一覧</string>
@@ -145,7 +145,7 @@
     <string name="insulinResistance">インスリン抵抗性</string>
     <string name="fastingInsulin">空腹時インスリン</string>
     <string name="fastingGlucose">空腹時血糖</string>
-    <string name="lungTNMTitle">肺癌TNM分類 (UICC第9版)</string>
+    <string name="lungTNMTitle">肺癌TNM分類 (第9版)</string>
     <string name="TfactorTitleNoteLungCancer">
         &lt;b>Tis&lt;/b> Carcinoma in situ\n&lt;b>T1a&lt;/b> Tumor ≤ 1cm\n&lt;b>T1b&lt;/b> Tumor > 1cm,  ≤ 2cm\n&lt;b>T1c&lt;/b> Tumor > 2 cm, ≤ 3cm\n&lt;b>T2a&lt;/b> Tumor > 3 cm, ≤ 4 cm。あるいは臓側胸膜・隣接肺葉に浸潤、主気管支（分岐部に達さない）に進展。あるいは無気肺・閉塞性肺炎が肺門部・片肺全体に及ぶ\n&lt;b>T2b&lt;/b> Tumor > 4 cm, ≤ 5 cm\n&lt;b>T3&lt;/b> 次のいずれかがみられる：腫瘍最大径が > 5 cm, 7 cm。 壁側胸膜あるいは胸壁に浸潤。 心膜・横隔膜神経・奇静脈に浸潤。胸椎神経根（T1やT2）・ 星状神経節に浸潤。 同じ肺葉に複数の原発腫瘍。\n&lt;b>T4&lt;/b> 次のいずれかがみられる：> 7 cm。縦郭・胸腺・気管・気管分岐部・反回神経・迷走神経・食道・横隔膜のいずれかに浸潤。 心臓・大血管（大動脈・上下下大静脈・心膜内肺動脈・肺静脈）・上行大動脈・腕頭静脈。鎖骨下動静脈・椎体・椎弓板・脊柱管・頚部神経根・腕神経叢（神経幹・分枝・索・終末神経）。同側の別肺葉に複数の腫瘍。
     </string>
@@ -162,11 +162,11 @@
     <string name="fibrosisStage2">線維化ステージ2</string>
     <string name="fibrosisStage3">線維化ステージ3</string>
     <string name="normal">正常</string>
-    <string name="hccTNMTitle">肝細胞癌TNM分類 (UICC第8版)</string>
+    <string name="hccTNMTitle">肝細胞癌TNM分類 (第8版)</string>
     <string name="TfactorTitleNoteHcc">&lt;b>T1&lt;/b> 単発腫瘍 ≤2 cm, あるいは >2 cm 血管浸潤なし\n&lt;b>T1a&lt;/b> 単発腫瘍 ≤2 cm\n&lt;b>T1b&lt;/b> 単発腫瘍 >2 cm 血管浸潤なし\n&lt;b>T2&lt;/b> 血管浸潤を伴う単発腫瘍 >2 cm, あるいは多発腫瘍, 5 cmを超えない\n&lt;b>T3&lt;/b> 多発腫瘍、少なくとも一つが>5 cm\n&lt;b>T4&lt;/b> 単発あるいは多発腫瘍、サイズを問わない、門脈あるいは肝静脈主管部に浸潤している、あるいは胆のう以外の隣接臓器に直接浸潤している、あるいは臓側腹膜を穿孔している</string>
     <string name="NfactorTitleNoteHcc">&lt;b>N0&lt;/b> リンパ節転移を認めない\n&lt;b>M1&lt;/b> 所属リンパ節転移を認める</string>
     <string name="MfactorTitleNoteHcc">&lt;b>M0&lt;/b> 遠隔転移なし\n&lt;b>M1&lt;/b> 遠隔転移あり</string>
-    <string name="intrahepaticCholangiocarcinomaTNMTitle">肝内胆管癌TNM分類 (UICC第8版)</string>
+    <string name="intrahepaticCholangiocarcinomaTNMTitle">肝内胆管癌TNM分類 (第8版)</string>
     <string name="TfactorTitleNoteIntrahepaticCholangiocarcinoma">&lt;b>Tis&lt;/b> 上皮内癌（胆管内腫瘍）\n&lt;b>T1a&lt;/b> 血管侵襲を伴わず、最大径が5cm以下の単発腫瘍\n&lt;b>T1b&lt;/b> 血管侵襲を伴わず、最大径が5cmをこえる単発腫瘍 \n&lt;b>T2&lt;/b> 肝内血管侵襲を伴う単発腫瘍、または血管侵襲の有無に関係なく多発腫瘍\n&lt;b>T3&lt;/b> 臓側腹膜を貫通する腫瘍\n&lt;b>T4&lt;/b> 直接的な肝浸潤により局所的肝外構造に浸潤する腫瘍</string>
     <string name="NfactorTitleNoteIntrahepaticCholangiocarcinoma">N0 リンパ節転移を認めない\n&lt;b>M1&lt;/b> 所属リンパ節転移を認める</string>
     <string name="MfactorTitleNoteIntrahepaticCholangiocarcinoma">M0  遠隔転移なし\n&lt;b>M1&lt;/b> 遠隔転移あり</string>
@@ -330,4 +330,8 @@
     <string name="o2saturation">SpO&lt;sub>2&lt;/sub></string>
     <string name="aldreteTitle">Modified Aldreteスコア</string>
     <string name="pacu">鎮静後の覚醒評価スコア</string>
+    <string name="TfactorTitleNoteGastricCancer">&lt;b>Tis&lt;/b> Carcinoma in situ: 粘膜内腫瘍であり粘膜固有層に浸潤しない; 高度異形成\n&lt;b>T1a&lt;/b> 粘膜固有層あるいは粘膜筋板\n&lt;b>T1b&lt;/b> 粘膜下層\n&lt;b>T2&lt;/b> 固有筋層\n&lt;b>T3&lt;/b> 腫瘍は漿膜下層に達するが臓側腹膜や周囲構造物には浸潤しない\n&lt;b>T4a&lt;/b> 漿膜を貫通し臓側腹膜に達する\n&lt;b>T4b&lt;/b> 漿膜を貫通し周囲構造物・臓器に達する</string>
+    <string name="NfactorTitleNoteGastricCancer">&lt;b>N1&lt;/b> 1-2個の領域リンパ節転移\n&lt;b>N2&lt;/b> 3-6個の領域リンパ節転移\n&lt;b>N3a&lt;/b> 7-15個の領域リンパ節転移\n&lt;b>N3b&lt;/b> 16個以上の領域リンパ節転移</string>
+    <string name="MfactorTitleNoteGastricCancer">&lt;b>M0&lt;/b> 遠隔転移なし\n&lt;b>M1&lt;/b> 遠隔転移あり</string>
+    <string name="gastrangercancerTNMTitle">胃癌TNM分類(第8版)</string>
 </resources>
