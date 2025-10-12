@@ -68,7 +68,7 @@ fun CkdScreen(
     )
     val urineAlbumin = remember { mutableDoubleStateOf(0.00) }
     val urineCreatinine = remember { mutableDoubleStateOf(0.0) }
-    val urineAlbuminCreatinineRatio = remember { mutableDoubleStateOf(0.0) }
+    //val urineAlbuminCreatinineRatio = remember { mutableDoubleStateOf(0.0) }
     val urineTotalProtein = remember { mutableDoubleStateOf(0.0) }
     val urineTotalProteinCreatinineRatio = remember { mutableDoubleStateOf(0.0) }
     val gfr = remember { mutableDoubleStateOf(0.0) }
@@ -89,13 +89,13 @@ fun CkdScreen(
             if ((urineAlbumin.doubleValue != 0.0) &&
                 (urineCreatinine.doubleValue != 0.0)
             ) {
-                (((
+                (
                         calculateUrineAlbuminCreatinineRatio(
                             urineAlbumin.doubleValue,
                             urineCreatinine.doubleValue,
-                        )
-                        ).roundToInt()
-                )
+
+                        )//.roundToInt()
+
                         )
             } else {
                 0.0
@@ -123,16 +123,18 @@ fun CkdScreen(
 
     var prognosis by remember { mutableStateOf("") }
 
-    LaunchedEffect(key1 = calculatedUrineAlbuminCreatinineRatio) {
-        if (calculatedUrineAlbuminCreatinineRatio != urineAlbuminCreatinineRatio.doubleValue)
-            urineAlbuminCreatinineRatio.doubleValue =
-                calculatedUrineAlbuminCreatinineRatio.toDouble()
-    }
+//    LaunchedEffect(key1 = calculatedUrineAlbuminCreatinineRatio) {
+//        if (calculatedUrineAlbuminCreatinineRatio != urineAlbuminCreatinineRatio.doubleValue)
+//            urineAlbuminCreatinineRatio.doubleValue =
+//                calculatedUrineAlbuminCreatinineRatio.toDouble()
+//    }
+
     LaunchedEffect(key1 = calculatedUrineTotalProteinCreatinineRatio) {
         if (calculatedUrineTotalProteinCreatinineRatio != urineTotalProteinCreatinineRatio.doubleValue)
             urineTotalProteinCreatinineRatio.doubleValue =
                 calculatedUrineTotalProteinCreatinineRatio
     }
+
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBarVariable(
@@ -165,7 +167,7 @@ fun CkdScreen(
                 allCkdScores = inputAndCalculateCkd(
                     urineAlbumin = urineAlbumin,
                     urineCreatinine = urineCreatinine,
-                    urineAlbuminCreatinineRatio = urineAlbuminCreatinineRatio,
+                    urineAlbuminCreatinineRatio = calculatedUrineAlbuminCreatinineRatio,
                     urineTotalProtein = urineTotalProtein,
                     urineTotalProteinCreatinineRatio = urineTotalProteinCreatinineRatio,
                     gfr = gfr
@@ -238,7 +240,7 @@ fun calculateUrineTotalProteinCreatinineRatio(
 fun inputAndCalculateCkd(
     urineAlbumin: MutableDoubleState,
     urineCreatinine: MutableDoubleState,
-    urineAlbuminCreatinineRatio: MutableDoubleState,
+    urineAlbuminCreatinineRatio: Double,
     urineTotalProtein: MutableDoubleState,
     urineTotalProteinCreatinineRatio: MutableDoubleState,
     gfr: MutableDoubleState,
@@ -246,6 +248,10 @@ fun inputAndCalculateCkd(
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
     var changedFactor3Unit by remember { mutableStateOf(true) }
+
+    val ratioDisplayState = remember(urineAlbuminCreatinineRatio) {
+        mutableDoubleStateOf(urineAlbuminCreatinineRatio)
+    }
 
     MedGuidelinesCard(
         modifier = Modifier
@@ -274,8 +280,14 @@ fun inputAndCalculateCkd(
                 changedValueRate = 88.4,
                 changedUnit = R.string.umolL
             )
+            // Create a temporary state that holds the calculated value
+
+            // Update it whenever the calculated value changes
+            ratioDisplayState.doubleValue = urineAlbuminCreatinineRatio
+
             InputValue(
-                label = R.string.urineAlbuminCreatinineRatio, value = urineAlbuminCreatinineRatio,
+                label = R.string.urineAlbuminCreatinineRatio,
+                value = ratioDisplayState,
                 japaneseUnit = R.string.mgg,
                 isJapaneseUnit = remember { mutableStateOf(changedFactor2Unit) }.also {
                     changedFactor2Unit = it.value
@@ -306,7 +318,7 @@ fun inputAndCalculateCkd(
 
     val urineAlbumin = urineAlbumin.doubleValue
     val urineCreatinine = urineCreatinine.doubleValue
-    val urineAlbuminCreatinineRatio = urineAlbuminCreatinineRatio.doubleValue
+    val urineAlbuminCreatinineRatio = ratioDisplayState.doubleValue
     val urineTotalProtein = urineTotalProtein.doubleValue
     val urineTotalProteinCreatinineRatio = urineTotalProteinCreatinineRatio.doubleValue
     val gfr = gfr.doubleValue

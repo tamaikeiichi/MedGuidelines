@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.focus.onFocusChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.collect
 
@@ -42,11 +43,12 @@ fun NumberInTextField(
     multiplier: Double = 1.0,
     isJapaneseUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
     formatter: DecimalFormat = remember { DecimalFormat("#.##") },
-    changeValueRate: Double = 1.0
+    changeValueRate: Double = 1.0,
+    onFocusChanged: (Boolean) -> Unit = {}
 ) {
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
+    var isFocused = interactionSource.collectIsFocusedAsState()
 
     LaunchedEffect(Unit) { // Runs once to set up the flow collection
         snapshotFlow { isJapaneseUnit.value } // Create a flow that emits when isJapaneseUnit.value changes
@@ -64,7 +66,7 @@ fun NumberInTextField(
 
     LaunchedEffect(isFocused//, isJapaneseUnit.value//, multiplier
          ) {
-        if (!isFocused) {
+        if (!isFocused.value) {
             //if (isJapaneseUnit) {
             text =
                 if (isJapaneseUnit.value) {
@@ -83,7 +85,7 @@ fun NumberInTextField(
         }
     }
     LaunchedEffect(isFocused) {
-        if (isFocused) {
+        if (isFocused.value) {
             text = ""
         }
     }
@@ -101,7 +103,12 @@ fun NumberInTextField(
         },
         modifier = Modifier
             .padding(5.dp)
-            .width(width.dp),
+            .width(width.dp)
+            .onFocusChanged { focusState ->
+                onFocusChanged(focusState.isFocused) // Call the lambda here
+                isFocused.value = focusState.isFocused
+                // ... rest of your onFocusChanged logic
+            },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next
