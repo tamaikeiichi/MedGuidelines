@@ -38,6 +38,7 @@ import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
+import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 
@@ -53,20 +54,45 @@ data class HomaGrade(
 
 @Composable
 fun HomaIRScreen(navController: NavController) {
-    var grade by remember { mutableStateOf(
-        HomaGrade(
-            ir = "",
-            beta = ""
+    var grade by remember {
+        mutableStateOf(
+            HomaGrade(
+                ir = "",
+                beta = ""
+            )
         )
-    ) }
-    var score by remember { mutableStateOf(
-        HomaScore(ir = 0.0, beta = 0.0)
-    )
     }
-    var scoreRound by remember { mutableStateOf(
-        HomaScore(ir = 0.0, beta = 0.0)
-    )}
+    var score by remember {
+        mutableStateOf(
+            HomaScore(ir = 0.0, beta = 0.0)
+        )
+    }
+    var scoreRound by remember {
+        mutableStateOf(
+            HomaScore(ir = 0.0, beta = 0.0)
+        )
+    }
     val focusManager = LocalFocusManager.current
+    val displayString =
+        buildAnnotatedString {
+            append(stringResource(R.string.insulinResistance))
+            append(" ")
+            withStyle(
+                style = SpanStyle(fontWeight = FontWeight.Bold)
+            ) {
+                append(" ${grade.ir} ")
+            }
+            append("\n")
+            append(stringResource(R.string.bCellDysfunction))
+            append(" ")
+            withStyle(
+                style = SpanStyle(fontWeight = FontWeight.Bold)
+            ) {
+                append(" ${grade.beta} ")
+            }
+            //append("HOMA-IR=$scoreRound")
+        }
+
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
@@ -77,33 +103,12 @@ fun HomaIRScreen(navController: NavController) {
                 )
             )
         },
-        bottomBar = {
-            ResultBottomAppBar {
-                Text(
-                    buildAnnotatedString {
-                        append(stringResource(R.string.insulinResistance))
-                        append(" ")
-                        withStyle(
-                            style = SpanStyle(fontWeight = FontWeight.Bold)
-                        ) {
-                            append(" ${grade.ir} ")
-                        }
-                        append("\n")
-                        append(stringResource(R.string.bCellDysfunction))
-                        append(" ")
-                        withStyle(
-                            style = SpanStyle(fontWeight = FontWeight.Bold)
-                        ) {
-                            append(" ${grade.beta} ")
-                        }
-                        //append("HOMA-IR=$scoreRound")
-                    },
-                    fontSize = 30.sp,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 1.2.em
-                )
 
-            }
+        bottomBar = {
+            ScoreBottomAppBarVariable(
+                displayText = displayString,
+                fontSize = 30.sp,
+            )
         },
         modifier = Modifier
             .pointerInput(Unit) { // Use pointerInput with detectTapGestures
@@ -136,7 +141,7 @@ fun HomaIRScreen(navController: NavController) {
                     ir = Math.round(score.ir * 100.0) / 100.0,
                     beta = Math.round(score.beta * 100.0) / 100.0
                 )
-                MedGuidelinesCard (
+                MedGuidelinesCard(
                 ) {
                     Text(
                         text = stringResource(R.string.homairTitle),
@@ -182,7 +187,7 @@ fun homaInput(): HomaScore {
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
 
-    MedGuidelinesCard (
+    MedGuidelinesCard(
     ) {
         FlowRow(
             modifier = Modifier
