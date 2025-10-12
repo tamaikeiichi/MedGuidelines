@@ -31,8 +31,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.tv.material3.MaterialTheme
 import com.keiichi.medguidelines.R
-import com.keiichi.medguidelines.ui.screen.PopupClickable
-import com.keiichi.medguidelines.ui.screen.drawThresholdLine
+import com.keiichi.medguidelines.ui.component.PopupClickable
+import com.keiichi.medguidelines.ui.component.drawThresholdLine
 
 @Composable
 fun GraphAndThreshold(

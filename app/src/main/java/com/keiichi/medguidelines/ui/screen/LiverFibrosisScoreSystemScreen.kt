@@ -1,7 +1,5 @@
 package com.keiichi.medguidelines.ui.screen
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,12 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -435,34 +429,34 @@ fun calculateElfScore(
     return score
 }
 
-@Composable
-fun PopupClickable(text: String, onClick: () -> Unit) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
-        shadowElevation = 10.dp,
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .padding(8.dp) // Optional: Add padding around the text
-            .clickable(onClick = onClick)
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(8.dp) // Optional: Add padding inside the surface
-        )
-    }
-}
+//@Composable
+//fun PopupClickable(text: String, onClick: () -> Unit) {
+//    Surface(
+//        color = MaterialTheme.colorScheme.secondaryContainer, // Set the background color to white
+//        shadowElevation = 10.dp,
+//        shape = RoundedCornerShape(16.dp),
+//        modifier = Modifier
+//            .padding(8.dp) // Optional: Add padding around the text
+//            .clickable(onClick = onClick)
+//    ) {
+//        Text(
+//            text = text,
+//            modifier = Modifier.padding(8.dp) // Optional: Add padding inside the surface
+//        )
+//    }
+//}
 
-fun DrawScope.drawThresholdLine(
-    height: Float,
-    xPosition: Float
-) {
-    drawLine(
-        color = Color.Black,
-        start = Offset(x = xPosition, y = height),
-        end = Offset(x = xPosition, y = height * 2),
-        strokeWidth = 3F
-    )
-}
+//fun DrawScope.drawThresholdLine(
+//    height: Float,
+//    xPosition: Float
+//) {
+//    drawLine(
+//        color = Color.Black,
+//        start = Offset(x = xPosition, y = height),
+//        end = Offset(x = xPosition, y = height * 2),
+//        strokeWidth = 3F
+//    )
+//}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
