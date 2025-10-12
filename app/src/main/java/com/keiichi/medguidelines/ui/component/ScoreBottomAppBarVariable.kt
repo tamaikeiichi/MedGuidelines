@@ -44,21 +44,11 @@ fun ScoreBottomAppBarVariable(
     // Define the style for measurement (should match your Text composable's style)
     val textStyle = TextStyle(
         fontSize = fontSize,
+        lineHeight = 1.2.em,
         // Add other style attributes if they affect height:
         // fontFamily = ..., fontWeight = ..., lineHeight = ...
     )
 
-    // Measure the text. You need to provide constraints.
-    // For width, you might use the available width of the BottomAppBar.
-    // For simplicity, let's assume it can take as much width as it needs for now,
-    // or you can pass a max width constraint.
-//    val textLayoutResult: TextLayoutResult = remember(displayText, textStyle, density) {
-//        textMeasurer.measure(
-//            text = displayText,
-//            style = textStyle,
-//            constraints = Constraints(maxWidth = Constraints.Infinity) // Adjust if you have a fixed width
-//        )
-//    }
     // Use BoxWithConstraints to get the available width for text measurement
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) { // The modifier here sets up the context for maxWidth
         val availableWidthPx = constraints.maxWidth // maxWidth from BoxWithConstraints in pixels
@@ -76,7 +66,7 @@ fun ScoreBottomAppBarVariable(
         val barHeight = textHeight + (paddingValues * 2) // Add padding above and below text
 
         ResultBottomAppBar(
-            modifier = modifier.height(barHeight), // Set the dynamic height
+            modifier = Modifier.height(barHeight), // Set the dynamic height
             // contentColor = ...,
             // containerColor = ...
         ) {
@@ -85,8 +75,9 @@ fun ScoreBottomAppBarVariable(
                 fontSize = fontSize,
                 style = textStyle, // Apply the same style
                 textAlign = TextAlign.Center,
-                lineHeight = 1.2.em,
-                modifier = Modifier.padding(horizontal = paddingValues) // Horizontal padding for text
+                modifier = Modifier
+                    .padding(horizontal = paddingValues) // Horizontal padding for text
+                    .fillMaxWidth()
             )
         }
     }
@@ -96,6 +87,6 @@ fun ScoreBottomAppBarVariable(
 @Composable
 fun ScoreBottomAppBarVariablePreview() {
     ScoreBottomAppBarVariable(
-        displayText = AnnotatedString("Mild")
+        displayText = AnnotatedString("Mild aaaaaaaaaaaaaaaaaaaaaaaaa \n bbbbbbbbbbbbbb \n")
     )
 }

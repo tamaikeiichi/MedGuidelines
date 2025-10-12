@@ -73,25 +73,7 @@ fun HomaIRScreen(navController: NavController) {
         )
     }
     val focusManager = LocalFocusManager.current
-    val displayString =
-        buildAnnotatedString {
-            append(stringResource(R.string.insulinResistance))
-            append(" ")
-            withStyle(
-                style = SpanStyle(fontWeight = FontWeight.Bold)
-            ) {
-                append(" ${grade.ir} ")
-            }
-            append("\n")
-            append(stringResource(R.string.bCellDysfunction))
-            append(" ")
-            withStyle(
-                style = SpanStyle(fontWeight = FontWeight.Bold)
-            ) {
-                append(" ${grade.beta} ")
-            }
-            //append("HOMA-IR=$scoreRound")
-        }
+
 
     MedGuidelinesScaffold(
         topBar = {
@@ -105,9 +87,38 @@ fun HomaIRScreen(navController: NavController) {
         },
 
         bottomBar = {
+            val displayString = //by remember { mutableStateOf(
+                buildAnnotatedString {
+                    append(stringResource(R.string.insulinResistance))
+                    append(" ")
+                    withStyle(
+                        style = SpanStyle(fontWeight = FontWeight.Bold)
+                    ) {
+                        append(" ${grade.ir} ")
+                    }
+                    append("\n")
+                    append(stringResource(R.string.bCellDysfunction))
+                    append(" ")
+                    withStyle(
+                        style = SpanStyle(fontWeight = FontWeight.Bold)
+                    ) {
+                        append(" ${grade.beta} ")
+                    }
+                    //append("HOMA-IR=$scoreRound")
+                }
+            //) //}
+
+//            ResultBottomAppBar{
+//                Text(displayString
+//                    ,
+//                    fontSize = 30.sp,
+//                    textAlign = TextAlign.Center,
+//                    lineHeight = 1.2.em
+//                )
+//            }
             ScoreBottomAppBarVariable(
                 displayText = displayString,
-                fontSize = 30.sp,
+                //fontSize = 30.sp,
             )
         },
         modifier = Modifier
@@ -128,15 +139,26 @@ fun HomaIRScreen(navController: NavController) {
         ) {
             item {
                 score = homaInput()
-                grade.ir = when {
-                    score.ir <= 1.6 -> stringResource(R.string.absence)
-                    score.ir < 2.5 -> stringResource(R.string.boaderline)
-                    else -> stringResource(R.string.presence)
-                }
-                grade.beta = when {
-                    score.beta < 30 -> stringResource(R.string.presence)
-                    else -> stringResource(R.string.absence)
-                }
+//                grade.ir = when {
+//                    score.ir <= 1.6 -> stringResource(R.string.absence)
+//                    score.ir < 2.5 -> stringResource(R.string.boaderline)
+//                    else -> stringResource(R.string.presence)
+//                }
+//                grade.beta = when {
+//                    score.beta < 30 -> stringResource(R.string.presence)
+//                    else -> stringResource(R.string.absence)
+//                }
+                grade = HomaGrade(
+                    ir = when {
+                        score.ir <= 1.6 -> stringResource(R.string.absence)
+                        score.ir < 2.5 -> stringResource(R.string.boaderline)
+                        else -> stringResource(R.string.presence)
+                    },
+                    beta = when {
+                        score.beta < 30 -> stringResource(R.string.presence)
+                        else -> stringResource(R.string.absence)
+                    }
+                )
                 scoreRound = HomaScore(
                     ir = Math.round(score.ir * 100.0) / 100.0,
                     beta = Math.round(score.beta * 100.0) / 100.0
