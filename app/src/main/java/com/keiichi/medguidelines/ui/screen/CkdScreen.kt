@@ -253,6 +253,19 @@ fun inputAndCalculateCkd(
         mutableDoubleStateOf(urineAlbuminCreatinineRatio)
     }
 
+    // 2. State to track if the user has manually edited the ratio field.
+    var isRatioManuallySet by remember { mutableStateOf(false) }
+
+    // --- Logic to decide what to display ---
+    // If NOT manually set, always show the latest calculated value.
+    if (!isRatioManuallySet) {
+        ratioDisplayState.doubleValue = urineAlbuminCreatinineRatio
+    }
+
+    LaunchedEffect(urineAlbumin.doubleValue, urineCreatinine.doubleValue) {
+        isRatioManuallySet = false
+    }
+
     MedGuidelinesCard(
         modifier = Modifier
             .padding(
@@ -293,7 +306,12 @@ fun inputAndCalculateCkd(
                     changedFactor2Unit = it.value
                 },
                 changedValueRate = 0.113,
-                changedUnit = R.string.mgmmol
+                changedUnit = R.string.mgmmol,
+                onFocusChanged = { isFocused ->
+                    if (isFocused) {
+                        isRatioManuallySet = true
+                    }
+                }
             )
             InputValue(
                 label = R.string.urineTotalProtein, value = urineTotalProtein,

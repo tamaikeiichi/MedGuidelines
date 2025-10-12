@@ -48,7 +48,7 @@ fun NumberInTextField(
 ) {
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
-    var isFocused = interactionSource.collectIsFocusedAsState()
+    val isFocused by interactionSource.collectIsFocusedAsState()
 
     LaunchedEffect(Unit) { // Runs once to set up the flow collection
         snapshotFlow { isJapaneseUnit.value } // Create a flow that emits when isJapaneseUnit.value changes
@@ -66,7 +66,7 @@ fun NumberInTextField(
 
     LaunchedEffect(isFocused//, isJapaneseUnit.value//, multiplier
          ) {
-        if (!isFocused.value) {
+        if (!isFocused) {
             //if (isJapaneseUnit) {
             text =
                 if (isJapaneseUnit.value) {
@@ -85,7 +85,7 @@ fun NumberInTextField(
         }
     }
     LaunchedEffect(isFocused) {
-        if (isFocused.value) {
+        if (isFocused) {
             text = ""
         }
     }
@@ -106,7 +106,7 @@ fun NumberInTextField(
             .width(width.dp)
             .onFocusChanged { focusState ->
                 onFocusChanged(focusState.isFocused) // Call the lambda here
-                isFocused.value = focusState.isFocused
+                //isFocused = focusState.isFocused
                 // ... rest of your onFocusChanged logic
             },
         keyboardOptions = KeyboardOptions(
