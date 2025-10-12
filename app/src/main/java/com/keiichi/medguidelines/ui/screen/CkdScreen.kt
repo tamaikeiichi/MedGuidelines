@@ -34,6 +34,7 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
+import com.keiichi.medguidelines.ui.component.TitleTopAppBarVariable
 import kotlin.math.roundToInt
 
 data class CkdScores(
@@ -75,7 +76,12 @@ fun CkdScreen(
     var allCkdScores by remember {
         mutableStateOf(
             CkdScores(
-                0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
             )
         )
     }
@@ -105,8 +111,10 @@ fun CkdScreen(
     }
     MedGuidelinesScaffold(
         topBar = {
-            TitleTopAppBar(
-                title = R.string.ckdGuidelineTitle,
+            TitleTopAppBarVariable(
+                displayText = buildAnnotatedString {
+                    append(stringResource(R.string.ckdGuidelineTitle))
+                },
                 navController = navController,
                 references = references,
             )
@@ -283,7 +291,6 @@ fun inputAndCalculateCkd(
     //allScores.roundToTwoDecimals()
     return allScores
 }
-
 
 @Preview
 @Composable

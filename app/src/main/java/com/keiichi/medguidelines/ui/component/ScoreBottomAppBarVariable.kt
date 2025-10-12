@@ -35,7 +35,6 @@ fun ScoreBottomAppBarVariable(
     displayText: AnnotatedString,
     fontSize: TextUnit = 30.sp,
     modifier: Modifier = Modifier,
-    // Other parameters like backgroundColor, contentColor, etc.
     paddingValues: Dp = 16.dp // Default padding around the text
 ) {
     val textMeasurer = rememberTextMeasurer()
