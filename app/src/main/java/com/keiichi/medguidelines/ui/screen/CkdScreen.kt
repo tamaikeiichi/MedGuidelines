@@ -14,6 +14,7 @@ import androidx.compose.runtime.MutableDoubleState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,12 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.Dimensions
-import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
-import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBarVariable
 import kotlin.math.roundToInt
@@ -90,11 +89,31 @@ fun CkdScreen(
             if ((urineAlbumin.doubleValue != 0.0) &&
                 (urineCreatinine.doubleValue != 0.0)
             ) {
-                (
+                (((
                         calculateUrineAlbuminCreatinineRatio(
                             urineAlbumin.doubleValue,
                             urineCreatinine.doubleValue,
+                        )
                         ).roundToInt()
+                )
+                        )
+            } else {
+                0.0
+            }
+        }
+    }
+    val calculatedUrineTotalProteinCreatinineRatio by remember {
+        derivedStateOf {
+            if ((urineTotalProtein.doubleValue != 0.0) &&
+                (urineCreatinine.doubleValue != 0.0)
+            ) {
+                (((
+                        calculateUrineTotalProteinCreatinineRatio(
+                            urineTotalProtein.doubleValue,
+                            urineCreatinine.doubleValue,
+                        ) * 100.0
+                        ).roundToInt()
+                        ) / 100.0
                         )
             } else {
                 0.0
@@ -107,7 +126,12 @@ fun CkdScreen(
     LaunchedEffect(key1 = calculatedUrineAlbuminCreatinineRatio) {
         if (calculatedUrineAlbuminCreatinineRatio != urineAlbuminCreatinineRatio.doubleValue)
             urineAlbuminCreatinineRatio.doubleValue =
-                calculatedUrineAlbuminCreatinineRatio as Double
+                calculatedUrineAlbuminCreatinineRatio.toDouble()
+    }
+    LaunchedEffect(key1 = calculatedUrineTotalProteinCreatinineRatio) {
+        if (calculatedUrineTotalProteinCreatinineRatio != urineTotalProteinCreatinineRatio.doubleValue)
+            urineTotalProteinCreatinineRatio.doubleValue =
+                calculatedUrineTotalProteinCreatinineRatio
     }
     MedGuidelinesScaffold(
         topBar = {
@@ -201,6 +225,14 @@ fun calculateUrineAlbuminCreatinineRatio(
     return score
 }
 
+fun calculateUrineTotalProteinCreatinineRatio(
+    urineTotalProtein: Double,
+    urineCreatinine: Double,
+): Double {
+    val score = (urineTotalProtein / urineCreatinine) * 1000 / 1000
+    return score
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun inputAndCalculateCkd(
@@ -258,7 +290,7 @@ fun inputAndCalculateCkd(
             InputValue(
                 label = R.string.urineTotalProteinCreatinineRatio,
                 value = urineTotalProteinCreatinineRatio,
-                japaneseUnit = R.string.mgg,
+                japaneseUnit = R.string.gg,
                 isJapaneseUnit = remember { mutableStateOf(changedFactor3Unit) }.also {
                     changedFactor3Unit = it.value
                 },

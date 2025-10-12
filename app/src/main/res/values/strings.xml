@@ -552,4 +552,5 @@
     <string name="veryHighRisk">Very high risk</string>
     <string name="kidney">Kidney</string>
     <string name="chronic">Chronic</string>
+    <string name="gg">g/g</string>
 </resources>
