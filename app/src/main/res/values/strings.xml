@@ -536,9 +536,9 @@
     <string name="NfactorTitleNoteGastricCancer">&lt;b>N1&lt;/b> Metastasis in one or two regional lymph nodes\n&lt;b>N2&lt;/b> Metastasis in three to six regional lymph nodes\n&lt;b>N3&lt;/b> Metastasis in seven or more regional lymph nodes\n&lt;b>N3a&lt;/b> Metastasis in seven to 15 regional lymph nodes\n&lt;b>T3b&lt;/b> Metastasis in 16 or more regional lymph nodes</string>
     <string name="MfactorTitleNoteGastricCancer">&lt;b>M0&lt;/b> No distant metastasis\n&lt;b>M1&lt;/b> Distant metastasis</string>
     <string name="gastrangercancerTNMTitle">Gastric Cancer TNM classification (8th)</string>
-    <string name="ckdGuideline">KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease</string>
+    <string name="ckdGuideline">KDIGO 2024 Guideline for CKD</string>
     <string name="ckdGuidelineUrl">https://www.kidney-international.org/article/S0085-2538(23)00766-4/fulltext</string>
-    <string name="ckdGuidelineTitle">Prognosis of chronic kidney disease by glomerular filtration rate and albuminuria categories</string>
+    <string name="ckdGuidelineTitle">Prognosis of CKD by GFR and albuminuria categories</string>
     <string name="urineAlbumin">Urine Albumin</string>
     <string name="urineCreatinine">Urine Creatinine</string>
     <string name="urineAlbuminCreatinineRatio">Urine Albumin Creatinine Ratio</string>
@@ -550,4 +550,6 @@
     <string name="mlmin173m2"><![CDATA[ml/min/1.73m<sup>2</sup>]]></string>
     <string name="moderatelyIncreasedRisk">Moderately increased risk</string>
     <string name="veryHighRisk">Very high risk</string>
+    <string name="kidney">Kidney</string>
+    <string name="chronic">Chronic</string>
 </resources>

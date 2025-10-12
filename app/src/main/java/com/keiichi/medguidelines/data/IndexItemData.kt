@@ -16,6 +16,7 @@ import com.keiichi.medguidelines.ui.screen.AldreteScreen
 import com.keiichi.medguidelines.ui.screen.BloodGasAnalysisScreen
 import com.keiichi.medguidelines.ui.screen.Chads2Screen
 import com.keiichi.medguidelines.ui.screen.ChildPughScreen
+import com.keiichi.medguidelines.ui.screen.CkdScreen
 import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
 import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
 import com.keiichi.medguidelines.ui.screen.GlasgowComaScaleScreen
@@ -68,7 +69,8 @@ enum class ActionType {
     NAVIGATE_TO_WILSON,
     NAVIGATE_TO_SHIKASHINRYOKOIMASTER,
     NAVIGATE_TO_ALDRETE,
-    NAVIGATE_TO_GASTRICCANCER_TNM
+    NAVIGATE_TO_GASTRICCANCER_TNM,
+    NAVIGATE_TO_CKD
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -158,6 +160,10 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.aldrete
         )),
+    ListItemData(R.string.ckdGuideline, ActionType.NAVIGATE_TO_CKD,
+        keywords = listOf(
+            R.string.kidney, R.string.chronic
+        ))
 )
 
 data class IndexScreenActions(
@@ -188,7 +194,8 @@ data class IndexScreenActions(
     val navigateToWilson: () -> Unit,
     val navigateToShikashinryokoiMaster: () -> Unit,
     val navigateToAldrete: () -> Unit,
-    val navigateToGastricCancerTNM: () -> Unit
+    val navigateToGastricCancerTNM: () -> Unit,
+    val navigateToCkd: () -> Unit
 )
 
 @Composable
@@ -227,7 +234,8 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToIcd10Japanese = { navController.navigate("Icd10JapaneseScreen") },
         navigateToShikashinryokoiMaster = { navController.navigate("ShikaShinryokoiMaster") },
         navigateToAldrete = { navController.navigate("ModifiedAldreteScore") },
-        navigateToGastricCancerTNM = { navController.navigate("GastricCancerTNM") }
+        navigateToGastricCancerTNM = { navController.navigate("GastricCancerTNM") },
+        navigateToCkd = { navController.navigate("CkdScreen") },
     )
 }
 
@@ -268,7 +276,8 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("WilsonScreen") { navController -> WilsonScreen(navController) },
         ScreenRoute("ShikaShinryokoiMaster") { navController -> ShikaShinryokoiMasterScreen(navController) },
         ScreenRoute("ModifiedAldreteScore") { navController -> AldreteScreen(navController) },
-        ScreenRoute("GastricCancerTNM") { navController -> GastricTNMScreen(navController) }
+        ScreenRoute("GastricCancerTNM") { navController -> GastricTNMScreen(navController) },
+        ScreenRoute("CkdScreen") { navController -> CkdScreen(navController) }
     )
 }
 
@@ -302,6 +311,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_SHIKASHINRYOKOIMASTER -> this.navigateToShikashinryokoiMaster()
         ActionType.NAVIGATE_TO_ALDRETE -> this.navigateToAldrete()
         ActionType.NAVIGATE_TO_GASTRICCANCER_TNM -> this.navigateToGastricCancerTNM()
+        ActionType.NAVIGATE_TO_CKD -> this.navigateToCkd()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand
