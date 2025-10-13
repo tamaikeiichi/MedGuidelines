@@ -553,4 +553,5 @@
     <string name="kidney">Kidney</string>
     <string name="chronic">Chronic</string>
     <string name="gg">g/g</string>
+    <string name="mmolL">mmol/L</string>
 </resources>

@@ -64,6 +64,9 @@ fun NumberInTextField(
             }
     }
 
+    LaunchedEffect(value.doubleValue){
+        text = formatter.format(value.doubleValue)
+    }
     LaunchedEffect(isFocused//, isJapaneseUnit.value//, multiplier
          ) {
         if (!isFocused) {
