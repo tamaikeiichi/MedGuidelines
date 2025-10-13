@@ -14,7 +14,6 @@ import androidx.compose.runtime.MutableDoubleState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -71,7 +70,7 @@ fun CkdScreen(
     //val urineAlbuminCreatinineRatio = remember { mutableDoubleStateOf(0.0) }
     val urineTotalProtein = remember { mutableDoubleStateOf(0.0) }
     val urineTotalProteinCreatinineRatio = remember { mutableDoubleStateOf(0.0) }
-    val gfr = remember { mutableDoubleStateOf(0.0) }
+    val gfr = remember { mutableDoubleStateOf(100.0) }
     var allCkdScores by remember {
         mutableStateOf(
             CkdScores(
@@ -93,9 +92,7 @@ fun CkdScreen(
                         calculateUrineAlbuminCreatinineRatio(
                             urineAlbumin.doubleValue,
                             urineCreatinine.doubleValue,
-
                         )//.roundToInt()
-
                         )
             } else {
                 0.0
@@ -170,7 +167,8 @@ fun CkdScreen(
                     urineAlbuminCreatinineRatio = calculatedUrineAlbuminCreatinineRatio,
                     urineTotalProtein = urineTotalProtein,
                     urineTotalProteinCreatinineRatio = urineTotalProteinCreatinineRatio,
-                    gfr = gfr
+                    gfr = gfr,
+                    calculatedUrineAlbuminCreatinineRatio = calculatedUrineAlbuminCreatinineRatio
                 )
                 allCkdScores.roundToTwoDecimals()
                 prognosis = when {
@@ -244,26 +242,40 @@ fun inputAndCalculateCkd(
     urineTotalProtein: MutableDoubleState,
     urineTotalProteinCreatinineRatio: MutableDoubleState,
     gfr: MutableDoubleState,
+    calculatedUrineAlbuminCreatinineRatio: Double,
 ): CkdScores {
     var changedFactor1Unit by remember { mutableStateOf(true) }
     var changedFactor2Unit by remember { mutableStateOf(true) }
     var changedFactor3Unit by remember { mutableStateOf(true) }
 
-    val ratioDisplayState = remember(urineAlbuminCreatinineRatio) {
-        mutableDoubleStateOf(urineAlbuminCreatinineRatio)
-    }
+//    val ratioDisplayState = remember(urineAlbuminCreatinineRatio) {
+//        mutableDoubleStateOf(urineAlbuminCreatinineRatio)
+//    }
+    val ratioDisplayState = remember { mutableDoubleStateOf(0.0) }
 
     // 2. State to track if the user has manually edited the ratio field.
-    var isRatioManuallySet by remember { mutableStateOf(false) }
+    var isRatioDirectlySet by remember { mutableStateOf(false) }
 
     // --- Logic to decide what to display ---
     // If NOT manually set, always show the latest calculated value.
-    if (!isRatioManuallySet) {
-        ratioDisplayState.doubleValue = urineAlbuminCreatinineRatio
-    }
+//    if (!isRatioManuallySet) {
+//        ratioDisplayState.doubleValue = urineAlbuminCreatinineRatio
+//    }
 
     LaunchedEffect(urineAlbumin.doubleValue, urineCreatinine.doubleValue) {
-        isRatioManuallySet = false
+        isRatioDirectlySet = false
+    }
+    LaunchedEffect(isRatioDirectlySet) {
+        if (!isRatioDirectlySet) {
+            ratioDisplayState.doubleValue = calculatedUrineAlbuminCreatinineRatio
+        } else {
+            ratioDisplayState.doubleValue = ratioDisplayState.doubleValue
+        }
+    }
+    LaunchedEffect(calculatedUrineAlbuminCreatinineRatio) {
+        if (!isRatioDirectlySet) {
+            ratioDisplayState.doubleValue = calculatedUrineAlbuminCreatinineRatio
+        }
     }
 
     MedGuidelinesCard(
@@ -293,10 +305,6 @@ fun inputAndCalculateCkd(
                 changedValueRate = 88.4,
                 changedUnit = R.string.umolL
             )
-            // Create a temporary state that holds the calculated value
-
-            // Update it whenever the calculated value changes
-            ratioDisplayState.doubleValue = urineAlbuminCreatinineRatio
 
             InputValue(
                 label = R.string.urineAlbuminCreatinineRatio,
@@ -309,7 +317,7 @@ fun inputAndCalculateCkd(
                 changedUnit = R.string.mgmmol,
                 onFocusChanged = { isFocused ->
                     if (isFocused) {
-                        isRatioManuallySet = true
+                        isRatioDirectlySet = true
                     }
                 }
             )
