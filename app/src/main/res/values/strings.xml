@@ -554,4 +554,10 @@
     <string name="chronic">Chronic</string>
     <string name="gg">g/g</string>
     <string name="mmolL">mmol/L</string>
+    <string name="g3a">G3a</string>
+    <string name="g3b">G3b</string>
+    <string name="g4">G4</string>
+    <string name="g5">G5</string>
+    <string name="g1">G1</string>
+    <string name="g2">G2</string>
 </resources>

@@ -119,6 +119,8 @@ fun CkdScreen(
     }
 
     var prognosis by remember { mutableStateOf("") }
+    var gStage by remember { mutableStateOf("") }
+    var aStage by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = calculatedUrineTotalProteinCreatinineRatio) {
         if (calculatedUrineTotalProteinCreatinineRatio != urineTotalProteinCreatinineRatio.doubleValue)
@@ -205,6 +207,21 @@ fun CkdScreen(
                     else -> {
                         stringResource(R.string.na)
                     }
+                }
+                gStage = when (allCkdScores.gfr) {
+                    in 90.0..Double.MAX_VALUE -> stringResource(R.string.g1)
+                    in 60.0..<90.0 -> stringResource(R.string.g2)
+                    in 45.0..<60.0 -> stringResource(R.string.g3a)
+                    in 30.0..<45.0 -> stringResource(R.string.g3b)
+                    in 15.0..<30.0 -> stringResource(R.string.g4)
+                    in 0.0..<15.0 -> stringResource(R.string.g5)
+                    else -> stringResource(R.string.na)
+                }
+                aStage = when (allCkdScores.urineAlbuminCreatinineRatio) {
+                    in 0.0..<30.0 -> stringResource(R.string.a1)
+                    in 30.0..<300.0 -> stringResource(R.string.a2)
+                    in 300.0..<Double.MAX_VALUE -> stringResource(R.string.a3)
+                    else -> stringResource(R.string.na)
                 }
             }
         }
