@@ -560,4 +560,9 @@
     <string name="g5">G5</string>
     <string name="g1">G1</string>
     <string name="g2">G2</string>
+    <string name="a1">A1</string>
+    <string name="a2">A2</string>
+    <string name="a3">A3</string>
+    <string name="persistentAlbuminuriaCategories">Persistent albuminuria categories</string>
+    <string name="persistentProteinuriaCategories">Persistent Proteinuria Categories</string>
 </resources>

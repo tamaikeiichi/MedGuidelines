@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableDoubleState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,12 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.Dimensions
+import com.keiichi.medguidelines.ui.component.GraphAndThreshold
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBarVariable
+import com.keiichi.medguidelines.ui.component.cardModifier
 import kotlin.math.roundToInt
 
 data class CkdScores(
@@ -121,6 +125,8 @@ fun CkdScreen(
     var prognosis by remember { mutableStateOf("") }
     var gStage by remember { mutableStateOf("") }
     var aStage by remember { mutableStateOf("") }
+    var aStageAlbumin by remember { mutableIntStateOf(0) }
+    var aStageTotalProtein by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(key1 = calculatedUrineTotalProteinCreatinineRatio) {
         if (calculatedUrineTotalProteinCreatinineRatio != urineTotalProteinCreatinineRatio.doubleValue)
@@ -141,6 +147,10 @@ fun CkdScreen(
         bottomBar = {
             val displayText =
                 buildAnnotatedString {
+                    append(gStage)
+                    append(" ")
+                    append(aStage)
+                    append("\n")
                     append(prognosis)
                 }
             ScoreBottomAppBarVariable(
@@ -161,47 +171,73 @@ fun CkdScreen(
                     urineAlbumin = urineAlbumin,
                     urineCreatinine = urineCreatinine,
                     urineTotalProtein = urineTotalProtein,
-                    urineTotalProteinCreatinineRatio = urineTotalProteinCreatinineRatio,
                     gfr = gfr,
                     calculatedUrineAlbuminCreatinineRatio = calculatedUrineAlbuminCreatinineRatio,
                     calculatedUrineTotalProteinCreatinineRatio = calculatedUrineTotalProteinCreatinineRatio
                 )
                 allCkdScores.roundToTwoDecimals()
+                aStageAlbumin = when (allCkdScores.urineAlbuminCreatinineRatio) {
+                    in 0.0..<30.0 -> 1
+                    in 30.0..<300.0 -> 2
+                    in 300.0..<Double.MAX_VALUE -> 3
+                    else -> 0
+                }
+                aStageTotalProtein = when (allCkdScores.urineTotalProteinCreatinineRatio) {
+                    in 0.0..<0.15 -> 1
+                    in 0.15..<0.5 -> 2
+                    in 0.5..<Double.MAX_VALUE -> 3
+                    else -> 0
+                }
+                aStage = when (maxOf(aStageAlbumin, aStageTotalProtein)) {
+                    1 -> stringResource(R.string.a1)
+                    2 -> stringResource(R.string.a2)
+                    3 -> stringResource(R.string.a3)
+                    else -> stringResource(R.string.na)
+                }
                 prognosis = when {
                     (allCkdScores.gfr >= 60.0 &&
-                            allCkdScores.urineAlbuminCreatinineRatio < 30.0)
+                            (aStage == stringResource(R.string.a1))
+                            )
                         -> stringResource(R.string.lowRisk)
 
                     (allCkdScores.gfr >= 45 &&
-                            allCkdScores.urineAlbuminCreatinineRatio < 30)
+                            (aStage == stringResource(R.string.a1))
+                            )
                         -> stringResource(R.string.moderatelyIncreasedRisk)
 
                     (allCkdScores.gfr >= 30 &&
-                            allCkdScores.urineAlbuminCreatinineRatio < 30)
+                            (aStage == stringResource(R.string.a1))
+                            )
                         -> stringResource(R.string.highRisk)
 
                     (allCkdScores.gfr < 30 &&
-                            allCkdScores.urineAlbuminCreatinineRatio < 30)
+                            (aStage == stringResource(R.string.a1))
+                            )
                         -> stringResource(R.string.veryHighRisk)
 
                     (allCkdScores.gfr >= 60 &&
-                            allCkdScores.urineAlbuminCreatinineRatio <= 300)
+                            (aStage == stringResource(R.string.a2))
+                            )
                         -> stringResource(R.string.moderatelyIncreasedRisk)
 
                     (allCkdScores.gfr >= 45 &&
-                            allCkdScores.urineAlbuminCreatinineRatio <= 300)
+                            (aStage == stringResource(R.string.a2))
+                            )
                         -> stringResource(R.string.highRisk)
 
                     (allCkdScores.gfr < 45 &&
-                            allCkdScores.urineAlbuminCreatinineRatio <= 300)
+                            (aStage == stringResource(R.string.a2))
+                            )
                         -> stringResource(R.string.veryHighRisk)
 
                     (allCkdScores.gfr >= 60 &&
-                            allCkdScores.urineAlbuminCreatinineRatio > 300)
+                            (aStage == stringResource(R.string.a3))
+                            )
                         -> stringResource(R.string.highRisk)
 
                     (allCkdScores.gfr < 60 &&
-                            allCkdScores.urineAlbuminCreatinineRatio > 300)
+                            (aStage == stringResource(R.string.a3))
+                            )
                         -> stringResource(R.string.veryHighRisk)
 
                     else -> {
@@ -217,11 +253,45 @@ fun CkdScreen(
                     in 0.0..<15.0 -> stringResource(R.string.g5)
                     else -> stringResource(R.string.na)
                 }
-                aStage = when (allCkdScores.urineAlbuminCreatinineRatio) {
-                    in 0.0..<30.0 -> stringResource(R.string.a1)
-                    in 30.0..<300.0 -> stringResource(R.string.a2)
-                    in 300.0..<Double.MAX_VALUE -> stringResource(R.string.a3)
-                    else -> stringResource(R.string.na)
+                MedGuidelinesCard(
+                    modifier = Modifier
+                        .padding(Dimensions.cardPadding)
+                ) {
+                    Text(
+                        text = stringResource(R.string.persistentAlbuminuriaCategories),
+                        modifier = Modifier
+                            .padding(Dimensions.textPadding)
+                    )
+                    GraphAndThreshold(
+                        maxValue = 350F,
+                        minValue = 0F,
+                        firstThreshold = 30F,
+                        secondThreshold = 300F,
+                        firstLabel = stringResource(R.string.a1),
+                        secondLabel = stringResource(R.string.a2),
+                        thirdLabel = stringResource(R.string.a3),
+                        score = allCkdScores.urineAlbuminCreatinineRatio
+                    )
+                }
+                MedGuidelinesCard(
+                    modifier = Modifier
+                        .padding(Dimensions.cardPadding)
+                ) {
+                    Text(
+                        text = stringResource(R.string.persistentProteinuriaCategories),
+                        modifier = Modifier
+                            .padding(Dimensions.textPadding)
+                    )
+                    GraphAndThreshold(
+                        maxValue = 0.7F,
+                        minValue = 0F,
+                        firstThreshold = 0.15F,
+                        secondThreshold = 0.5F,
+                        firstLabel = stringResource(R.string.a1),
+                        secondLabel = stringResource(R.string.a2),
+                        thirdLabel = stringResource(R.string.a3),
+                        score = allCkdScores.urineTotalProteinCreatinineRatio
+                    )
                 }
             }
         }
@@ -250,7 +320,6 @@ fun inputAndCalculateCkd(
     urineAlbumin: MutableDoubleState,
     urineCreatinine: MutableDoubleState,
     urineTotalProtein: MutableDoubleState,
-    urineTotalProteinCreatinineRatio: MutableDoubleState,
     gfr: MutableDoubleState,
     calculatedUrineAlbuminCreatinineRatio: Double,
     calculatedUrineTotalProteinCreatinineRatio: Double,
@@ -272,26 +341,32 @@ fun inputAndCalculateCkd(
     }
     LaunchedEffect(isUrineAlbuminCreatinineRatioDirectlySet) {
         if (!isUrineAlbuminCreatinineRatioDirectlySet) {
-            urineAlbuminCreatinineRatioDisplay.doubleValue = calculatedUrineAlbuminCreatinineRatio
+            urineAlbuminCreatinineRatioDisplay.doubleValue =
+                calculatedUrineAlbuminCreatinineRatio
         } else {
-            urineAlbuminCreatinineRatioDisplay.doubleValue = urineAlbuminCreatinineRatioDisplay.doubleValue
+            urineAlbuminCreatinineRatioDisplay.doubleValue =
+                urineAlbuminCreatinineRatioDisplay.doubleValue
         }
     }
     LaunchedEffect(isUrineTotalProteinCreatinineRatioDirectlySet) {
         if (!isUrineTotalProteinCreatinineRatioDirectlySet) {
-            urineTotalProteinCreatinineRatioDisplay.doubleValue = calculatedUrineTotalProteinCreatinineRatio
+            urineTotalProteinCreatinineRatioDisplay.doubleValue =
+                calculatedUrineTotalProteinCreatinineRatio
         } else {
-            urineTotalProteinCreatinineRatioDisplay.doubleValue = urineTotalProteinCreatinineRatioDisplay.doubleValue
+            urineTotalProteinCreatinineRatioDisplay.doubleValue =
+                urineTotalProteinCreatinineRatioDisplay.doubleValue
         }
     }
     LaunchedEffect(calculatedUrineAlbuminCreatinineRatio) {
         if (!isUrineAlbuminCreatinineRatioDirectlySet) {
-            urineAlbuminCreatinineRatioDisplay.doubleValue = calculatedUrineAlbuminCreatinineRatio
+            urineAlbuminCreatinineRatioDisplay.doubleValue =
+                calculatedUrineAlbuminCreatinineRatio
         }
     }
     LaunchedEffect(calculatedUrineTotalProteinCreatinineRatio) {
         if (!isUrineTotalProteinCreatinineRatioDirectlySet) {
-            urineTotalProteinCreatinineRatioDisplay.doubleValue = calculatedUrineTotalProteinCreatinineRatio
+            urineTotalProteinCreatinineRatioDisplay.doubleValue =
+                calculatedUrineTotalProteinCreatinineRatio
         }
     }
 
@@ -319,10 +394,9 @@ fun inputAndCalculateCkd(
                 isJapaneseUnit = remember { mutableStateOf(changedFactor1Unit) }.also {
                     changedFactor1Unit = it.value
                 },
-                changedValueRate = 88.4/1000.0,
+                changedValueRate = 88.4 / 1000.0,
                 changedUnit = R.string.mmolL
             )
-
             InputValue(
                 label = R.string.urineAlbuminCreatinineRatio,
                 value = urineAlbuminCreatinineRatioDisplay,
@@ -350,7 +424,12 @@ fun inputAndCalculateCkd(
                     changedFactor3Unit = it.value
                 },
                 changedValueRate = 0.113,
-                changedUnit = R.string.mgmmol
+                changedUnit = R.string.mgmmol,
+                onFocusChanged = { isFocused ->
+                    if (isFocused) {
+                        isUrineTotalProteinCreatinineRatioDirectlySet = true
+                    }
+                }
             )
             InputValue(
                 label = R.string.gfr, value = gfr,
@@ -363,7 +442,7 @@ fun inputAndCalculateCkd(
     val urineCreatinine = urineCreatinine.doubleValue
     val urineAlbuminCreatinineRatio = urineAlbuminCreatinineRatioDisplay.doubleValue
     val urineTotalProtein = urineTotalProtein.doubleValue
-    val urineTotalProteinCreatinineRatio = urineTotalProteinCreatinineRatio.doubleValue
+    val urineTotalProteinCreatinineRatio = urineTotalProteinCreatinineRatioDisplay.doubleValue
     val gfr = gfr.doubleValue
 
     val allScores =
