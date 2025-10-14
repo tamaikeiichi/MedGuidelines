@@ -10,7 +10,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -31,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.focus.onFocusChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.collect
 
 //@SuppressLint("RememberReturnType")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +41,8 @@ fun NumberInTextField(
     isJapaneseUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
     formatter: DecimalFormat = remember { DecimalFormat("#.##") },
     changeValueRate: Double = 1.0,
-    onFocusChanged: (Boolean) -> Unit = {}
+    onFocusChanged: (Boolean) -> Unit = {},
+    isSetByOtherComponent: Boolean = false
 ) {
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -132,6 +130,9 @@ fun NumberInTextField(
             focusedContainerColor = MaterialTheme.colorScheme.onPrimary,
             unfocusedLabelColor = MaterialTheme.colorScheme.primary,
             focusedLabelColor = MaterialTheme.colorScheme.error,
+            unfocusedTextColor = if (isSetByOtherComponent) MaterialTheme.colorScheme.surfaceDim else MaterialTheme.colorScheme.onBackground,
+            focusedTextColor = if (isSetByOtherComponent) MaterialTheme.colorScheme.surfaceDim else MaterialTheme.colorScheme.onBackground
+
         )
     )
 }

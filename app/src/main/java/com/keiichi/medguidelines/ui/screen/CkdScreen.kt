@@ -416,6 +416,7 @@ fun inputAndCalculateCkd(
             InputValue(
                 label = R.string.urineAlbumin, value = urineAlbumin,
                 japaneseUnit = R.string.mgdl,
+                isSetByOtherComponent = isUrineAlbuminCreatinineRatioDirectlySet
             )
             InputValue(
                 label = R.string.urineCreatinine, value = urineCreatinine,
@@ -424,7 +425,8 @@ fun inputAndCalculateCkd(
                     changedFactor1Unit = it.value
                 },
                 changedValueRate = 88.4 / 1000.0,
-                changedUnit = R.string.mmolL
+                changedUnit = R.string.mmolL,
+                isSetByOtherComponent = isUrineAlbuminCreatinineRatioDirectlySet || isUrineTotalProteinCreatinineRatioDirectlySet
             )
             InputValue(
                 label = R.string.urineAlbuminCreatinineRatio,
@@ -439,11 +441,13 @@ fun inputAndCalculateCkd(
                     if (isFocused) {
                         isUrineAlbuminCreatinineRatioDirectlySet = true
                     }
-                }
+                },
+                isSetByOtherComponent = !isUrineAlbuminCreatinineRatioDirectlySet
             )
             InputValue(
                 label = R.string.urineTotalProtein, value = urineTotalProtein,
-                japaneseUnit = R.string.mgdl, //changeUnit = changedFactor2Unit
+                japaneseUnit = R.string.mgdl, //changeUnit = changedFactor2Unit,
+                isSetByOtherComponent = isUrineTotalProteinCreatinineRatioDirectlySet
             )
             InputValue(
                 label = R.string.urineTotalProteinCreatinineRatio,
@@ -458,7 +462,8 @@ fun inputAndCalculateCkd(
                     if (isFocused) {
                         isUrineTotalProteinCreatinineRatioDirectlySet = true
                     }
-                }
+                },
+                isSetByOtherComponent = !isUrineTotalProteinCreatinineRatioDirectlySet
             )
             InputValue(
                 label = R.string.gfr, value = gfr,

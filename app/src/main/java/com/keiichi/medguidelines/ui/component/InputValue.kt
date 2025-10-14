@@ -34,7 +34,8 @@ fun InputValue(
     changedValueRate: Double = 1.0,
     changedUnit: Int = R.string.space,
     appendixLabel: @Composable (() -> Unit)? = null,
-    onFocusChanged: (Boolean) -> Unit = {}
+    onFocusChanged: (Boolean) -> Unit = {},
+    isSetByOtherComponent: Boolean = false
     ) {
     val textMeasurer = rememberTextMeasurer()
     val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
@@ -73,6 +74,8 @@ fun InputValue(
                 formatter = formatter,
                 isJapaneseUnit = isJapaneseUnit,
                 changeValueRate = changedValueRate,
+                onFocusChanged = onFocusChanged,
+                isSetByOtherComponent = isSetByOtherComponent
             )
             if (changedValueRate == 1.0) {
                 Column(
