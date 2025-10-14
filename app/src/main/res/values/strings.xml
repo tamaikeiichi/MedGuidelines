@@ -565,4 +565,5 @@
     <string name="a3">A3</string>
     <string name="persistentAlbuminuriaCategories">Persistent albuminuria categories</string>
     <string name="persistentProteinuriaCategories">Persistent Proteinuria Categories</string>
+    <string name="gfrCategories">GFR categories</string>
 </resources>

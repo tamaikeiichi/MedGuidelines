@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -42,12 +43,20 @@ fun GraphAndThresholdSixSegments(
     firstThreshold: Float,
     secondThreshold: Float = 0F,
     thirdThreshold: Float = 0F,
+    fourthThreshold: Float = 0F,
+    fifthThreshold: Float = 0F,
+    sixthThreshold: Float = 0F,
     firstLabel: String,
     secondLabel: String = "",
     thirdLabel: String = "",
     thirdLabelInDetail: String = "",
     fourthLabel: String = "",
-    score: Double
+    fifthLabel: String = "",
+    sixthLabel: String = "",
+    seventhLabel: String = "",
+    score: Double,
+    displayAsInt: Boolean = false,
+    invertColors: Boolean = false
 ) {
     val mediumColorValue =
         (((secondThreshold + firstThreshold) / 2) - minValue) / (maxValue - minValue)
@@ -71,18 +80,40 @@ fun GraphAndThresholdSixSegments(
 
     // Declare variables before the if-else
     val greenColor: Color
+    val g2y1Color: Color
+    val g1y2color: Color
     val yellowColor: Color
+    val y2r1Color: Color
+    val y1r2Color: Color
     val redColor: Color
 
     if (isDarkTheme) {
         greenColor = Color(0xFF109A07)
         yellowColor = Color(0xFF968607)
         redColor = Color(0xFF8B0045)
+        g2y1Color = lerp(greenColor, yellowColor, 0.33F)
+        g1y2color = lerp(greenColor, yellowColor, 0.66F)
+        y2r1Color = lerp(yellowColor, redColor, 0.33F)
+        y1r2Color = lerp(yellowColor, redColor, 0.66F)
+
     } else {
         greenColor = Color(0xFF1BFF0B)
         yellowColor = Color(0xFFFFE30B)
         redColor = Color(0xFFFF0180)
+        g2y1Color = lerp(greenColor, yellowColor, 0.33F)
+        g1y2color = lerp(greenColor, yellowColor, 0.66F)
+        y2r1Color = lerp(yellowColor, redColor, 0.33F)
+        y1r2Color = lerp(yellowColor, redColor, 0.66F)
     }
+
+    // Conditionally assign the final colors based on the invertColors flag
+    val finalGreenColor = if (invertColors) redColor else greenColor
+    val finalG2y1Color = if (invertColors) y1r2Color else g2y1Color
+    val finalG1y2color = if (invertColors) y2r1Color else g1y2color
+    val finalYellowColor = yellowColor // Yellow stays in the middle
+    val finalY2r1Color = if (invertColors) g1y2color else y2r1Color
+    val finalY1r2Color = if (invertColors) g2y1Color else y1r2Color
+    val finalRedColor = if (invertColors) greenColor else redColor
 
     val labelTextStyle = TextStyle(
         color = MaterialTheme.colorScheme.tertiary
@@ -115,19 +146,15 @@ fun GraphAndThresholdSixSegments(
     {
         drawIntoCanvas {
             val rectColorStops =
-                if (secondThreshold == 0F) {
                     arrayOf(
-                        0.0f to greenColor,
-                        (firstThreshold - minValue) / (maxValue - minValue) to yellowColor,
-                        1.0f to redColor
+                        0.0f to finalGreenColor,
+                        ((firstThreshold - minValue) / (maxValue - minValue)) to finalG2y1Color,
+                        ((secondThreshold - minValue) / (maxValue - minValue)) to finalG1y2color,
+                        ((thirdThreshold - minValue) / (maxValue - minValue)) to finalYellowColor,
+                        ((fourthThreshold - minValue) / (maxValue - minValue)) to finalY2r1Color,
+                        ((fifthThreshold - minValue) / (maxValue - minValue)) to finalY1r2Color,
+                        1.0f to finalRedColor
                     )
-                } else {
-                    arrayOf(
-                        0.0f to greenColor,
-                        mediumColorValue to yellowColor,
-                        1.0f to redColor
-                    )
-                }
             val rectGradient = Brush.horizontalGradient(
                 colorStops = rectColorStops,
                 startX = size.width * (0),
@@ -187,12 +214,50 @@ fun GraphAndThresholdSixSegments(
                     labelTextStyle = labelTextStyle
                 )
             }
+            if (fourthThreshold != 0F) {
+                drawThresholdWithLabel(
+                    thresholdValue = fourthThreshold,
+                    minValue = minValue,
+                    maxValue = maxValue,
+                    label = fifthLabel,
+                    textMeasurer = textMeasurer,
+                    labelTextStyle = labelTextStyle
+                )
+            }
+            if (fifthThreshold != 0F) {
+                drawThresholdWithLabel(
+                    thresholdValue = fifthThreshold,
+                    minValue = minValue,
+                    maxValue = maxValue,
+                    label = sixthLabel,
+                    textMeasurer = textMeasurer,
+                    labelTextStyle = labelTextStyle
+                )
+            }
+            if (sixthThreshold != 0F) {
+                drawThresholdWithLabel(
+                    thresholdValue = sixthThreshold,
+                    minValue = minValue,
+                    maxValue = maxValue,
+                    label = seventhLabel,
+                    textMeasurer = textMeasurer,
+                    labelTextStyle = labelTextStyle
+                )
+            }
+            drawScaleValue(
+                threshold = firstThreshold,
+                minValue = minValue,
+                maxValue = maxValue,
+                textMeasurer = textMeasurer,
+                displayAsInt = displayAsInt
+            )
             if (secondThreshold != 0F){
                 drawScaleValue(
                     threshold = secondThreshold,
                     minValue = minValue,
                     maxValue = maxValue,
-                    textMeasurer = textMeasurer
+                    textMeasurer = textMeasurer,
+                    displayAsInt = displayAsInt
                 )
             }
             if (thirdThreshold != 0F){
@@ -200,7 +265,35 @@ fun GraphAndThresholdSixSegments(
                     threshold = thirdThreshold,
                     minValue = minValue,
                     maxValue = maxValue,
-                    textMeasurer = textMeasurer
+                    textMeasurer = textMeasurer,
+                    displayAsInt = displayAsInt
+                )
+            }
+            if (fourthThreshold != 0F){
+                drawScaleValue(
+                    threshold = fourthThreshold,
+                    minValue = minValue,
+                    maxValue = maxValue,
+                    textMeasurer = textMeasurer,
+                    displayAsInt = displayAsInt
+                )
+            }
+            if (fifthThreshold != 0F){
+                drawScaleValue(
+                    threshold = fifthThreshold,
+                    minValue = minValue,
+                    maxValue = maxValue,
+                    textMeasurer = textMeasurer,
+                    displayAsInt = displayAsInt
+                )
+            }
+            if (sixthThreshold != 0F){
+                drawScaleValue(
+                    threshold = sixthThreshold,
+                    minValue = minValue,
+                    maxValue = maxValue,
+                    textMeasurer = textMeasurer,
+                    displayAsInt = displayAsInt
                 )
             }
             val alphaCircle =
@@ -276,26 +369,6 @@ fun GraphAndThresholdSixSegments(
                     )
                 )
             }
-            rotate(
-                degrees = -90F,
-                pivot = Offset(
-                    x = (((firstThreshold - minValue)
-                            / (maxValue - minValue)) * size.width), y = (size.height / 2)
-                )
-            ) {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = firstThreshold.toString(),
-                    topLeft = Offset(
-                        x = (((firstThreshold - minValue) / (maxValue - minValue)) * size.width)
-                                + (textMeasurer.measure(text = firstThreshold.toString()).size.height) / 4,
-                        y = (size.height / 2)
-                                - (textMeasurer.measure(text = firstThreshold.toString()).size.height / 2)
-                    ),
-                    style = TextStyle(fontSize = 10.sp, color = Color.Gray)
-                )
-            }
-
         }
     }
 }
@@ -330,7 +403,14 @@ private fun DrawScope.drawScaleValue(
     minValue: Float,
     maxValue: Float,
     textMeasurer: androidx.compose.ui.text.TextMeasurer,
+    displayAsInt: Boolean = false
 ) {
+    val textToDisplay = if (displayAsInt) {
+        threshold.toInt().toString()
+    } else {
+        threshold.toString()
+    }
+
     rotate(
         degrees = -90F,
         pivot = Offset(
@@ -340,7 +420,7 @@ private fun DrawScope.drawScaleValue(
     ) {
         drawText(
             textMeasurer = textMeasurer,
-            text = threshold.toString(),
+            text = textToDisplay,
             topLeft = Offset(
                 x = (((threshold - minValue) / (maxValue - minValue)) * size.width)
                         + (textMeasurer.measure(text = threshold.toString()).size.height) / 4,
@@ -357,13 +437,21 @@ private fun DrawScope.drawScaleValue(
 @Composable
 fun GraphAndThresholdSixSegmentsPreview(){
     GraphAndThresholdSixSegments(
-        maxValue = 350F,
+        maxValue = 100F,
         minValue = 0F,
-        firstThreshold = 100F,
-        secondThreshold = 300F,
-        firstLabel = "A1",
-        secondLabel = "A2",
-        thirdLabel = "A3",
-        score = 100.0
+        firstThreshold = 15F,
+        secondThreshold = 30F,
+        thirdThreshold = 45F,
+        fourthThreshold = 60F,
+        fifthThreshold = 90F,
+        firstLabel = "G5",
+        secondLabel = "G4",
+        thirdLabel = "G3b",
+        fourthLabel = "G3a",
+        fifthLabel = "G2",
+        sixthLabel = "G1",
+        score = 80.0,
+        displayAsInt = true,
+        invertColors = true
     )
 }

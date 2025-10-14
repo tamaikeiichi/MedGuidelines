@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.Dimensions
 import com.keiichi.medguidelines.ui.component.GraphAndThreshold
+import com.keiichi.medguidelines.ui.component.GraphAndThresholdSixSegments
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
@@ -291,6 +292,34 @@ fun CkdScreen(
                         secondLabel = stringResource(R.string.a2),
                         thirdLabel = stringResource(R.string.a3),
                         score = allCkdScores.urineTotalProteinCreatinineRatio
+                    )
+                }
+                MedGuidelinesCard(
+                    modifier = Modifier
+                        .padding(Dimensions.cardPadding)
+                ) {
+                    Text(
+                        text = stringResource(R.string.gfrCategories),
+                        modifier = Modifier
+                            .padding(Dimensions.textPadding)
+                    )
+                    GraphAndThresholdSixSegments(
+                        maxValue = 100F,
+                        minValue = 0F,
+                        firstThreshold = 15F,
+                        secondThreshold = 30F,
+                        thirdThreshold = 45F,
+                        fourthThreshold = 60F,
+                        fifthThreshold = 90F,
+                        firstLabel = stringResource(R.string.g5),
+                        secondLabel = stringResource(R.string.g4),
+                        thirdLabel = stringResource(R.string.g3b),
+                        fourthLabel = stringResource(R.string.g3a),
+                        fifthLabel = stringResource(R.string.g2),
+                        sixthLabel = stringResource(R.string.g1),
+                        score = allCkdScores.gfr,
+                        displayAsInt = true,
+                        invertColors = true
                     )
                 }
             }
