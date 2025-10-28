@@ -350,7 +350,8 @@ fun IndexScreenPreview() {
             navigateToShikashinryokoiMaster = {},
             navigateToAldrete = {},
             navigateToGastricCancerTNM = {},
-            navigateToCkd = {}
+            navigateToCkd = {},
+            navigateDate = {}
         )
     )
 }

@@ -18,6 +18,7 @@ import com.keiichi.medguidelines.ui.screen.Chads2Screen
 import com.keiichi.medguidelines.ui.screen.ChildPughScreen
 import com.keiichi.medguidelines.ui.screen.CkdScreen
 import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
+import com.keiichi.medguidelines.ui.screen.DateScreen
 import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
 import com.keiichi.medguidelines.ui.screen.GlasgowComaScaleScreen
 import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
@@ -70,7 +71,8 @@ enum class ActionType {
     NAVIGATE_TO_SHIKASHINRYOKOIMASTER,
     NAVIGATE_TO_ALDRETE,
     NAVIGATE_TO_GASTRICCANCER_TNM,
-    NAVIGATE_TO_CKD
+    NAVIGATE_TO_CKD,
+    NAVIGATE_TO_DATE
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -163,7 +165,8 @@ val itemsList = listOf(
     ListItemData(R.string.ckdGuideline, ActionType.NAVIGATE_TO_CKD,
         keywords = listOf(
             R.string.kidney, R.string.chronic
-        ))
+        )),
+    ListItemData(R.string.dateTitle, ActionType.NAVIGATE_TO_DATE),
 )
 
 data class IndexScreenActions(
@@ -195,7 +198,8 @@ data class IndexScreenActions(
     val navigateToShikashinryokoiMaster: () -> Unit,
     val navigateToAldrete: () -> Unit,
     val navigateToGastricCancerTNM: () -> Unit,
-    val navigateToCkd: () -> Unit
+    val navigateToCkd: () -> Unit,
+    val navigateDate: () -> Unit,
 )
 
 @Composable
@@ -236,6 +240,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToAldrete = { navController.navigate("ModifiedAldreteScore") },
         navigateToGastricCancerTNM = { navController.navigate("GastricCancerTNM") },
         navigateToCkd = { navController.navigate("CkdScreen") },
+        navigateDate = { navController.navigate("DateScreen") },
     )
 }
 
@@ -277,7 +282,8 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("ShikaShinryokoiMaster") { navController -> ShikaShinryokoiMasterScreen(navController) },
         ScreenRoute("ModifiedAldreteScore") { navController -> AldreteScreen(navController) },
         ScreenRoute("GastricCancerTNM") { navController -> GastricTNMScreen(navController) },
-        ScreenRoute("CkdScreen") { navController -> CkdScreen(navController) }
+        ScreenRoute("CkdScreen") { navController -> CkdScreen(navController) },
+        ScreenRoute("DateScreen") { navController -> DateScreen(navController) },
     )
 }
 
@@ -312,6 +318,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_ALDRETE -> this.navigateToAldrete()
         ActionType.NAVIGATE_TO_GASTRICCANCER_TNM -> this.navigateToGastricCancerTNM()
         ActionType.NAVIGATE_TO_CKD -> this.navigateToCkd()
+        ActionType.NAVIGATE_TO_DATE -> this.navigateDate()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

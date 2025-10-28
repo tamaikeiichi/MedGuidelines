@@ -334,4 +334,22 @@
     <string name="NfactorTitleNoteGastricCancer">&lt;b>N1&lt;/b> 1-2個の領域リンパ節転移\n&lt;b>N2&lt;/b> 3-6個の領域リンパ節転移\n&lt;b>N3a&lt;/b> 7-15個の領域リンパ節転移\n&lt;b>N3b&lt;/b> 16個以上の領域リンパ節転移</string>
     <string name="MfactorTitleNoteGastricCancer">&lt;b>M0&lt;/b> 遠隔転移なし\n&lt;b>M1&lt;/b> 遠隔転移あり</string>
     <string name="gastrangercancerTNMTitle">胃癌TNM分類(第8版)</string>
+    <string name="kidney">腎</string>
+    <string name="chronic">慢性</string>
+    <string name="urineTotalProtein">尿蛋白</string>
+    <string name="urineTotalProteinCreatinineRatio">尿蛋白/Cr比</string>
+    <string name="ckdGuidelineTitle">CKD重症度分類</string>
+    <string name="urineAlbumin">尿中アルブミン</string>
+    <string name="urineCreatinine">尿中クレアチニン</string>
+    <string name="urineAlbuminCreatinineRatio">尿アルブミン/Cr比</string>
+    <string name="ckdGuideline">KDIGO 2024 CKDガイドライン</string>
+    <string name="dateTitle">日数計算</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+    <string name="todayStartingDate">開始日</string>
+    <string name="yearMonthDay">年/月/日</string>
+    <string name="endDate">終了日</string>
+    <string name="numberOfDays">日数</string>
+    <string name="days">日</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -97,15 +98,22 @@ fun TitleTopAppBarVariable(
         }
         CenterAlignedTopAppBar(
             modifier = Modifier.height(barHeight),
-            title = { Text(
-                text = displayText,
-                fontSize = fontSize,
-                style = textStyle,
+            title = {
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center, // Vertically centers the content.
+                    horizontalAlignment = Alignment.CenterHorizontally // Ensures text alignment is also centered.
+                ) {
+                    Text(
+                        text = displayText,
+                        fontSize = fontSize,
+                        style = textStyle,
 //                modifier = Modifier
 //                    .padding(
 //                        Dimensions.textPadding
 //                    )
                     )
+                }
                     },
             navigationIcon = {
                 var navigateBackEvent by remember { mutableStateOf(false) }

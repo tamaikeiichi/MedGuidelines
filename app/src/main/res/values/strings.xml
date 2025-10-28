@@ -495,8 +495,8 @@
     <string name="gender">Gender</string>
     <string name="Adrop">A-drop (Japanese)</string>
     <string name="AdropUrl">https://www.jrs.or.jp/publication/file/adult_pneumonia1-3.pdf</string>
-    <string name="shikashiRinryokuMasterKensaku">歯科診療行為マスター検索</string>
-    <string name="ShikaShinryokoiMaster">歯科診療行為マスター</string>
+    <string name="shikashiRinryokuMasterKensaku" translatable="false">歯科診療行為マスター検索</string>
+    <string name="ShikaShinryokoiMaster" translatable="false">歯科診療行為マスター</string>
     <string name="ShikaShinryokoiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="aldreteTitle">Modified Aldrete Score</string>
     <string name="aldreteRefTitle">J Clin Anesth. 1995 Feb;7(1):89-91.</string>
@@ -526,24 +526,24 @@
     <string name="modifiedAldreteScore">Modified Aldrete Score</string>
     <string name="aldrete">Aldrete</string>
     <string name="pacu">Post-anesthesia scoring system used in the Post-Anesthesia Care Unit</string>
-    <string name="twentyTofortynine">± 20% to 49%</string>
-    <string name="plusTwentyTofortynine">+20–49%:</string>
-    <string name="minusTwentyTofortynine">-20–49%:</string>
+    <string name="twentyTofortynine" translatable="false">± 20% to 49%</string>
+    <string name="plusTwentyTofortynine" translatable="false">+20–49%:</string>
+    <string name="minusTwentyTofortynine" translatable="false">-20–49%:</string>
     <string name="gastricTNMTitle">Gastric cancer TNM classification</string>
-    <string name="N3a">N3a</string>
-    <string name="N3b">N3b</string>
+    <string name="N3a" translatable="false">N3a</string>
+    <string name="N3b" translatable="false">N3b</string>
     <string name="TfactorTitleNoteGastricCancer">&lt;b>Tis&lt;/b> Carcinoma in situ: intraepithelial tumor without invasion of the lamina propria; high grade dysplasia\n&lt;b>T1&lt;/b> Tumor invades the lamina propria, muscularis mucosae or submucosa\n&lt;b>T1a&lt;/b> Tumor invades the lamina propria or muscularis mucosae\n&lt;b>T1b&lt;/b> Tumor invades the submucosa\n&lt;b>T2&lt;/b> Tumor invades the muscularis propria\n&lt;b>T3&lt;/b> Tumor penetrates the subserosal connective tissue without invasion of the visceral peritoneum or adjacent structures\n&lt;b>T4&lt;/b> Tumor invades the serosa (visceral peritoneum) or adjacent structures\n&lt;b>T4a&lt;/b> Tumor invades the serosa (visceral peritoneum)\n&lt;b>T4b&lt;/b> Tumor invades adjacent structures/organs</string>
     <string name="NfactorTitleNoteGastricCancer">&lt;b>N1&lt;/b> Metastasis in one or two regional lymph nodes\n&lt;b>N2&lt;/b> Metastasis in three to six regional lymph nodes\n&lt;b>N3&lt;/b> Metastasis in seven or more regional lymph nodes\n&lt;b>N3a&lt;/b> Metastasis in seven to 15 regional lymph nodes\n&lt;b>T3b&lt;/b> Metastasis in 16 or more regional lymph nodes</string>
     <string name="MfactorTitleNoteGastricCancer">&lt;b>M0&lt;/b> No distant metastasis\n&lt;b>M1&lt;/b> Distant metastasis</string>
     <string name="gastrangercancerTNMTitle">Gastric Cancer TNM classification (8th)</string>
     <string name="ckdGuideline">KDIGO 2024 Guideline for CKD</string>
-    <string name="ckdGuidelineUrl">https://www.kidney-international.org/article/S0085-2538(23)00766-4/fulltext</string>
+    <string name="ckdGuidelineUrl" translatable="false">https://www.kidney-international.org/article/S0085-2538(23)00766-4/fulltext</string>
     <string name="ckdGuidelineTitle">Prognosis of CKD by GFR and albuminuria categories</string>
     <string name="urineAlbumin">Urine Albumin</string>
     <string name="urineCreatinine">Urine Creatinine</string>
     <string name="urineAlbuminCreatinineRatio">Urine Albumin Creatinine Ratio</string>
-    <string name="mgg">mg/g</string>
-    <string name="mgmmol">mg/mmol</string>
+    <string name="mgg" translatable="false">mg/g</string>
+    <string name="mgmmol" translatable="false">mg/mmol</string>
     <string name="urineTotalProtein">Urine Total Protein</string>
     <string name="urineTotalProteinCreatinineRatio">Urine Total Protein Creatinine Ratio</string>
     <string name="gfr">GFR</string>
@@ -552,8 +552,8 @@
     <string name="veryHighRisk">Very high risk</string>
     <string name="kidney">Kidney</string>
     <string name="chronic">Chronic</string>
-    <string name="gg">g/g</string>
-    <string name="mmolL">mmol/L</string>
+    <string name="gg" translatable="false">g/g</string>
+    <string name="mmolL" translatable="false">mmol/L</string>
     <string name="g3a">G3a</string>
     <string name="g3b">G3b</string>
     <string name="g4">G4</string>
@@ -566,4 +566,13 @@
     <string name="persistentAlbuminuriaCategories">Persistent albuminuria categories</string>
     <string name="persistentProteinuriaCategories">Persistent Proteinuria Categories</string>
     <string name="gfrCategories">GFR categories</string>
+    <string name="dateTitle">Days calculation</string>
+    <string name="year">Year</string>
+    <string name="month">Month</string>
+    <string name="day">Day</string>
+    <string name="todayStartingDate">Today (starting day)</string>
+    <string name="yearMonthDay">Year/Month/Day</string>
+    <string name="endDate">End date</string>
+    <string name="numberOfDays">Number of Days</string>
+    <string name="days">days</string>
 </resources>
