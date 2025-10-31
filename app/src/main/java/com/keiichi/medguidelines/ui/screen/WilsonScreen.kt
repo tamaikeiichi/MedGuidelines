@@ -37,6 +37,7 @@ import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScore
+import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
 import com.keiichi.medguidelines.ui.component.parseStyledString
 import org.apache.commons.math3.stat.interval.WilsonScoreInterval
 
@@ -85,43 +86,43 @@ fun WilsonScreen(navController: NavController) {
 
 @Composable
 fun wilsonTotalScore(): Int {
-    val  KayserFleischerRingsScore = buttonAndScoreWithScore(
+    val  KayserFleischerRingsScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = kayserFleischerRings,
         title = R.string.KFrings,
         titleNote = R.string.kayserFleischerRingsNote,
         defaultSelectedOption =  R.string.absent
     )
     val neurologicScore =
-        buttonAndScoreWithScore(
+        buttonAndScoreWithScoreDisplayed(
             neurologicSymptoms,
             R.string.neurologicSymptoms,
             R.string.neurologicSymptomsNote,
             defaultSelectedOption =  R.string.absent
         )
-    val ceruloplasminScore = buttonAndScoreWithScore(
+    val ceruloplasminScore = buttonAndScoreWithScoreDisplayed(
         serumCeruloplasmin,
         R.string.serumCeruloplasmin,
         R.string.space
     )
     val coombsScore =
-        buttonAndScoreWithScore(
+        buttonAndScoreWithScoreDisplayed(
             coombsNegativeHemolyticAnemia,
             R.string.coombsNegativeHymolyticAnemia,
             R.string.space,
             defaultSelectedOption =  R.string.absent
         )
-    val liveCopperScore = buttonAndScoreWithScore(
+    val liveCopperScore = buttonAndScoreWithScoreDisplayed(
         liverCopper,
         R.string.liverCopper,
         R.string.liverCopperNote,
         defaultSelectedOption =  R.string.normal08
     )
-    val urinaryCopperScore = buttonAndScoreWithScore(
+    val urinaryCopperScore = buttonAndScoreWithScoreDisplayed(
         urinaryCopper,
         R.string.urinaryCopper,
         R.string.urinaryCopperNote
     )
-    val mutationScore = buttonAndScoreWithScore(
+    val mutationScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = mutationAnalysis,
         title = R.string.mutationAnalysis,
         titleNote = R.string.atp7bMutation,
