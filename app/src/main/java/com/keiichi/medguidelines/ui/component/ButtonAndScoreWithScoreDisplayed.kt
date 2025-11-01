@@ -7,10 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.keiichi.medguidelines.R // Assuming your R file is here
 import com.keiichi.medguidelines.data.LabelAndScore
-import com.keiichi.medguidelines.data.yesNoUnknown
-
-// Data class to hold label and score for each option
-
 
 @Composable
 fun buttonAndScoreWithScoreDisplayed(
@@ -19,7 +15,8 @@ fun buttonAndScoreWithScoreDisplayed(
     titleNote: Int = R.string.space,
     defaultSelectedOption: Int? = null,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
-    appendixLabel: @Composable () -> Unit = {}
+    appendixLabel: @Composable () -> Unit = {},
+    isNumberDisplayed: Boolean = true
 ): Int {
     // Ensure optionsWithScores is not empty to avoid crashing on optionsWithScores[0]
     if (optionsWithScores.isEmpty()) {
@@ -42,7 +39,8 @@ fun buttonAndScoreWithScoreDisplayed(
         title = title,
         titleNote = titleNote,
         cardColor = cardColor,
-        appendixLabel = appendixLabel
+        appendixLabel = appendixLabel,
+        isNumberDisplayed = isNumberDisplayed
     )
 
     // The score is now directly from the selected option's score property

@@ -37,7 +37,6 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBarVariable
-import com.keiichi.medguidelines.ui.component.cardModifier
 import kotlin.math.roundToInt
 
 data class CkdScores(
@@ -138,7 +137,7 @@ fun CkdScreen(
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBarVariable(
-                displayText = buildAnnotatedString {
+                title = buildAnnotatedString {
                     append(stringResource(R.string.ckdGuidelineTitle))
                 },
                 navController = navController,

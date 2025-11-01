@@ -54,7 +54,8 @@ fun RadioButtonAndExpandWithScoreDisplayed(
     title: Int, // R.string resource for the title
     titleNote: Int, // R.string resource for the note, R.string.space if no note
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
-    appendixLabel: @Composable (() -> Unit)? = null
+    appendixLabel: @Composable (() -> Unit)? = null,
+    isNumberDisplayed: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -150,7 +151,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                                 size = 20.dp
                             )
                             // Layer 2: The overlayed Text, shown only if the score is not 0
-                           // if (option.score != 0) {
+                           if (isNumberDisplayed) {
                                 Text(
                                     text = "${option.score}",
                                     color = if (isSelected) {
@@ -163,7 +164,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                                     fontSize = 14.sp, // Small font size to fit inside
                                     textAlign = TextAlign.Center
                                 )
-                           // }
+                            }
                         }
                         // --- End of Custom Overlay RadioButton ---
 

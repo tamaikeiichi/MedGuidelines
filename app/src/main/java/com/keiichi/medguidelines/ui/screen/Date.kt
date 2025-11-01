@@ -90,7 +90,7 @@ fun DateScreen(
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBarVariable(
-                displayText = buildAnnotatedString {
+                title = buildAnnotatedString {
                     append(stringResource(R.string.dateTitle))
                 },
                 navController = navController,

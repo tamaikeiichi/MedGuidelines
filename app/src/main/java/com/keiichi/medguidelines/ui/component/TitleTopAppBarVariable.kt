@@ -6,19 +6,14 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -44,7 +38,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -59,7 +52,7 @@ import com.keiichi.medguidelines.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TitleTopAppBarVariable(
-    displayText: AnnotatedString,
+    title: AnnotatedString,
     fontSize: TextUnit = 24.sp,
     modifier: Modifier = Modifier,
     paddingValues: Dp = 16.dp, // Default padding around the text
@@ -85,9 +78,9 @@ fun TitleTopAppBarVariable(
                 constraints.maxWidth // maxWidth from BoxWithConstraints in pixels
 
             val textLayoutResult: TextLayoutResult =
-                remember(displayText, textStyle, density, availableWidthPx) {
+                remember(title, textStyle, density, availableWidthPx) {
                     textMeasurer.measure(
-                        text = displayText,
+                        text = title,
                         style = textStyle,
                         constraints = Constraints(maxWidth = availableWidthPx) // Use the actual available width
                     )
@@ -105,7 +98,7 @@ fun TitleTopAppBarVariable(
                     horizontalAlignment = Alignment.CenterHorizontally // Ensures text alignment is also centered.
                 ) {
                     Text(
-                        text = displayText,
+                        text = title,
                         fontSize = fontSize,
                         style = textStyle,
 //                modifier = Modifier
@@ -223,7 +216,7 @@ fun TitleTopAppBarVariable(
 @Composable
 fun TitleTopAppBarVariablePreview() {
     TitleTopAppBarVariable(
-        displayText = AnnotatedString("Mild \n bbbbbbbbb \n ccccc \n"),
+        title = AnnotatedString("Mild \n bbbbbbbbb \n ccccc \n"),
         navController = NavController(LocalContext.current),
         references = listOf(
             TextAndUrl(R.string.mALBIRef, R.string.mALBIUrl),

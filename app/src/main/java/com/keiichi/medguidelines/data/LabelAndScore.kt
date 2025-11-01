@@ -88,3 +88,70 @@ val aldreteSaturation = listOf(
     LabelAndScore(labelResId = R.string.aboveNinety, score = 1),
     LabelAndScore(labelResId = R.string.belowNinety, score = 0)
 )
+
+val sleEntryCriterion = listOf(
+    LabelAndScore(labelResId = R.string.eightyOrMore, score = 1),
+    LabelAndScore(labelResId = R.string.lessThanEighty, score = 0)
+)
+
+val constitutional = listOf(
+    LabelAndScore(labelResId = R.string.fever, score = 2),
+    LabelAndScore(labelResId = R.string.none, score = 0),
+
+)
+
+val hematologic = listOf(
+    LabelAndScore(labelResId = R.string.leukopenia, score = 3),
+    LabelAndScore(labelResId = R.string.thrombocytopenia, score = 4),
+    LabelAndScore(labelResId = R.string.autoimmuneHemolysis, score = 4),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val neuropsychiatric = listOf(
+    LabelAndScore(labelResId = R.string.delirium, score = 2),
+    LabelAndScore(labelResId = R.string.psychosis, score = 3),
+    LabelAndScore(labelResId = R.string.seizure, score = 5),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val mucocutaneus = listOf(
+    LabelAndScore(labelResId = R.string.nonScarringAlopecia, score = 2),
+    LabelAndScore(labelResId = R.string.oralUlcers, score = 2),
+    LabelAndScore(labelResId = R.string.subacuteCutaneousOrDscoidLupus, score = 4),
+    LabelAndScore(labelResId = R.string.acuteCutaneousLupus, score = 6),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val serosal = listOf(
+    LabelAndScore(labelResId = R.string.pleuralOrPericardialEffusion, score = 5),
+    LabelAndScore(labelResId = R.string.acutePericarditis, score = 6),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val musculoskeletal = listOf(
+    LabelAndScore(labelResId = R.string.jointInvolvement, score = 6),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val renal = listOf(
+    LabelAndScore(labelResId = R.string.proteinuria, score = 4),
+    LabelAndScore(labelResId = R.string.renalBiopsyClassIIorV, score = 8),
+    LabelAndScore(labelResId = R.string.renalBiopsyClassIIIorIV, score = 10),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val antiphospholipidAntibodies = listOf(
+    LabelAndScore(labelResId = R.string.antiphospholipidAntibodies, score = 2),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val complementProtiens = listOf(
+    LabelAndScore(labelResId = R.string.lowC3OrC4, score = 3),
+    LabelAndScore(labelResId = R.string.lowC3AndC4, score = 4),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val sleSpecificAntibodies = listOf(
+    LabelAndScore(labelResId = R.string.sleSpecificAntibodies, score = 6),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
