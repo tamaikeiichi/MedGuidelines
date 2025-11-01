@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -62,7 +63,10 @@ import org.apache.commons.math3.stat.interval.WilsonScoreInterval
 fun SleScreen(navController: NavController) {
     var totalScore by remember { mutableIntStateOf(0) }
     var entryCriterionScore by remember { mutableIntStateOf(0) }
-    var displayScore by remember { mutableIntStateOf(value = 0) }
+
+    // This is now a simple derived state. No need for its own `remember`.
+    var displayScore by remember (entryCriterionScore, totalScore) { mutableStateOf(0) }
+    displayScore = if (entryCriterionScore > 0) totalScore else 0
     var diagnosis by remember { mutableStateOf("") }
     diagnosis = when (displayScore) {
         in 10..100 -> parseStyledString(R.string.classifyAsSle).toString()
@@ -70,6 +74,17 @@ fun SleScreen(navController: NavController) {
         in 0..9 -> parseStyledString(R.string.doNotMeetTheCriteria).toString()// "possible"
         else -> parseStyledString(R.string.na).toString()// "very unlikely"
     }
+    //var displayText by remember { mutableStateOf(AnnotatedString("")) }
+    val displayText =
+        buildAnnotatedString {
+            append("Score: ")
+            append(displayScore.toString())
+            append(" (")
+            append(diagnosis)
+            append(")")
+        }
+    //var displayScore by remember { mutableIntStateOf(value = 0) }
+
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBarVariable(
@@ -82,21 +97,11 @@ fun SleScreen(navController: NavController) {
             )
         },
         bottomBar = {
-            if (entryCriterionScore == 0){
-                displayScore = 0
-            } else {
-                displayScore = totalScore
-            }
-            val displayText =
-                buildAnnotatedString {
-                    append("Score: ")
-                    append(displayScore.toString())
-                    append(" (")
-                    append(diagnosis)
-                    append(")")
-                }
             ScoreBottomAppBarVariable(
                 displayText = displayText,
+//            buildAnnotatedString {
+//                append("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbc")
+//            }
             )
         }
     ) { innerPadding ->
@@ -109,10 +114,11 @@ fun SleScreen(navController: NavController) {
             if (entryCriterionScore > 0) {
                 totalScore = sleTotalScore() // Assuming childPughTotalScore() returns an Int
                 //Text(text = totalScore.toString())
-
-
             }
-        }
+//        ScoreBottomAppBarVariable(
+//            displayText = displayText, // It receives the final, pre-calculated text
+//        )
+    }
     }
 }
 

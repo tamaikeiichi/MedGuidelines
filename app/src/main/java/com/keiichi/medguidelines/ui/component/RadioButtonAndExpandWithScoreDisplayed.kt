@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -142,33 +143,39 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 // --- Start of Custom Overlay RadioButton ---
+                        val radioButtonSize = 24.dp
                         Box(
-                            modifier = Modifier.size(24.dp), // Standard RadioButton touch target size
+                            modifier = Modifier.size(radioButtonSize), // Standard RadioButton touch target size
                             contentAlignment = Alignment.Center
                         ) {
                             // Layer 1: The RadioButton itself
                             ThinRadioButton(
                                 selected = isSelected,
                                 strokeWidth = 1.dp,
-                                size = 20.dp
+                                size = radioButtonSize
                             )
                             // Layer 2: The overlayed Text, shown only if the score is not 0
                            if (isNumberDisplayed) {
-                                Text(
-                                    modifier = Modifier.offset(y = (-1).dp),
-                                    text = "${option.score}",
-                                    color = if (isSelected) {
-                                        // Change text color to be visible on the selected radio button color
-                                        MaterialTheme.colorScheme.onPrimary
-                                    } else {
-                                        // Use the default text color when not selected
-                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                    },
-                                    fontSize = 14.sp, // Small font size to fit inside
-                                    textAlign = TextAlign.Center,
-                                    lineHeight = TextUnit.Unspecified
-                                )
-
+                               Box(
+                                   modifier = Modifier.fillMaxSize(),
+                                   contentAlignment = Alignment.Center
+                               ) {
+                                   Text(
+                                       modifier = Modifier,
+                                       //.offset(y = (-1).dp),
+                                       text = "${option.score}",
+                                       color = if (isSelected) {
+                                           // Change text color to be visible on the selected radio button color
+                                           MaterialTheme.colorScheme.onPrimary
+                                       } else {
+                                           // Use the default text color when not selected
+                                           MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                       },
+                                       fontSize = 14.sp, // Small font size to fit inside
+                                       textAlign = TextAlign.Center,
+                                       //lineHeight = TextUnit.Unspecified
+                                   )
+                               }
                             }
                         }
                         // --- End of Custom Overlay RadioButton ---

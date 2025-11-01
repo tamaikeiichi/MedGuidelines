@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-10-14T10:37:33.780325200Z">
+        <DropdownSelection timestamp="2025-11-01T05:41:34.592273400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\tamai\.android\avd\Pixel_9_jap.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=4B111FDKD0007L" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -37,10 +37,10 @@
       </SelectionState>
       <SelectionState runConfigName="SleScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-11-01T02:28:16.694692300Z">
+        <DropdownSelection timestamp="2025-11-01T05:31:52.799645800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\tamai\.android\avd\Pixel_9_darkMode.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=4B111FDKD0007L" />
             </handle>
           </Target>
         </DropdownSelection>

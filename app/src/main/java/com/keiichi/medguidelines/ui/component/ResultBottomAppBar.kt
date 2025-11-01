@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,17 +19,25 @@ fun ResultBottomAppBar(
     barHeight: Dp = 100.dp,
     content: @Composable () -> Unit = {}
 ) {
-    BottomAppBar(
-        modifier = modifier.height(barHeight),
-        contentColor = MaterialTheme.colorScheme.primaryContainer,
-        containerColor = MaterialTheme.colorScheme.onPrimaryContainer
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        // Add shadow to make it look like a bar, separating it from content above.
+        shadowElevation = 8.dp,
+        // Use a theme color appropriate for a bottom bar.
+        color = MaterialTheme.colorScheme.surface
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+        BottomAppBar(
+            modifier = modifier.height(barHeight),
+            contentColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.onPrimaryContainer
         ) {
-            content()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                content()
+            }
         }
     }
 }
