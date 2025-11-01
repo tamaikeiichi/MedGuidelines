@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
@@ -38,6 +39,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.size
 import androidx.compose.ui.unit.sp
@@ -153,6 +155,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                             // Layer 2: The overlayed Text, shown only if the score is not 0
                            if (isNumberDisplayed) {
                                 Text(
+                                    modifier = Modifier.offset(y = (-1).dp),
                                     text = "${option.score}",
                                     color = if (isSelected) {
                                         // Change text color to be visible on the selected radio button color
@@ -162,8 +165,10 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                                         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     },
                                     fontSize = 14.sp, // Small font size to fit inside
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = TextUnit.Unspecified
                                 )
+
                             }
                         }
                         // --- End of Custom Overlay RadioButton ---

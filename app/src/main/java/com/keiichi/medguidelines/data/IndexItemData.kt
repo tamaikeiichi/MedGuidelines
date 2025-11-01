@@ -38,6 +38,7 @@ import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
 import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
 import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
 import com.keiichi.medguidelines.ui.screen.ShikaShinryokoiMasterScreen
+import com.keiichi.medguidelines.ui.screen.SleScreen
 import com.keiichi.medguidelines.ui.screen.WilsonScreen
 import java.util.Locale
 
@@ -72,7 +73,8 @@ enum class ActionType {
     NAVIGATE_TO_ALDRETE,
     NAVIGATE_TO_GASTRICCANCER_TNM,
     NAVIGATE_TO_CKD,
-    NAVIGATE_TO_DATE
+    NAVIGATE_TO_DATE,
+    NAVIGATE_TO_SLE,
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -167,6 +169,10 @@ val itemsList = listOf(
             R.string.kidney, R.string.chronic
         )),
     ListItemData(R.string.dateTitle, ActionType.NAVIGATE_TO_DATE),
+    ListItemData(R.string.sleTitle, ActionType.NAVIGATE_TO_SLE,
+        keywords = listOf(
+            R.string.systemicLupusErythemothosus
+    )),
 )
 
 data class IndexScreenActions(
@@ -200,6 +206,7 @@ data class IndexScreenActions(
     val navigateToGastricCancerTNM: () -> Unit,
     val navigateToCkd: () -> Unit,
     val navigateDate: () -> Unit,
+    val navigateToSle: () -> Unit,
 )
 
 @Composable
@@ -241,6 +248,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToGastricCancerTNM = { navController.navigate("GastricCancerTNM") },
         navigateToCkd = { navController.navigate("CkdScreen") },
         navigateDate = { navController.navigate("DateScreen") },
+        navigateToSle = { navController.navigate("SleScreen") },
     )
 }
 
@@ -284,6 +292,7 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("GastricCancerTNM") { navController -> GastricTNMScreen(navController) },
         ScreenRoute("CkdScreen") { navController -> CkdScreen(navController) },
         ScreenRoute("DateScreen") { navController -> DateScreen(navController) },
+        ScreenRoute("SleScreen") { navController -> SleScreen(navController) },
     )
 }
 
@@ -319,6 +328,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_GASTRICCANCER_TNM -> this.navigateToGastricCancerTNM()
         ActionType.NAVIGATE_TO_CKD -> this.navigateToCkd()
         ActionType.NAVIGATE_TO_DATE -> this.navigateDate()
+        ActionType.NAVIGATE_TO_SLE -> this.navigateToSle()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

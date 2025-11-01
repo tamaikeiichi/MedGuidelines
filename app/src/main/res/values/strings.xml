@@ -554,15 +554,15 @@
     <string name="chronic">Chronic</string>
     <string name="gg" translatable="false">g/g</string>
     <string name="mmolL" translatable="false">mmol/L</string>
-    <string name="g3a">G3a</string>
-    <string name="g3b">G3b</string>
-    <string name="g4">G4</string>
-    <string name="g5">G5</string>
-    <string name="g1">G1</string>
-    <string name="g2">G2</string>
-    <string name="a1">A1</string>
-    <string name="a2">A2</string>
-    <string name="a3">A3</string>
+    <string name="g3a" translatable="false">G3a</string>
+    <string name="g3b" translatable="false">G3b</string>
+    <string name="g4" translatable="false">G4</string>
+    <string name="g5" translatable="false">G5</string>
+    <string name="g1" translatable="false">G1</string>
+    <string name="g2" translatable="false">G2</string>
+    <string name="a1" translatable="false">A1</string>
+    <string name="a2" translatable="false">A2</string>
+    <string name="a3" translatable="false">A3</string>
     <string name="persistentAlbuminuriaCategories">Persistent albuminuria categories</string>
     <string name="persistentProteinuriaCategories">Persistent Proteinuria Categories</string>
     <string name="gfrCategories">GFR categories</string>
@@ -580,8 +580,8 @@
     <string name="sleUrl">https://pubmed.ncbi.nlm.nih.gov/31385462/</string>
     <string name="classifyAsSle">Classify as Systemic Lupus Erythematosus</string>
     <string name="doNotMeetTheCriteria">Do not meet the criteria</string>
-    <string name="eightyOrMore">≧ 1:80</string>
-    <string name="lessThanEighty"><![CDATA[< 1:80]]></string>
+    <string name="eightyOrMore">≧ 1: 80</string>
+    <string name="lessThanEighty"><![CDATA[< 1: 80]]></string>
     <string name="slesEntryCriterion">Antinuclear antibodies (ANA) at a titer</string>
     <string name="slesEntryCriterionNote">HEp-2 cells or an equivalent positive test (ever)</string>
     <string name="constitutional">Constitutional</string>
@@ -614,4 +614,39 @@
     <string name="renal">Renal</string>
     <string name="antiphospholipid">Antiphospholipid antibodies</string>
     <string name="complement">Complement proteins</string>
+    <string name="additiveCriteria">Additive criteria</string>
+    <string name="secondCommentSle">Do not count a criterion if there is a more likely explanation than SLE.\nOccurrence of a criterion on at least one occasion is sufficient.\nSLE classification requires at least one clinical criterion and ≥10 points.\nCriteria need not occur simultaneously.\nWithin each domain, only the highest weighted criterion is counted toward the total score</string>
+    <string name="antiphospholipidNote">Anti-β2GPI = anti–β2-glycoprotein I\n&lt;b>Positive antiphospholipid antibodies&lt;/b>
+    Anticardiolipin antibodies (IgA, IgG, or IgM) at medium or high titer (>40 APL, GPL, or MPL, or >the 99th percentile) or positive anti-β2GPI antibodies (IgA, IgG, or IgM) or positive lupus anticoagulant
+    </string>
+    <string name="hematologicNote">WBC &lt; 4,000/mm&lt;sup>3&lt;/sup>, Plt &lt; 100,000/mm&lt;sup>3&lt;/sup&lt;\n&lt;b>Autoimmune hemolysis&lt;/b> Evidence of hemolysis, such as reticulocytosis, low haptoglobin, elevated indirect bilirubin, elevated LDH, AND positive Coombs’ (direct antiglobulin) test</string>
+    <string name="slesJapRefTitle">全身性エリテマトーデス（SLE）（指定難病４９）(Japanese)</string>
+    <string name="sleJapsUrl">https://www.nanbyou.or.jp/entry/215</string>
+    <string name="constitutionalNote"><![CDATA[Temperature >38.3°C]]></string>
+    <string name="neuropsychiatricNote">&lt;b>Delirium&lt;/b> Characterized by 1) change in consciousness or level of arousal with reduced ability to focus, 2) symptom development over hours to &lt;2 days, 3) symptom fluctuation throughout the day, 4) either 4a) acute/subacute change in cognition (e.g., memory deficit or disorientation), or 4b) change in behavior, mood, or affect (e.g., restlessness, reversal of sleep/wake cycle)\n&lt;b>Psychosis&lt;/b> Characterized by 1) delusions and/or hallucinations without insight and 2) absence of delirium\n&lt;b>Seizure&lt;/b> Primary generalized seizure or partial/focal seizure</string>
+    <string name="mucocutaneousNote">
+    &lt;b>Non-scarring alopecia&lt;/b>
+    Non-scarring alopecia observed by a clinician\n&lt;b>Oral ulcers&lt;/b>
+        Oral ulcers observed by a clinician\n&lt;b>Subacute cutaneous OR discoid lupus&lt;/b>
+        &lt;i>Subacute cutaneous lupus erythematosus observed by a clinician:&lt;/i>
+    Annular or papulosquamous (psoriasiform) cutaneous eruption, usually photodistributed If skin biopsy is performed, typical changes must be present (interface vacuolar dermatitis consisting of a perivascular lymphohistiocytic infiltrate, often with dermal mucin noted).
+    \nOR\n&lt;i>Discoid lupus erythematosus observed by a clinician:&lt;/i> <!-- THIS LINE NOW USES &lt;i> to be consistent -->
+        Erythematous-violaceous cutaneous lesions with secondary changes of atrophic scarring, dyspigmentation, often follicular hyperkeratosis/plugging (scalp), leading to scarring alopecia on the scalp If skin biopsy is performed, typical changes must be present (interface vacuolar dermatitis consisting of a perivascular and/or periappendageal lymphohistiocytic infiltrate. In the scalp, follicular keratin plugs may be seen. In longstanding lesions, mucin deposition may be noted)\n&lt;b>Acute cutaneous lupus&lt;/b>
+    Malar rash or generalized maculopapular rash observed by a clinician† If skin biopsy is performed, typical changes must be present (interface vacuolar dermatitis consisting of a perivascular lymphohistiocytic infiltrate, often with dermal mucin noted. Perivascular neutrophilic infiltrate may be present early in the course)
+</string>
+    <string name="serosalNote">&lt;b>Pleural or pericardial effusion&lt;/b>
+        Imaging evidence (such as ultrasound, x-ray, CT scan, MRI) of pleural or pericardial effusion, or both\n&lt;b>Acute pericarditis&lt;/b>
+        ≥2 of 1) pericardial chest pain (typically sharp, worse with inspiration, improved by leaning forward), 2) pericardial rub, 3) EKG with new widespread ST elevation or PR depression, 4) new or worsened pericardial effusion on imaging (such as ultrasound, x-ray, CT scan, MRI)</string>
+    <string name="renalNote">&lt;b>Proteinuria&lt;/b>
+        >0.5 g/24 hours Proteinuria >0.5 g/24 hours by 24-hour urine or equivalent spot urine protein-tocreatinine ratio\n&lt;b>Class II or V lupus nephritis on renal biopsy according to ISN/RPS 2003 classification&lt;/b>\n&lt;i>Class II:&lt;/i>
+        Mesangial proliferative lupus nephritis: purely mesangial hypercellularity of any degree or mesangial matrix expansion by light microscopy, with mesangial immune deposit. A few isolated subepithelial or subendothelial deposits may be visible by immunofluorescence or electron microscopy, but not by light microscopy\n&lt;i>Class V:&lt;/i>
+        Membranous lupus nephritis: global or segmental subepithelial immune deposits or their morphologic sequelae by light microscopy and by immunofluorescence or electron microscopy, with or without mesangial alterations\n&lt;b>Class III or IV lupus nephritis on renal biopsy according to ISN/RPS 2003 classification&lt;/b>
+        &lt;i>Class III:&lt;/i>
+        Focal lupus nephritis: active or inactive focal, segmental, or global endocapillary or extracapillary glomerulonephritis involving &lt;50% of all glomeruli, typically with focal subendothelial immune deposits, with or without mesangial alterations&lt;i>Class IV:&lt;/i>
+        Diffuse lupus nephritis: active or inactive diffuse, segmental, or global endocapillary or extracapillary glomerulonephritis involving ≥50% of all glomeruli, typically with diffuse subendothelial immune deposits, with or without mesangial alterations. This class includes cases with diffuse wire loop deposits but with little or no glomerular proliferation
+    </string>
+    <string name="complementNote">&lt;b>Low C3 OR low&lt;/b> C4 C3 OR C4 below the lower limit of normal\n&lt;b>Low C3 AND low C4&lt;/b> Both C3 AND C4 below their lower limits of normal</string>
+    <string name="sleSpecificAntibodiesNote">&lt;b>Anti-dsDNA antibodies OR anti-Sm antibodies&lt;/b> Anti-dsDNA antibodies in an immunoassay with demonstrated ≥90% specificity for SLE against relevant disease controls OR anti-Sm antibodies</string>
+    <string name="systemicLupusErythemothosus">Systemic Lupus Erythematosus</string>
+
 </resources>

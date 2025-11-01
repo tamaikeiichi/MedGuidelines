@@ -19,6 +19,7 @@ fun parseStyledString(@StringRes stringResId: Int): AnnotatedString {
     return buildAnnotatedString {
         val tagRegexes = listOf(
             TagRegex("<b>", "</b>", SpanStyle(fontWeight = FontWeight.Bold)),
+            TagRegex("<i>", "</i>", SpanStyle(fontStyle = FontStyle.Italic)),
             TagRegex(
                 "<sub>",
                 "</sub>",

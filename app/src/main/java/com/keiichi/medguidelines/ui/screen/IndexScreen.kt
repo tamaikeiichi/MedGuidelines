@@ -316,42 +316,42 @@ fun IndexScreen(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun IndexScreenPreview() {
-    IndexScreen(
-        actions = IndexScreenActions(
-            navigateToChildPugh = {},
-            navigateToAdrop = {},
-            navigateToColorectalTNM = {},
-            navigateToAcuteTonsillitisAlgorithm = {},
-            navigateToBloodGasAnalysis = {},
-            navigateToAcutePancreatitis = {},
-            navigateToNetakirido = {},
-            navigateToPancreaticTNM = {},
-            navigateToEsophagealTNM = {},
-            navigateToMALBI = {},
-            navigateToLiverFibrosisScoreSystem = {},
-            navigateToHomaIR = {},
-            navigateToLungTNM = {},
-            navigateToHccTNM = {},
-            navigateToIntrahepaticCholangiocarcinomaTNM = {},
-            navigateToCHADS2 = {},
-            navigateToGlasgowComaScale = {},
-            navigateToSodiumDifferentialDiagnosis = {},
-            navigateToLilleModel = {},
-            navigateToEcog = {},
-            navigateToInfusionCalculator = {},
-            navigateToIkaShinryokoiMaster = {},
-            navigateToIcd10 = {},
-            navigateToIcd10Japanese = {},
-            navigateToWilson = {},
-            navigateToShikashinryokoiMaster = {},
-            navigateToAldrete = {},
-            navigateToGastricCancerTNM = {},
-            navigateToCkd = {},
-            navigateDate = {}
-        )
-    )
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun IndexScreenPreview() {
+//    IndexScreen(
+//        actions = IndexScreenActions(
+//            navigateToChildPugh = {},
+//            navigateToAdrop = {},
+//            navigateToColorectalTNM = {},
+//            navigateToAcuteTonsillitisAlgorithm = {},
+//            navigateToBloodGasAnalysis = {},
+//            navigateToAcutePancreatitis = {},
+//            navigateToNetakirido = {},
+//            navigateToPancreaticTNM = {},
+//            navigateToEsophagealTNM = {},
+//            navigateToMALBI = {},
+//            navigateToLiverFibrosisScoreSystem = {},
+//            navigateToHomaIR = {},
+//            navigateToLungTNM = {},
+//            navigateToHccTNM = {},
+//            navigateToIntrahepaticCholangiocarcinomaTNM = {},
+//            navigateToCHADS2 = {},
+//            navigateToGlasgowComaScale = {},
+//            navigateToSodiumDifferentialDiagnosis = {},
+//            navigateToLilleModel = {},
+//            navigateToEcog = {},
+//            navigateToInfusionCalculator = {},
+//            navigateToIkaShinryokoiMaster = {},
+//            navigateToIcd10 = {},
+//            navigateToIcd10Japanese = {},
+//            navigateToWilson = {},
+//            navigateToShikashinryokoiMaster = {},
+//            navigateToAldrete = {},
+//            navigateToGastricCancerTNM = {},
+//            navigateToCkd = {},
+//            navigateDate = {}
+//        )
+//    )
+//}

@@ -19,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.keiichi.compose.MedGuidelinesTheme
+import com.keiichi.compose.secondaryDark
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.albuminGrade
 import com.keiichi.medguidelines.data.antiphospholipidAntibodies
@@ -46,6 +48,7 @@ import com.keiichi.medguidelines.data.urinaryCopper
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ResultBottomAppBar
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
+import com.keiichi.medguidelines.ui.component.TextAndExpand2Levels
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.TextAndUrl
@@ -58,23 +61,36 @@ import org.apache.commons.math3.stat.interval.WilsonScoreInterval
 @Composable
 fun SleScreen(navController: NavController) {
     var totalScore by remember { mutableIntStateOf(0) }
+    var entryCriterionScore by remember { mutableIntStateOf(0) }
+    var displayScore by remember { mutableIntStateOf(value = 0) }
     var diagnosis by remember { mutableStateOf("") }
-
+    diagnosis = when (displayScore) {
+        in 10..100 -> parseStyledString(R.string.classifyAsSle).toString()
+        //"established"
+        in 0..9 -> parseStyledString(R.string.doNotMeetTheCriteria).toString()// "possible"
+        else -> parseStyledString(R.string.na).toString()// "very unlikely"
+    }
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBarVariable(
                 title = parseStyledString(R.string.sleTitle),
                 navController = navController,
                 references = listOf(
-                    TextAndUrl(R.string.sleRefTitle, R.string.sleUrl)
+                    TextAndUrl(R.string.sleRefTitle, R.string.sleUrl),
+                    TextAndUrl(R.string.slesJapRefTitle, R.string.sleJapsUrl),
                 )
             )
         },
         bottomBar = {
+            if (entryCriterionScore == 0){
+                displayScore = 0
+            } else {
+                displayScore = totalScore
+            }
             val displayText =
                 buildAnnotatedString {
                     append("Score: ")
-                    append(totalScore.toString())
+                    append(displayScore.toString())
                     append(" (")
                     append(diagnosis)
                     append(")")
@@ -89,17 +105,12 @@ fun SleScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            val entryCriterionScore = entryCriterion()
+            entryCriterionScore = entryCriterion()
             if (entryCriterionScore > 0) {
                 totalScore = sleTotalScore() // Assuming childPughTotalScore() returns an Int
                 //Text(text = totalScore.toString())
 
-                diagnosis = when (totalScore) {
-                    in 10..100 -> parseStyledString(R.string.classifyAsSle).toString()
-                    //"established"
-                    in 0..9 -> parseStyledString(R.string.doNotMeetTheCriteria).toString()// "possible"
-                    else -> parseStyledString(R.string.na).toString()// "very unlikely"
-                }
+
             }
         }
     }
@@ -111,7 +122,7 @@ fun entryCriterion(): Int {
         optionsWithScores = sleEntryCriterion,
         title = R.string.slesEntryCriterion,
         titleNote = R.string.slesEntryCriterionNote,
-        defaultSelectedOption = R.string.absent,
+        defaultSelectedOption = R.string.lessThanEighty,
         isNumberDisplayed = false
     )
     return entryCriterion
@@ -120,29 +131,38 @@ fun entryCriterion(): Int {
 
 @Composable
 fun sleTotalScore(): Int {
+    TextAndExpand2Levels(
+        firstTitle = R.string.additiveCriteria,
+        secondTitle = R.string.secondCommentSle,
+    )
     val constitutionalScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = constitutional,
         title = R.string.constitutional,
+        titleNote = R.string.constitutionalNote,
         defaultSelectedOption = R.string.none
     )
     val hematologicScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = hematologic,
         title = R.string.hematologic,
+        titleNote = R.string.hematologicNote,
         defaultSelectedOption = R.string.none
     )
     val neuropsychiatricScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = neuropsychiatric,
         title = R.string.neuropsychiatric,
+        titleNote = R.string.neuropsychiatricNote,
         defaultSelectedOption = R.string.none
     )
     val mucocutaneousScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = mucocutaneus,
         title = R.string.mucocutaneous,
+        titleNote = R.string.mucocutaneousNote,
         defaultSelectedOption = R.string.none
     )
     val serosalScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = serosal,
         title = R.string.serosal,
+        titleNote = R.string.serosalNote,
         defaultSelectedOption = R.string.none
     )
     val musculoskeletalScore = buttonAndScoreWithScoreDisplayed(
@@ -153,21 +173,25 @@ fun sleTotalScore(): Int {
     val renalScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = renal,
         title = R.string.renal,
+        titleNote = R.string.renalNote,
         defaultSelectedOption = R.string.none
     )
     val antiphospholipidScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = antiphospholipidAntibodies,
         title = R.string.antiphospholipid,
+        titleNote = R.string.antiphospholipidNote,
         defaultSelectedOption = R.string.none
     )
     val complementScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = complementProtiens,
         title = R.string.complement,
+        titleNote = R.string.complementNote,
         defaultSelectedOption = R.string.none
     )
     val sleSpecificAntibodiesScore = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = sleSpecificAntibodies,
         title = R.string.sleSpecificAntibodies,
+        titleNote = R.string.sleSpecificAntibodiesNote,
         defaultSelectedOption = R.string.none
     )
 
@@ -189,5 +213,8 @@ fun sleTotalScore(): Int {
 @Preview
 @Composable
 fun SleScreenPreview() {
-    SleScreen(navController = NavController(LocalContext.current))
+    MedGuidelinesTheme {
+        SleScreen(navController = NavController(LocalContext.current))
+    }
+
 }
