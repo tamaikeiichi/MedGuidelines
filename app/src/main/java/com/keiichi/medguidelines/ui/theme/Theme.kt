@@ -279,7 +279,6 @@ fun selectSchemeForContrast(isDark: Boolean): ColorScheme {
 fun MedGuidelinesTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
-    enableEdgeToEdge: Boolean = true,
     content: @Composable() () -> Unit
 ) {
     val colorScheme = when {
@@ -290,18 +289,11 @@ fun MedGuidelinesTheme(
 
         else -> selectSchemeForContrast(darkTheme)
     }
-    val view = LocalView.current
-//    if (!view.isInEditMode) {
-//        SideEffect {
-//            val window = (view.context as Activity).window
-//            window.statusBarColor = colorScheme.primary.toArgb()
-//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-//        }
-//    }
     MaterialTheme(
-        colorScheme = colorScheme,
+       colorScheme = colorScheme,
         typography = AppTypography,
         shapes = Shapes,
         content = content
     )
+//    content()
 }

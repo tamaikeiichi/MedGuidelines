@@ -125,7 +125,7 @@ fun entryCriterion(): Int {
         optionsWithScores = sleEntryCriterion,
         title = R.string.slesEntryCriterion,
         titleNote = R.string.slesEntryCriterionNote,
-        defaultSelectedOption = R.string.lessThanEighty,
+        defaultSelectedOption = R.string.eightyOrMore,
         isNumberDisplayed = false
     )
     return entryCriterion
@@ -216,7 +216,7 @@ fun sleTotalScore(): Int {
 @Preview
 @Composable
 fun SleScreenPreview() {
-    MedGuidelinesTheme {
+   MedGuidelinesTheme {
         SleScreen(navController = NavController(LocalContext.current))
     }
 
