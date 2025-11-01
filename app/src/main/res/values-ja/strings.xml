@@ -389,4 +389,6 @@
     <string name="additiveCriteria">追加の基準（注意事項）</string>
     <string name="secondCommentSle">SLEよりもそれらしい解釈があれば、その項目の点数は計上しない。\n同じ項目内で複数の小項目が陽性の場合は最も高い点数のみを加算する。\n臨床所見は経過中に1項目以上の陽性化が必要である。\n各項目は同時期に出現する必要はなく、経過中に1回出現すれば当該項目を加算する。</string>
     <string name="hematologicNote">4000/mm<sup>3</sup>未満の白血球減少、10万/mm<sup>3</sup>未満の血小板減少</string>
+    <string name="sleTitle">SLE診断基準</string>
+    <string name="constitutionalNote"><![CDATA[体温 >38.3°C]]></string>
 </resources>

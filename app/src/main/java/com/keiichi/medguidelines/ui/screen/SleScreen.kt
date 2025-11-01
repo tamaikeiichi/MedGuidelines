@@ -99,9 +99,6 @@ fun SleScreen(navController: NavController) {
         bottomBar = {
             ScoreBottomAppBarVariable(
                 displayText = displayText,
-//            buildAnnotatedString {
-//                append("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbc")
-//            }
             )
         }
     ) { innerPadding ->

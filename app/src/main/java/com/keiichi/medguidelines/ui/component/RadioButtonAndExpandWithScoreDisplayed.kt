@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
@@ -146,7 +147,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                         val radioButtonSize = 24.dp
                         Box(
                             modifier = Modifier.size(radioButtonSize), // Standard RadioButton touch target size
-                            contentAlignment = Alignment.Center
+                            //contentAlignment = Alignment.TopCenter
                         ) {
                             // Layer 1: The RadioButton itself
                             ThinRadioButton(
@@ -157,11 +158,19 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                             // Layer 2: The overlayed Text, shown only if the score is not 0
                            if (isNumberDisplayed) {
                                Box(
-                                   modifier = Modifier.fillMaxSize(),
-                                   contentAlignment = Alignment.Center
+                                   modifier = Modifier
+                                       .fillMaxSize()
+                                       .padding(bottom = 2.dp)
+
+
+                                   ,
+                                   contentAlignment = Alignment.TopCenter
                                ) {
                                    Text(
-                                       modifier = Modifier,
+                                       modifier = Modifier
+                                           //.padding(bottom = 1.dp)
+                                        ,
+                                           //.wrapContentSize(),
                                        //.offset(y = (-1).dp),
                                        text = "${option.score}",
                                        color = if (isSelected) {
@@ -172,10 +181,10 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                        },
                                        fontSize = 14.sp, // Small font size to fit inside
-                                       textAlign = TextAlign.Center,
+                                       //textAlign = TextAlign.Center,
                                        //lineHeight = TextUnit.Unspecified
                                    )
-                               }
+                              }
                             }
                         }
                         // --- End of Custom Overlay RadioButton ---
@@ -186,14 +195,6 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                             modifier = Modifier.padding(start = 8.dp), // Increased start padding
                             softWrap = true,
                         )
-//                        Text(
-//                            text = " ${option.score}", // Prepend with a "+" for clarity
-//                            style = MaterialTheme.typography.bodyMedium,
-//                            modifier = Modifier
-//                                .padding(start = 8.dp, end = 4.dp) // Add padding
-//                                .weight(1f), // Allow it to take remaining space
-//                            textAlign = TextAlign.End // Align the score to the right
-//                        )
                     }
                 }
             }
@@ -206,7 +207,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
 fun ThinRadioButton(
     selected: Boolean,
     modifier: Modifier = Modifier,
-    size: Dp = 24.dp, // The overall size of the radio button
+    size: Dp = 20.dp, // The overall size of the radio button
     strokeWidth: Dp = 1.dp, // The thickness of the outer circle
     dotRadiusRatio: Float = 1.0f // Ratio of the dot's radius to the outer circle's radius
 ) {
@@ -217,7 +218,7 @@ fun ThinRadioButton(
     }
 
     Canvas(modifier = modifier.size(size)) {
-        val radius = (this.size.minDimension / 2.0f)
+        val radius = (size.toPx() / 2) //- (strokeWidth.toPx() / 1)
 
         // Draw the outer circle (the border)
         drawCircle(

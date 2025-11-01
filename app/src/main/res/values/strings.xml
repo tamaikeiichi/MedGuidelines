@@ -576,11 +576,11 @@
     <string name="numberOfDays">Number of Days</string>
     <string name="days">days</string>
     <string name="sleTitle">Classification criteria for SLE</string>
-    <string name="sleRefTitle">2019 European League Against Rheumatism/American College of Rheumatology Classification Criteria for Systemic Lupus Erythematosus</string>
-    <string name="sleUrl">https://pubmed.ncbi.nlm.nih.gov/31385462/</string>
+    <string name="sleRefTitle" translatable="false">2019 European League Against Rheumatism/American College of Rheumatology Classification Criteria for Systemic Lupus Erythematosus</string>
+    <string name="sleUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/31385462/</string>
     <string name="classifyAsSle">Classify as Systemic Lupus Erythematosus</string>
     <string name="doNotMeetTheCriteria">Do not meet the criteria</string>
-    <string name="eightyOrMore">≧ 1: 80</string>
+    <string name="eightyOrMore" translatable="false">≧ 1: 80</string>
     <string name="lessThanEighty"><![CDATA[< 1: 80]]></string>
     <string name="slesEntryCriterion">Antinuclear antibodies (ANA) at a titer</string>
     <string name="slesEntryCriterionNote">HEp-2 cells or an equivalent positive test (ever)</string>
