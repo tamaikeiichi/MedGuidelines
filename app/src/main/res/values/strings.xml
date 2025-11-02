@@ -648,5 +648,34 @@
     <string name="complementNote">&lt;b>Low C3 OR low&lt;/b> C4 C3 OR C4 below the lower limit of normal\n&lt;b>Low C3 AND low C4&lt;/b> Both C3 AND C4 below their lower limits of normal</string>
     <string name="sleSpecificAntibodiesNote">&lt;b>Anti-dsDNA antibodies OR anti-Sm antibodies&lt;/b> Anti-dsDNA antibodies in an immunoassay with demonstrated ≥90% specificity for SLE against relevant disease controls OR anti-Sm antibodies</string>
     <string name="systemicLupusErythemothosus">Systemic Lupus Erythematosus</string>
+    <string name="classifyAsRa">Classify as RA</string>
+    <string name="raTitle">Classification criteria for Rheumatoid Arthritis</string>
+    <string name="raRefTitle">The 2010 American College of Rheumatology/European League Against Rheumatism classifi cation criteria for RA</string>
+    <string name="raUrl">https://pubmed.ncbi.nlm.nih.gov/20699241/</string>
+    <string name="atLeastOneJoint">" have at least 1 joint with defi nite clinical synovitis (swelling)"</string>
+    <string name="noBetterExplained">with the synovitis not better explained by another disease</string>
+    <string name="oneLargeJoint">1 large joint</string>
+    <string name="twoToTenLargeJoints">2−10 large joints</string>
+    <string name="oneToThreeSmallJoints">1−3 small joints (with or without involvement of large joints)</string>
+    <string name="fourOrTenSmallJoints">4−10 small joints (with or without involvement of large joints)</string>
+    <string name="moreThanTenJoints"><![CDATA[>10 joints (at least 1 small joint)]]></string>
+    <string name="negativeRfAndNegativeAcpa">Negative RF and negative ACPA</string>
+    <string name="lowPositiveRfAndLowPositiveAcpa">Low-positive RF or low-positive ACPA</string>
+    <string name="highPositiveRfOrHighPositiveAcpa">High-positive RF or high-positive ACPA</string>
+    <string name="normalCrpAndNormalEsr">Normal CRP and normal ESR</string>
+    <string name="abnormlaCrpOrNormalEsr">Abnormal CRP or abnormal ESR</string>
+    <string name="lessThanSixWeeks"><![CDATA[<6 weeks]]></string>
+    <string name="sixWeeksOrMore">≥6 weeks</string>
+    <string name="lowPositiveRfOrLowPositiveAcpa">Low-positive RF or low-positive ACPA</string>
+    <string name="raEntryCriterion">Target population (Who should be tested?): Patients who</string>
+    <string name="raEntryCriterionNote">&lt;b>*&lt;/b> The criteria are aimed at classification of newly presenting patients. In addition, patients with erosive disease typical of rheumatoid arthritis (RA) with a history compatible with prior fulfilment of the 2010 criteria should be classified as having RA. Patients with long-standing disease, including those whose disease is inactive (with or without treatment) who, based on retrospectively available data, have previously fulfilled the 2010 criteria should be classified as having RA.\n&lt;b>†&lt;/b> Differential diagnoses differ in patients with different presentations, but may include conditions such as systemic lupus erythematosus, psoriatic arthritis and gout. If it is unclear about the relevant differential diagnoses to consider, an expert rheumatologist should be consulted.</string>
+    <string name="jointInvolvementRa">Joint involvement</string>
+    <string name="jointInvolvementNote">&lt;b>§&lt;/b> Joint involvement refers to any swollen or tender joint on examination, which may be confirmed by imaging evidence of synovitis. Distal interphalangeal joints, first carpometacarpal joints and first metatarsophalangeal joints are excluded from assessment. Categories of joint distribution are classified according to the location and number of involved joints, with placement into the highest category possible based on the pattern of joint involvement.\n¶’Large joints’ refers to shoulders, elbows, hips, knees and ankles.\n&lt;b>**&lt;/b> ’Small joints’ refers to the metacarpophalangeal joints, proximal interphalangeal joints, second to fifth metatarsophalangeal joints, thumb interphalangeal joints and wrists.\n&lt;b>††&lt;/b>In this category, at least one of the involved joints must be a small joint; the other joints can include any combination of large and additional small joints, as well as other joints not specifically listed elsewhere (eg, temporomandibular, acromioclavicular, sternoclavicular, etc.). </string>
+    <string name="serology">Serology (at least 1 test result is needed for classification)</string>
+    <string name="serologyNote">&lt;b>ACPA&lt;/b> anti-citrullinated protein antibody.\n&lt;b>††&lt;/b> In this category, at least one of the involved joints must be a small joint; the other joints can include any combination of large and additional small joints, as well as other joints not specifically listed elsewhere (eg, temporomandibular, acromioclavicular, sternoclavicular, etc.).</string>
+    <string name="acutePhaseReactants">Acute-phase reactants (at least 1 test result is needed for classifi cation)</string>
+    <string name="nacutePhaseReactantsNote">&lt;b>§§&lt;/b>Normal/abnormal is determined by local laboratory standards.</string>
+    <string name="durationOfSymptoms">Duration of symptoms</string>
+    <string name="durationOfSymptomsNote">&lt;b>¶¶&lt;/b>Duration of symptoms refers to patient self-report of the duration of signs or symptoms of synovitis (eg, pain, swelling, tenderness) of joints that are clinically involved at the time of assessment, regardless of treatment status.</string>
 
 </resources>

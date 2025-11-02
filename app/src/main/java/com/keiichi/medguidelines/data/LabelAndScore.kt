@@ -155,3 +155,33 @@ val sleSpecificAntibodies = listOf(
     LabelAndScore(labelResId = R.string.sleSpecificAntibodies, score = 6),
     LabelAndScore(labelResId = R.string.none, score = 0)
 )
+
+val raEntryCriterion = listOf(
+    LabelAndScore(labelResId = R.string.atLeastOneJoint, score = 1),
+    LabelAndScore(labelResId = R.string.noBetterExplained, score = 1)
+)
+
+val jointInvolvement = listOf(
+    LabelAndScore(labelResId = R.string.oneLargeJoint, score = 0),
+    LabelAndScore(labelResId = R.string.twoToTenLargeJoints, score = 1),
+    LabelAndScore(labelResId = R.string.oneToThreeSmallJoints, score = 2),
+    LabelAndScore(labelResId = R.string.fourOrTenSmallJoints, score = 3),
+    LabelAndScore(labelResId = R.string.moreThanTenJoints, score = 5),
+    LabelAndScore(labelResId = R.string.none, score = 0)
+)
+
+val serology = listOf(
+    LabelAndScore(labelResId = R.string.negativeRfAndNegativeAcpa, score = 0),
+    LabelAndScore(labelResId = R.string.lowPositiveRfOrLowPositiveAcpa, score = 2),
+    LabelAndScore(labelResId = R.string.highPositiveRfOrHighPositiveAcpa, score = 4)
+)
+
+val acutePhaseReactants = listOf(
+    LabelAndScore(labelResId = R.string.normalCrpAndNormalEsr, score = 0),
+    LabelAndScore(labelResId = R.string.abnormlaCrpOrNormalEsr, score = 1),
+)
+
+val durationOfSymptoms = listOf(
+    LabelAndScore(labelResId = R.string.lessThanSixWeeks, score = 0),
+    LabelAndScore(labelResId = R.string.sixWeeksOrMore, score = 1),
+)
