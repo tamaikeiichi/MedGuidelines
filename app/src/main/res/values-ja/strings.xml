@@ -352,8 +352,8 @@
     <string name="endDate">終了日</string>
     <string name="numberOfDays">日数</string>
     <string name="days">日</string>
-    <string name="classifyAsSle">診断基準を満たす</string>
-    <string name="doNotMeetTheCriteria">診断基準を満たさない</string>
+    <string name="classifyAsSle">分類基準を満たす</string>
+    <string name="doNotMeetTheCriteria">分類基準を満たさない</string>
     <string name="slesEntryCriterion">抗核抗体</string>
     <string name="slesEntryCriterionNote">HEp-2細胞を用いるか、同等の検査</string>
     <string name="constitutional">全身症状</string>
@@ -389,7 +389,7 @@
     <string name="additiveCriteria">追加の基準（注意事項）</string>
     <string name="secondCommentSle">SLEよりもそれらしい解釈があれば、その項目の点数は計上しない。\n同じ項目内で複数の小項目が陽性の場合は最も高い点数のみを加算する。\n臨床所見は経過中に1項目以上の陽性化が必要である。\n各項目は同時期に出現する必要はなく、経過中に1回出現すれば当該項目を加算する。</string>
     <string name="hematologicNote">4000/mm<sup>3</sup>未満の白血球減少、10万/mm<sup>3</sup>未満の血小板減少</string>
-    <string name="sleTitle">SLE診断基準</string>
+    <string name="sleTitle">SLE分類基準</string>
     <string name="constitutionalNote"><![CDATA[体温 >38.3°C]]></string>
     <string name="classifyAsRa">関節リウマチに分類される</string>
     <string name="raTitle">関節リウマチ分類基準</string>
@@ -417,4 +417,17 @@
     <string name="acutePhaseReactants">急性期反応物質（少なくともESR，CRPいずれかの結果が必要）</string>
     <string name="durationOfSymptoms">臨床症状の持続期間</string>
     <string name="durationOfSymptomsNote">∫∫症状の持続期間とは，患者の申告による滑膜炎の症状および徴候の持続期間である．すなわち，治療の有無に関係なく，評価時点において臨床的に圧痛・腫脹を認める関節に関する，患者の申告による疼痛，腫脹，圧痛の持続期間である．</string>
+    <string name="rheumatoidArthritis">関節リウマチ</string>
+    <string name="JgCalendarTitle">和暦-西暦 換算</string>
+    <string name="ad">西暦</string>
+    <string name="meji">明治</string>
+    <string name="taisho">大正</string>
+    <string name="showa">昭和</string>
+    <string name="heisei">平成</string>
+    <string name="reiwa">令和</string>
+    <string name="nen">年</string>
+    <string name="meiji">明治</string>
+    <string name="westernCalendar">西暦</string>
+    <string name="japaneseCalendar">和暦</string>
+    <string name="calendar">カレンダー</string>
 </resources>

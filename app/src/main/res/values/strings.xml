@@ -620,8 +620,8 @@
     Anticardiolipin antibodies (IgA, IgG, or IgM) at medium or high titer (>40 APL, GPL, or MPL, or >the 99th percentile) or positive anti-β2GPI antibodies (IgA, IgG, or IgM) or positive lupus anticoagulant
     </string>
     <string name="hematologicNote">WBC &lt; 4,000/mm&lt;sup>3&lt;/sup>, Plt &lt; 100,000/mm&lt;sup>3&lt;/sup&lt;\n&lt;b>Autoimmune hemolysis&lt;/b> Evidence of hemolysis, such as reticulocytosis, low haptoglobin, elevated indirect bilirubin, elevated LDH, AND positive Coombs’ (direct antiglobulin) test</string>
-    <string name="slesJapRefTitle">全身性エリテマトーデス（SLE）（指定難病４９）(Japanese)</string>
-    <string name="sleJapsUrl">https://www.nanbyou.or.jp/entry/215</string>
+    <string name="slesJapRefTitle" translatable="false">全身性エリテマトーデス（SLE）（指定難病４９）(Japanese)</string>
+    <string name="sleJapsUrl" translatable="false">https://www.nanbyou.or.jp/entry/215</string>
     <string name="constitutionalNote"><![CDATA[Temperature >38.3°C]]></string>
     <string name="neuropsychiatricNote">&lt;b>Delirium&lt;/b> Characterized by 1) change in consciousness or level of arousal with reduced ability to focus, 2) symptom development over hours to &lt;2 days, 3) symptom fluctuation throughout the day, 4) either 4a) acute/subacute change in cognition (e.g., memory deficit or disorientation), or 4b) change in behavior, mood, or affect (e.g., restlessness, reversal of sleep/wake cycle)\n&lt;b>Psychosis&lt;/b> Characterized by 1) delusions and/or hallucinations without insight and 2) absence of delirium\n&lt;b>Seizure&lt;/b> Primary generalized seizure or partial/focal seizure</string>
     <string name="mucocutaneousNote">
@@ -677,5 +677,20 @@
     <string name="nacutePhaseReactantsNote">&lt;b>§§&lt;/b>Normal/abnormal is determined by local laboratory standards.</string>
     <string name="durationOfSymptoms">Duration of symptoms</string>
     <string name="durationOfSymptomsNote">&lt;b>¶¶&lt;/b>Duration of symptoms refers to patient self-report of the duration of signs or symptoms of synovitis (eg, pain, swelling, tenderness) of joints that are clinically involved at the time of assessment, regardless of treatment status.</string>
+    <string name="rheumatoidArthritis">Reumatoid Arthritis</string>
+    <string name="jgCalendarUrl">https://en.wikipedia.org/wiki/Japanese_era_name</string>
+    <string name="jEraName">Japanese Era Name</string>
+    <string name="JgCalendarTitle">Japanese-Gregorian calendar conversion</string>
+    <string name="ad">A.D.</string>
+    <string name="meji">Meiji</string>
+    <string name="taisho">Taisho</string>
+    <string name="showa">Showa</string>
+    <string name="heisei">Heisei</string>
+    <string name="reiwa">Reiwa</string>
+    <string name="nen">" "</string>
+    <string name="meiji">Meiji</string>
+    <string name="westernCalendar">Western calendar</string>
+    <string name="japaneseCalendar">Japanese calendar</string>
+    <string name="calendar">Calendar</string>
 
 </resources>

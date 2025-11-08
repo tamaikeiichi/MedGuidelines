@@ -37,6 +37,8 @@ import com.keiichi.medguidelines.ui.screen.GastricTNMScreen
 import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
 import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
 import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
+import com.keiichi.medguidelines.ui.screen.JgCalendarScreen
+import com.keiichi.medguidelines.ui.screen.RaScreen
 import com.keiichi.medguidelines.ui.screen.ShikaShinryokoiMasterScreen
 import com.keiichi.medguidelines.ui.screen.SleScreen
 import com.keiichi.medguidelines.ui.screen.WilsonScreen
@@ -75,6 +77,8 @@ enum class ActionType {
     NAVIGATE_TO_CKD,
     NAVIGATE_TO_DATE,
     NAVIGATE_TO_SLE,
+    NAVIGATE_TO_RA,
+    NAVIGATE_TO_JGCALENDAR,
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -173,6 +177,21 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.systemicLupusErythemothosus
     )),
+    ListItemData(R.string.raTitle, ActionType.NAVIGATE_TO_RA,
+        keywords = listOf(
+            R.string.rheumatoidArthritis
+        )),
+    ListItemData(R.string.JgCalendarTitle, ActionType.NAVIGATE_TO_JGCALENDAR,
+        keywords = listOf(
+            R.string.westernCalendar,
+            R.string.japaneseCalendar,
+            R.string.meiji,
+            R.string.taisho,
+            R.string.heisei,
+            R.string.showa,
+            R.string.reiwa,
+            R.string.calendar
+        )),
 )
 
 data class IndexScreenActions(
@@ -207,6 +226,8 @@ data class IndexScreenActions(
     val navigateToCkd: () -> Unit,
     val navigateDate: () -> Unit,
     val navigateToSle: () -> Unit,
+    val navigateToRa: () -> Unit,
+    val navigateToJgCalendar: () -> Unit,
 )
 
 @Composable
@@ -249,6 +270,8 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToCkd = { navController.navigate("CkdScreen") },
         navigateDate = { navController.navigate("DateScreen") },
         navigateToSle = { navController.navigate("SleScreen") },
+        navigateToRa = {navController.navigate("RaScreen")},
+        navigateToJgCalendar = {navController.navigate("JgCalendarScreen")}
     )
 }
 
@@ -293,6 +316,8 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("CkdScreen") { navController -> CkdScreen(navController) },
         ScreenRoute("DateScreen") { navController -> DateScreen(navController) },
         ScreenRoute("SleScreen") { navController -> SleScreen(navController) },
+        ScreenRoute("RaScreen") { navController -> RaScreen(navController)},
+        ScreenRoute("JgCalendarScreen") { navController -> JgCalendarScreen(navController)}
     )
 }
 
@@ -329,6 +354,8 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_CKD -> this.navigateToCkd()
         ActionType.NAVIGATE_TO_DATE -> this.navigateDate()
         ActionType.NAVIGATE_TO_SLE -> this.navigateToSle()
+        ActionType.NAVIGATE_TO_RA -> this.navigateToRa()
+        ActionType.NAVIGATE_TO_JGCALENDAR -> this.navigateToJgCalendar()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand
