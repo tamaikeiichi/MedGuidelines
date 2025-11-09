@@ -1,7 +1,6 @@
 package com.keiichi.medguidelines.data
 
 import androidx.annotation.StringRes
-import androidx.compose.material3.Label
 import com.keiichi.medguidelines.R
 
 data class LabelAndScore(
@@ -184,4 +183,52 @@ val acutePhaseReactants = listOf(
 val durationOfSymptoms = listOf(
     LabelAndScore(labelResId = R.string.lessThanSixWeeks, score = 0),
     LabelAndScore(labelResId = R.string.sixWeeksOrMore, score = 1),
+)
+
+val sofaRespiration = listOf(
+    LabelAndScore(labelResId = R.string.fourHundredOrMore, score = 0),
+    LabelAndScore(labelResId = R.string.belowFourHundred, score = 1),
+    LabelAndScore(labelResId = R.string.belowThreeHundred, score = 2),
+    LabelAndScore(labelResId = R.string.belowTwoHundred, score = 3),
+    LabelAndScore(labelResId = R.string.belowOneHundredWithRespiratorySupport, score = 4),
+)
+
+val sofaCoagulation = listOf(
+    LabelAndScore(labelResId = R.string.oneHundredAndFiftyOrMore, score = 0),
+    LabelAndScore(labelResId = R.string.belowOneHundredAndFifty, score = 1),
+    LabelAndScore(labelResId = R.string.belowOneHundred, score = 2),
+    LabelAndScore(labelResId = R.string.belowFifty, score = 3),
+    LabelAndScore(labelResId = R.string.belowTwenty, score = 4)
+)
+
+val sofaLiver = listOf(
+    LabelAndScore(labelResId = R.string.below12, score = 0),
+    LabelAndScore(labelResId = R.string.between1219, score = 1),
+    LabelAndScore(labelResId = R.string.between2059, score = 2),
+    LabelAndScore(labelResId = R.string.between60119, score = 3),
+    LabelAndScore(labelResId = R.string.above120, score = 4)
+)
+
+val sofaCardiovascular = listOf(
+    LabelAndScore(labelResId = R.string.seventyOrMore, score = 0),
+    LabelAndScore(labelResId = R.string.belowSeventy, score = 1),
+    LabelAndScore(labelResId = R.string.dopamine5, score = 2),
+    LabelAndScore(labelResId = R.string.dopamine5115, score = 3),
+    LabelAndScore(labelResId = R.string.dopamine15, score = 4)
+)
+
+val sofaCentralNervousSystem = listOf(
+    LabelAndScore(labelResId = R.string.fifteen, score = 0),
+    LabelAndScore(labelResId = R.string.between1314, score = 1),
+    LabelAndScore(labelResId = R.string.between1012, score = 2),
+    LabelAndScore(labelResId = R.string.between69, score = 3),
+    LabelAndScore(labelResId = R.string.below6, score = 4)
+)
+
+val sofaRenal = listOf(
+    LabelAndScore(labelResId = R.string.below12Sofa, score = 0),
+    LabelAndScore(labelResId = R.string.between1219Sofa, score = 1),
+    LabelAndScore(labelResId = R.string.between2034, score = 2),
+    LabelAndScore(labelResId = R.string.between3549, score = 3),
+    LabelAndScore(labelResId = R.string.above5Sofa, score = 4)
 )
