@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
@@ -94,23 +96,56 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                     // Ensure parseStyledString is available and works as expected
                     if (title != R.string.space) { // Assuming R.string.space means "no title"
                         val textModifier = Modifier.padding(bottom = if (expanded && hasTitleNote) 4.dp else 0.dp)
-
-                        Text(
-                            text = parseStyledString(title), // Using stringResource directly for simplicity
-                            // Replace with parseStyledString(title) if styling is needed
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = if (onTitleClick != null) {
-                                textModifier.clickable(
-                                    onClick = onTitleClick,
-                                    // Optional: Add a visual ripple effect for the click
-                                    indication = LocalIndication.current,
-                                    interactionSource = remember { MutableInteractionSource() }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp, horizontal = 8.dp)
+                                .then(
+                                    // Make the text column clickable if an action is provided
+                                    if (onTitleClick != null) Modifier.clickable(onClick = onTitleClick)
+                                    else if (hasTitleNote) Modifier.clickable { expanded = !expanded }
+                                    else Modifier
                                 )
-                            } else {
-                                textModifier // Use the base modifier if no click action is provided
+                                .animateContentSize(),
+                            verticalAlignment = Alignment.CenterVertically, // Align to top for better look with wrapped text
+                        ) {
+                            // PART 1: The column for all text content (Title and Note)
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f) // This column takes up all available space
+
+                                    .padding(end = 8.dp) // Padding between text and icons
+                            ) {
+                                Text(
+                                    text = parseStyledString(title), // Using stringResource directly for simplicity
+                                    // Replace with parseStyledString(title) if styling is needed
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = if (onTitleClick != null) {
+                                        textModifier.clickable(
+                                            onClick = onTitleClick,
+                                            // Optional: Add a visual ripple effect for the click
+                                            indication = LocalIndication.current,
+                                            interactionSource = remember { MutableInteractionSource() }
+                                        )
+                                    } else {
+                                        textModifier // Use the base modifier if no click action is provided
+                                    }
+                                )
                             }
-                        )
-                    }
+                            //Spacer(modifier = Modifier.weight(1f))
+                            if (onTitleClick != null) {
+                                Icon(
+                                    imageVector = Icons.Default.ChevronRight,
+                                    contentDescription = "Navigate", // For accessibility
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                            // The Spacer pushes the Icon to the far right
+                            //Spacer(modifier = Modifier.weight(1f))
+
+                        }
+
                     if (expanded && hasTitleNote) {
                         Text(
                             text = parseStyledString(titleNote), // Using stringResource directly

@@ -4,15 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
@@ -31,16 +27,9 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.eyeGrade
 import com.keiichi.medguidelines.data.motorGrade
 import com.keiichi.medguidelines.data.verbalGrade
-import com.keiichi.medguidelines.ui.component.buttonAndScore
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
 import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
 import com.keiichi.medguidelines.ui.viewModel.GcsComponents
-
-data class glasgowComaScale(
-    val e: Int,
-    val v: Int,
-    val m: Int
-)
 
 @Composable
 fun GlasgowComaScaleScreen(
@@ -94,9 +83,7 @@ fun GlasgowComaScaleScreen(
         ) {
 //            score = glasgowComaScaleScore()
             glasgowComaScaleScore(
-                // Pass the current state down to set the default selection
                 defaultScores = gcsComponents,
-                // Receive a callback to update the ViewModel when a selection changes
                 onScoresChanged = { e, v, m ->
                     viewModel.updateGcsComponents(e, v, m)
                 }
@@ -110,12 +97,11 @@ fun GlasgowComaScaleScreen(
 fun glasgowComaScaleScore(
     defaultScores: GcsComponents,
     onScoresChanged: (e: Int, v: Int, m: Int) -> Unit
-)
-        //: glasgowComaScale
-{
-    val defaultEyeIndex = eyeGrade.size - defaultScores.e
-    val defaultVerbalIndex = verbalGrade.size - defaultScores.v
-    val defaultMotorIndex = motorGrade.size - defaultScores.m
+) {
+    val defaultEyeIndex = eyeGrade.find { it.score == defaultScores.e }?.labelResId ?: eyeGrade[0].labelResId
+    val defaultVerbalIndex = verbalGrade.find { it.score == defaultScores.v }?.labelResId ?: verbalGrade[0].labelResId
+    val defaultMotorIndex = motorGrade.find { it.score == defaultScores.m }?.labelResId ?: motorGrade[0].labelResId
+
 
     val eye = buttonAndScoreWithScoreDisplayed(
             optionsWithScores = eyeGrade,
@@ -132,24 +118,11 @@ fun glasgowComaScaleScore(
             title = R.string.motor,
             defaultSelectedOption = defaultMotorIndex // Use the calculated default
         )
-//    val score = glasgowComaScale(
-//        e = eye,
-//        v = verbal,
-//        m = motor
-//    )
-//    return score
-    onScoresChanged(eye, verbal, motor)
-}
 
-//private fun invertNumberHorizontally(
-//    number: Int,
-//    list: List<Int>,
-//): Int{
-//    val maxNumber = list.size.toDouble()
-//    val minNumber = 1.0
-//    val invertedNumber = ((number - ((maxNumber + minNumber)/2)) * (-1)) + ((maxNumber + minNumber)/2)
-//    return invertedNumber.toInt()
-//}
+    LaunchedEffect(eye, verbal, motor) {
+        onScoresChanged(eye, verbal, motor)
+    }
+}
 
 @Preview
 @Composable

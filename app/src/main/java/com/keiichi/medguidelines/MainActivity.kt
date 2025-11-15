@@ -38,6 +38,7 @@ import com.keiichi.medguidelines.ui.screen.GlasgowComaScaleScreen
 import com.keiichi.medguidelines.ui.screen.IndexScreen
 import com.keiichi.medguidelines.ui.screen.SofaScreen
 import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
+import androidx.activity.viewModels
 
 data class ScreenRoute(
     val route: String,
@@ -45,6 +46,8 @@ data class ScreenRoute(
 )
 
 class MainActivity : ComponentActivity() {
+    private val sofaViewModel: SofaViewModel by viewModels()
+
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,8 +68,8 @@ class MainActivity : ComponentActivity() {
                     )
                     {
                         val controller = rememberNavController()
-                        val sofaViewModel: SofaViewModel =
-                            viewModel()
+//                        val sofaViewModel: SofaViewModel =
+//                            viewModel()
                         val appScreens = getAppScreens(sofaViewModel)
                         val indexScreenActions = rememberIndexScreenActions(navController = controller)
 
@@ -83,11 +86,11 @@ class MainActivity : ComponentActivity() {
                                 composable(screenRoute.route) {
                                     ChildComposable {
                                         when (screenRoute.route) {
-                                            "sofa_screen" -> SofaScreen(
+                                            "SofaScreen" -> SofaScreen(
                                                 navController = controller,
                                                 viewModel = sofaViewModel
                                             )
-                                            "glasgow_coma_scale_screen" -> GlasgowComaScaleScreen(
+                                            "GlasgowComaScaleScreen" -> GlasgowComaScaleScreen(
                                                 navController = controller,
                                                 viewModel = sofaViewModel
                                             )

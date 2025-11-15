@@ -59,8 +59,6 @@ fun SofaScreen(
 //    val glasgowComaScaleViewModel by viewModel.gcsComponents.collectAsState()
     val gcsComponents by viewModel.gcsComponents.collectAsState()
 
-
-    // Automatically recalculates when GCS changes
     val centralNervousSystemScore by remember(gcsComponents) {
         derivedStateOf {
             val totalGcsScore = gcsComponents.e + gcsComponents.v + gcsComponents.m
@@ -161,14 +159,7 @@ fun SofaScreen(
                     onScoresChanged = { newScores ->
                         allSofaScores = newScores // Update the state in the parent
                     },
-                    onCnsScoreChanged = { newCnsScore ->
-                        viewModel.updateGcsFromCnsScore(newCnsScore)
-                    }
                 )
-//                allSofaScores = inputAndCalculateSofa(
-//                    navController = navController,
-//                    centralNervousSystemScore = centralNervousSystemScore
-//                )
             }
         }
     }
@@ -180,10 +171,7 @@ private fun inputAndCalculateSofa(
     navController: NavController,
     centralNervousSystemScore: Int,
     onScoresChanged: (SofaScores) -> Unit,
-    onCnsScoreChanged: (Int) -> Unit
-)
-//: SofaScores
-{
+) {
             val respiration = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaRespiration,
                 title = R.string.sofaRespiration,
@@ -213,23 +201,14 @@ private fun inputAndCalculateSofa(
                     ?: sofaCentralNervousSystem[0].labelResId, // Fallback to the first option
                 onTitleClick = {
                     navController.navigate("GlasgowComaScaleScreen") // Your navigation route
-                }
+                },
+                //titleNote = R.string.map
             )
             val renal = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaRenal,
                 title = R.string.sofaRenal,
                 defaultSelectedOption = sofaRenal[0].labelResId,
             )
-
-    // ADD THIS LAUNCHED EFFECT:
-// This effect will run whenever the user manually changes the CNS button.
-    LaunchedEffect(centralNervousSystem) {
-        // It checks if the new score from the button is different from the score
-        // derived from the ViewModel. If it is, it means the user changed it here.
-        if (centralNervousSystem != centralNervousSystemScore) {
-            onCnsScoreChanged(centralNervousSystem)
-        }
-    }
 
     val allScores =
         SofaScores(

@@ -17,22 +17,16 @@ fun buttonAndScoreWithScoreDisplayed(
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
     appendixLabel: @Composable () -> Unit = {},
     isNumberDisplayed: Boolean = true,
-    onTitleClick : () -> Unit = {}
+    onTitleClick : (() -> Unit)? = null,
 ): Int {
-    // Ensure optionsWithScores is not empty to avoid crashing on optionsWithScores[0]
     if (optionsWithScores.isEmpty()) {
-        // Handle empty options list: return a default score, throw error, or show placeholder
         return 0 // Or some other sensible default
     }
-// Determine the initial selected option
     val initialOption = optionsWithScores.find{it.labelResId == defaultSelectedOption}?.takeIf { optionsWithScores.contains(it) }
         ?: optionsWithScores[0] // Fallback to first if default is null or not in the list
 
-    // The state now holds the selected ScoreOption object
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(initialOption) }
 
-    // RadioButtonAndExpand will need to be adapted to use ScoreOption
-    // It will pass the full ScoreOption object back on selection.
     RadioButtonAndExpandWithScoreDisplayed( // You'll need to modify RadioButtonAndExpand
         options = optionsWithScores,
         selectedOption = selectedOption,
@@ -44,8 +38,6 @@ fun buttonAndScoreWithScoreDisplayed(
         isNumberDisplayed = isNumberDisplayed,
         onTitleClick = onTitleClick
     )
-
-    // The score is now directly from the selected option's score property
     val score: Int = selectedOption.score
     return score
 }
