@@ -144,6 +144,8 @@ fun SofaScreen(
                         emptyList<LabelAndScore>()
                     )
                 }
+                qSofaScore = defaultSelectedOptions.sumOf { it.score } // Parent calculates the score// In Component Signature
+
                 CheckboxesAndExpandWithScore(
                     optionsWithScores = optionsWithScores,
                     title = R.string.qSofaCriteria,

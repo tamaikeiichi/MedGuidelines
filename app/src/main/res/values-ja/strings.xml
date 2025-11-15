@@ -430,4 +430,22 @@
     <string name="westernCalendar">西暦</string>
     <string name="japaneseCalendar">和暦</string>
     <string name="calendar">カレンダー</string>
+    <string name="sepsis">敗血症</string>
+    <string name="shock">ショック</string>
+    <string name="sofaLiver">肝: 総ビリルビン, mg/dL (μmol/L)</string>
+    <string name="sofaRespiration">呼吸: PaO&lt;sub>2&lt;/sub>/FIO&lt;sub>2&lt;/sub>, mmHg (kPa)</string>
+    <string name="sofaRenal">腎機能: クレアチニン, mg/dL (μmol/L) あるいは尿量, mL/d</string>
+    <string name="map">MAP, mean arterial pressure　平均動脈圧</string>
+    <string name="sofaCentralNervousSystem">中枢神経: Glasgow Coma Scale score</string>
+    <string name="qSofaRespiratoryRate">呼吸数 ≥22/min</string>
+    <string name="qSofaAlteredMentation">精神状態の変容</string>
+    <string name="qSofaSystolicBloodPressure">収縮期血圧 100 mm Hg</string>
+    <string name="above5Sofa"><![CDATA[>5.0 (440) あるいは尿量 <200 ml/d]]></string>
+    <string name="sofaCoagulation">凝固: 血小板, ×10&lt;sup>3&lt;/sup>/μL</string>
+    <string name="between3549">3.5-4.9 (300-440) あるいは尿量 &lt;500 mL/d</string>
+    <string name="dopamine5"><![CDATA[ドパミン <5 あるいはドブタミン (量問わず)]]></string>
+    <string name="dopamine5115">ドパミン 5.1-15 あるいはエピネフリン ≤0.1 あるいはノルエピネフリン ≤0.1</string>
+    <string name="dopamine15"><![CDATA[ドパミン >15 あるいはエピネフリン >0.1 あるいはノルエピネフリン >0.1]]></string>
+    <string name="belowTwoHundred"><![CDATA[<200 (26.7) +人工呼吸]]></string>
+    <string name="belowOneHundredWithRespiratorySupport"><![CDATA[<100 (13.3) +人口呼吸]]></string>
 </resources>

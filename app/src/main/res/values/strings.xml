@@ -651,7 +651,7 @@
     <string name="classifyAsRa">Classify as RA</string>
     <string name="raTitle">Classification criteria for Rheumatoid Arthritis</string>
     <string name="raRefTitle">The 2010 American College of Rheumatology/European League Against Rheumatism classifi cation criteria for RA</string>
-    <string name="raUrl">https://pubmed.ncbi.nlm.nih.gov/20699241/</string>
+    <string name="raUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/20699241/</string>
     <string name="atLeastOneJoint">" have at least 1 joint with defi nite clinical synovitis (swelling)"</string>
     <string name="noBetterExplained">with the synovitis not better explained by another disease</string>
     <string name="oneLargeJoint">1 large joint</string>
@@ -678,8 +678,8 @@
     <string name="durationOfSymptoms">Duration of symptoms</string>
     <string name="durationOfSymptomsNote">&lt;b>¶¶&lt;/b>Duration of symptoms refers to patient self-report of the duration of signs or symptoms of synovitis (eg, pain, swelling, tenderness) of joints that are clinically involved at the time of assessment, regardless of treatment status.</string>
     <string name="rheumatoidArthritis">Reumatoid Arthritis</string>
-    <string name="jgCalendarUrl">https://en.wikipedia.org/wiki/Japanese_era_name</string>
-    <string name="jEraName">Japanese Era Name</string>
+    <string name="jgCalendarUrl" translatable="false">https://en.wikipedia.org/wiki/Japanese_era_name</string>
+    <string name="jEraName" translatable="false">Japanese Era Name</string>
     <string name="JgCalendarTitle">Japanese-Gregorian calendar conversion</string>
     <string name="ad">A.D.</string>
     <string name="meji">Meiji</string>
@@ -692,27 +692,27 @@
     <string name="westernCalendar">Western calendar</string>
     <string name="japaneseCalendar">Japanese calendar</string>
     <string name="calendar">Calendar</string>
-    <string name="sepsis3">The Third International Consensus Definitions  for Sepsis and Septic Shock (Sepsis-3)</string>
-    <string name="sofaUrl">https://jamanetwork.com/journals/jama/fullarticle/2492881</string>
+    <string name="sepsis3" translatable="false">The Third International Consensus Definitions  for Sepsis and Septic Shock (Sepsis-3)</string>
+    <string name="sofaUrl" translatable="false">https://jamanetwork.com/journals/jama/fullarticle/2492881</string>
     <string name="sofaTitle">qSOFA and SOFA score</string>
     <string name="sofaScore">SOFA score</string>
-    <string name="fourHundredOrMore">≥400 (53.3)</string>
-    <string name="belowFourHundred"><![CDATA[<400 (53.3)]]></string>
-    <string name="belowThreeHundred"><![CDATA[<300 (40)]]></string>
+    <string name="fourHundredOrMore" translatable="false">≥400 (53.3)</string>
+    <string name="belowFourHundred" translatable="false"><![CDATA[<400 (53.3)]]></string>
+    <string name="belowThreeHundred" translatable="false"><![CDATA[<300 (40)]]></string>
     <string name="belowTwoHundred"><![CDATA[<200 (26.7) with respiratory support]]></string>
     <string name="belowOneHundredWithRespiratorySupport"><![CDATA[<100 (13.3) with respiratory support]]></string>
     <string name="oneHundredAndFiftyOrMore">≥150</string>
-    <string name="belowOneHundredAndFifty"><![CDATA[<150]]></string>
-    <string name="belowOneHundred"><![CDATA[<100]]></string>
-    <string name="belowFifty"><![CDATA[<50]]></string>
-    <string name="belowTwenty"><![CDATA[<20]]></string>
-    <string name="below12"><![CDATA[<1.2 (20)]]></string>
-    <string name="between1219">1.2-1.9 (20-32)</string>
-    <string name="between2059">2.0-5.9 (33-101)</string>
-    <string name="between60119">6.0-11.9 (102-204)</string>
-    <string name="above120"><![CDATA[>12.0 (204)]]></string>
-    <string name="seventyOrMore">MAP ≥70 mm Hg</string>
-    <string name="belowSeventy"><![CDATA[MAP <70 mm Hg]]></string>
+    <string name="belowOneHundredAndFifty" translatable="false"><![CDATA[<150]]></string>
+    <string name="belowOneHundred" translatable="false"><![CDATA[<100]]></string>
+    <string name="belowFifty" translatable="false"><![CDATA[<50]]></string>
+    <string name="belowTwenty" translatable="false"><![CDATA[<20]]></string>
+    <string name="below12" translatable="false"><![CDATA[<1.2 (20)]]></string>
+    <string name="between1219" translatable="false">1.2-1.9 (20-32)</string>
+    <string name="between2059" translatable="false">2.0-5.9 (33-101)</string>
+    <string name="between60119" translatable="false">6.0-11.9 (102-204)</string>
+    <string name="above120" translatable="false"><![CDATA[>12.0 (204)]]></string>
+    <string name="seventyOrMore" translatable="false">MAP ≥70 mm Hg</string>
+    <string name="belowSeventy" translatable="false"><![CDATA[MAP <70 mm Hg]]></string>
     <string name="dopamine5"><![CDATA[Dopamine <5 or dobutamine (any dose)]]></string>
     <string name="dopamine5115">Dopamine 5.1-15 or epinephrine ≤0.1 or norepinephrine ≤0.1</string>
     <string name="dopamine15"><![CDATA[Dopamine >15 or epinephrine >0.1 or norepinephrine >0.1]]></string>

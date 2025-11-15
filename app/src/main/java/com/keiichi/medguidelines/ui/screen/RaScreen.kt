@@ -105,7 +105,7 @@ fun entryCriterionRa(): Int {
     var selectedOptions by remember { mutableStateOf<List<LabelAndScore>>(emptyList()) }
     val score = defaultSelectedOptions.sumOf { it.score } // Parent calculates the score// In Component Signature
 
-    val entryCriterion = CheckboxesAndExpandWithScore(
+    CheckboxesAndExpandWithScore(
         optionsWithScores = optionsWithScores,
         title = R.string.raEntryCriterion,
         titleNote = R.string.raEntryCriterionNote,
