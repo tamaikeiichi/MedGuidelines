@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +32,7 @@ import com.keiichi.medguidelines.data.eyeGrade
 import com.keiichi.medguidelines.data.motorGrade
 import com.keiichi.medguidelines.data.verbalGrade
 import com.keiichi.medguidelines.ui.component.buttonAndScore
+import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
 
 data class glasgowComaScale(
     val e: Int,
@@ -38,8 +41,23 @@ data class glasgowComaScale(
 )
 
 @Composable
-fun GlasgowComaScaleScreen(navController: NavController) {
+fun GlasgowComaScaleScreen(
+    navController: NavController,
+    viewModel: SofaViewModel
+) {
     var score by remember { mutableStateOf(glasgowComaScale(0, 0, 0)) }
+    // Call the ViewModel's update function whenever the score changes
+
+    val sumOfScore = score.e + score.v + score.m
+
+    LaunchedEffect(sumOfScore) {
+        viewModel.updateGcsScore(sumOfScore.toDouble())
+    }
+
+//    // You can also add a button that pops the back stack
+//    Button(onClick = { navController.popBackStack() }) {
+//        Text("Done")
+//    }
 
     MedGuidelinesScaffold(
         topBar = {
@@ -118,7 +136,6 @@ fun glasgowComaScaleScore(): glasgowComaScale {
         m = motor
     )
     return score
-    Text(text = motorGrade.size.toString())
 }
 
 private fun invertNumberHorizontally(
@@ -134,5 +151,8 @@ private fun invertNumberHorizontally(
 @Preview
 @Composable
 fun GlasgowComaScaleScreenPreview() {
-    GlasgowComaScaleScreen(navController = NavController(LocalContext.current))
+    GlasgowComaScaleScreen(
+        navController = NavController(LocalContext.current),
+        viewModel = SofaViewModel()
+    )
 }

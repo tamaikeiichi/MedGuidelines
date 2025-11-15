@@ -22,38 +22,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode.Companion.Screen
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.keiichi.compose.MedGuidelinesTheme
-import com.keiichi.medguidelines.data.IndexScreenActions
 import com.keiichi.medguidelines.data.getAppScreens
 import com.keiichi.medguidelines.data.rememberIndexScreenActions
 import com.keiichi.medguidelines.ui.component.AppDimensions
 import com.keiichi.medguidelines.ui.component.LocalAppDimensions
-import com.keiichi.medguidelines.ui.screen.AcutePancreatitisScreen
-import com.keiichi.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
-import com.keiichi.medguidelines.ui.screen.AdropScreen
-import com.keiichi.medguidelines.ui.screen.BloodGasAnalysisScreen
-import com.keiichi.medguidelines.ui.screen.Chads2Screen
-import com.keiichi.medguidelines.ui.screen.ChildPughScreen
-import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
-import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
 import com.keiichi.medguidelines.ui.screen.GlasgowComaScaleScreen
-import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
-import com.keiichi.medguidelines.ui.screen.HomaIRScreen
 import com.keiichi.medguidelines.ui.screen.IndexScreen
-import com.keiichi.medguidelines.ui.screen.IntrahepaticCholangiocarcinomaTNMScreen
-import com.keiichi.medguidelines.ui.screen.LiverFibrosisScoreSystemScreen
-import com.keiichi.medguidelines.ui.screen.LungTNMScreen
-import com.keiichi.medguidelines.ui.screen.MALBIScreen
-import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
-import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
-import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
+import com.keiichi.medguidelines.ui.screen.SofaScreen
+import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
 
 data class ScreenRoute(
     val route: String,
@@ -81,8 +65,11 @@ class MainActivity : ComponentActivity() {
                     )
                     {
                         val controller = rememberNavController()
-                        val appScreens = getAppScreens()
+                        val sofaViewModel: SofaViewModel =
+                            viewModel()
+                        val appScreens = getAppScreens(sofaViewModel)
                         val indexScreenActions = rememberIndexScreenActions(navController = controller)
+
 
                         NavHost(controller, startDestination = "IndexScreen") {
                             composable("IndexScreen") {
@@ -95,7 +82,20 @@ class MainActivity : ComponentActivity() {
                             appScreens.forEach { screenRoute ->
                                 composable(screenRoute.route) {
                                     ChildComposable {
-                                        screenRoute.content(controller)
+                                        when (screenRoute.route) {
+                                            "sofa_screen" -> SofaScreen(
+                                                navController = controller,
+                                                viewModel = sofaViewModel
+                                            )
+                                            "glasgow_coma_scale_screen" -> GlasgowComaScaleScreen(
+                                                navController = controller,
+                                                viewModel = sofaViewModel
+                                            )
+                                            else -> {
+                                                // For all other screens, call the original content function
+                                                screenRoute.content(controller)
+                                            }
+                                        }
                                     }
                                 }
                             }

@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
 import kotlinx.parcelize.Parcelize
@@ -41,7 +42,9 @@ import com.keiichi.medguidelines.ui.screen.JgCalendarScreen
 import com.keiichi.medguidelines.ui.screen.RaScreen
 import com.keiichi.medguidelines.ui.screen.ShikaShinryokoiMasterScreen
 import com.keiichi.medguidelines.ui.screen.SleScreen
+import com.keiichi.medguidelines.ui.screen.SofaScreen
 import com.keiichi.medguidelines.ui.screen.WilsonScreen
+import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
 import java.util.Locale
 
 @Serializable
@@ -79,6 +82,7 @@ enum class ActionType {
     NAVIGATE_TO_SLE,
     NAVIGATE_TO_RA,
     NAVIGATE_TO_JGCALENDAR,
+    NAVIGATE_TO_SOFA
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -192,6 +196,11 @@ val itemsList = listOf(
             R.string.reiwa,
             R.string.calendar
         )),
+    ListItemData(R.string.sofaTitle, ActionType.NAVIGATE_TO_SOFA,
+        keywords = listOf(
+            R.string.sepsis,
+            R.string.shock
+        ))
 )
 
 data class IndexScreenActions(
@@ -228,6 +237,7 @@ data class IndexScreenActions(
     val navigateToSle: () -> Unit,
     val navigateToRa: () -> Unit,
     val navigateToJgCalendar: () -> Unit,
+    val navigateToSofa: () -> Unit
 )
 
 @Composable
@@ -271,11 +281,12 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateDate = { navController.navigate("DateScreen") },
         navigateToSle = { navController.navigate("SleScreen") },
         navigateToRa = {navController.navigate("RaScreen")},
-        navigateToJgCalendar = {navController.navigate("JgCalendarScreen")}
+        navigateToJgCalendar = {navController.navigate("JgCalendarScreen")},
+        navigateToSofa = {navController.navigate("SofaScreen")}
     )
 }
 
-fun getAppScreens(): List<ScreenRoute> {
+fun getAppScreens(sofaViewModel: SofaViewModel): List<ScreenRoute> {
     return listOf(
         ScreenRoute("ChildPughScreen") { navController -> ChildPughScreen(navController) },
         ScreenRoute("AdropScreen") { navController -> AdropScreen(navController) },
@@ -299,7 +310,9 @@ fun getAppScreens(): List<ScreenRoute> {
             IntrahepaticCholangiocarcinomaTNMScreen(navController)
         },
         ScreenRoute("CHADS2") { navController -> Chads2Screen(navController) },
-        ScreenRoute("GlasgowComaScaleScreen") { navController -> GlasgowComaScaleScreen(navController) },
+        ScreenRoute("GlasgowComaScaleScreen") { navController ->
+            GlasgowComaScaleScreen(navController, sofaViewModel) // Pass the viewModel here
+        },
         ScreenRoute("SodiumDifferentialDiagnosisScreen") { navController ->
             SodiumDifferentialDiagnosisScreen(navController)
         },
@@ -317,7 +330,10 @@ fun getAppScreens(): List<ScreenRoute> {
         ScreenRoute("DateScreen") { navController -> DateScreen(navController) },
         ScreenRoute("SleScreen") { navController -> SleScreen(navController) },
         ScreenRoute("RaScreen") { navController -> RaScreen(navController)},
-        ScreenRoute("JgCalendarScreen") { navController -> JgCalendarScreen(navController)}
+        ScreenRoute("JgCalendarScreen") { navController -> JgCalendarScreen(navController)},
+        ScreenRoute("SofaScreen") { navController ->
+            SofaScreen(navController, sofaViewModel) // Pass the viewModel here
+        },
     )
 }
 
@@ -356,6 +372,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_SLE -> this.navigateToSle()
         ActionType.NAVIGATE_TO_RA -> this.navigateToRa()
         ActionType.NAVIGATE_TO_JGCALENDAR -> this.navigateToJgCalendar()
+        ActionType.NAVIGATE_TO_SOFA -> this.navigateToSofa()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

@@ -1,17 +1,13 @@
 package com.keiichi.medguidelines.ui.screen
 
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -19,29 +15,29 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.LabelAndScore
+import com.keiichi.medguidelines.data.qSofa
 import com.keiichi.medguidelines.data.sofaCardiovascular
 import com.keiichi.medguidelines.data.sofaCentralNervousSystem
 import com.keiichi.medguidelines.data.sofaCoagulation
 import com.keiichi.medguidelines.data.sofaLiver
 import com.keiichi.medguidelines.data.sofaRenal
 import com.keiichi.medguidelines.data.sofaRespiration
+import com.keiichi.medguidelines.ui.component.CheckboxesAndExpandWithScore
 import com.keiichi.medguidelines.ui.component.Dimensions
-import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBarVariable
-import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScore
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
+import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
 
 data class SofaScores(
     val respiration: Int,
@@ -56,7 +52,26 @@ data class SofaScores(
 @Composable
 fun SofaScreen(
     navController: NavController,
+    viewModel: SofaViewModel,
 ) {
+    // Collect the GCS score from the ViewModel as state
+    val glasgowComaScaleViewModel by viewModel.gcsScore.collectAsState()
+
+    // Automatically recalculates when GCS changes
+    val centralNervousSystemScore by remember(glasgowComaScaleViewModel) {
+        derivedStateOf {
+            when {
+                glasgowComaScaleViewModel == 15.0 -> 0
+                glasgowComaScaleViewModel in 13.0..14.0 -> 1
+                glasgowComaScaleViewModel in 10.0..12.0 -> 2
+                glasgowComaScaleViewModel in 6.0..9.0 -> 3
+                glasgowComaScaleViewModel < 6.0 -> 4
+                else -> 0 // Default case
+            }
+        }
+    }
+
+    var qSofaScore by remember { mutableIntStateOf(0) }
     val references = listOf(
         TextAndUrl(R.string.sepsis3, R.string.sofaUrl),
     )
@@ -118,11 +133,17 @@ fun SofaScreen(
                 },
                 navController = navController,
                 references = references,
+                helpTitleResId = R.string.sofaAndQSofa,
+                helpMessageResId = R.string.sofaAndQSofaInfo
             )
         },
         bottomBar = {
             val displayText =
                 buildAnnotatedString {
+                    append(stringResource(R.string.qSofaScore))
+                    append(" ")
+                    append(qSofaScore.toString())
+                    append("\n")
                     append(stringResource(R.string.sofaScore))
                     append(" ")
                     append(sofaScoresSum.toString())
@@ -141,10 +162,27 @@ fun SofaScreen(
             state = rememberLazyListState()
         ) {
             item {
-                inputAndCalculateSofa(
-                    onScoresChanged = {
-                        allSofaScores = it
-                    }
+                val optionsWithScores = qSofa
+                var defaultSelectedOptions by remember {
+                    mutableStateOf(
+                        emptyList<LabelAndScore>()
+                        //listOf(
+                        //optionsWithScores[0], optionsWithScores[1], optionsWithScores[2]
+                    )
+                }
+                qSofaScore = defaultSelectedOptions.sumOf { it.score }
+                CheckboxesAndExpandWithScore(
+                    optionsWithScores = optionsWithScores,
+                    title = R.string.qSofaCriteria,
+                    defaultSelectedOption = defaultSelectedOptions,
+                    isNumberDisplayed = false,
+                    onOptionSelected = { newSelection ->
+                        defaultSelectedOptions = newSelection
+                    },
+                )
+                allSofaScores = inputAndCalculateSofa(
+                    navController = navController,
+                    centralNervousSystemScore = centralNervousSystemScore
                 )
             }
         }
@@ -155,101 +193,67 @@ fun SofaScreen(
 //@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun inputAndCalculateSofa(
-    onScoresChanged: (SofaScores) -> Unit
-//    calculatedRespiration: MutableDoubleState,
-//    calculatedMeanArterialPressure: MutableDoubleState,
-) {
-    var changedFactor1Unit by remember { mutableStateOf(true) }
-    var changedFactor2Unit by remember { mutableStateOf(true) }
-    var changedFactor3Unit by remember { mutableStateOf(true) }
-
-//    var respiration by remember { mutableIntStateOf(0) }
-//    var coagulation by remember { mutableIntStateOf(0) }
-//    var liver by remember { mutableIntStateOf(0) }
-//    var cardiovascular by remember { mutableIntStateOf(0) }
-//    var centralNervousSystem by remember { mutableIntStateOf(0) }
-//    var renal by remember { mutableIntStateOf(0) }
-
-
-//    MedGuidelinesCard(
-//        modifier = Modifier
-//            .padding(
-//                Dimensions.cardPadding
-//            )
-//    ) {
-//        FlowRow(
-//            modifier = Modifier
-//                .padding(4.dp)
-//                .wrapContentHeight(
-//                    align = Alignment.Bottom
-//                ),
-//            itemVerticalAlignment = Alignment.Bottom,
-//        ) {
+    navController: NavController,
+    centralNervousSystemScore: Int
+)
+: SofaScores
+{
             val respiration = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaRespiration,
-                title = R.string.respiration,
+                title = R.string.sofaRespiration,
                 defaultSelectedOption = sofaRespiration[0].labelResId,
             )
 
             val coagulation = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaCoagulation,
-                title = R.string.coagulation,
+                title = R.string.sofaCoagulation,
                 defaultSelectedOption = sofaCoagulation[0].labelResId,
             )
             val liver = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaLiver,
-                title = R.string.liver,
+                title = R.string.sofaLiver,
                 defaultSelectedOption = sofaLiver[0].labelResId,
             )
             val cardiovascular = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaCardiovascular,
-                title = R.string.cardiovascular,
+                title = R.string.sofaCardiovascular,
+                titleNote = R.string.map,
                 defaultSelectedOption = sofaCardiovascular[0].labelResId,
             )
             val centralNervousSystem = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaCentralNervousSystem,
-                title = R.string.centralNervousSystem,
-                defaultSelectedOption = sofaCentralNervousSystem[0].labelResId,
+                title = R.string.sofaCentralNervousSystem,
+                defaultSelectedOption = sofaCentralNervousSystem.find { it.score == centralNervousSystemScore }?.labelResId
+                    ?: sofaCentralNervousSystem[0].labelResId, // Fallback to the first option
+                onTitleClick = {
+                    navController.navigate("GlasgowComaScaleScreen") // Your navigation route
+                }
             )
             val renal = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaRenal,
-                title = R.string.renal,
+                title = R.string.sofaRenal,
                 defaultSelectedOption = sofaRenal[0].labelResId,
             )
-    LaunchedEffect(respiration, coagulation, liver, cardiovascular, centralNervousSystem, renal) {
-        onScoresChanged(
-            SofaScores(
-                respiration = respiration,
-                coagulation = coagulation,
-                liver = liver,
-                cardiovascular = cardiovascular,
-                centralNervousSystem = centralNervousSystem,
-                renal = renal
-            )
-        )
-    }
-//        }
-//    }
 
-//    val allScores =
-//        SofaScores(
-//            respiration,
-//            coagulation,
-//            liver,
-//            cardiovascular,
-//            centralNervousSystem,
-//            renal
-//        )
-//    onScoresChanged(allScores)
-    //allScores.roundToTwoDecimals()
-    //return allScores
+    val allScores =
+        SofaScores(
+            respiration,
+            coagulation,
+            liver,
+            cardiovascular,
+            centralNervousSystem,
+            renal
+        )
+    return allScores
 }
 
-//@Preview
-//@Composable
-//fun SofaScreenPreview() {
-//    SofaScreen(navController = NavController(LocalContext.current))
-//}
+@Preview
+@Composable
+fun SofaScreenPreview() {
+    SofaScreen(
+        navController = NavController(LocalContext.current),
+        viewModel = SofaViewModel())
+}
 
 //@Preview
 //@Composable
@@ -257,36 +261,36 @@ private fun inputAndCalculateSofa(
 //    inputAndCalculateSofa()
 //}
 
-@Preview(showBackground = true, name = "Single Button Component")
-@Composable
-fun SingleButtonPreview() {
-    // This is how you correctly preview the single component.
-    // By wrapping it in a Surface, it gets a background and becomes visible.
-    Surface {
-        val respiration = buttonAndScoreWithScoreDisplayed(
-            optionsWithScores = sofaRespiration,
-            title = R.string.respiration,
-            defaultSelectedOption = sofaRespiration[0].labelResId,
-        )
-    }
-}
+//@Preview(showBackground = true, name = "Single Button Component")
+//@Composable
+//fun SingleButtonPreview() {
+//    // This is how you correctly preview the single component.
+//    // By wrapping it in a Surface, it gets a background and becomes visible.
+//    Surface {
+//        val respiration = buttonAndScoreWithScoreDisplayed(
+//            optionsWithScores = sofaRespiration,
+//            title = R.string.respiration,
+//            defaultSelectedOption = sofaRespiration[0].labelResId,
+//        )
+//    }
+//}
 
-@Preview(showBackground = true, name = "Single Button Component")
-@Composable
-fun SingleButtonPreview2() {
-    // This is how you correctly preview the single component.
-    // By wrapping it in a Surface, it gets a background and becomes visible.
-    Surface {
-        val respiration = buttonAndScoreWithScore(
-            optionsWithScores = sofaRespiration,
-            title = R.string.respiration,
-            defaultSelectedOption = sofaRespiration[0].labelResId,
-        )
-    }
-}
+//@Preview(showBackground = true, name = "Single Button Component")
+//@Composable
+//fun SingleButtonPreview2() {
+//    // This is how you correctly preview the single component.
+//    // By wrapping it in a Surface, it gets a background and becomes visible.
+//    Surface {
+//        val respiration = buttonAndScoreWithScore(
+//            optionsWithScores = sofaRespiration,
+//            title = R.string.respiration,
+//            defaultSelectedOption = sofaRespiration[0].labelResId,
+//        )
+//    }
+//}
 
-@Preview
-@Composable
-fun SofaScreenPreview4(){
-    Text(text = "hello")
-}
+//@Preview
+//@Composable
+//fun SofaScreenPreview4(){
+//    Text(text = "hello")
+//}

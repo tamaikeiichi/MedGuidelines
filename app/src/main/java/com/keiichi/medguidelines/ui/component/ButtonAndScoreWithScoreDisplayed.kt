@@ -16,7 +16,8 @@ fun buttonAndScoreWithScoreDisplayed(
     defaultSelectedOption: Int? = null,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
     appendixLabel: @Composable () -> Unit = {},
-    isNumberDisplayed: Boolean = true
+    isNumberDisplayed: Boolean = true,
+    onTitleClick : () -> Unit = {}
 ): Int {
     // Ensure optionsWithScores is not empty to avoid crashing on optionsWithScores[0]
     if (optionsWithScores.isEmpty()) {
@@ -40,7 +41,8 @@ fun buttonAndScoreWithScoreDisplayed(
         titleNote = titleNote,
         cardColor = cardColor,
         appendixLabel = appendixLabel,
-        isNumberDisplayed = isNumberDisplayed
+        isNumberDisplayed = isNumberDisplayed,
+        onTitleClick = onTitleClick
     )
 
     // The score is now directly from the selected option's score property

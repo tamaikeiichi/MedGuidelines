@@ -726,8 +726,22 @@
     <string name="between2034">2.0-3.4 (171-299)</string>
     <string name="between3549">3.5-4.9 (300-440) or urine output &lt;500 mL/d</string>
     <string name="above5Sofa"><![CDATA[>5.0 (440) or urine output <200 ml/d]]></string>
-    <string name="coagulation">Coagulation</string>
-    <string name="cardiovascular">Cardiovascular</string>
-    <string name="centralNervousSystem">Central nervous system</string>
+    <string name="sofaCoagulation">Coagulation: platelets, ×10&lt;sup>3&lt;/sup>/μL</string>
+    <string name="sofaCardiovascular">Cardiovascular</string>
+    <string name="sofaCentralNervousSystem">Central nervous system: Glasgow Coma Scale score</string>
+    <string name="qSofaRespiratoryRate">Respiratory rate ≥22/min</string>
+    <string name="qSofaAlteredMentation">Altered mentation</string>
+    <string name="qSofaSystolicBloodPressure">Systolic blood pressure 100 mm Hg</string>
+    <string name="qSofaCriteria">qSOFA (Quick SOFA) Criteria</string>
+    <string name="qSofa">qSOFA</string>
+    <string name="qSofaScore">qSOFA score</string>
+    <string name="sofaLiver">Liver: bilirubin, mg/dL (μmol/L)</string>
+    <string name="sofaRespiration">Respiration: PaO&lt;sub>2&lt;/sub>/FIO&lt;sub>2&lt;/sub>, mmHg (kPa)</string>
+    <string name="sofaRenal">Renal: creatinine, mg/dL (μmol/L) or urine output, mL/d</string>
+    <string name="map">MAP, mean arterial pressure</string>
+    <string name="sofaAndQSofa">SOFA and qSOFA</string>
+    <string name="sofaAndQSofaInfo">qSOFA ≥ 2: poor outcomes typical of sepsis.\nIncrease SOFA score from baseline ≥ 2: in-hospital mortality greater than 10%.\nThe baseline SOFA score should be assumed to be zero unless the patient is known to have preexisting (acute or chronic) organ dysfunction before the onset of infection.</string>
+    <string name="sepsis">Sepsis</string>
+    <string name="shock">Shock</string>
 
 </resources>

@@ -232,3 +232,9 @@ val sofaRenal = listOf(
     LabelAndScore(labelResId = R.string.between3549, score = 3),
     LabelAndScore(labelResId = R.string.above5Sofa, score = 4)
 )
+
+val qSofa = listOf(
+    LabelAndScore(labelResId = R.string.qSofaRespiratoryRate, score = 1),
+    LabelAndScore(labelResId = R.string.qSofaAlteredMentation, score = 1),
+    LabelAndScore(labelResId = R.string.qSofaSystolicBloodPressure, score = 1)
+)

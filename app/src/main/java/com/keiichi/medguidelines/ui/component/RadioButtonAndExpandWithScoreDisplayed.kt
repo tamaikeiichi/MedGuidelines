@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +55,8 @@ fun RadioButtonAndExpandWithScoreDisplayed(
     titleNote: Int, // R.string resource for the note, R.string.space if no note
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
     appendixLabel: @Composable (() -> Unit)? = null,
-    isNumberDisplayed: Boolean = true
+    isNumberDisplayed: Boolean = true,
+    onTitleClick: (() -> Unit)? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -91,11 +93,22 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                 ) {
                     // Ensure parseStyledString is available and works as expected
                     if (title != R.string.space) { // Assuming R.string.space means "no title"
+                        val textModifier = Modifier.padding(bottom = if (expanded && hasTitleNote) 4.dp else 0.dp)
+
                         Text(
                             text = parseStyledString(title), // Using stringResource directly for simplicity
                             // Replace with parseStyledString(title) if styling is needed
                             style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = if (expanded && hasTitleNote) 4.dp else 0.dp)
+                            modifier = if (onTitleClick != null) {
+                                textModifier.clickable(
+                                    onClick = onTitleClick,
+                                    // Optional: Add a visual ripple effect for the click
+                                    indication = LocalIndication.current,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                )
+                            } else {
+                                textModifier // Use the base modifier if no click action is provided
+                            }
                         )
                     }
                     if (expanded && hasTitleNote) {

@@ -199,7 +199,8 @@ fun TitleTopAppBarVariable(
                 text = {
                     Text(
                         text = stringResource(id = helpMessageResId),
-                        fontSize = 22.sp
+                        fontSize = 22.sp,
+                        lineHeight = 1.2.em,
                     )
                 },
                 confirmButton = {
