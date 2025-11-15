@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -55,18 +56,21 @@ fun SofaScreen(
     viewModel: SofaViewModel,
 ) {
     // Collect the GCS score from the ViewModel as state
-    val glasgowComaScaleViewModel by viewModel.gcsScore.collectAsState()
+//    val glasgowComaScaleViewModel by viewModel.gcsComponents.collectAsState()
+    val gcsComponents by viewModel.gcsComponents.collectAsState()
+
 
     // Automatically recalculates when GCS changes
-    val centralNervousSystemScore by remember(glasgowComaScaleViewModel) {
+    val centralNervousSystemScore by remember(gcsComponents) {
         derivedStateOf {
-            when {
-                glasgowComaScaleViewModel == 15.0 -> 0
-                glasgowComaScaleViewModel in 13.0..14.0 -> 1
-                glasgowComaScaleViewModel in 10.0..12.0 -> 2
-                glasgowComaScaleViewModel in 6.0..9.0 -> 3
-                glasgowComaScaleViewModel < 6.0 -> 4
-                else -> 0 // Default case
+            val totalGcsScore = gcsComponents.e + gcsComponents.v + gcsComponents.m
+
+            when (totalGcsScore) {
+                15 -> 0
+                in 13..14 -> 1
+                in 10..12 -> 2
+                in 6..9 -> 3
+                else -> 4 // Covers scores less than 6
             }
         }
     }
@@ -75,26 +79,6 @@ fun SofaScreen(
     val references = listOf(
         TextAndUrl(R.string.sepsis3, R.string.sofaUrl),
     )
-    var fio2 by remember {mutableDoubleStateOf(0.21)}
-    var pao2 by remember { mutableDoubleStateOf(100.0) }
-    val calculatedRespiration by remember {
-        derivedStateOf {
-            if (fio2 > 0) pao2 / fio2 else 0.0
-        }
-    }
-    var plateletes by remember { mutableDoubleStateOf(200.0) }
-    var bilirubin by remember { mutableDoubleStateOf(1.0) }
-    var diastolicBp by remember { mutableDoubleStateOf(75.0) }
-    var systolicBp by remember { mutableDoubleStateOf(125.0) }
-    var meanArterialPressure by remember { mutableDoubleStateOf(80.0) }
-    val calculatedMeanArterialPressure by remember {
-        derivedStateOf {
-            diastolicBp + (systolicBp - diastolicBp)/3.0
-        }
-    }
-    var glasgowComaScale by remember { mutableDoubleStateOf(15.0 ) }
-    var creatinine by remember { mutableDoubleStateOf(1.0) }
-    var urineOutput by remember { mutableDoubleStateOf(1000.0) }
 
     var allSofaScores by remember {
         mutableStateOf(
@@ -118,12 +102,6 @@ fun SofaScreen(
                     allSofaScores.renal
         }
     }
-
-//    LaunchedEffect(key1 = calculatedUrineTotalProteinCreatinineRatio) {
-//        if (calculatedUrineTotalProteinCreatinineRatio != urineTotalProteinCreatinineRatio.doubleValue)
-//            urineTotalProteinCreatinineRatio.doubleValue =
-//                calculatedUrineTotalProteinCreatinineRatio
-//    }
 
     MedGuidelinesScaffold(
         topBar = {
@@ -166,11 +144,8 @@ fun SofaScreen(
                 var defaultSelectedOptions by remember {
                     mutableStateOf(
                         emptyList<LabelAndScore>()
-                        //listOf(
-                        //optionsWithScores[0], optionsWithScores[1], optionsWithScores[2]
                     )
                 }
-                qSofaScore = defaultSelectedOptions.sumOf { it.score }
                 CheckboxesAndExpandWithScore(
                     optionsWithScores = optionsWithScores,
                     title = R.string.qSofaCriteria,
@@ -180,23 +155,34 @@ fun SofaScreen(
                         defaultSelectedOptions = newSelection
                     },
                 )
-                allSofaScores = inputAndCalculateSofa(
+                inputAndCalculateSofa(
                     navController = navController,
-                    centralNervousSystemScore = centralNervousSystemScore
+                    centralNervousSystemScore = centralNervousSystemScore,
+                    onScoresChanged = { newScores ->
+                        allSofaScores = newScores // Update the state in the parent
+                    },
+                    onCnsScoreChanged = { newCnsScore ->
+                        viewModel.updateGcsFromCnsScore(newCnsScore)
+                    }
                 )
+//                allSofaScores = inputAndCalculateSofa(
+//                    navController = navController,
+//                    centralNervousSystemScore = centralNervousSystemScore
+//                )
             }
         }
     }
 }
 
 
-//@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun inputAndCalculateSofa(
     navController: NavController,
-    centralNervousSystemScore: Int
+    centralNervousSystemScore: Int,
+    onScoresChanged: (SofaScores) -> Unit,
+    onCnsScoreChanged: (Int) -> Unit
 )
-: SofaScores
+//: SofaScores
 {
             val respiration = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaRespiration,
@@ -235,6 +221,16 @@ private fun inputAndCalculateSofa(
                 defaultSelectedOption = sofaRenal[0].labelResId,
             )
 
+    // ADD THIS LAUNCHED EFFECT:
+// This effect will run whenever the user manually changes the CNS button.
+    LaunchedEffect(centralNervousSystem) {
+        // It checks if the new score from the button is different from the score
+        // derived from the ViewModel. If it is, it means the user changed it here.
+        if (centralNervousSystem != centralNervousSystemScore) {
+            onCnsScoreChanged(centralNervousSystem)
+        }
+    }
+
     val allScores =
         SofaScores(
             respiration,
@@ -244,7 +240,10 @@ private fun inputAndCalculateSofa(
             centralNervousSystem,
             renal
         )
-    return allScores
+    LaunchedEffect(allScores) {
+        onScoresChanged(allScores)
+    }
+    //return allScores
 }
 
 @Preview

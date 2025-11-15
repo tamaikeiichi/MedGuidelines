@@ -238,3 +238,27 @@ val qSofa = listOf(
     LabelAndScore(labelResId = R.string.qSofaAlteredMentation, score = 1),
     LabelAndScore(labelResId = R.string.qSofaSystolicBloodPressure, score = 1)
 )
+
+val eyeGrade = listOf(
+    LabelAndScore(labelResId = R.string.openspontaneously, score = 4),
+    LabelAndScore(labelResId = R.string.opentoverbalcommand, score = 3),
+    LabelAndScore(labelResId = R.string.openinresponsetopainappliedtothelimbsorsternum,score = 2),
+    LabelAndScore(labelResId = R.string.none,score = 1)
+)
+
+val verbalGrade = listOf(
+    LabelAndScore(labelResId = R.string.oriented, score= 5),
+    LabelAndScore(labelResId = R.string.disorientedbutabletoanswerquestions, score = 4),
+    LabelAndScore(labelResId = R.string.inappropriateanswerstoquestionswordsdiscernible, score = 3),
+    LabelAndScore(labelResId = R.string.incomprehensiblespeech, score = 2),
+    LabelAndScore(labelResId = R.string.none, score = 1)
+)
+
+val motorGrade = listOf(
+    LabelAndScore(labelResId = R.string.obeyscommands, score= 6),
+    LabelAndScore(labelResId = R.string.respondstopainwithpurposefulmovement, score = 5),
+    LabelAndScore(labelResId = R.string.withdrawsfrompainstimuli, score =4),
+    LabelAndScore(labelResId = R.string.respondstopainwithabnormalflexiondecorticateposture, score = 3),
+    LabelAndScore(labelResId = R.string.respondstopainwithabnormalrigidextensiondecerebrateposture, score = 2),
+    LabelAndScore(labelResId = R.string.none, score =1)
+)

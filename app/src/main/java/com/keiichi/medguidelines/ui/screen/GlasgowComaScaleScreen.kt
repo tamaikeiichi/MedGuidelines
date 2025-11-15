@@ -8,8 +8,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,7 +32,9 @@ import com.keiichi.medguidelines.data.eyeGrade
 import com.keiichi.medguidelines.data.motorGrade
 import com.keiichi.medguidelines.data.verbalGrade
 import com.keiichi.medguidelines.ui.component.buttonAndScore
+import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
 import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
+import com.keiichi.medguidelines.ui.viewModel.GcsComponents
 
 data class glasgowComaScale(
     val e: Int,
@@ -45,19 +47,7 @@ fun GlasgowComaScaleScreen(
     navController: NavController,
     viewModel: SofaViewModel
 ) {
-    var score by remember { mutableStateOf(glasgowComaScale(0, 0, 0)) }
-    // Call the ViewModel's update function whenever the score changes
-
-    val sumOfScore = score.e + score.v + score.m
-
-    LaunchedEffect(sumOfScore) {
-        viewModel.updateGcsScore(sumOfScore.toDouble())
-    }
-
-//    // You can also add a button that pops the back stack
-//    Button(onClick = { navController.popBackStack() }) {
-//        Text("Done")
-//    }
+    val gcsComponents by viewModel.gcsComponents.collectAsState()
 
     MedGuidelinesScaffold(
         topBar = {
@@ -75,19 +65,20 @@ fun GlasgowComaScaleScreen(
                     text = buildAnnotatedString {
                         append("E")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(score.e.toString())
+                            append(gcsComponents.e.toString())
                         }
                         append("V")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(score.v.toString())
+                            append(gcsComponents.v.toString())
                         }
                         append("M")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(score.m.toString())
+                            append(gcsComponents.m.toString())
                         }
                         append(", Total ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append((score.e + score.v + score.m).toString())
+                            val total = gcsComponents.e + gcsComponents.v + gcsComponents.m
+                            append(total.toString())
                         }
                     },
                     fontSize = 30.sp,
@@ -101,52 +92,64 @@ fun GlasgowComaScaleScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
         ) {
-            score = glasgowComaScaleScore()
+//            score = glasgowComaScaleScore()
+            glasgowComaScaleScore(
+                // Pass the current state down to set the default selection
+                defaultScores = gcsComponents,
+                // Receive a callback to update the ViewModel when a selection changes
+                onScoresChanged = { e, v, m ->
+                    viewModel.updateGcsComponents(e, v, m)
+                }
+            )
         }
 
 }
 }
 
 @Composable
-fun glasgowComaScaleScore(): glasgowComaScale {
-    val eye = invertNumberHorizontally(
-        number = buttonAndScore(
-            factor = eyeGrade,
+fun glasgowComaScaleScore(
+    defaultScores: GcsComponents,
+    onScoresChanged: (e: Int, v: Int, m: Int) -> Unit
+)
+        //: glasgowComaScale
+{
+    val defaultEyeIndex = eyeGrade.size - defaultScores.e
+    val defaultVerbalIndex = verbalGrade.size - defaultScores.v
+    val defaultMotorIndex = motorGrade.size - defaultScores.m
+
+    val eye = buttonAndScoreWithScoreDisplayed(
+            optionsWithScores = eyeGrade,
             title = R.string.eye,
-        ) + 1,
-        list = eyeGrade
-    )
-    val verbal = invertNumberHorizontally(
-        number =  buttonAndScore(
-            factor = verbalGrade,
+            defaultSelectedOption = defaultEyeIndex // Use the calculated default
+        )
+    val verbal = buttonAndScoreWithScoreDisplayed(
+            optionsWithScores = verbalGrade,
             title = R.string.verbal,
-        ) + 1,
-        list = verbalGrade
-    )
-    val motor = invertNumberHorizontally(
-        number =  buttonAndScore(
-            factor = motorGrade,
+            defaultSelectedOption = defaultVerbalIndex // Use the calculated default
+        )
+    val motor = buttonAndScoreWithScoreDisplayed(
+            optionsWithScores = motorGrade,
             title = R.string.motor,
-        ) + 1,
-        list = motorGrade
-    )
-    val score = glasgowComaScale(
-        e = eye,
-        v = verbal,
-        m = motor
-    )
-    return score
+            defaultSelectedOption = defaultMotorIndex // Use the calculated default
+        )
+//    val score = glasgowComaScale(
+//        e = eye,
+//        v = verbal,
+//        m = motor
+//    )
+//    return score
+    onScoresChanged(eye, verbal, motor)
 }
 
-private fun invertNumberHorizontally(
-    number: Int,
-    list: List<Int>,
-): Int{
-    val maxNumber = list.size.toDouble()
-    val minNumber = 1.0
-    val invertedNumber = ((number - ((maxNumber + minNumber)/2)) * (-1)) + ((maxNumber + minNumber)/2)
-    return invertedNumber.toInt()
-}
+//private fun invertNumberHorizontally(
+//    number: Int,
+//    list: List<Int>,
+//): Int{
+//    val maxNumber = list.size.toDouble()
+//    val minNumber = 1.0
+//    val invertedNumber = ((number - ((maxNumber + minNumber)/2)) * (-1)) + ((maxNumber + minNumber)/2)
+//    return invertedNumber.toInt()
+//}
 
 @Preview
 @Composable
