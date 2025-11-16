@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,7 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
@@ -198,12 +202,38 @@ private fun inputAndCalculateSofa(
             val systolicBp = remember { mutableDoubleStateOf(135.0) }
             val diastolicBp = remember { mutableDoubleStateOf(75.0) }
             val map = remember { mutableDoubleStateOf(95.0) }
-            map.value = (systolicBp.value + (diastolicBp.value - systolicBp.value) / 3.0)
-            val cardiovascular = buttonAndScoreWithScoreDisplayed(
+            map.value = (diastolicBp.value + ((systolicBp.value- diastolicBp.value) / 3.0))
+//    val mapScore = when {
+//        map.value >= 70 -> 0
+//        map.value < 70 -> 1
+//        // Note: The logic for scores 2, 3, 4 depends on vasopressors,
+//        // which aren't in your current UI. This logic covers the MAP part.
+//        else -> 0
+//    }
+    val cardiovascularDefaultLabel by remember(map.value) {
+        derivedStateOf {
+            val mapScore = when {
+                map.value >= 70 -> 0
+                map.value < 70 -> 1
+                // This logic correctly handles the MAP-based part of the score.
+                else -> 0
+            }
+            // Find the label that corresponds to the newly calculated score.
+            sofaCardiovascular.find { it.score == mapScore }?.labelResId
+                ?: sofaCardiovascular[0].labelResId // Fallback to the first option
+        }
+    }
+//    LaunchedEffect(systolicBp, diastolicBp) {
+//        val cardiovascularDefaultLabel = sofaCardiovascular.find { it.score == mapScore }?.labelResId
+//            ?: sofaCardiovascular[0].labelResId // Fallback to the first option
+//
+//    }
+
+    val cardiovascular = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaCardiovascular,
                 title = R.string.sofaCardiovascular,
                 titleNote = R.string.mapMeanArterialPressure,
-                defaultSelectedOption = sofaCardiovascular[0].labelResId,
+                defaultSelectedOption = cardiovascularDefaultLabel,
                 expandedContent = {
                     FlowRow() {
                         InputValue(
@@ -217,8 +247,20 @@ private fun inputAndCalculateSofa(
                             japaneseUnit = R.string.mmhg,
                         )
                         Column(){
-                            Text(text = parseStyledString(R.string.map))
-                            Text(text = map.value.toString())
+                            Text(text = buildAnnotatedString {
+                                append(stringResource(R.string.map))
+                                append(": ")
+                                withStyle(style = SpanStyle(
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                    textDecoration = TextDecoration.Underline
+                                )) {
+                                    append(map.value.toInt().toString())
+                                }
+                                //append(map.value.toInt().toString())
+                                append(" ")
+                                append(stringResource(R.string.mmhg))
+                            }
+                            )
                         }
                     }
                 }
