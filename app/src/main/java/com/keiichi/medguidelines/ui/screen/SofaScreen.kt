@@ -46,6 +46,7 @@ import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBarVariable
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
+import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectable
 import com.keiichi.medguidelines.ui.component.parseStyledString
 import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
 
@@ -153,7 +154,8 @@ fun SofaScreen(
                         emptyList<LabelAndScore>()
                     )
                 }
-                qSofaScore = defaultSelectedOptions.sumOf { it.score } // Parent calculates the score// In Component Signature
+                qSofaScore =
+                    defaultSelectedOptions.sumOf { it.score } // Parent calculates the score// In Component Signature
 
                 CheckboxesAndExpandWithScore(
                     optionsWithScores = optionsWithScores,
@@ -183,26 +185,26 @@ private fun inputAndCalculateSofa(
     centralNervousSystemScore: Int,
     onScoresChanged: (SofaScores) -> Unit,
 ) {
-            val respiration = buttonAndScoreWithScoreDisplayed(
-                optionsWithScores = sofaRespiration,
-                title = R.string.sofaRespiration,
-                defaultSelectedOption = sofaRespiration[0].labelResId,
-            )
+    val respiration = buttonAndScoreWithScoreDisplayed(
+        optionsWithScores = sofaRespiration,
+        title = R.string.sofaRespiration,
+        defaultSelectedOption = sofaRespiration[0].labelResId,
+    )
 
-            val coagulation = buttonAndScoreWithScoreDisplayed(
-                optionsWithScores = sofaCoagulation,
-                title = R.string.sofaCoagulation,
-                defaultSelectedOption = sofaCoagulation[0].labelResId,
-            )
-            val liver = buttonAndScoreWithScoreDisplayed(
-                optionsWithScores = sofaLiver,
-                title = R.string.sofaLiver,
-                defaultSelectedOption = sofaLiver[0].labelResId,
-            )
-            val systolicBp = remember { mutableDoubleStateOf(135.0) }
-            val diastolicBp = remember { mutableDoubleStateOf(75.0) }
-            val map = remember { mutableDoubleStateOf(95.0) }
-            map.value = (diastolicBp.value + ((systolicBp.value- diastolicBp.value) / 3.0))
+    val coagulation = buttonAndScoreWithScoreDisplayed(
+        optionsWithScores = sofaCoagulation,
+        title = R.string.sofaCoagulation,
+        defaultSelectedOption = sofaCoagulation[0].labelResId,
+    )
+    val liver = buttonAndScoreWithScoreDisplayed(
+        optionsWithScores = sofaLiver,
+        title = R.string.sofaLiver,
+        defaultSelectedOption = sofaLiver[0].labelResId,
+    )
+    val systolicBp = remember { mutableDoubleStateOf(135.0) }
+    val diastolicBp = remember { mutableDoubleStateOf(75.0) }
+    val map = remember { mutableDoubleStateOf(95.0) }
+    map.value = (diastolicBp.value + ((systolicBp.value - diastolicBp.value) / 3.0))
 //    val mapScore = when {
 //        map.value >= 70 -> 0
 //        map.value < 70 -> 1
@@ -213,8 +215,8 @@ private fun inputAndCalculateSofa(
     val cardiovascularDefaultLabel by remember(map.value) {
         derivedStateOf {
             val mapScore = when {
-                map.value >= 70 -> 0
-                map.value < 70 -> 1
+                map.value >= 70.0 -> 0
+                map.value < 70.0 -> 1
                 // This logic correctly handles the MAP-based part of the score.
                 else -> 0
             }
@@ -223,63 +225,73 @@ private fun inputAndCalculateSofa(
                 ?: sofaCardiovascular[0].labelResId // Fallback to the first option
         }
     }
-//    LaunchedEffect(systolicBp, diastolicBp) {
-//        val cardiovascularDefaultLabel = sofaCardiovascular.find { it.score == mapScore }?.labelResId
-//            ?: sofaCardiovascular[0].labelResId // Fallback to the first option
-//
-//    }
+    var cardiovascularSelection by remember { mutableIntStateOf(cardiovascularDefaultLabel) }
 
-    val cardiovascular = buttonAndScoreWithScoreDisplayed(
-                optionsWithScores = sofaCardiovascular,
-                title = R.string.sofaCardiovascular,
-                titleNote = R.string.mapMeanArterialPressure,
-                defaultSelectedOption = cardiovascularDefaultLabel,
-                expandedContent = {
-                    FlowRow() {
-                        InputValue(
-                            label = R.string.systolicBloodPressure,
-                            value = systolicBp,
-                            japaneseUnit = R.string.mmhg,
-                        )
-                        InputValue(
-                            label = R.string.diastolicBloodPressure,
-                            value = diastolicBp,
-                            japaneseUnit = R.string.mmhg,
-                        )
-                        Column(){
-                            Text(text = buildAnnotatedString {
-                                append(stringResource(R.string.map))
-                                append(": ")
-                                withStyle(style = SpanStyle(
-                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                                    textDecoration = TextDecoration.Underline
-                                )) {
-                                    append(map.value.toInt().toString())
-                                }
-                                //append(map.value.toInt().toString())
-                                append(" ")
-                                append(stringResource(R.string.mmhg))
-                            }
+    // 2. This effect is crucial. It synchronizes the state when the
+    //    calculated default changes due to the MAP calculation.
+    LaunchedEffect(cardiovascularDefaultLabel) {
+        cardiovascularSelection = cardiovascularDefaultLabel
+    }
+    val cardiovascular = buttonAndScoreWithScoreDisplayedSelectable(
+        optionsWithScores = sofaCardiovascular,
+        title = R.string.sofaCardiovascular,
+        titleNote = R.string.mapMeanArterialPressure,
+
+        // Pass the state down. The name matches the parameter in your corrected file.
+        defaultSelectedOption = cardiovascularSelection,
+
+        // When the user clicks a button, the child reports back, and we update our state.
+        onOptionSelected = { newSelection ->
+            cardiovascularSelection = newSelection
+        },
+        expandedContent = {
+            FlowRow() {
+                InputValue(
+                    label = R.string.systolicBloodPressure,
+                    value = systolicBp,
+                    japaneseUnit = R.string.mmhg,
+                )
+                InputValue(
+                    label = R.string.diastolicBloodPressure,
+                    value = diastolicBp,
+                    japaneseUnit = R.string.mmhg,
+                )
+                Column() {
+                    Text(text = buildAnnotatedString {
+                        append(stringResource(R.string.map))
+                        append(": ")
+                        withStyle(
+                            style = SpanStyle(
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                textDecoration = TextDecoration.Underline
                             )
+                        ) {
+                            append(map.value.toInt().toString())
                         }
+                        //append(map.value.toInt().toString())
+                        append(" ")
+                        append(stringResource(R.string.mmhg))
                     }
+                    )
                 }
-            )
-            val centralNervousSystem = buttonAndScoreWithScoreDisplayed(
-                optionsWithScores = sofaCentralNervousSystem,
-                title = R.string.sofaCentralNervousSystem,
-                defaultSelectedOption = sofaCentralNervousSystem.find { it.score == centralNervousSystemScore }?.labelResId
-                    ?: sofaCentralNervousSystem[0].labelResId, // Fallback to the first option
-                onTitleClick = {
-                    navController.navigate("GlasgowComaScaleScreen") // Your navigation route
-                },
-                //titleNote = R.string.map
-            )
-            val renal = buttonAndScoreWithScoreDisplayed(
-                optionsWithScores = sofaRenal,
-                title = R.string.sofaRenal,
-                defaultSelectedOption = sofaRenal[0].labelResId,
-            )
+            }
+        }
+    )
+    val centralNervousSystem = buttonAndScoreWithScoreDisplayed(
+        optionsWithScores = sofaCentralNervousSystem,
+        title = R.string.sofaCentralNervousSystem,
+        defaultSelectedOption = sofaCentralNervousSystem.find { it.score == centralNervousSystemScore }?.labelResId
+            ?: sofaCentralNervousSystem[0].labelResId, // Fallback to the first option
+        onTitleClick = {
+            navController.navigate("GlasgowComaScaleScreen") // Your navigation route
+        },
+        //titleNote = R.string.map
+    )
+    val renal = buttonAndScoreWithScoreDisplayed(
+        optionsWithScores = sofaRenal,
+        title = R.string.sofaRenal,
+        defaultSelectedOption = sofaRenal[0].labelResId,
+    )
 
     val allScores =
         SofaScores(
@@ -301,7 +313,8 @@ private fun inputAndCalculateSofa(
 fun SofaScreenPreview() {
     SofaScreen(
         navController = NavController(LocalContext.current),
-        viewModel = SofaViewModel())
+        viewModel = SofaViewModel()
+    )
 }
 
 //@Preview

@@ -19,6 +19,8 @@ fun buttonAndScoreWithScoreDisplayed(
     isNumberDisplayed: Boolean = true,
     onTitleClick : (() -> Unit)? = null,
     expandedContent: @Composable (() -> Unit)? = null ,
+    //selectedOption: Int,
+    //onOptionSelected: (Int) -> Unit,
 ): Int {
     if (optionsWithScores.isEmpty()) {
         return 0 // Or some other sensible default
