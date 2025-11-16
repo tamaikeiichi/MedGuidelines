@@ -738,10 +738,11 @@
     <string name="sofaLiver">Liver: bilirubin, mg/dL (μmol/L)</string>
     <string name="sofaRespiration">Respiration: PaO&lt;sub>2&lt;/sub>/FIO&lt;sub>2&lt;/sub>, mmHg (kPa)</string>
     <string name="sofaRenal">Renal: creatinine, mg/dL (μmol/L) or urine output, mL/d</string>
-    <string name="map">MAP, mean arterial pressure</string>
+    <string name="mapMeanArterialPressure">MAP, mean arterial pressure</string>
     <string name="sofaAndQSofa">SOFA and qSOFA</string>
     <string name="sofaAndQSofaInfo">qSOFA ≥ 2: poor outcomes typical of sepsis.\nIncrease SOFA score from baseline ≥ 2: in-hospital mortality greater than 10%.\nThe baseline SOFA score should be assumed to be zero unless the patient is known to have preexisting (acute or chronic) organ dysfunction before the onset of infection.</string>
     <string name="sepsis">Sepsis</string>
     <string name="shock">Shock</string>
+    <string name="map">MAP</string>
 
 </resources>

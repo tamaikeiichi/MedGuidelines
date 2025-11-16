@@ -435,7 +435,7 @@
     <string name="sofaLiver">肝: 総ビリルビン, mg/dL (μmol/L)</string>
     <string name="sofaRespiration">呼吸: PaO&lt;sub>2&lt;/sub>/FIO&lt;sub>2&lt;/sub>, mmHg (kPa)</string>
     <string name="sofaRenal">腎機能: クレアチニン, mg/dL (μmol/L) あるいは尿量, mL/d</string>
-    <string name="map">MAP, mean arterial pressure　平均動脈圧</string>
+    <string name="mapMeanArterialPressure">MAP, mean arterial pressure　平均動脈圧</string>
     <string name="sofaCentralNervousSystem">中枢神経: Glasgow Coma Scale score</string>
     <string name="qSofaRespiratoryRate">呼吸数 ≥22/min</string>
     <string name="qSofaAlteredMentation">精神状態の変容</string>

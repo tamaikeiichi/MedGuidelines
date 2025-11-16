@@ -18,6 +18,7 @@ fun buttonAndScoreWithScoreDisplayed(
     appendixLabel: @Composable () -> Unit = {},
     isNumberDisplayed: Boolean = true,
     onTitleClick : (() -> Unit)? = null,
+    expandedContent: @Composable (() -> Unit)? = null ,
 ): Int {
     if (optionsWithScores.isEmpty()) {
         return 0 // Or some other sensible default
@@ -36,7 +37,8 @@ fun buttonAndScoreWithScoreDisplayed(
         cardColor = cardColor,
         appendixLabel = appendixLabel,
         isNumberDisplayed = isNumberDisplayed,
-        onTitleClick = onTitleClick
+        onTitleClick = onTitleClick,
+        expandedContent = expandedContent,
     )
     val score: Int = selectedOption.score
     return score

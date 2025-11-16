@@ -59,6 +59,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
     appendixLabel: @Composable (() -> Unit)? = null,
     isNumberDisplayed: Boolean = true,
     onTitleClick: (() -> Unit)? = null,
+    expandedContent: @Composable (() -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -153,6 +154,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = 2.dp)
                         )
+                        expandedContent?.invoke()
                     }
                 }
                 if (hasTitleNote) {

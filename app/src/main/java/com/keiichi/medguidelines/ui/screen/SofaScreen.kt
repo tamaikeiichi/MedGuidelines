@@ -1,11 +1,14 @@
 package com.keiichi.medguidelines.ui.screen
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,11 +36,13 @@ import com.keiichi.medguidelines.data.sofaRenal
 import com.keiichi.medguidelines.data.sofaRespiration
 import com.keiichi.medguidelines.ui.component.CheckboxesAndExpandWithScore
 import com.keiichi.medguidelines.ui.component.Dimensions
+import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBarVariable
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
+import com.keiichi.medguidelines.ui.component.parseStyledString
 import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
 
 data class SofaScores(
@@ -190,11 +195,33 @@ private fun inputAndCalculateSofa(
                 title = R.string.sofaLiver,
                 defaultSelectedOption = sofaLiver[0].labelResId,
             )
+            val systolicBp = remember { mutableDoubleStateOf(135.0) }
+            val diastolicBp = remember { mutableDoubleStateOf(75.0) }
+            val map = remember { mutableDoubleStateOf(95.0) }
+            map.value = (systolicBp.value + (diastolicBp.value - systolicBp.value) / 3.0)
             val cardiovascular = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaCardiovascular,
                 title = R.string.sofaCardiovascular,
-                titleNote = R.string.map,
+                titleNote = R.string.mapMeanArterialPressure,
                 defaultSelectedOption = sofaCardiovascular[0].labelResId,
+                expandedContent = {
+                    FlowRow() {
+                        InputValue(
+                            label = R.string.systolicBloodPressure,
+                            value = systolicBp,
+                            japaneseUnit = R.string.mmhg,
+                        )
+                        InputValue(
+                            label = R.string.diastolicBloodPressure,
+                            value = diastolicBp,
+                            japaneseUnit = R.string.mmhg,
+                        )
+                        Column(){
+                            Text(text = parseStyledString(R.string.map))
+                            Text(text = map.value.toString())
+                        }
+                    }
+                }
             )
             val centralNervousSystem = buttonAndScoreWithScoreDisplayed(
                 optionsWithScores = sofaCentralNervousSystem,
