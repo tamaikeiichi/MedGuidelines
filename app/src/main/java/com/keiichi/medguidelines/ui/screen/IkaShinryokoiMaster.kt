@@ -57,18 +57,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-//@Serializable
-//data class PairedTextItem(
-//    val kanjiMeisho: String?,
-//    val tensuShikibetsu: String,
-//    val tensu: String,
-//    val kanaMeisho: String?,
-//    val originalIndex: Int,
-//    var isFavorite: Boolean = false,
-//    val kanjiText: String,
-//    val kanaText: String
-//)// : IndexableItem
-
 @Composable
 fun IkaShinryokoiMasterScreen(navController: NavHostController) {
     val context = LocalContext.current
