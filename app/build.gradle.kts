@@ -9,7 +9,7 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.protobuf") version "0.9.3" // Or latest version
     kotlin("plugin.serialization") version "2.2.0-RC2" //"1.9.22" // Use the latest version
-    id("com.google.devtools.ksp") version "1.9.23-1.0.19"
+    //id("com.google.devtools.ksp") version "1.9.23-1.0.19"
     //id("com.google.dagger.hilt.android")
 }
 
@@ -106,12 +106,14 @@ dependencies {
 // You need the main POI library and the one for modern .xlsx files
     implementation("org.apache.poi:poi:5.2.5")
     implementation("org.apache.poi:poi-ooxml:5.2.5")
-    val room_version = "2.6.1"
+    implementation("org.jetbrains.kotlinx:dataframe:0.15.0")
+    implementation("org.jetbrains.kotlinx:dataframe-excel:0.15.0")
+    //val room_version = "2.6.1"
 
-    implementation("androidx.room:room-runtime:$room_version")
-    ksp(libs.androidx.room.compiler) // Use ksp instead of kapt
-    implementation("androidx.room:room-ktx:$room_version") // For coroutine support
-    // ... other dependencies
+//    implementation("androidx.room:room-runtime:$room_version")
+//    ksp(libs.androidx.room.compiler) // Use ksp instead of kapt
+//    implementation("androidx.room:room-ktx:$room_version") // For coroutine support
+//    // ... other dependencies
 
 
 }
