@@ -100,6 +100,9 @@ fun IndexScreen(
                 ActionType.NAVIGATE_TO_SHIKASHINRYOKOIMASTER -> {
                     currentDeviceLocale.language == Locale.JAPANESE.language
                 }
+                ActionType.NAVIGATE_TO_DPC -> {
+                    currentDeviceLocale.language == Locale.JAPANESE.language
+                }
                 // All other items are always displayed.
                 else -> true
             }

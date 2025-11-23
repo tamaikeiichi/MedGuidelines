@@ -744,5 +744,6 @@
     <string name="sepsis">Sepsis</string>
     <string name="shock">Shock</string>
     <string name="map">MAP</string>
+    <string name="dpcTitle">DPC算定</string>
 
 </resources>

@@ -20,6 +20,7 @@ import com.keiichi.medguidelines.ui.screen.ChildPughScreen
 import com.keiichi.medguidelines.ui.screen.CkdScreen
 import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
 import com.keiichi.medguidelines.ui.screen.DateScreen
+import com.keiichi.medguidelines.ui.screen.DpcScreen
 import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
 import com.keiichi.medguidelines.ui.screen.GlasgowComaScaleScreen
 import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
@@ -82,7 +83,8 @@ enum class ActionType {
     NAVIGATE_TO_SLE,
     NAVIGATE_TO_RA,
     NAVIGATE_TO_JGCALENDAR,
-    NAVIGATE_TO_SOFA
+    NAVIGATE_TO_SOFA,
+    NAVIGATE_TO_DPC,
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -200,7 +202,8 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.sepsis,
             R.string.shock
-        ))
+        )),
+    ListItemData(R.string.dpcTitle, ActionType.NAVIGATE_TO_DPC,)
 )
 
 data class IndexScreenActions(
@@ -237,7 +240,8 @@ data class IndexScreenActions(
     val navigateToSle: () -> Unit,
     val navigateToRa: () -> Unit,
     val navigateToJgCalendar: () -> Unit,
-    val navigateToSofa: () -> Unit
+    val navigateToSofa: () -> Unit,
+    val navigateToDpc: () -> Unit,
 )
 
 @Composable
@@ -282,7 +286,8 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToSle = { navController.navigate("SleScreen") },
         navigateToRa = {navController.navigate("RaScreen")},
         navigateToJgCalendar = {navController.navigate("JgCalendarScreen")},
-        navigateToSofa = {navController.navigate("SofaScreen")}
+        navigateToSofa = {navController.navigate("SofaScreen")},
+        navigateToDpc = {navController.navigate("DpcScreen")}
     )
 }
 
@@ -334,6 +339,7 @@ fun getAppScreens(sofaViewModel: SofaViewModel): List<ScreenRoute> {
         ScreenRoute("SofaScreen") { navController ->
             SofaScreen(navController, sofaViewModel) // Pass the viewModel here
         },
+        ScreenRoute("DpcScreen") { navController -> DpcScreen(navController) }
     )
 }
 
@@ -373,6 +379,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_RA -> this.navigateToRa()
         ActionType.NAVIGATE_TO_JGCALENDAR -> this.navigateToJgCalendar()
         ActionType.NAVIGATE_TO_SOFA -> this.navigateToSofa()
+        ActionType.NAVIGATE_TO_DPC -> this.navigateToDpc()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

@@ -2,8 +2,10 @@ package com.keiichi.medguidelines.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.forEach
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -93,12 +95,33 @@ fun IndexScreenItemCard(
                         } else {
                             LocalContentColor.current // Or MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.medium)
                         }
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
-                            contentDescription = if (isFavorite) "Unmark as favorite" else "Mark as favorite",
-                            tint = if (isFavorite) starColor else LocalContentColor.current,
-                            modifier = Modifier.size(36.dp)
-                        )
+                        // Use a Box to overlay the two icons.
+                        Box(contentAlignment = Alignment.Center) {                            // Icon 1: The Outline (Always visible as the background/border)
+                            Icon(
+                                imageVector = Icons.Outlined.StarOutline,
+                                contentDescription = if (isFavorite) "Unmark as favorite" else "Mark as favorite",
+                                // The outline color can be a standard content color
+                                tint = LocalContentColor.current.copy(alpha = 0.7f),
+                                modifier = Modifier.size(36.dp)
+                            )
+
+                            // Icon 2: The Fill (Conditionally visible on top)
+                            if (isFavorite) {
+                                Icon(
+                                    imageVector = Icons.Filled.Star,
+                                    contentDescription = null, // Description is handled by the outline icon
+                                    tint = starColor, // Use your calculated yellow color
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+
+//                        Icon(
+//                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,
+//                            contentDescription = if (isFavorite) "Unmark as favorite" else "Mark as favorite",
+//                            tint = if (isFavorite) starColor else LocalContentColor.current,
+//                            modifier = Modifier.size(36.dp)
+//                        )
                     }
                 }
             }
@@ -109,6 +132,11 @@ fun IndexScreenItemCard(
     }
 }
 
+
+
+
+
+
 @Preview
 @Composable
 fun IndexScreenItemCardPreview(){
@@ -117,6 +145,15 @@ fun IndexScreenItemCardPreview(){
             name = R.string.childPughTitle,
             currentAlpha = 1f,
             isFavorite = false,
+            isLoading = remember { mutableStateOf(false) }, // Preview not loading
+            onItemClick = {},
+            onFavoriteClick = {}
+        )
+        Spacer(Modifier.height(8.dp))
+        IndexScreenItemCard(
+            name = R.string.childPughTitle,
+            currentAlpha = 1f,
+            isFavorite = true,
             isLoading = remember { mutableStateOf(false) }, // Preview not loading
             onItemClick = {},
             onFavoriteClick = {}
