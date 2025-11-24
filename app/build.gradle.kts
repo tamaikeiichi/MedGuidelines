@@ -58,6 +58,10 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
+            // This is the specific line that fixes your error
+            excludes += "META-INF/DEPENDENCIES"
         }
     }
 }
@@ -107,6 +111,9 @@ dependencies {
     implementation("org.apache.poi:poi:5.2.5")
     implementation("org.apache.poi:poi-ooxml:5.2.5")
     implementation("org.jetbrains.kotlinx:dataframe:1.0.0-Beta3")
+    implementation("org.dhatim:fastexcel:0.19.0")
+    implementation("org.dhatim:fastexcel-reader:0.18.4")
+
     //implementation("org.jetbrains.kotlinx:dataframe-excel:1.0.0-Beta3")
     //val room_version = "2.6.1"
 
