@@ -1,15 +1,10 @@
 package com.keiichi.medguidelines.data
 
-import android.os.Parcelable
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
-import kotlinx.parcelize.Parcelize
-import kotlinx.serialization.Serializable
-import com.keiichi.medguidelines.ScreenRoute // Make sure this is imported (from MainActivity or its new file)
+import com.keiichi.medguidelines.ScreenRoute
 import com.keiichi.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.keiichi.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.keiichi.medguidelines.ui.screen.AdropScreen
@@ -21,32 +16,32 @@ import com.keiichi.medguidelines.ui.screen.CkdScreen
 import com.keiichi.medguidelines.ui.screen.ColorectalTNMScreen
 import com.keiichi.medguidelines.ui.screen.DateScreen
 import com.keiichi.medguidelines.ui.screen.DpcScreen
+import com.keiichi.medguidelines.ui.screen.EcogScreen
 import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
+import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
+import com.keiichi.medguidelines.ui.screen.GastricTNMScreen
 import com.keiichi.medguidelines.ui.screen.GlasgowComaScaleScreen
 import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
 import com.keiichi.medguidelines.ui.screen.HomaIRScreen
+import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
+import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
+import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
 import com.keiichi.medguidelines.ui.screen.IntrahepaticCholangiocarcinomaTNMScreen
+import com.keiichi.medguidelines.ui.screen.JgCalendarScreen
+import com.keiichi.medguidelines.ui.screen.LilleModelScreen
 import com.keiichi.medguidelines.ui.screen.LiverFibrosisScoreSystemScreen
 import com.keiichi.medguidelines.ui.screen.LungTNMScreen
 import com.keiichi.medguidelines.ui.screen.MALBIScreen
 import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
 import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
-import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
-import com.keiichi.medguidelines.ui.screen.LilleModelScreen
-import com.keiichi.medguidelines.ui.screen.EcogScreen
-import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
-import com.keiichi.medguidelines.ui.screen.GastricTNMScreen
-import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
-import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
-import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
-import com.keiichi.medguidelines.ui.screen.JgCalendarScreen
 import com.keiichi.medguidelines.ui.screen.RaScreen
 import com.keiichi.medguidelines.ui.screen.ShikaShinryokoiMasterScreen
 import com.keiichi.medguidelines.ui.screen.SleScreen
+import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
 import com.keiichi.medguidelines.ui.screen.SofaScreen
 import com.keiichi.medguidelines.ui.screen.WilsonScreen
 import com.keiichi.medguidelines.ui.viewModel.SofaViewModel
-import java.util.Locale
+import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ActionType {

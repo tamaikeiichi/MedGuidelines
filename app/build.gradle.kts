@@ -106,8 +106,8 @@ dependencies {
 // You need the main POI library and the one for modern .xlsx files
     implementation("org.apache.poi:poi:5.2.5")
     implementation("org.apache.poi:poi-ooxml:5.2.5")
-    implementation("org.jetbrains.kotlinx:dataframe:0.15.0")
-    implementation("org.jetbrains.kotlinx:dataframe-excel:0.15.0")
+    implementation("org.jetbrains.kotlinx:dataframe:1.0.0-Beta3")
+    //implementation("org.jetbrains.kotlinx:dataframe-excel:1.0.0-Beta3")
     //val room_version = "2.6.1"
 
 //    implementation("androidx.room:room-runtime:$room_version")
