@@ -57,11 +57,17 @@ android {
 //    }
     packaging {
         resources {
+            // This is a general good practice for many Android libraries
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+
+            // These lines specifically target files that are often duplicated
+            // by data-processing libraries like Arrow, POI, and DataFrame.
             excludes += "META-INF/LICENSE.md"
             excludes += "META-INF/LICENSE-notice.md"
-            // This is the specific line that fixes your error
             excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/services/javax.xml.stream.XMLInputFactory"
+            excludes += "META-INF/services/javax.xml.stream.XMLOutputFactory"
+            excludes += "META-INF/services/javax.xml.stream.XMLEventFactory"
         }
     }
 }
@@ -82,7 +88,7 @@ dependencies {
     implementation(libs.androidx.ui.test.android)
     implementation(libs.androidx.tv.material)
     implementation(libs.androidx.graphics.shapes.android)
-    implementation(libs.androidx.room.compiler.processing.testing)
+    //implementation(libs.androidx.room.compiler.processing.testing)
     implementation(libs.androidx.constraintlayout)
 
     testImplementation(libs.junit)
@@ -103,16 +109,21 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.androidx.work.runtime.ktx)
-    implementation("org.jetbrains.kotlinx:dataframe:0.15.0")
-    implementation("com.google.dagger:hilt-android:2.56.2")
+    //implementation("org.jetbrains.kotlinx:dataframe:0.15.0")
+    //implementation("com.google.dagger:hilt-android:2.56.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0") // Use the latest version
-    implementation("androidx.navigation:navigation-compose:2.7.7") // Ensure this is up to date
+    implementation(libs.androidx.navigation.compose.v277) // Ensure this is up to date
 // You need the main POI library and the one for modern .xlsx files
-    implementation("org.apache.poi:poi:5.2.5")
-    implementation("org.apache.poi:poi-ooxml:5.2.5")
-    implementation("org.jetbrains.kotlinx:dataframe:1.0.0-Beta3")
-    implementation("org.dhatim:fastexcel:0.19.0")
-    implementation("org.dhatim:fastexcel-reader:0.18.4")
+    // 1. Use the latest stable core DataFrame library for data manipulation
+    implementation(libs.dataframe.v100beta3)
+    // In your dependencies { ... } block
+    //implementation("org.jetbrains.kotlinx:dataframe-excel:0.15.1") // Use the specific excel artifact
+
+    // 2. Use fastexcel for memory-efficient reading. You only need the reader.
+    implementation("org.dhatim:fastexcel-reader:0.19.0")
+
+    // 3. EXPLICITLY ADD the missing dependency to resolve the build error.
+    implementation("com.fasterxml:aalto-xml:1.3.4")
 
     //implementation("org.jetbrains.kotlinx:dataframe-excel:1.0.0-Beta3")
     //val room_version = "2.6.1"

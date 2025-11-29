@@ -3,6 +3,8 @@ accompanistFlowlayout = "0.36.0"
 accompanistNavigationAnimation = "0.34.0"
 agp = "8.13.1"
 androidxDatastorePreferences = "1.1.7"
+androidxNavigationCompose = "2.7.7"
+dataframe = "1.0.0-Beta3"
 dataframeVersion = "1.0.0-Beta2"
 datastorePreferencesVersion = "1.1.7"
 foundationLayout = "1.8.2"
@@ -41,10 +43,12 @@ androidx-datastore-preferences-v100 = { module = "androidx.datastore:datastore-p
 androidx-datastore-preferences-v111 = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesVersion" }
 androidx-foundation-layout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "foundationLayout" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
+androidx-navigation-compose-v277 = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigationCompose" }
 androidx-navigation-compose-v284 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-preference = { module = "androidx.preference:preference", version.ref = "preference" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+dataframe-v100beta3 = { module = "org.jetbrains.kotlinx:dataframe", version.ref = "dataframe" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.0" }
