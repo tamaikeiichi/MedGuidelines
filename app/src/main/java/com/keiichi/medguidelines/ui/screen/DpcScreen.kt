@@ -7,97 +7,160 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
-import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 
-// Data class to hold the final DataFrame objects.
+// 読み込んだDataFrameを保持するためのデータクラス
 data class DpcDataSheets(
+    var mdc: DataFrame<*>? = null,
+    var bunrui: DataFrame<*>? = null,
+    var byotai: DataFrame<*>? = null,
+    var icd: DataFrame<*>? = null,
     var nenrei: DataFrame<*>? = null,
     var shujutu: DataFrame<*>? = null,
-    // Other properties...
+    var shochi1: DataFrame<*>? = null,
+    var shochi2: DataFrame<*>? = null,
+    var fukubyomei: DataFrame<*>? = null,
+    var jushodoJcs: DataFrame<*>? = null,
+    var jushodoShujutu: DataFrame<*>? = null,
+    var jushodoJushou: DataFrame<*>? = null,
+    var jushodoRankin: DataFrame<*>? = null
 )
 
 @Composable
 fun DpcScreen(navController: NavHostController) {
     val context = LocalContext.current
 
+    // UIの状態を管理するためのState変数
     var df by remember { mutableStateOf(DpcDataSheets()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var loadingMessage by remember { mutableStateOf("Starting to load data...") }
 
+    // Composableが最初に表示されたときに一度だけ実行される副作用
     LaunchedEffect(Unit) {
         isLoading = true
         try {
-            val loadedNenrei = withContext(Dispatchers.IO) {
-                loadDpcData(context, "５）年齢、出生時体重等")
-            }
-            println("✅ 'nenrei' sheet read successfully. Rows: ${loadedNenrei.rowsCount()}")
+            // UIスレッドをブロックしないように、処理全体をバックグラウンドスレッドで実行
+            withContext(Dispatchers.IO) {
+                loadingMessage = "Loading sheets in parallel..."
 
-            val loadedShujutu = withContext(Dispatchers.IO) {
-                loadDpcData(context, "６）手術 ")
-            }
-            println("✅ 'shujutu' sheet read successfully. Rows: ${loadedShujutu.rowsCount()}")
+                // asyncを使って、すべてのシート読み込み処理を並行して開始する
+                val deferredMdc = async { loadDpcData(context, "１）ＭＤＣ名称") }
+                val deferredBunrui = async { loadDpcData(context, "２）分類名称") }
+                val deferredByotai = async { loadDpcData(context, "３）病態等分類") }
+                val deferredIcd = async { loadDpcData(context, "４）ＩＣＤ") }
+                val deferredNenrei = async { loadDpcData(context, "５）年齢、出生時体重等") }
+                val deferredShujutu = async { loadDpcData(context, "６）手術 ") }
+                val deferredShochi1 = async { loadDpcData(context, "７）手術・処置等１") }
+                val deferredShochi2 = async { loadDpcData(context, "８）手術・処置等２") }
+                val deferredFukubyomei = async { loadDpcData(context, "９）定義副傷病名") }
+                val deferredJushodoJcs = async { loadDpcData(context, "10－1）重症度等（ＪＣＳ等）") }
+                val deferredJushodoShujutu = async { loadDpcData(context, "10－2）重症度等（手術等）") }
+                val deferredJushodoJushou = async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
+                val deferredJushodoRankin = async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
 
-            // Update the UI state with the final DataFrame objects.
-            withContext(Dispatchers.Main) {
+                loadingMessage = "Waiting for all sheets to finish loading..."
+
+                // awaitAllですべての非同期処理が完了するのを待つ
+                val allData = awaitAll(
+                    deferredMdc, deferredBunrui, deferredByotai, deferredIcd, deferredNenrei,
+                    deferredShujutu, deferredShochi1, deferredShochi2, deferredFukubyomei,
+                    deferredJushodoJcs, deferredJushodoShujutu, deferredJushodoJushou, deferredJushodoRankin
+                )
+
+                loadingMessage = "Updating UI..."
+
+                // すべてのデータが揃ったら、Stateを一度だけ更新してUIの再描画をトリガーする
                 df = df.copy(
-                    nenrei = loadedNenrei,
-                    shujutu = loadedShujutu
+                    mdc = allData[0],
+                    bunrui = allData[1],
+                    byotai = allData[2],
+                    icd = allData[3],
+                    nenrei = allData[4],
+                    shujutu = allData[5],
+                    shochi1 = allData[6],
+                    shochi2 = allData[7],
+                    fukubyomei = allData[8],
+                    jushodoJcs = allData[9],
+                    jushodoShujutu = allData[10],
+                    jushodoJushou = allData[11],
+                    jushodoRankin = allData[12]
                 )
             }
-
         } catch (t: Throwable) {
+            // Exceptionだけでなく、Errorも含むあらゆる問題を捕捉する
             errorMessage = t.message ?: "An unknown error occurred"
-            t.printStackTrace()
+            t.printStackTrace() // Logcatに詳細なエラーログを出力する
         } finally {
+            // 成功しても失敗しても、ローディング状態を解除する
             isLoading = false
         }
     }
 
-    MedGuidelinesScaffold (
+    MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
                 title = R.string.dpcTitle,
                 navController = navController,
-                references = listOf(
-                    TextAndUrl(R.string.space, R.string.space)
-                )
+                references = listOf(TextAndUrl(R.string.space, R.string.space))
             )
         },
-    ){ innerPadding ->
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
+            // 状態に応じてUIを切り替える
             when {
-                isLoading -> CircularProgressIndicator()
-                errorMessage != null -> Text(text = "Error: $errorMessage")
+                isLoading -> {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator()
+                        Text(text = loadingMessage, modifier = Modifier.padding(top = 8.dp))
+                    }
+                }
+                errorMessage != null -> {
+                    Text(text = "Error: $errorMessage")
+                }
                 else -> {
                     Column {
-                        Text("Nenrei DataFrame is null: ${df.nenrei == null}")
-                        Text("Shujutu DataFrame is null: ${df.shujutu == null}")
-                        Text("Nenrei rows loaded: ${df.nenrei?.rowsCount() ?: 0}")
-                        Text("Shujutu rows loaded: ${df.shujutu?.rowsCount() ?: 0}")
-                        Text("${df.nenrei?.schema()}")
-                        Text("${df.shujutu?.schema()}")
+                        Text("All sheets loaded successfully!")
+                        Text("MDC rows: ${df.mdc?.rowsCount() ?: "Failed"}")
+                        Text("Bunrui rows: ${df.bunrui?.rowsCount() ?: "Failed"}")
+                        Text("Byotai rows: ${df.byotai?.rowsCount() ?: "Failed"}")
+                        Text("ICD rows: ${df.icd?.rowsCount() ?: "Failed"}")
+                        Text("Nenrei rows: ${df.nenrei?.rowsCount() ?: "Failed"}")
+                        Text("Shujutu rows: ${df.shujutu?.rowsCount() ?: "Failed"}")
+                        Text("Shochi1 rows: ${df.shochi1?.rowsCount() ?: "Failed"}")
+                        Text("Shochi2 rows: ${df.shochi2?.rowsCount() ?: "Failed"}")
+                        Text("Fukubyomei rows: ${df.fukubyomei?.rowsCount() ?: "Failed"}")
+                        Text("JCS rows: ${df.jushodoJcs?.rowsCount() ?: "Failed"}")
+                        Text("Jushodo Shujutu rows: ${df.jushodoShujutu?.rowsCount() ?: "Failed"}")
+                        Text("Jushodo Jushou rows: ${df.jushodoJushou?.rowsCount() ?: "Failed"}")
+                        Text("Jushodo Rankin rows: ${df.jushodoRankin?.rowsCount() ?: "Failed"}")
                     }
                 }
             }
@@ -105,8 +168,12 @@ fun DpcScreen(navController: NavHostController) {
     }
 }
 
-// THIS IS THE CORRECTED FUNCTION using only kotlinx-dataframe
+/**
+ * 指定されたシート名のExcelシートを読み込み、DataFrameとして返す。
+ * この関数は毎回新しいInputStreamを開くため、連続して呼び出しても安全です。
+ */
 private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
+    // 'use'ブロックを使うことで、処理が終わった後に自動的にInputStreamが閉じられる
     context.resources.openRawResource(R.raw.dpc001348055).use { inputStream ->
         return DataFrame.readExcel(
             inputStream = inputStream,
@@ -114,7 +181,7 @@ private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
             skipRows = 0,
             nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
             firstRowIsHeader = false
-            //parseEmptyAsNull = false
+
         )
     }
 }
@@ -122,5 +189,6 @@ private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
 @Preview(showBackground = true)
 @Composable
 fun DpcScreenPreview() {
+    // プレビューはUIの初期状態（ローディング中）を表示するため、クラッシュしない
     DpcScreen(navController = NavHostController(LocalContext.current))
 }
