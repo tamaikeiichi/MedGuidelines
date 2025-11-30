@@ -24,8 +24,6 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
@@ -63,16 +61,20 @@ fun DpcScreen(navController: NavHostController) {
 
     // Composableが最初に表示されたときに一度だけ実行される副作用
     LaunchedEffect(Unit) {
-        isLoading = false
+        isLoading = true
         try {
-            // UIスレッドをブロックしないように、処理全体をバックグラウンドスレッドで実行
-//            withContext(Dispatchers.IO) {
-//                loadingMessage = "Loading sheets in parallel..."
-
-                // asyncを使って、すべてのシート読み込み処理を並行して開始する
-                val deferredMdc = //async
-                      loadDpcData(context, "１）ＭＤＣ名称")
-//                val deferredBunrui = async { loadDpcData(context, "２）分類名称") }
+            val loadedMdc =
+                withContext(Dispatchers.IO) {
+                    loadDpcData(context, "１）ＭＤＣ名称")
+                }
+            val loadedBunrui =
+                withContext(Dispatchers.IO) {
+                    loadDpcData(context, "２）分類名称")
+                }
+            val loadedByotai =
+                withContext(Dispatchers.IO) {
+                    loadDpcData(context, "３）病態等分類")
+                }
 //                val deferredByotai = async { loadDpcData(context, "３）病態等分類") }
 //                val deferredIcd = async { loadDpcData(context, "４）ＩＣＤ") }
 //                val deferredNenrei = async { loadDpcData(context, "５）年齢、出生時体重等") }
@@ -85,21 +87,25 @@ fun DpcScreen(navController: NavHostController) {
 //                val deferredJushodoJushou = async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
 //                val deferredJushodoRankin = async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
 
-                loadingMessage = "Waiting for all sheets to finish loading..."
+            loadingMessage = "Waiting for all sheets to finish loading..."
 
-                // awaitAllですべての非同期処理が完了するのを待つ
+            // awaitAllですべての非同期処理が完了するのを待つ
 //                val allData = awaitAll(
 //                    deferredMdc,
 //                    deferredBunrui, deferredByotai, deferredIcd, deferredNenrei,
 //                    deferredShujutu, deferredShochi1, deferredShochi2, deferredFukubyomei,
 //                    deferredJushodoJcs, deferredJushodoShujutu, deferredJushodoJushou, deferredJushodoRankin
-                //)
+            //)
 
-                loadingMessage = "Updating UI..."
+            loadingMessage = "Updating UI..."
 
-                // すべてのデータが揃ったら、Stateを一度だけ更新してUIの再描画をトリガーする
+            // すべてのデータが揃ったら、Stateを一度だけ更新してUIの再描画をトリガーする
+            withContext(Dispatchers.Main) {
                 df = df.copy(
-                    mdc = deferredMdc as DataFrame<*>?
+                    mdc = loadedMdc,
+                    bunrui = loadedBunrui,
+                    byotai = loadedByotai,
+
                     //mdc = allData[0],
 //                    bunrui = allData[1],
 //                    byotai = allData[2],
@@ -114,7 +120,7 @@ fun DpcScreen(navController: NavHostController) {
 //                    jushodoJushou = allData[11],
 //                    jushodoRankin = allData[12]
                 )
-            //}
+            }
         } catch (t: Throwable) {
             errorMessage = t.message ?: "An unknown error occurred"
             t.printStackTrace()
@@ -123,33 +129,14 @@ fun DpcScreen(navController: NavHostController) {
         }
     }
 
-    // UIの表示はDpcScreenContentに委任する
-    DpcScreenContent(
-        navController = navController,
-        df = df,
-        isLoading = isLoading,
-        errorMessage = errorMessage,
-        loadingMessage = loadingMessage
-    )
-}
-
-/**
- * UIの表示のみを担当する "ダム" (Stateless) なコンポーザブル
- */
-@Composable
-private fun DpcScreenContent(
-    navController: NavHostController,
-    df: DpcDataSheets,
-    isLoading: Boolean,
-    errorMessage: String?,
-    loadingMessage: String
-) {
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
                 title = R.string.dpcTitle,
                 navController = navController,
-                references = listOf(TextAndUrl(R.string.space, R.string.space))
+                references = listOf(
+                    TextAndUrl(R.string.space, R.string.space)
+                )
             )
         },
     ) { innerPadding ->
@@ -159,7 +146,6 @@ private fun DpcScreenContent(
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
-            // 状態に応じてUIを切り替える
             when {
                 isLoading -> {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -167,9 +153,11 @@ private fun DpcScreenContent(
                         Text(text = loadingMessage, modifier = Modifier.padding(top = 8.dp))
                     }
                 }
+
                 errorMessage != null -> {
                     Text(text = "Error: $errorMessage")
                 }
+
                 else -> {
                     Column {
                         Text("All sheets loaded successfully!")
@@ -190,8 +178,76 @@ private fun DpcScreenContent(
                 }
             }
         }
+        // UIの表示はDpcScreenContentに委任する
+//    DpcScreenContent(
+//        navController = navController,
+//        df = df,
+//        isLoading = isLoading,
+//        errorMessage = errorMessage,
+//        loadingMessage = loadingMessage
+//    )
     }
 }
+
+/**
+ * UIの表示のみを担当する "ダム" (Stateless) なコンポーザブル
+ */
+//@Composable
+//private fun DpcScreenContent(
+//    navController: NavHostController,
+//    df: DpcDataSheets,
+//    isLoading: Boolean,
+//    errorMessage: String?,
+//    loadingMessage: String
+//) {
+//    MedGuidelinesScaffold(
+//        topBar = {
+//            TitleTopAppBar(
+//                title = R.string.dpcTitle,
+//                navController = navController,
+//                references = listOf(TextAndUrl(R.string.space, R.string.space))
+//            )
+//        },
+//    ) { innerPadding ->
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(innerPadding),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            // 状態に応じてUIを切り替える
+//            when {
+//                isLoading -> {
+//                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                        CircularProgressIndicator()
+//                        Text(text = loadingMessage, modifier = Modifier.padding(top = 8.dp))
+//                    }
+//                }
+//                errorMessage != null -> {
+//                    Text(text = "Error: $errorMessage")
+//                }
+//                else -> {
+//                    Column {
+//                        Text("All sheets loaded successfully!")
+//                        Text("MDC rows: ${df.mdc?.rowsCount() ?: "Failed"}")
+//                        Text("Bunrui rows: ${df.bunrui?.rowsCount() ?: "Failed"}")
+//                        Text("Byotai rows: ${df.byotai?.rowsCount() ?: "Failed"}")
+//                        Text("ICD rows: ${df.icd?.rowsCount() ?: "Failed"}")
+//                        Text("Nenrei rows: ${df.nenrei?.rowsCount() ?: "Failed"}")
+//                        Text("Shujutu rows: ${df.shujutu?.rowsCount() ?: "Failed"}")
+//                        Text("Shochi1 rows: ${df.shochi1?.rowsCount() ?: "Failed"}")
+//                        Text("Shochi2 rows: ${df.shochi2?.rowsCount() ?: "Failed"}")
+//                        Text("Fukubyomei rows: ${df.fukubyomei?.rowsCount() ?: "Failed"}")
+//                        Text("JCS rows: ${df.jushodoJcs?.rowsCount() ?: "Failed"}")
+//                        Text("Jushodo Shujutu rows: ${df.jushodoShujutu?.rowsCount() ?: "Failed"}")
+//                        Text("Jushodo Jushou rows: ${df.jushodoJushou?.rowsCount() ?: "Failed"}")
+//                        Text("Jushodo Rankin rows: ${df.jushodoRankin?.rowsCount() ?: "Failed"}")
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 
 /**
@@ -209,19 +265,9 @@ private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
     }
 }
 
-// --- START: プレビューの修正 ---
 @Preview(showBackground = true)
 @Composable
 fun DpcScreenPreview() {
-    // プレビューでは、UI表示用のDpcScreenContentを直接呼び出す
-    // これにより、実際のデータ読み込みを回避し、クラッシュしなくなる
-    DpcScreenContent(
-        navController = NavHostController(LocalContext.current),
-        df = DpcDataSheets(), // 空のデータで初期化
-        isLoading = true,     // ローディング状態をプレビュー
-        errorMessage = null,
-        loadingMessage = "Loading sheets in parallel..."
-    )
+    DpcScreen(navController = NavHostController(LocalContext.current))
 }
-// --- END: プレビューの修正 ---
 
