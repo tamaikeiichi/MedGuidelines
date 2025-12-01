@@ -75,27 +75,40 @@ fun DpcScreen(navController: NavHostController) {
                 withContext(Dispatchers.IO) {
                     loadDpcData(context, "３）病態等分類")
                 }
-//                val deferredByotai = async { loadDpcData(context, "３）病態等分類") }
-//                val deferredIcd = async { loadDpcData(context, "４）ＩＣＤ") }
-//                val deferredNenrei = async { loadDpcData(context, "５）年齢、出生時体重等") }
-//                val deferredShujutu = async { loadDpcData(context, "６）手術 ") }
-//                val deferredShochi1 = async { loadDpcData(context, "７）手術・処置等１") }
-//                val deferredShochi2 = async { loadDpcData(context, "８）手術・処置等２") }
-//                val deferredFukubyomei = async { loadDpcData(context, "９）定義副傷病名") }
-//                val deferredJushodoJcs = async { loadDpcData(context, "10－1）重症度等（ＪＣＳ等）") }
-//                val deferredJushodoShujutu = async { loadDpcData(context, "10－2）重症度等（手術等）") }
-//                val deferredJushodoJushou = async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
-//                val deferredJushodoRankin = async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
+            val loadedIcd =
+                withContext(Dispatchers.IO){
+                    loadDpcData(context, "４）ＩＣＤ")
+                }
+            val loadedNenrei =
+                withContext(Dispatchers.IO){
+                    loadDpcData(context, "５）年齢、出生時体重等")
+                }
+            val loadedShujutu = withContext(Dispatchers.IO) {
+                loadDpcData(context, "６）手術 ")
+            }
+            val loadedShochi1 = withContext(Dispatchers.IO){
+                loadDpcData(context, "７）手術・処置等１")
+            }
+            val loadedShochi2 = withContext(Dispatchers.IO){
+                loadDpcData(context, "８）手術・処置等２")
+            }
+            val loadedFukubyomei = withContext(Dispatchers.IO){
+                loadDpcData(context, "９）定義副傷病名")
+            }
+            val loadedJushodoJcs = withContext(Dispatchers.IO){
+                loadDpcData(context, "10－1）重症度等（ＪＣＳ等）")
+            }
+            val loadedJushodoShujutu = withContext(Dispatchers.IO){
+                loadDpcData(context, "10－2）重症度等（手術等）")
+            }
+            val loadedJushodoJushou = withContext(Dispatchers.IO){
+                loadDpcData(context, "10－3）重症度等（重症・軽症）")
+            }
+            val loadedJushodoRankin = withContext(Dispatchers.IO){
+                loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）")
+            }
 
             loadingMessage = "Waiting for all sheets to finish loading..."
-
-            // awaitAllですべての非同期処理が完了するのを待つ
-//                val allData = awaitAll(
-//                    deferredMdc,
-//                    deferredBunrui, deferredByotai, deferredIcd, deferredNenrei,
-//                    deferredShujutu, deferredShochi1, deferredShochi2, deferredFukubyomei,
-//                    deferredJushodoJcs, deferredJushodoShujutu, deferredJushodoJushou, deferredJushodoRankin
-            //)
 
             loadingMessage = "Updating UI..."
 
@@ -105,20 +118,16 @@ fun DpcScreen(navController: NavHostController) {
                     mdc = loadedMdc,
                     bunrui = loadedBunrui,
                     byotai = loadedByotai,
-
-                    //mdc = allData[0],
-//                    bunrui = allData[1],
-//                    byotai = allData[2],
-//                    icd = allData[3],
-//                    nenrei = allData[4],
-//                    shujutu = allData[5],
-//                    shochi1 = allData[6],
-//                    shochi2 = allData[7],
-//                    fukubyomei = allData[8],
-//                    jushodoJcs = allData[9],
-//                    jushodoShujutu = allData[10],
-//                    jushodoJushou = allData[11],
-//                    jushodoRankin = allData[12]
+                    icd = loadedIcd,
+                    nenrei = loadedNenrei,
+//                    shujutu = loadedShujutu,
+//                    shochi1 = loadedShochi1,
+//                    shochi2 = loadedShochi2,
+//                    fukubyomei = loadedFukubyomei,
+//                    jushodoJcs = loadedJushodoJcs,
+//                    jushodoShujutu = loadedJushodoShujutu,
+//                    jushodoJushou = loadedJushodoJushou,
+//                    jushodoRankin = loadedJushodoRankin
                 )
             }
         } catch (t: Throwable) {
