@@ -1,6 +1,7 @@
 package com.keiichi.medguidelines.ui.screen
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
@@ -61,26 +63,22 @@ fun DpcScreen(navController: NavHostController) {
 
     // Composableが最初に表示されたときに一度だけ実行される副作用
     LaunchedEffect(Unit) {
+        delay(300)
         isLoading = true
         try {
-            val loadedMdc =
-                withContext(Dispatchers.IO) {
+            val loadedMdc = withContext(Dispatchers.IO) {
                     loadDpcData(context, "１）ＭＤＣ名称")
                 }
-            val loadedBunrui =
-                withContext(Dispatchers.IO) {
+            val loadedBunrui = withContext(Dispatchers.IO) {
                     loadDpcData(context, "２）分類名称")
                 }
-            val loadedByotai =
-                withContext(Dispatchers.IO) {
+            val loadedByotai = withContext(Dispatchers.IO) {
                     loadDpcData(context, "３）病態等分類")
                 }
-            val loadedIcd =
-                withContext(Dispatchers.IO){
+            val loadedIcd = withContext(Dispatchers.IO){
                     loadDpcData(context, "４）ＩＣＤ")
                 }
-            val loadedNenrei =
-                withContext(Dispatchers.IO){
+            val loadedNenrei = withContext(Dispatchers.IO){
                     loadDpcData(context, "５）年齢、出生時体重等")
                 }
             val loadedShujutu = withContext(Dispatchers.IO) {
@@ -110,8 +108,6 @@ fun DpcScreen(navController: NavHostController) {
 
             loadingMessage = "Waiting for all sheets to finish loading..."
 
-            loadingMessage = "Updating UI..."
-
             // すべてのデータが揃ったら、Stateを一度だけ更新してUIの再描画をトリガーする
             withContext(Dispatchers.Main) {
                 df = df.copy(
@@ -120,14 +116,14 @@ fun DpcScreen(navController: NavHostController) {
                     byotai = loadedByotai,
                     icd = loadedIcd,
                     nenrei = loadedNenrei,
-//                    shujutu = loadedShujutu,
-//                    shochi1 = loadedShochi1,
-//                    shochi2 = loadedShochi2,
-//                    fukubyomei = loadedFukubyomei,
-//                    jushodoJcs = loadedJushodoJcs,
-//                    jushodoShujutu = loadedJushodoShujutu,
-//                    jushodoJushou = loadedJushodoJushou,
-//                    jushodoRankin = loadedJushodoRankin
+                    shujutu = loadedShujutu,
+                    shochi1 = loadedShochi1,
+                    shochi2 = loadedShochi2,
+                    fukubyomei = loadedFukubyomei,
+                    jushodoJcs = loadedJushodoJcs,
+                    jushodoShujutu = loadedJushodoShujutu,
+                    jushodoJushou = loadedJushodoJushou,
+                    jushodoRankin = loadedJushodoRankin
                 )
             }
         } catch (t: Throwable) {
@@ -263,14 +259,20 @@ fun DpcScreen(navController: NavHostController) {
  * 指定されたシート名のExcelシートを読み込み、DataFrameとして返す。
  */
 private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
-    context.resources.openRawResource(R.raw.dpc001348055).use { inputStream ->
-        return DataFrame.readExcel(
-            inputStream = inputStream,
-            sheetName = sheetName,
-            skipRows = 0,
-            nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
-            firstRowIsHeader = false
-        )
+    return try {
+        context.resources.openRawResource(R.raw.dpc001348055).use { inputStream ->
+            DataFrame.readExcel(
+                inputStream = inputStream,
+                sheetName = sheetName,
+                skipRows = 0,
+                nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
+                firstRowIsHeader = false
+            )
+        }
+    } catch (e: Exception) {
+        Log.e("DPC", "Error loading data for sheet $sheetName: ${e.message}")
+        e.printStackTrace()
+        DataFrame.empty() // Return an empty DataFrame instead of emptyList()
     }
 }
 
