@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
@@ -144,29 +145,29 @@ private fun DpcScreenContent(
     loadingMessage: String
 ) {
     // --- START: 検索と選択のためのStateを追加 ---
-    var currentRawQuery by remember { mutableStateOf("") }
-    var selectedIcdItem by remember { mutableStateOf<String?>(null) }
-    var displayedItems by remember { mutableStateOf<List<String>>(emptyList()) }
+    var bunruiIcdCurrentRawQuery by remember { mutableStateOf("") }
+    var bunruiIcdSelectedIcdItem by remember { mutableStateOf<String?>(null) }
+    var displayedItemsBunrui by remember { mutableStateOf<List<String>>(emptyList()) }
+    var displayedItemsIcd by remember { mutableStateOf<List<String>>(emptyList()) }
 
 
     // searchQueryが変更されるたびに、検索結果を再計算する
     LaunchedEffect(
-        currentRawQuery
+        bunruiIcdCurrentRawQuery
     ) {
         val filtered = withContext(Dispatchers.Default) {
-
                 // df.icdがnullまたはsearchQueryが空の場合は空のリストを返す
-                if (currentRawQuery.isBlank()) {
+                if (bunruiIcdCurrentRawQuery.isBlank()) {
                     emptyList<String>()
                 } else {
                         val spaceRegex = Regex("[ 　]+")
-                        val searchTerms = currentRawQuery
+                        val searchTerms = bunruiIcdCurrentRawQuery
                             .split(spaceRegex) // Split by the regex
                             .map { normalizeTextForSearch(it) }
                             .filter { it.isNotBlank() }
                     // Safely get the data from the third column
-                    val thirdColumnData = df.icd?.columns()?.getOrNull(2)?.toList()?.drop(2)
-                    thirdColumnData?.filter { item ->
+                    val selectedColumn = df.icd?.columns()?.getOrNull(2)?.toList()?.drop(2)
+                    selectedColumn?.filter { item ->
                         // Convert the current item to a string and normalize it for searching
                         val normalizedItemText = normalizeTextForSearch(item.toString())
                         // Check if the normalized item text contains ALL of the search terms
@@ -175,9 +176,37 @@ private fun DpcScreenContent(
                         }
                     } ?: emptyList()
 
+
                 }
         }
-        displayedItems = filtered.map { it.toString() }
+        displayedItemsIcd = filtered.map { it.toString() }
+    }
+    LaunchedEffect(
+        bunruiIcdCurrentRawQuery
+    ) {
+        val filtered = withContext(Dispatchers.Default) {
+            // df.icdがnullまたはsearchQueryが空の場合は空のリストを返す
+            if (bunruiIcdCurrentRawQuery.isBlank()) {
+                emptyList<String>()
+            } else {
+                val spaceRegex = Regex("[ 　]+")
+                val searchTerms = bunruiIcdCurrentRawQuery
+                    .split(spaceRegex) // Split by the regex
+                    .map { normalizeTextForSearch(it) }
+                    .filter { it.isNotBlank() }
+                // Safely get the data from the third column
+                val selectedColumn = df.bunrui?.columns()?.getOrNull(2)?.toList()?.drop(2)
+                selectedColumn?.filter { item ->
+                    // Convert the current item to a string and normalize it for searching
+                    val normalizedItemText = normalizeTextForSearch(item.toString())
+                    // Check if the normalized item text contains ALL of the search terms
+                    searchTerms.all { term ->
+                        normalizedItemText.contains(term)
+                    }
+                } ?: emptyList()
+            }
+        }
+        displayedItemsBunrui = filtered.map { it.toString() }
     }
     // --- END: 検索と選択のためのStateを追加 ---
 
@@ -214,53 +243,100 @@ private fun DpcScreenContent(
                 else -> {
                     // --- START: 検索UIと結果表示UIを追加 ---
                     // 選択されたアイテムを表示
-                    if (selectedIcdItem != null) {
-                        Text(
-                            text = "Selected: $selectedIcdItem",
-                            modifier = Modifier.padding(16.dp)
-                        )
+                    if (bunruiIcdSelectedIcdItem != null) {
+                        MedGuidelinesCard() {
+                            Text(
+                                text = "$bunruiIcdSelectedIcdItem",
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+
                     }
 
                     // 検索バー
                     MyCustomSearchBar(
-                        searchQuery = currentRawQuery,
-                        onSearchQueryChange = { currentRawQuery = it },
-                        onSearch = { currentRawQuery = it },
+                        searchQuery = bunruiIcdCurrentRawQuery,
+                        onSearchQueryChange = { bunruiIcdCurrentRawQuery = it },
+                        onSearch = { bunruiIcdCurrentRawQuery = it },
                         isLoading = false,
-                        placeholderText = R.string.diseaseNamePlaceholderText
+                        placeholderText = R.string.search
                     )
-                    // Directly get the string name of the third column
-                    // Safely get the third column name only if the dataframe and its columns exist
-                    // Safely get the third column by index and convert its values to a list.
-                    val thirdColumnData: List<Any?>? = df.icd?.columns()?.getOrNull(2)?.toList()?.drop(2)
+//                    val thirdColumnData: List<Any?>? = df.icd?.columns()?.getOrNull(2)?.toList()?.drop(2)
+//
+//                    if (thirdColumnData != null) {
+//                        Text("First 5 rows of the third column:")
+//                        LazyColumn {
+//                            items(items = thirdColumnData.take(5)) { rowData ->
+//                                Text(text = rowData.toString())
+//                            }
+//                        }
+//                    }
 
-// You can now use `thirdColumnData` as a list of all row values for that column.
-                    if (thirdColumnData != null) {
-                        Text("First 5 rows of the third column:")
-                        LazyColumn {
-                            items(items = thirdColumnData.take(5)) { rowData ->
-                                Text(text = rowData.toString())
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        // --- ICDコードの結果 ---
+                        if (displayedItemsIcd.isNotEmpty()) {
+                            // This header will stick to the top as you scroll
+                            stickyHeader {
+                                MedGuidelinesCard() {
+                                    Text(
+                                        text = "ICDコードから (From ICD Code)",
+                                        modifier = Modifier.fillMaxWidth().padding(16.dp)
+                                    )
+                                }
+                            }
+                            items(items = displayedItemsIcd) { item ->
+                                Text(
+                                    text = item,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            bunruiIcdSelectedIcdItem = item
+                                        }
+                                        .padding(16.dp)
+                                )
+                            }
+                        }
+
+                        // --- 分類名称の結果 ---
+                        if (displayedItemsBunrui.isNotEmpty()) {
+                            stickyHeader {
+                                MedGuidelinesCard() {
+                                    Text(
+                                        text = "分類名称から (From Classification Name)",
+                                        modifier = Modifier.fillMaxWidth().padding(16.dp)
+                                    )
+                                }
+                            }
+                            items(items = displayedItemsBunrui) { item ->
+                                Text(
+                                    text = item,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            bunruiIcdSelectedIcdItem = item
+                                        }
+                                        .padding(16.dp)
+                                )
                             }
                         }
                     }
 
 
-
-                    // 検索結果リスト
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(items = displayedItems) { item ->
-                            Text(
-                                text = item,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        // アイテムをタップしたら、選択状態を更新
-                                        selectedIcdItem = item
-                                    }
-                                    .padding(16.dp)
-                            )
-                        }
-                    }
+//                    // 検索結果リスト
+//                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+//                        items(items = displayedItemsBunrui) { item ->
+//                            Text(
+//                                text = item,
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .clickable {
+//                                        // アイテムをタップしたら、選択状態を更新
+//                                        bunruiIcdSelectedIcdItem = item
+//                                    }
+//                                    .padding(16.dp)
+//                            )
+//                        }
+//                    }
                     // --- END: 検索UIと結果表示UIを追加 ---
                 }
             }
