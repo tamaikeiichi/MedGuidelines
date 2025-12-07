@@ -11,11 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +36,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
-import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 
@@ -168,7 +165,7 @@ private fun DpcScreenContent(
                             .map { normalizeTextForSearch(it) }
                             .filter { it.isNotBlank() }
                     // Safely get the data from the third column
-                    val thirdColumnData = df.icd?.columns()?.getOrNull(2)?.toList()
+                    val thirdColumnData = df.icd?.columns()?.getOrNull(2)?.toList()?.drop(2)
                     thirdColumnData?.filter { item ->
                         // Convert the current item to a string and normalize it for searching
                         val normalizedItemText = normalizeTextForSearch(item.toString())
@@ -229,12 +226,13 @@ private fun DpcScreenContent(
                         searchQuery = currentRawQuery,
                         onSearchQueryChange = { currentRawQuery = it },
                         onSearch = { currentRawQuery = it },
-                        isLoading = false
+                        isLoading = false,
+                        placeholderText = R.string.diseaseNamePlaceholderText
                     )
                     // Directly get the string name of the third column
                     // Safely get the third column name only if the dataframe and its columns exist
                     // Safely get the third column by index and convert its values to a list.
-                    val thirdColumnData: List<Any?>? = df.icd?.columns()?.getOrNull(2)?.toList()
+                    val thirdColumnData: List<Any?>? = df.icd?.columns()?.getOrNull(2)?.toList()?.drop(2)
 
 // You can now use `thirdColumnData` as a list of all row values for that column.
                     if (thirdColumnData != null) {

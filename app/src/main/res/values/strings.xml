@@ -745,5 +745,6 @@
     <string name="shock">Shock</string>
     <string name="map">MAP</string>
     <string name="dpcTitle">DPC算定</string>
+    <string name="diseaseNamePlaceholderText">ICD10</string>
 
 </resources>
