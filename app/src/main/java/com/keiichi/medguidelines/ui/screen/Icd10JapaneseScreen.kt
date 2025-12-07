@@ -89,7 +89,6 @@ data class Icd10JapaneseItem(
     val codeReseden: String,
     val originalIndex: Int,
     var isFavorite: Boolean = false,
-    //val normalizedCode: String,// = normalizeTextForSearch(code), // Assuming normalizeTextForSearch is accessible here
     val normalizedDescriptionKana: String// = normalizeTextForSearch(description)
 )
 

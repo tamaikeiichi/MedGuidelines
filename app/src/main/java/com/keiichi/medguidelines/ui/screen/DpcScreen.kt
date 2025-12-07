@@ -28,8 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
+import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
+import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -38,9 +40,6 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readExcel
-import org.jetbrains.kotlinx.dataframe.api.filter
-import org.jetbrains.kotlinx.dataframe.api.rows
-import org.jetbrains.kotlinx.dataframe.api.values
 
 
 // 読み込んだDataFrameを保持するためのデータクラス
@@ -147,30 +146,35 @@ private fun DpcScreenContent(
     loadingMessage: String
 ) {
     // --- START: 検索と選択のためのStateを追加 ---
-    var searchQuery by remember { mutableStateOf("") }
+    var currentRawQuery by remember { mutableStateOf("") }
     var selectedIcdItem by remember { mutableStateOf<String?>(null) }
+    var displayedItems by remember { mutableStateOf<List<String>>(emptyList()) }
+
 
     // searchQueryが変更されるたびに、検索結果を再計算する
-    val searchResults by remember(searchQuery, df.icd) {
-        derivedStateOf {
-            // df.icdがnullまたはsearchQueryが空の場合は空のリストを返す
-            if (df.icd == null || searchQuery.isBlank()) {
-                emptyList<String>()
-            } else {
-                try {
-                    val thirdColumnName = df.icd!!.columnNames()[2]
-                    df.icd!!
-                        .filter {
-                            it[thirdColumnName].toString().contains(searchQuery, ignoreCase = true)
+    LaunchedEffect(
+        currentRawQuery
+    ) {
+        val filtered = withContext(Dispatchers.Default) {
+
+                // df.icdがnullまたはsearchQueryが空の場合は空のリストを返す
+                if (currentRawQuery.isBlank()) {
+                    emptyList<String>()
+                } else {
+                        val spaceRegex = Regex("[ 　]+")
+                        val searchTerms = currentRawQuery
+                            .split(spaceRegex) // Split by the regex
+                            .map { normalizeTextForSearch(it) }
+                            .filter { it.isNotBlank() }
+                        val thirdColumnName = listOf(df.icd!!.columnNames()[2])
+                        thirdColumnName.filter {
+                            searchTerms.all { term ->
+                                thirdColumnName.contains(term)
+                            }
                         }
-                        .rows()
-                        .map { it.values().joinToString(" - ") }
-                } catch (e: Exception) {
-                    Log.e("DpcScreen", "Error during search: ${e.message}")
-                    emptyList()
                 }
-            }
         }
+        displayedItems = filtered
     }
     // --- END: 検索と選択のためのStateを追加 ---
 
@@ -215,18 +219,18 @@ private fun DpcScreenContent(
                     }
 
                     // 検索バー
-                    OutlinedTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        label = { Text("Search ICD (3rd column)") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    MyCustomSearchBar(
+                        searchQuery = currentRawQuery,
+                        onSearchQueryChange = { currentRawQuery = it },
+                        onSearch = { currentRawQuery = it },
+                        isLoading = false
                     )
+                    val thirdColumnName = listOf(df.icd!!.columnNames()[2])
+                    Text(thirdColumnName[1].toString())
 
                     // 検索結果リスト
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(items = searchResults) { item ->
+                        items(items = displayedItems) { item ->
                             Text(
                                 text = item,
                                 modifier = Modifier
