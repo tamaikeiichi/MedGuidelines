@@ -38,6 +38,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.api.schema
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 
@@ -166,15 +167,20 @@ private fun DpcScreenContent(
                             .split(spaceRegex) // Split by the regex
                             .map { normalizeTextForSearch(it) }
                             .filter { it.isNotBlank() }
-                        val thirdColumnName = listOf(df.icd!!.columnNames()[2])
-                        thirdColumnName.filter {
-                            searchTerms.all { term ->
-                                thirdColumnName.contains(term)
-                            }
+                    // Safely get the data from the third column
+                    val thirdColumnData = df.icd?.columns()?.getOrNull(2)?.toList()
+                    thirdColumnData?.filter { item ->
+                        // Convert the current item to a string and normalize it for searching
+                        val normalizedItemText = normalizeTextForSearch(item.toString())
+                        // Check if the normalized item text contains ALL of the search terms
+                        searchTerms.all { term ->
+                            normalizedItemText.contains(term)
                         }
+                    } ?: emptyList()
+
                 }
         }
-        displayedItems = filtered
+        displayedItems = filtered.map { it.toString() }
     }
     // --- END: 検索と選択のためのStateを追加 ---
 
@@ -225,8 +231,22 @@ private fun DpcScreenContent(
                         onSearch = { currentRawQuery = it },
                         isLoading = false
                     )
-                    val thirdColumnName = listOf(df.icd!!.columnNames()[2])
-                    Text(thirdColumnName[1].toString())
+                    // Directly get the string name of the third column
+                    // Safely get the third column name only if the dataframe and its columns exist
+                    // Safely get the third column by index and convert its values to a list.
+                    val thirdColumnData: List<Any?>? = df.icd?.columns()?.getOrNull(2)?.toList()
+
+// You can now use `thirdColumnData` as a list of all row values for that column.
+                    if (thirdColumnData != null) {
+                        Text("First 5 rows of the third column:")
+                        LazyColumn {
+                            items(items = thirdColumnData.take(5)) { rowData ->
+                                Text(text = rowData.toString())
+                            }
+                        }
+                    }
+
+
 
                     // 検索結果リスト
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
