@@ -150,14 +150,13 @@ private fun DpcScreenContent(
     // --- START: 検索と選択のためのStateを追加 ---
     var bunruiIcdCurrentRawQuery by remember { mutableStateOf("") }
     var bunruiIcdSelectedIcdItem by remember { mutableStateOf<String?>(null) }
+    var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
     var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
 
-    var isSearching by remember { mutableStateOf(false) }
-
     // --- START: 修正・統合された検索ロジック ---
     LaunchedEffect(bunruiIcdCurrentRawQuery) {
-        isSearching = true
+        val filtered =
         withContext(Dispatchers.Default) {
             val spaceRegex = Regex("[ 　]+")
             val searchTerms = bunruiIcdCurrentRawQuery
@@ -165,45 +164,30 @@ private fun DpcScreenContent(
                 .map { normalizeTextForSearch(it) }
                 .filter { it.isNotBlank() }
 
-            if (searchTerms.isEmpty()) {
-                withContext(Dispatchers.Main) {
-                    displayedItemsIcd = DataFrame.empty()
-                    displayedItemsBunrui = DataFrame.empty()
-                }
+            if (bunruiIcdCurrentRawQuery.isBlank()) {
+                DataFrame.empty()
             } else {
-                // 両方のフィルタリングを並行して実行
-                val filteredIcdDeferred = //async {
-                    df.icd?.filter { dataRow ->
-                        // 3列目(インデックス2)の値を取得してフィルタリング
-                        // getOrNullを使って安全に列にアクセス
-                        val itemText = dataRow[2]?.toString()
-                        if (itemText != null) {
-                            val normalizedItemText = normalizeTextForSearch(itemText)
-                            searchTerms.all { term -> normalizedItemText.contains(term) }
-                        } else {
-                            false // 3列目がnullの場合はフィルタリングしない
+                // df.icdがnullでない場合のみフィルタリングを実行
+                df.icd?.filter { dataRow ->
+                    // 3列目の値を取得
+                    val itemText = dataRow[2]?.toString()
+
+                    // itemTextがnullでなければ検索ロジックを実行し、Booleanを返す
+                    if (itemText != null) {
+                        val normalizedItemText = normalizeTextForSearch(itemText)
+                        // 全ての検索語が3列目の値に含まれているかを評価する
+                        searchTerms.all { term ->
+                            normalizedItemText.contains(term)
                         }
-                    } ?: DataFrame.empty()
-                //}
-
-                val filteredBunruiDeferred = async {
-                    df.bunrui?.filter { dataRow ->
-                        // 3列目(インデックス2)の値を取得してフィルタリング
-                        dataRow[2]?.toString()?.let { itemText ->
-                            val normalizedItemText = normalizeTextForSearch(itemText)
-                            searchTerms.all { term -> normalizedItemText.contains(term) }
-                        } ?: false // 3列目が存在しないかnullの場合はフィルタリングしない
-                    } ?: DataFrame.empty()
-                }
-
-                // UI更新はメインスレッドで行う
-                withContext(Dispatchers.Main) {
-                    displayedItemsIcd = filteredIcdDeferred//.await()
-                    displayedItemsBunrui = filteredBunruiDeferred.await()
-                }
+                    } else {
+                        // 3列目の値がnullの場合は、この行を結果に含めない (falseを返す)
+                        false
+                    }
+                } ?: DataFrame.empty() // df.icdがnullだった場合は、空のDataFrameを返す
             }
+
         }
-        isSearching = false
+        displayedItemsIcd = filtered
     }
     // --- END: 修正・統合された検索ロジック ---
 
@@ -246,6 +230,10 @@ private fun DpcScreenContent(
                                 text = "$bunruiIcdSelectedIcdItem",
                                 modifier = Modifier.padding(16.dp)
                             )
+                            Text(
+                                text = "ICDコード: $icdCode",
+                                modifier = Modifier.padding(16.dp)
+                            )
                         }
 
                     }
@@ -272,12 +260,14 @@ private fun DpcScreenContent(
                                 }
                                 items(icdResults.rows().toList()) { row ->
                                     val itemText = row[2]?.toString() ?: ""
+                                    val icdCodeSelected = row[3]?.toString() ?: ""
                                     Text(
                                         text = itemText,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
                                                 bunruiIcdSelectedIcdItem = itemText
+                                                icdCode = icdCodeSelected
                                             }
                                             .padding(16.dp)
                                     )
