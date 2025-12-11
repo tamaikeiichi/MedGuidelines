@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.values
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
@@ -61,23 +60,33 @@ data class DpcDataSheets(
     var jushodoRankin: DataFrame<*>? = null
 )
 
+data class DpcCode(
+    var mdc: String? = "xx",
+    var bunrui: String? = "xxxx",
+    var nyuin: String? = "x",
+    var nenrei: String? = "x",
+    var shujutu: String? = "xx",
+    var shochi1: String? = "x",
+    var shochi2: String? = "x",
+    var fukubyomei: String? = "x",
+    var jushodo: String? = "x"
+)
+
 @Composable
 fun DpcScreen(navController: NavHostController) {
     val context = LocalContext.current
 
-    var df by remember { mutableStateOf(DpcDataSheets()) }
+    var dpcMaster by remember { mutableStateOf(DpcDataSheets()) }
+    var dpcCodeFirst by remember { mutableStateOf(DpcCode()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var loadingMessage by remember { mutableStateOf("Starting to load data...") }
 
-    // Composableが最初に表示されたときに一度だけ実行される副作用
     LaunchedEffect(Unit) {
         delay(100)
         isLoading = true
         try {
             val loadedData = withContext(Dispatchers.IO) {
-                loadingMessage = "Loading sheets in parallel..."
-
                 val deferredMdc = async { loadDpcData(context, "１）ＭＤＣ名称") }
                 val deferredBunrui = async { loadDpcData(context, "２）分類名称") }
                 val deferredByotai = async { loadDpcData(context, "３）病態等分類") }
@@ -102,8 +111,7 @@ fun DpcScreen(navController: NavHostController) {
             }
 
             withContext(Dispatchers.Main) {
-                loadingMessage = "Updating UI..."
-                df = df.copy(
+                dpcMaster = dpcMaster.copy(
                     mdc = loadedData[0],
                     bunrui = loadedData[1],
                     byotai = loadedData[2],
@@ -120,22 +128,21 @@ fun DpcScreen(navController: NavHostController) {
                 )
                 loadingMessage = "loaded"
             }
-
         } catch (t: Throwable) {
             errorMessage = t.message ?: "An unknown error occurred"
             t.printStackTrace()
         } finally {
-            // このブロックはtry-catchが完了した後に必ず実行される
             isLoading = false
         }
     }
 
     DpcScreenContent(
         navController = navController,
-        df = df,
+        df = dpcMaster,
         isLoading = isLoading,
         errorMessage = errorMessage,
-        loadingMessage = loadingMessage
+        loadingMessage = loadingMessage,
+        dpcCodeFirst = dpcCodeFirst
     )
 }
 
@@ -145,7 +152,8 @@ private fun DpcScreenContent(
     df: DpcDataSheets,
     isLoading: Boolean,
     errorMessage: String?,
-    loadingMessage: String
+    loadingMessage: String,
+    dpcCodeFirst: DpcCode
 ) {
     // --- START: 検索と選択のためのStateを追加 ---
     var bunruiIcdCurrentRawQuery by remember { mutableStateOf("") }
@@ -154,7 +162,6 @@ private fun DpcScreenContent(
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
     var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
 
-    // --- START: 修正・統合された検索ロジック ---
     LaunchedEffect(bunruiIcdCurrentRawQuery) {
         val filtered =
         withContext(Dispatchers.Default) {
@@ -185,11 +192,9 @@ private fun DpcScreenContent(
                     }
                 } ?: DataFrame.empty() // df.icdがnullだった場合は、空のDataFrameを返す
             }
-
         }
         displayedItemsIcd = filtered
     }
-    // --- END: 修正・統合された検索ロジック ---
 
     MedGuidelinesScaffold(
         topBar = {
@@ -234,6 +239,14 @@ private fun DpcScreenContent(
                                 text = "ICDコード: $icdCode",
                                 modifier = Modifier.padding(16.dp)
                             )
+                            Text(
+                                text = "MDC: ${dpcCodeFirst.mdc}",
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            Text(
+                                text = "分類名称: ${dpcCodeFirst.bunrui}",
+                                modifier = Modifier.padding(16.dp)
+                            )
                         }
 
                     }
@@ -261,6 +274,8 @@ private fun DpcScreenContent(
                                 items(icdResults.rows().toList()) { row ->
                                     val itemText = row[2]?.toString() ?: ""
                                     val icdCodeSelected = row[3]?.toString() ?: ""
+                                    val mdcSelected = row[0]?.toString() ?: ""
+                                    val bunruiSelected = row[1]?.toString() ?: ""
                                     Text(
                                         text = itemText,
                                         modifier = Modifier
@@ -268,6 +283,8 @@ private fun DpcScreenContent(
                                             .clickable {
                                                 bunruiIcdSelectedIcdItem = itemText
                                                 icdCode = icdCodeSelected
+                                                dpcCodeFirst.mdc = mdcSelected
+                                                dpcCodeFirst.bunrui = bunruiSelected
                                             }
                                             .padding(16.dp)
                                     )
