@@ -37,9 +37,13 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.api.ParserOptions
+import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.filter
 import org.jetbrains.kotlinx.dataframe.api.rows
+import org.jetbrains.kotlinx.dataframe.io.ColType
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
+import org.jetbrains.kotlinx.dataframe.io.StringColumns
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 
 
@@ -332,8 +336,10 @@ private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
                 sheetName = sheetName,
                 skipRows = 0,
                 nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
-                firstRowIsHeader = false
-            )
+                firstRowIsHeader = false,
+
+                //stringColumns = StringColumns
+            )//.convert { all() }.to<String>()
         }
     } catch (e: Exception) {
         Log.e("DPC", "Error loading data for sheet $sheetName: ${e.message}")
