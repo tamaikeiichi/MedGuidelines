@@ -138,7 +138,7 @@ fun DpcScreen(navController: NavHostController) {
 
     DpcScreenContent(
         navController = navController,
-        df = dpcMaster,
+        dpcMaster = dpcMaster,
         isLoading = isLoading,
         errorMessage = errorMessage,
         loadingMessage = loadingMessage,
@@ -149,7 +149,7 @@ fun DpcScreen(navController: NavHostController) {
 @Composable
 private fun DpcScreenContent(
     navController: NavHostController,
-    df: DpcDataSheets,
+    dpcMaster: DpcDataSheets,
     isLoading: Boolean,
     errorMessage: String?,
     loadingMessage: String,
@@ -163,37 +163,15 @@ private fun DpcScreenContent(
     var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
 
     LaunchedEffect(bunruiIcdCurrentRawQuery) {
-        val filtered =
+        val filteredIcd =
         withContext(Dispatchers.Default) {
-            val spaceRegex = Regex("[ 　]+")
-            val searchTerms = bunruiIcdCurrentRawQuery
-                .split(spaceRegex)
-                .map { normalizeTextForSearch(it) }
-                .filter { it.isNotBlank() }
-
-            if (bunruiIcdCurrentRawQuery.isBlank()) {
-                DataFrame.empty()
-            } else {
-                // df.icdがnullでない場合のみフィルタリングを実行
-                df.icd?.filter { dataRow ->
-                    // 3列目の値を取得
-                    val itemText = dataRow[2]?.toString()
-
-                    // itemTextがnullでなければ検索ロジックを実行し、Booleanを返す
-                    if (itemText != null) {
-                        val normalizedItemText = normalizeTextForSearch(itemText)
-                        // 全ての検索語が3列目の値に含まれているかを評価する
-                        searchTerms.all { term ->
-                            normalizedItemText.contains(term)
-                        }
-                    } else {
-                        // 3列目の値がnullの場合は、この行を結果に含めない (falseを返す)
-                        false
-                    }
-                } ?: DataFrame.empty() // df.icdがnullだった場合は、空のDataFrameを返す
-            }
+            filterDpcMaster(
+                icdDataFrame = dpcMaster.icd,
+                query = bunruiIcdCurrentRawQuery,
+                targetRow = 2
+            )
         }
-        displayedItemsIcd = filtered
+        displayedItemsIcd = filteredIcd
     }
 
     MedGuidelinesScaffold(
@@ -227,8 +205,6 @@ private fun DpcScreenContent(
                     }
                 }
                 else -> {
-                    // --- START: 検索UIと結果表示UIを追加 ---
-                    // 選択されたアイテムを表示
                     if (bunruiIcdSelectedIcdItem != null) {
                         MedGuidelinesCard() {
                             Text(
@@ -239,14 +215,7 @@ private fun DpcScreenContent(
                                 text = "ICDコード: $icdCode",
                                 modifier = Modifier.padding(16.dp)
                             )
-                            Text(
-                                text = "MDC: ${dpcCodeFirst.mdc}",
-                                modifier = Modifier.padding(16.dp)
-                            )
-                            Text(
-                                text = "分類名称: ${dpcCodeFirst.bunrui}",
-                                modifier = Modifier.padding(16.dp)
-                            )
+
                         }
 
                     }
@@ -260,57 +229,95 @@ private fun DpcScreenContent(
                         placeholderText = R.string.search
                     )
 
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        // --- ICDコードの結果 ---
-                        displayedItemsIcd?.let { icdResults ->
-                            if (icdResults.rowsCount() > 0) {
-                                stickyHeader {
-                                    MedGuidelinesCard {
-                                        Text(text = "ICDコードから (From ICD Code)", modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp))
+                    if (dpcCodeFirst.mdc == "xx" && dpcCodeFirst.bunrui == "xxxx") {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            // --- ICDコードの結果 ---
+                            displayedItemsIcd?.let { icdResults ->
+                                if (icdResults.rowsCount() > 0) {
+                                    stickyHeader {
+                                        MedGuidelinesCard {
+                                            Text(
+                                                text = "ICDコードから (From ICD Code)",
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(16.dp)
+                                            )
+                                        }
+                                    }
+                                    items(icdResults.rows().toList()) { row ->
+                                        val itemText = row[2]?.toString() ?: ""
+                                        val icdCodeSelected = row[3]?.toString() ?: ""
+                                        val mdcSelected = row[0]?.toString() ?: ""
+                                        val bunruiSelected = row[1]?.toString() ?: ""
+                                        Text(
+                                            text = itemText,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    bunruiIcdSelectedIcdItem = itemText
+                                                    icdCode = icdCodeSelected
+                                                    dpcCodeFirst.mdc = mdcSelected
+                                                    dpcCodeFirst.bunrui = bunruiSelected
+                                                }
+                                                .padding(16.dp)
+                                        )
                                     }
                                 }
-                                items(icdResults.rows().toList()) { row ->
-                                    val itemText = row[2]?.toString() ?: ""
-                                    val icdCodeSelected = row[3]?.toString() ?: ""
-                                    val mdcSelected = row[0]?.toString() ?: ""
-                                    val bunruiSelected = row[1]?.toString() ?: ""
-                                    Text(
-                                        text = itemText,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                bunruiIcdSelectedIcdItem = itemText
-                                                icdCode = icdCodeSelected
-                                                dpcCodeFirst.mdc = mdcSelected
-                                                dpcCodeFirst.bunrui = bunruiSelected
-                                            }
-                                            .padding(16.dp)
-                                    )
-                                }
                             }
-                        }
 
-                        // --- 分類名称の結果 ---
-                        displayedItemsBunrui?.let { bunruiResults ->
-                            if (bunruiResults.rowsCount() > 0) {
-                                stickyHeader {
-                                    MedGuidelinesCard {
-                                        Text(text = "分類名称から (From Classification Name)", modifier = Modifier.fillMaxWidth().padding(16.dp))
+                            // --- 分類名称の結果 ---
+                            displayedItemsBunrui?.let { bunruiResults ->
+                                if (bunruiResults.rowsCount() > 0) {
+                                    stickyHeader {
+                                        MedGuidelinesCard {
+                                            Text(
+                                                text = "分類名称から (From Classification Name)",
+                                                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                                            )
+                                        }
                                     }
-                                }
-                                items(bunruiResults.rows().toList()) { row ->
-                                    val itemText = row.values().joinToString(" | ")
-                                    Text(
-                                        text = itemText,
-                                        modifier = Modifier.fillMaxWidth().clickable {
-                                            bunruiIcdSelectedIcdItem = itemText
-                                        }.padding(16.dp)
-                                    )
+                                    items(bunruiResults.rows().toList()) { row ->
+                                        val itemText = row.values().joinToString(" | ")
+                                        Text(
+                                            text = itemText,
+                                            modifier = Modifier.fillMaxWidth().clickable {
+                                                bunruiIcdSelectedIcdItem = itemText
+                                            }.padding(16.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
+                    }
+
+                    if (dpcCodeFirst.mdc != "xx" && dpcCodeFirst.bunrui != "xxxx") {
+                        var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
+                        LaunchedEffect(dpcCodeFirst) {
+                            filteredByotai =
+                                withContext(Dispatchers.Default) {
+                                    filterDpcMaster(
+                                        icdDataFrame = dpcMaster.byotai,
+                                        query = "${dpcCodeFirst.mdc}",
+                                        targetRow = 0
+                                    )
+                                }
+                            filteredByotai =
+                                withContext(Dispatchers.Default) {
+                                    filterDpcMaster(
+                                        icdDataFrame = filteredByotai,
+                                        query = "${dpcCodeFirst.bunrui}",
+                                        targetRow = 1
+                                    )
+                                }
+                        }
+                        Text(
+                            text = "MDC: ${dpcCodeFirst.mdc}",
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        Text(
+                            text = "${filteredByotai?.get(0)}",
+                            modifier = Modifier.padding(16.dp)
+                        )
                     }
                 }
             }
@@ -332,6 +339,43 @@ private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
         Log.e("DPC", "Error loading data for sheet $sheetName: ${e.message}")
         e.printStackTrace()
         DataFrame.empty() // Return an empty DataFrame instead of emptyList()
+    }
+}
+
+/** * ICDのDataFrameを検索クエリでフィルタリングするサスペンド関数
+ * @param icdDataFrame フィルタリング対象のDataFrame
+ * @param query ユーザーが入力した検索クエリ
+ * @return フィルタリングされたDataFrame
+ */
+private suspend fun filterDpcMaster(
+    icdDataFrame: DataFrame<*>?,
+    query: String,
+    targetRow: Int
+): DataFrame<*> {
+    // この関数はバックグラウンドスレッドで実行されることを想定
+    if (icdDataFrame == null || query.isBlank()) {
+        return DataFrame.empty()
+    }
+
+    val spaceRegex = Regex("[ 　]+")
+    val searchTerms = query
+        .split(spaceRegex)
+        .map { normalizeTextForSearch(it) }
+        .filter { it.isNotBlank() }
+
+    if (searchTerms.isEmpty()) {
+        return DataFrame.empty()
+    }
+
+    return icdDataFrame.filter { dataRow ->
+        // 3列目(インデックス2)の値を安全に取得してフィルタリング
+        val itemText = dataRow[targetRow]?.toString()
+        if (itemText != null) {
+            val normalizedItemText = normalizeTextForSearch(itemText)
+            searchTerms.all { term -> normalizedItemText.contains(term) }
+        } else {
+            false // 3列目がnullの場合は結果に含めない
+        }
     }
 }
 
