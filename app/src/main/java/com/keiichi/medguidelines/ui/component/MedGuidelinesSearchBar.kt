@@ -107,6 +107,18 @@ fun MyCustomSearchBarEmptyPreview() {
     MyCustomSearchBar(
         searchQuery = query,
         onSearchQueryChange = { query = it },
-        onSearch = { /* Preview: handle search action */ }
+        onSearch = { /* Preview: handle search action */ },
+        placeholderText = R.string.searchIcd
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun displayText(){
+    Text(parseStyledString(R.string.search))
+}
+@Preview(showBackground = true)
+@Composable
+fun displayText2(){
+    Text(R.string.searchIcd.toString())
 }

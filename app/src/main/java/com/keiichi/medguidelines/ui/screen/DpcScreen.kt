@@ -37,13 +37,10 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
-import org.jetbrains.kotlinx.dataframe.api.ParserOptions
-import org.jetbrains.kotlinx.dataframe.api.convert
+import org.jetbrains.kotlinx.dataframe.api.concat
 import org.jetbrains.kotlinx.dataframe.api.filter
 import org.jetbrains.kotlinx.dataframe.api.rows
-import org.jetbrains.kotlinx.dataframe.io.ColType
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
-import org.jetbrains.kotlinx.dataframe.io.StringColumns
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 
 
@@ -73,7 +70,8 @@ data class DpcCode(
     var shochi1: String? = "x",
     var shochi2: String? = "x",
     var fukubyomei: String? = "x",
-    var jushodo: String? = "x"
+    var jushodo: String? = "x",
+    var icd: String? = "x"
 )
 
 @Composable
@@ -160,22 +158,50 @@ private fun DpcScreenContent(
     dpcCodeFirst: DpcCode
 ) {
     // --- START: 検索と選択のためのStateを追加 ---
-    var bunruiIcdCurrentRawQuery by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf("") }
     var bunruiIcdSelectedIcdItem by remember { mutableStateOf<String?>(null) }
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
     var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
+    var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
 
-    LaunchedEffect(bunruiIcdCurrentRawQuery) {
-        val filteredIcd =
-        withContext(Dispatchers.Default) {
-            filterDpcMaster(
-                icdDataFrame = dpcMaster.icd,
-                query = bunruiIcdCurrentRawQuery,
-                targetRow = 2
-            )
+    LaunchedEffect(query) {
+        if (query.isBlank()) {
+            displayedItemsIcd = null
+            return@LaunchedEffect
         }
-        displayedItemsIcd = filteredIcd
+        val filteredItem =
+            withContext(Dispatchers.Default) {
+                filterDpcMaster(
+                    icdDataFrame = dpcMaster.icd,
+                    query = query,
+                    targetRow = 2
+                )
+            }
+        if (displayedItemsIcd == null) {
+            displayedItemsIcd = filteredItem
+        } else {
+            displayedItemsIcd = displayedItemsIcd?.concat(filteredItem)
+        }
+    }
+    LaunchedEffect(query) {
+        if (query.isBlank()) {
+            displayedItemsIcd = null
+            return@LaunchedEffect
+        }
+        val filteredItem =
+            withContext(Dispatchers.Default) {
+                filterDpcMaster(
+                    icdDataFrame = dpcMaster.icd,
+                    query = query,
+                    targetRow = 3
+                )
+            }
+        if (displayedItemsIcd == null) {
+            displayedItemsIcd = filteredItem
+        } else {
+            displayedItemsIcd = displayedItemsIcd?.concat(filteredItem)
+        }
     }
 
     MedGuidelinesScaffold(
@@ -226,11 +252,11 @@ private fun DpcScreenContent(
 
                     // 検索バー
                     MyCustomSearchBar(
-                        searchQuery = bunruiIcdCurrentRawQuery,
-                        onSearchQueryChange = { bunruiIcdCurrentRawQuery = it },
-                        onSearch = { bunruiIcdCurrentRawQuery = it },
+                        searchQuery = query,
+                        onSearchQueryChange = { query = it },
+                        onSearch = { query = it },
                         isLoading = false,
-                        placeholderText = R.string.search
+                        placeholderText = R.string.searchIcd
                     )
 
                     if (dpcCodeFirst.mdc == "xx" && dpcCodeFirst.bunrui == "xxxx") {
@@ -259,7 +285,7 @@ private fun DpcScreenContent(
                                                 .fillMaxWidth()
                                                 .clickable {
                                                     bunruiIcdSelectedIcdItem = itemText
-                                                    icdCode = icdCodeSelected
+                                                    dpcCodeFirst.icd = icdCodeSelected
                                                     dpcCodeFirst.mdc = mdcSelected
                                                     dpcCodeFirst.bunrui = bunruiSelected
                                                 }
@@ -295,33 +321,41 @@ private fun DpcScreenContent(
                     }
 
                     if (dpcCodeFirst.mdc != "xx" && dpcCodeFirst.bunrui != "xxxx") {
-                        var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
-                        LaunchedEffect(dpcCodeFirst) {
-                            filteredByotai =
-                                withContext(Dispatchers.Default) {
-                                    filterDpcMaster(
-                                        icdDataFrame = dpcMaster.byotai,
-                                        query = "${dpcCodeFirst.mdc}",
-                                        targetRow = 0
-                                    )
-                                }
-                            filteredByotai =
-                                withContext(Dispatchers.Default) {
-                                    filterDpcMaster(
-                                        icdDataFrame = filteredByotai,
-                                        query = "${dpcCodeFirst.bunrui}",
-                                        targetRow = 1
-                                    )
-                                }
+                        LaunchedEffect(dpcCodeFirst, query) {
+                            val filteredResult = withContext(Dispatchers.Default) {
+                                // 1. まずMDCコードでフィルタリング
+                                val mdcFiltered = filterDpcMaster(
+                                    icdDataFrame = dpcMaster.byotai,
+                                    query = dpcCodeFirst.mdc ?: "",
+                                    targetRow = 0
+                                )
+                                // 2. 次に、MDCでフィルタリングされた結果を、さらに分類コードでフィルタリング
+                                filterDpcMaster(
+                                    icdDataFrame = mdcFiltered,
+                                    query = dpcCodeFirst.bunrui ?: "",
+                                    targetRow = 1
+                                )
+                            }
+                            // 最終的な結果をUIのStateに反映
+                            filteredByotai = filteredResult
                         }
                         Text(
-                            text = "MDC: ${dpcCodeFirst.mdc}",
+                            text = filteredByotai.toString(),
                             modifier = Modifier.padding(16.dp)
                         )
                         Text(
-                            text = "${filteredByotai?.get(0)}",
+                            text = dpcCodeFirst.mdc.toString(),
                             modifier = Modifier.padding(16.dp)
                         )
+                        Text(
+                            text = dpcCodeFirst.bunrui.toString(),
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        Text(
+                            text = dpcMaster.byotai.toString(),
+                            modifier = Modifier.padding(16.dp)
+                        )
+
                     }
                 }
             }
