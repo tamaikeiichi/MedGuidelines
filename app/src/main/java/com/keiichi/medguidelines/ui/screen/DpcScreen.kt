@@ -11,10 +11,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,11 +33,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.dpcByotai
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
+import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
+import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectable
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -38,8 +49,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.concat
+import org.jetbrains.kotlinx.dataframe.api.distinct
 import org.jetbrains.kotlinx.dataframe.api.filter
 import org.jetbrains.kotlinx.dataframe.api.rows
+import org.jetbrains.kotlinx.dataframe.api.toList
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 
@@ -64,6 +77,7 @@ data class DpcDataSheets(
 data class DpcCode(
     var mdc: String? = "xx",
     var bunrui: String? = "xxxx",
+    var byotai: String? = "x",
     var nyuin: String? = "x",
     var nenrei: String? = "x",
     var shujutu: String? = "xx",
@@ -85,7 +99,7 @@ fun DpcScreen(navController: NavHostController) {
     var loadingMessage by remember { mutableStateOf("Starting to load data...") }
 
     LaunchedEffect(Unit) {
-        delay(100)
+        delay(500)
         isLoading = true
         try {
             val loadedData = withContext(Dispatchers.IO) {
@@ -103,7 +117,7 @@ fun DpcScreen(navController: NavHostController) {
                 val deferredJushodoJushou = async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
                 val deferredJushodoRankin = async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
 
-                loadingMessage = "Waiting for all sheets to finish loading..."
+                loadingMessage = "DPCマスタ読込中..."
 
                 awaitAll(
                     deferredMdc, deferredBunrui, deferredByotai, deferredIcd, deferredNenrei,
@@ -148,6 +162,7 @@ fun DpcScreen(navController: NavHostController) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DpcScreenContent(
     navController: NavHostController,
@@ -158,7 +173,7 @@ private fun DpcScreenContent(
     dpcCodeFirst: DpcCode
 ) {
     // --- START: 検索と選択のためのStateを追加 ---
-    var query by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf("J16") }
     var bunruiIcdSelectedIcdItem by remember { mutableStateOf<String?>(null) }
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
@@ -166,41 +181,27 @@ private fun DpcScreenContent(
     var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
 
     LaunchedEffect(query) {
+        // クエリが空なら結果をクリアして終了
         if (query.isBlank()) {
-            displayedItemsIcd = null
+            displayedItemsIcd = DataFrame.empty()
             return@LaunchedEffect
         }
-        val filteredItem =
-            withContext(Dispatchers.Default) {
-                filterDpcMaster(
-                    icdDataFrame = dpcMaster.icd,
-                    query = query,
-                    targetRow = 2
-                )
-            }
-        if (displayedItemsIcd == null) {
-            displayedItemsIcd = filteredItem
-        } else {
-            displayedItemsIcd = displayedItemsIcd?.concat(filteredItem)
+        val filteredResult: DataFrame<*> = withContext(Dispatchers.Default) {
+            // 1. 3列目(targetRow=2)でフィルタリング
+            val filteredByThirdColumn = filterDpcMaster(
+                icdDataFrame = dpcMaster.icd,
+                query = query,
+                targetRow = 2
+            )
+            val filteredByFourthColumn = filterDpcMaster(
+                icdDataFrame = dpcMaster.icd,
+                query = query,
+                targetRow = 3
+            )
+            filteredByThirdColumn.concat(filteredByFourthColumn).distinct()
         }
-    }
-    LaunchedEffect(query) {
-        if (query.isBlank()) {
-            displayedItemsIcd = null
-            return@LaunchedEffect
-        }
-        val filteredItem =
-            withContext(Dispatchers.Default) {
-                filterDpcMaster(
-                    icdDataFrame = dpcMaster.icd,
-                    query = query,
-                    targetRow = 3
-                )
-            }
-        if (displayedItemsIcd == null) {
-            displayedItemsIcd = filteredItem
-        } else {
-            displayedItemsIcd = displayedItemsIcd?.concat(filteredItem)
+        withContext(Dispatchers.Main) {
+            displayedItemsIcd = filteredResult
         }
     }
 
@@ -338,6 +339,62 @@ private fun DpcScreenContent(
                             }
                             // 最終的な結果をUIのStateに反映
                             filteredByotai = filteredResult
+                        }
+
+//                        var byotaiDefaultLabel by remember {mutableIntStateOf(0)}
+//                        var byotaiSelection by remember { mutableIntStateOf(byotaiDefaultLabel) }
+//                        LaunchedEffect(byotaiDefaultLabel) {
+//                            byotaiSelection = byotaiDefaultLabel
+//                        }
+                        val dpcByotaiScore =  buttonAndScoreWithScoreDisplayed(
+                            optionsWithScores = dpcByotai,
+                            title = R.string.space,
+                            defaultSelectedOption = dpcByotai[0].labelResId,
+                            isNumberDisplayed = false
+                        )
+                        if (dpcByotaiScore == 0){
+                            dpcCodeFirst.byotai == "0"
+                        } else {
+                            var expanded by remember { mutableStateOf(false) }
+                            val options = filteredByotai?.toList()
+                            var selectedOption by remember { mutableStateOf("Option 1") }
+                            ExposedDropdownMenuBox(
+                                expanded = expanded,
+                                onExpandedChange = { expanded = !expanded }
+                            ) {
+                                TextField(
+                                    value = selectedOption,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                    },
+                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    options?.forEach { option ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    option as String,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                            },
+                                            onClick = {
+                                                selectedOption = option as String
+                                                expanded = false
+                                            },
+                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                        )
+                                    }
+                                }
+                            }
                         }
                         Text(
                             text = filteredByotai.toString(),

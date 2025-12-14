@@ -747,4 +747,6 @@
     <string name="dpcTitle">DPC算定</string>
     <string name="searchIcd">病名あるいはICDコード</string>
     <string name="diseaseNamePlaceholder" translatable="false">MAP</string>
+    <string name="below15">15歳未満</string>
+    <string name="fifteenOrMore">15歳以上</string>
 </resources>

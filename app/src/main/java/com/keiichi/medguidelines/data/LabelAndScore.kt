@@ -262,3 +262,7 @@ val motorGrade = listOf(
     LabelAndScore(labelResId = R.string.respondstopainwithabnormalrigidextensiondecerebrateposture, score = 2),
     LabelAndScore(labelResId = R.string.none, score =1)
 )
+val dpcByotai = listOf(
+    LabelAndScore(labelResId = R.string.below15, score = 0),
+    LabelAndScore(labelResId = R.string.fifteenOrMore, score = 1)
+)
