@@ -201,7 +201,8 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                                 ThinRadioButton(
                                     selected = isSelected,
                                     strokeWidth = 1.dp,
-                                    size = radioButtonSize
+                                    size = radioButtonSize,
+                                    isNumberDisplayed = isNumberDisplayed
                                 )
                                 // Layer 2: The overlayed Text, shown only if the score is not 0
                                 if (isNumberDisplayed) {
@@ -257,8 +258,9 @@ fun ThinRadioButton(
     modifier: Modifier = Modifier,
     size: Dp = 20.dp, // The overall size of the radio button
     strokeWidth: Dp = 1.dp, // The thickness of the outer circle
-    dotRadiusRatio: Float = 1.0f // Ratio of the dot's radius to the outer circle's radius
-) {
+    dotRadiusRatio: Float = 1.0f, // Ratio of the dot's radius to the outer circle's radius
+    isNumberDisplayed: Boolean
+    ) {
     val radioColor: Color = if (selected) {
         MaterialTheme.colorScheme.primary
     } else {
@@ -279,7 +281,11 @@ fun ThinRadioButton(
         if (selected) {
             drawCircle(
                 color = radioColor,
-                radius = radius * dotRadiusRatio
+                radius = if(isNumberDisplayed){
+                    radius * dotRadiusRatio
+                }else{
+                    radius * (dotRadiusRatio - 0.3f)
+                }
             )
         }
     }
@@ -301,5 +307,25 @@ fun RadioButtonAndExpandWithScoreDisplayedPreview(){
         onOptionSelected = { selected = it },
         title = R.string.wilsonTitle, // Replace with your actual string resource
         titleNote = R.string.wilsonTitle, // Replace with your actual string resource
+    )
+}
+
+@Preview
+@Composable
+fun RadioButtonAndExpandWithScoreDisplayedPreview2(){
+    val previewOptions = listOf(
+        LabelAndScore(R.string.none, 0),
+        LabelAndScore(R.string.mild, 1),
+        LabelAndScore(R.string.severe, -3)
+    )
+    var selected by remember { mutableStateOf(previewOptions[1]) }
+
+    RadioButtonAndExpandWithScoreDisplayed(
+        options = previewOptions,
+        selectedOption = selected,
+        onOptionSelected = { selected = it },
+        title = R.string.wilsonTitle, // Replace with your actual string resource
+        titleNote = R.string.wilsonTitle,
+        isNumberDisplayed = false// Replace with your actual string resource
     )
 }

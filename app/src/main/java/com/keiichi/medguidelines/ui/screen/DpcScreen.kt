@@ -114,15 +114,27 @@ fun DpcScreen(navController: NavHostController) {
                 val deferredFukubyomei = async { loadDpcData(context, "９）定義副傷病名") }
                 val deferredJushodoJcs = async { loadDpcData(context, "10－1）重症度等（ＪＣＳ等）") }
                 val deferredJushodoShujutu = async { loadDpcData(context, "10－2）重症度等（手術等）") }
-                val deferredJushodoJushou = async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
-                val deferredJushodoRankin = async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
+                val deferredJushodoJushou =
+                    async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
+                val deferredJushodoRankin =
+                    async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
 
                 loadingMessage = "DPCマスタ読込中..."
 
                 awaitAll(
-                    deferredMdc, deferredBunrui, deferredByotai, deferredIcd, deferredNenrei,
-                    deferredShujutu, deferredShochi1, deferredShochi2, deferredFukubyomei,
-                    deferredJushodoJcs, deferredJushodoShujutu, deferredJushodoJushou, deferredJushodoRankin
+                    deferredMdc,
+                    deferredBunrui,
+                    deferredByotai,
+                    deferredIcd,
+                    deferredNenrei,
+                    deferredShujutu,
+                    deferredShochi1,
+                    deferredShochi2,
+                    deferredFukubyomei,
+                    deferredJushodoJcs,
+                    deferredJushodoShujutu,
+                    deferredJushodoJushou,
+                    deferredJushodoRankin
                 )
             }
 
@@ -158,7 +170,10 @@ fun DpcScreen(navController: NavHostController) {
         isLoading = isLoading,
         errorMessage = errorMessage,
         loadingMessage = loadingMessage,
-        dpcCodeFirst = dpcCodeFirst
+        dpcCodeFirst = dpcCodeFirst,
+        onDpcCodeChange = { newDpcCode ->
+            dpcCodeFirst = newDpcCode
+        }
     )
 }
 
@@ -170,7 +185,8 @@ private fun DpcScreenContent(
     isLoading: Boolean,
     errorMessage: String?,
     loadingMessage: String,
-    dpcCodeFirst: DpcCode
+    dpcCodeFirst: DpcCode,
+    onDpcCodeChange: (DpcCode) -> Unit
 ) {
     // --- START: 検索と選択のためのStateを追加 ---
     var query by remember { mutableStateOf("J16") }
@@ -180,7 +196,7 @@ private fun DpcScreenContent(
     var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
     var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
 
-    LaunchedEffect(query) {
+    LaunchedEffect(query, dpcMaster.icd) {
         // クエリが空なら結果をクリアして終了
         if (query.isBlank()) {
             displayedItemsIcd = DataFrame.empty()
@@ -205,6 +221,25 @@ private fun DpcScreenContent(
         }
     }
 
+    LaunchedEffect(dpcCodeFirst.bunrui, dpcCodeFirst.mdc, query) {
+        val filteredResult = withContext(Dispatchers.Default) {
+            // 1. まずMDCコードでフィルタリング
+            val mdcFiltered = filterDpcMaster(
+                icdDataFrame = dpcMaster.byotai,
+                query = dpcCodeFirst.mdc ?: "",
+                targetRow = 0
+            )
+            // 2. 次に、MDCでフィルタリングされた結果を、さらに分類コードでフィルタリング
+            filterDpcMaster(
+                icdDataFrame = mdcFiltered,
+                query = dpcCodeFirst.bunrui ?: "",
+                targetRow = 1
+            )
+        }
+        // 最終的な結果をUIのStateに反映
+        filteredByotai = filteredResult
+    }
+
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
@@ -227,6 +262,7 @@ private fun DpcScreenContent(
                         }
                     }
                 }
+
                 errorMessage != null -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -235,6 +271,7 @@ private fun DpcScreenContent(
                         Text(text = "Error: $errorMessage")
                     }
                 }
+
                 else -> {
                     if (bunruiIcdSelectedIcdItem != null) {
                         MedGuidelinesCard() {
@@ -286,15 +323,20 @@ private fun DpcScreenContent(
                                                 .fillMaxWidth()
                                                 .clickable {
                                                     bunruiIcdSelectedIcdItem = itemText
-                                                    dpcCodeFirst.icd = icdCodeSelected
-                                                    dpcCodeFirst.mdc = mdcSelected
-                                                    dpcCodeFirst.bunrui = bunruiSelected
+                                                    onDpcCodeChange(
+                                                        dpcCodeFirst.copy(
+                                                            icd = icdCodeSelected,
+                                                            mdc = mdcSelected,
+                                                            bunrui = bunruiSelected
+                                                        )
+                                                    )
                                                 }
                                                 .padding(16.dp)
                                         )
                                     }
                                 }
                             }
+
 
                             // --- 分類名称の結果 ---
                             displayedItemsBunrui?.let { bunruiResults ->
@@ -303,7 +345,9 @@ private fun DpcScreenContent(
                                         MedGuidelinesCard {
                                             Text(
                                                 text = "分類名称から (From Classification Name)",
-                                                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(16.dp)
                                             )
                                         }
                                     }
@@ -311,114 +355,101 @@ private fun DpcScreenContent(
                                         val itemText = row.values().joinToString(" | ")
                                         Text(
                                             text = itemText,
-                                            modifier = Modifier.fillMaxWidth().clickable {
-                                                bunruiIcdSelectedIcdItem = itemText
-                                            }.padding(16.dp)
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    bunruiIcdSelectedIcdItem = itemText
+                                                }
+                                                .padding(16.dp)
                                         )
                                     }
                                 }
                             }
                         }
+
                     }
-
                     if (dpcCodeFirst.mdc != "xx" && dpcCodeFirst.bunrui != "xxxx") {
-                        LaunchedEffect(dpcCodeFirst, query) {
-                            val filteredResult = withContext(Dispatchers.Default) {
-                                // 1. まずMDCコードでフィルタリング
-                                val mdcFiltered = filterDpcMaster(
-                                    icdDataFrame = dpcMaster.byotai,
-                                    query = dpcCodeFirst.mdc ?: "",
-                                    targetRow = 0
-                                )
-                                // 2. 次に、MDCでフィルタリングされた結果を、さらに分類コードでフィルタリング
-                                filterDpcMaster(
-                                    icdDataFrame = mdcFiltered,
-                                    query = dpcCodeFirst.bunrui ?: "",
-                                    targetRow = 1
-                                )
-                            }
-                            // 最終的な結果をUIのStateに反映
-                            filteredByotai = filteredResult
-                        }
-
-//                        var byotaiDefaultLabel by remember {mutableIntStateOf(0)}
-//                        var byotaiSelection by remember { mutableIntStateOf(byotaiDefaultLabel) }
-//                        LaunchedEffect(byotaiDefaultLabel) {
-//                            byotaiSelection = byotaiDefaultLabel
-//                        }
-                        val dpcByotaiScore =  buttonAndScoreWithScoreDisplayed(
+                        var defaultSelectedOption by remember { mutableIntStateOf(dpcByotai[1].labelResId) }
+                        val dpcByotaiScore = buttonAndScoreWithScoreDisplayedSelectable(
                             optionsWithScores = dpcByotai,
                             title = R.string.space,
-                            defaultSelectedOption = dpcByotai[0].labelResId,
-                            isNumberDisplayed = false
+                            defaultSelectedOption = defaultSelectedOption,
+                            isNumberDisplayed = false,
+                            onOptionSelected = { newSelection ->
+                                defaultSelectedOption = newSelection
+                            },
                         )
-                        if (dpcByotaiScore == 0){
-                            dpcCodeFirst.byotai == "0"
-                        } else {
-                            var expanded by remember { mutableStateOf(false) }
-                            val options = filteredByotai?.toList()
-                            var selectedOption by remember { mutableStateOf("Option 1") }
-                            ExposedDropdownMenuBox(
-                                expanded = expanded,
-                                onExpandedChange = { expanded = !expanded }
-                            ) {
-                                TextField(
-                                    value = selectedOption,
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    trailingIcon = {
-                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                                    },
-                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                                )
-                                ExposedDropdownMenu(
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false }
-                                ) {
-                                    options?.forEach { option ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    option as String,
-                                                    color = MaterialTheme.colorScheme.onSurface
-                                                )
-                                            },
-                                            onClick = {
-                                                selectedOption = option as String
-                                                expanded = false
-                                            },
-                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                        )
-                                    }
-                                }
-                            }
-                        }
+//                        if (dpcByotaiScore == 0) {
+//                            dpcCodeFirst.byotai == "0"
+//                        } else {
+//                            var expanded by remember { mutableStateOf(false) }
+//                            val options = filteredByotai?.toList()
+//                            var selectedOption by remember { mutableStateOf("Option 1") }
+//                            ExposedDropdownMenuBox(
+//                                expanded = expanded,
+//                                onExpandedChange = { expanded = !expanded }
+//                            ) {
+//                                TextField(
+//                                    value = selectedOption,
+//                                    onValueChange = {},
+//                                    readOnly = true,
+//                                    trailingIcon = {
+//                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+//                                    },
+//                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+//                                    modifier = Modifier
+//                                        .fillMaxWidth()
+//                                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+//                                )
+//                                ExposedDropdownMenu(
+//                                    expanded = expanded,
+//                                    onDismissRequest = { expanded = false }
+//                                ) {
+//                                    options?.forEach { option ->
+//                                        DropdownMenuItem(
+//                                            text = {
+//                                                Text(
+//                                                    option as String,
+//                                                    color = MaterialTheme.colorScheme.onSurface
+//                                                )
+//                                            },
+//                                            onClick = {
+//                                                selectedOption = option as String
+//                                                expanded = false
+//                                            },
+//                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+//                                        )
+//                                    }
+//                                }
+//                            }
+//                        }
                         Text(
-                            text = filteredByotai.toString(),
+                            text = "dpcByotaiScore ${dpcByotaiScore.toString()}",
                             modifier = Modifier.padding(16.dp)
                         )
                         Text(
-                            text = dpcCodeFirst.mdc.toString(),
+                            text = "filteredByotai ${filteredByotai.toString()}",
                             modifier = Modifier.padding(16.dp)
                         )
                         Text(
-                            text = dpcCodeFirst.bunrui.toString(),
+                            text = "dpcCodeFirst.mdc ${dpcCodeFirst.mdc.toString()}",
                             modifier = Modifier.padding(16.dp)
                         )
                         Text(
-                            text = dpcMaster.byotai.toString(),
+                            text = "dpcCodeFirst.bunrui ${dpcCodeFirst.bunrui.toString()}",
                             modifier = Modifier.padding(16.dp)
                         )
-
+                        Text(
+                            text = "dpcMaster.byotai ${dpcMaster.byotai.toString()}",
+                            modifier = Modifier.padding(16.dp)
+                        )
                     }
                 }
             }
         }
     }
 }
+
 private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
     return try {
         context.resources.openRawResource(R.raw.dpc001348055).use { inputStream ->

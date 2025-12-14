@@ -11,9 +11,7 @@ fun buttonAndScoreWithScoreDisplayedSelectable(
     optionsWithScores: List<LabelAndScore>,
     title: Int,
     titleNote: Int = R.string.space,
-    // We use the name you requested. This parameter will now CONTROL the selection.
     defaultSelectedOption: Int,
-    // The parent must provide a way for this component to report back user selections.
     onOptionSelected: (Int) -> Unit,
     cardColor: Color = MaterialTheme.colorScheme.onSecondary,
     appendixLabel: @Composable () -> Unit = {},
