@@ -94,7 +94,6 @@ data class DpcCode(
 @Composable
 fun DpcScreen(navController: NavHostController) {
     val context = LocalContext.current
-
     var dpcMaster by remember { mutableStateOf(DpcDataSheets()) }
     var dpcCodeFirst by remember { mutableStateOf(DpcCode()) }
     var isLoading by remember { mutableStateOf(false) }
@@ -198,9 +197,10 @@ private fun DpcScreenContent(
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
     var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
     var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
+    var currentMdc by remember { mutableStateOf("xx") }
+    var currentBunrui by remember { mutableStateOf("xxxx") }
 
     LaunchedEffect(query, dpcMaster.icd) {
-        // クエリが空なら結果をクリアして終了
         if (query.isBlank()) {
             displayedItemsIcd = DataFrame.empty()
             return@LaunchedEffect
@@ -224,23 +224,11 @@ private fun DpcScreenContent(
         }
     }
 
-    LaunchedEffect(dpcCodeFirst.bunrui, dpcCodeFirst.mdc, query) {
-        val filteredResult = withContext(Dispatchers.Default) {
-            // 1. まずMDCコードでフィルタリング
-            val mdcFiltered = filterDpcMaster(
-                icdDataFrame = dpcMaster.byotai,
-                query = dpcCodeFirst.mdc ?: "",
-                targetRow = 0
-            )
-            // 2. 次に、MDCでフィルタリングされた結果を、さらに分類コードでフィルタリング
-            filterDpcMaster(
-                icdDataFrame = mdcFiltered,
-                query = dpcCodeFirst.bunrui ?: "",
-                targetRow = 1
-            )
+    LaunchedEffect(query) {
+        if (query.isBlank()) {
+            bunruiIcdSelectedIcdItem = null
+            return@LaunchedEffect
         }
-        // 最終的な結果をUIのStateに反映
-        filteredByotai = filteredResult
     }
 
     MedGuidelinesScaffold(
@@ -300,75 +288,63 @@ private fun DpcScreenContent(
                     )
 
                     if (dpcCodeFirst.mdc == "xx" && dpcCodeFirst.bunrui == "xxxx") {
+                        val icdItemsList = displayedItemsIcd?.rows()?.toList()
+                        val bunruiItemsList = displayedItemsBunrui?.rows()?.toList()
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             // --- ICDコードの結果 ---
-                            displayedItemsIcd?.let { icdResults ->
-                                if (icdResults.rowsCount() > 0) {
-                                    stickyHeader {
-                                        MedGuidelinesCard {
-                                            Text(
-                                                text = "ICDコードから (From ICD Code)",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(16.dp)
-                                            )
-                                        }
-                                    }
-                                    items(icdResults.rows().toList()) { row ->
-                                        val itemText = row[2]?.toString() ?: ""
-                                        val icdCodeSelected = row[3]?.toString() ?: ""
-                                        val mdcSelected = row[0]?.toString() ?: ""
-                                        val bunruiSelected = row[1]?.toString() ?: ""
+                            if (!icdItemsList.isNullOrEmpty()) {
+                                stickyHeader {
+                                    MedGuidelinesCard {
                                         Text(
-                                            text = itemText,
+                                            text = "ICDコードから (From ICD Code)",
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .clickable {
-                                                    bunruiIcdSelectedIcdItem = itemText
-                                                    onDpcCodeChange(
-                                                        dpcCodeFirst.copy(
-                                                            icd = icdCodeSelected,
-                                                            mdc = mdcSelected,
-                                                            bunrui = bunruiSelected
-                                                        )
-                                                    )
-                                                }
                                                 .padding(16.dp)
                                         )
                                     }
                                 }
-                            }
+                                items(icdItemsList) { row ->
+                                    val itemText = row[2]?.toString() ?: ""
+                                    val icdCodeSelected = row[3]?.toString() ?: ""
+                                    val mdcSelected = row[0]?.toString() ?: ""
+                                    val bunruiSelected = row[1]?.toString() ?: ""
+                                    Text(
+                                        text = itemText,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                bunruiIcdSelectedIcdItem = itemText
+                                                onDpcCodeChange(
+                                                    dpcCodeFirst.copy(
+                                                        icd = icdCodeSelected,
+                                                        mdc = mdcSelected,
+                                                        bunrui = bunruiSelected,
 
-                            displayedItemsBunrui?.let { bunruiResults ->
-                                if (bunruiResults.rowsCount() > 0) {
-                                    stickyHeader {
-                                        MedGuidelinesCard {
-                                            Text(
-                                                text = "分類名称から (From Classification Name)",
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(16.dp)
-                                            )
-                                        }
-                                    }
-                                    items(bunruiResults.rows().toList()) { row ->
-                                        val itemText = row.values().joinToString(" | ")
-                                        Text(
-                                            text = itemText,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .clickable {
-                                                    bunruiIcdSelectedIcdItem = itemText
-                                                }
-                                                .padding(16.dp)
-                                        )
-                                    }
+                                                        )
+                                                )
+                                                currentMdc = mdcSelected
+                                                currentBunrui = bunruiSelected
+                                            }
+                                            .padding(16.dp)
+                                    )
                                 }
                             }
                         }
 
                     }
-                    if (dpcCodeFirst.mdc != "xx" && dpcCodeFirst.bunrui != "xxxx") {
+                    val byotaiMdcUnique = dpcMaster.byotai?.columns()?.getOrNull(
+                        0
+                    )?.drop(
+                        2
+                    )?.distinct()?.map { it.toString() }
+                    val byotaiBunruiUnique = dpcMaster.byotai?.columns()?.getOrNull(
+                        1
+                    )?.drop(
+                        2
+                    )?.distinct()?.map { it.toString() }
+                    if (byotaiMdcUnique?.contains(currentMdc) == true &&
+                        byotaiBunruiUnique?.contains(currentBunrui) == true
+                    ) {
                         var defaultSelectedOption by remember { mutableIntStateOf(dpcByotai[1].labelResId) }
                         val dpcByotaiAgeScore = buttonAndScoreWithScoreDisplayedSelectable(
                             optionsWithScores = dpcByotai,
