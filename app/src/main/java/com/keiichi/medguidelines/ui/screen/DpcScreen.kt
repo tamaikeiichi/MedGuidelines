@@ -39,7 +39,6 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
-import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectable
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.Dispatchers
@@ -50,9 +49,12 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.concat
 import org.jetbrains.kotlinx.dataframe.api.distinct
+import org.jetbrains.kotlinx.dataframe.api.drop
 import org.jetbrains.kotlinx.dataframe.api.filter
+import org.jetbrains.kotlinx.dataframe.api.firstOrNull
+import org.jetbrains.kotlinx.dataframe.api.forEach
+import org.jetbrains.kotlinx.dataframe.api.map
 import org.jetbrains.kotlinx.dataframe.api.rows
-import org.jetbrains.kotlinx.dataframe.api.toList
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 
@@ -288,7 +290,6 @@ private fun DpcScreenContent(
 
                     }
 
-                    // 検索バー
                     MyCustomSearchBar(
                         searchQuery = query,
                         onSearchQueryChange = { query = it },
@@ -337,8 +338,6 @@ private fun DpcScreenContent(
                                 }
                             }
 
-
-                            // --- 分類名称の結果 ---
                             displayedItemsBunrui?.let { bunruiResults ->
                                 if (bunruiResults.rowsCount() > 0) {
                                     stickyHeader {
@@ -370,7 +369,7 @@ private fun DpcScreenContent(
                     }
                     if (dpcCodeFirst.mdc != "xx" && dpcCodeFirst.bunrui != "xxxx") {
                         var defaultSelectedOption by remember { mutableIntStateOf(dpcByotai[1].labelResId) }
-                        val dpcByotaiScore = buttonAndScoreWithScoreDisplayedSelectable(
+                        val dpcByotaiAgeScore = buttonAndScoreWithScoreDisplayedSelectable(
                             optionsWithScores = dpcByotai,
                             title = R.string.space,
                             defaultSelectedOption = defaultSelectedOption,
@@ -379,70 +378,85 @@ private fun DpcScreenContent(
                                 defaultSelectedOption = newSelection
                             },
                         )
-//                        if (dpcByotaiScore == 0) {
-//                            dpcCodeFirst.byotai == "0"
-//                        } else {
-//                            var expanded by remember { mutableStateOf(false) }
-//                            val options = filteredByotai?.toList()
-//                            var selectedOption by remember { mutableStateOf("Option 1") }
-//                            ExposedDropdownMenuBox(
-//                                expanded = expanded,
-//                                onExpandedChange = { expanded = !expanded }
-//                            ) {
-//                                TextField(
-//                                    value = selectedOption,
-//                                    onValueChange = {},
-//                                    readOnly = true,
-//                                    trailingIcon = {
-//                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-//                                    },
-//                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-//                                )
-//                                ExposedDropdownMenu(
-//                                    expanded = expanded,
-//                                    onDismissRequest = { expanded = false }
-//                                ) {
-//                                    options?.forEach { option ->
-//                                        DropdownMenuItem(
-//                                            text = {
-//                                                Text(
-//                                                    option as String,
-//                                                    color = MaterialTheme.colorScheme.onSurface
-//                                                )
-//                                            },
-//                                            onClick = {
-//                                                selectedOption = option as String
-//                                                expanded = false
-//                                            },
-//                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                        }
+                        if (dpcByotaiAgeScore == 0) {
+                            dpcCodeFirst.byotai == "0"
+                        } else {
+                            var expanded by remember { mutableStateOf(false) }
+                            val options = dpcMaster.byotai?.columns()[7]?.drop(3)?.map {
+                                it.toString() }
+                            var selectedOption by remember { mutableStateOf("院内肺炎又は市中肺炎") }
+                            ExposedDropdownMenuBox(
+                                expanded = expanded,
+                                onExpandedChange = { expanded = !expanded }
+                            ) {
+                                TextField(
+                                    value = selectedOption,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                    },
+                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }
+                                ) {
+                                    options?.forEach { option ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    option,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                            },
+                                            onClick = {
+                                                selectedOption = option
+                                                expanded = false
+                                                val matchedRow = dpcMaster.byotai?.filter {
+                                                    // 8列目(index 7)の値が、選択されたoptionと一致するかチェック
+                                                    it[7]?.toString() == option
+                                                }
+
+                                                // 3. 一致した行から3列目(index 2)の値を取得し、dpcCodeFirstを更新
+                                                // filterの結果から最初の行を取得
+                                                val firstMatchedRow = matchedRow?.firstOrNull()
+// 取得した行から3列目(index 2)の値を取得
+                                                val byotaiCode = firstMatchedRow?.get(2)?.toString()
+
+//                                                if (byotaiCode != null) {
+//                                                    onDpcCodeChange(dpcCodeFirst.copy(byotai = byotaiCode))
+//                                                }
+                                            },
+                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                        )
+                                    }
+                                }
+                            }
+                        }
                         Text(
-                            text = "dpcByotaiScore ${dpcByotaiScore.toString()}",
+                            text = "dpcCodeFirst.byotai ${dpcCodeFirst.byotai.toString()}",
                             modifier = Modifier.padding(16.dp)
                         )
-                        Text(
-                            text = "filteredByotai ${filteredByotai.toString()}",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        Text(
-                            text = "dpcCodeFirst.mdc ${dpcCodeFirst.mdc.toString()}",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        Text(
-                            text = "dpcCodeFirst.bunrui ${dpcCodeFirst.bunrui.toString()}",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        Text(
-                            text = "dpcMaster.byotai ${dpcMaster.byotai.toString()}",
-                            modifier = Modifier.padding(16.dp)
-                        )
+//                        Text(
+//                            text = "filteredByotai ${filteredByotai.toString()}",
+//                            modifier = Modifier.padding(16.dp)
+//                        )
+//                        Text(
+//                            text = "dpcCodeFirst.mdc ${dpcCodeFirst.mdc.toString()}",
+//                            modifier = Modifier.padding(16.dp)
+//                        )
+//                        Text(
+//                            text = "dpcCodeFirst.bunrui ${dpcCodeFirst.bunrui.toString()}",
+//                            modifier = Modifier.padding(16.dp)
+//                        )
+//                        Text(
+//                            text = "dpcMaster.byotai ${dpcMaster.byotai.toString()}",
+//                            modifier = Modifier.padding(16.dp)
+//                        )
                     }
                 }
             }
