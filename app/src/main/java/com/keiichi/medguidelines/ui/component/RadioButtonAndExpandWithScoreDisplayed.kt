@@ -55,7 +55,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
     onOptionSelected: (selectedOption: LabelAndScore) -> Unit, // Changed callback type
     title: Int, // R.string resource for the title
     titleNote: Int, // R.string resource for the note, R.string.space if no note
-    cardColor: Color = MaterialTheme.colorScheme.onSecondary,
+    cardColor: Color = MaterialTheme.colorScheme.onPrimary,
     appendixLabel: @Composable (() -> Unit)? = null,
     isNumberDisplayed: Boolean = true,
     onTitleClick: (() -> Unit)? = null,

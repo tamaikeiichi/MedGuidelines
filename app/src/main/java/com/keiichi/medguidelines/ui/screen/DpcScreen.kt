@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -383,60 +384,74 @@ private fun DpcScreenContent(
                         } else {
                             var expanded by remember { mutableStateOf(false) }
                             val options = dpcMaster.byotai?.columns()[7]?.drop(3)?.map {
-                                it.toString() }
+                                it.toString()
+                            }
                             var selectedOption by remember { mutableStateOf("院内肺炎又は市中肺炎") }
-                            ExposedDropdownMenuBox(
-                                expanded = expanded,
-                                onExpandedChange = { expanded = !expanded }
+                            MedGuidelinesCard(
+                                //modifier = Modifier.fillMaxWidth(),
                             ) {
-                                TextField(
-                                    value = selectedOption,
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    trailingIcon = {
-                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                                    },
-                                    colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                                )
-                                ExposedDropdownMenu(
+                                ExposedDropdownMenuBox(
                                     expanded = expanded,
-                                    onDismissRequest = { expanded = false }
+                                    onExpandedChange = { expanded = !expanded }
                                 ) {
-                                    options?.forEach { option ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    option,
-                                                    color = MaterialTheme.colorScheme.onSurface
-                                                )
-                                            },
-                                            onClick = {
-                                                selectedOption = option
-                                                expanded = false
-                                                val matchedRow = dpcMaster.byotai?.filter {
-                                                    // 8列目(index 7)の値が、選択されたoptionと一致するかチェック
-                                                    it[7]?.toString() == option
-                                                }
+                                    TextField(
+                                        value = selectedOption,
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        trailingIcon = {
+                                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                        },
+                                        colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                            unfocusedContainerColor = Color.Transparent,
+                                            focusedContainerColor = Color.Transparent
+                                        ),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false },
+                                        //containerColor = MaterialTheme.colorScheme.primary
+                                    ) {
+                                        options?.forEach { option ->
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(
+                                                        option,
+                                                        color = MaterialTheme.colorScheme.onSurface
+                                                    )
+                                                },
+                                                onClick = {
+                                                    selectedOption = option
+                                                    expanded = false
+                                                    val matchedRow = dpcMaster.byotai?.filter {
+                                                        // 8列目(index 7)の値が、選択されたoptionと一致するかチェック
+                                                        it[7]?.toString() == option
+                                                    }
 
-                                                // 3. 一致した行から3列目(index 2)の値を取得し、dpcCodeFirstを更新
-                                                // filterの結果から最初の行を取得
-                                                val firstMatchedRow = matchedRow?.firstOrNull()
+                                                    // 3. 一致した行から3列目(index 2)の値を取得し、dpcCodeFirstを更新
+                                                    // filterの結果から最初の行を取得
+                                                    val firstMatchedRow = matchedRow?.firstOrNull()
 // 取得した行から3列目(index 2)の値を取得
-                                                val byotaiCode = firstMatchedRow?.get(2)?.toString()
+                                                    // 取得した値をDoubleに変換し、その後Intに変換してからStringにする
+                                                    val byotaiCode =
+                                                        firstMatchedRow?.get(2)?.toString()
+                                                            ?.toDoubleOrNull()?.toInt()?.toString()
 
-//                                                if (byotaiCode != null) {
-//                                                    onDpcCodeChange(dpcCodeFirst.copy(byotai = byotaiCode))
-//                                                }
-                                            },
-                                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                        )
+                                                    if (byotaiCode != null) {
+                                                        onDpcCodeChange(dpcCodeFirst.copy(byotai = byotaiCode))
+                                                    }
+                                                },
+                                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                            )
+                                        }
                                     }
                                 }
+
                             }
                         }
+
                         Text(
                             text = "dpcCodeFirst.byotai ${dpcCodeFirst.byotai.toString()}",
                             modifier = Modifier.padding(16.dp)
@@ -521,7 +536,7 @@ private suspend fun filterDpcMaster(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = false)
 @Composable
 fun DpcScreenPreview() {
     DpcScreen(navController = NavHostController(LocalContext.current))
