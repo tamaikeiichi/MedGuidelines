@@ -266,3 +266,4 @@ val dpcByotai = listOf(
     LabelAndScore(labelResId = R.string.below15, score = 0),
     LabelAndScore(labelResId = R.string.fifteenOrMore, score = 1)
 )
+
