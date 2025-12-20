@@ -7,9 +7,15 @@ plugins {
     //alias(libs.plugins.kotlin.compose)
     //id("org.jetbrains.kotlin.plugin.compose") version "2.2.0-RC2"// apply false
     id("kotlin-parcelize")
-    id("com.google.protobuf") version "0.9.3" // Or latest version
-    kotlin("plugin.serialization") version "2.2.0-RC2" //"1.9.22" // Use the latest version
-    //id("com.google.devtools.ksp") version "1.9.23-1.0.19"
+
+    alias(libs.plugins.protobuf)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+
+//    id("com.google.protobuf") version "0.9.6" // Or latest version
+//    kotlin("plugin.serialization") version "2.2.0-RC2" //"1.9.22" // Use the latest version
+//    id("com.google.devtools.ksp") version "2.3.4"
+    //alias(libs.plugins.ksp)
     //id("com.google.dagger.hilt.android")
 }
 
@@ -41,12 +47,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        jvmToolchain(21)
     }
+//    kotlinOptions {
+//        jvmTarget = "17"
+//    }
     buildFeatures {
         compose = true
     }
@@ -127,10 +136,10 @@ dependencies {
 
     //implementation("org.jetbrains.kotlinx:dataframe-excel:1.0.0-Beta3")
     //val room_version = "2.6.1"
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx) // コメントアウトを解除して有効化
+    ksp(libs.androidx.room.compiler)
 
-//    implementation("androidx.room:room-runtime:$room_version")
-//    ksp(libs.androidx.room.compiler) // Use ksp instead of kapt
-//    implementation("androidx.room:room-ktx:$room_version") // For coroutine support
 //    // ... other dependencies
 
 

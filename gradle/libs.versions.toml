@@ -1,22 +1,24 @@
 [versions]
+agp = "8.13.2"
+kotlin = "2.3.0"
+ksp = "2.3.4" # This KSP version corresponds to Kotlin 1.9.23
+coreKtx = "1.13.1"
+junit = "4.13.2"
+androidxJunit = "1.1.5"
+espressoCore = "3.5.1"
+lifecycleRuntimeKtx = "2.8.1"
+activityCompose = "1.9.0"
+composeBom = "2025.12.01" # Use a stable Compose BOM
 accompanistFlowlayout = "0.36.0"
 accompanistNavigationAnimation = "0.34.0"
-agp = "8.13.2"
 androidxDatastorePreferences = "1.1.7"
 androidxNavigationCompose = "2.7.7"
 dataframe = "1.0.0-Beta3"
 dataframeVersion = "1.0.0-Beta2"
 datastorePreferencesVersion = "1.1.7"
 foundationLayout = "1.8.2"
-kotlin = "2.1.10"
-coreKtx = "1.16.0"
-junit = "4.13.2"
 junitVersion = "1.2.1"
-espressoCore = "3.6.1"
 kotlinxSerializationJson = "1.7.3"
-lifecycleRuntimeKtx = "2.9.1"
-activityCompose = "1.10.1"
-composeBom = "2025.06.00"
 navigationCompose = "2.9.0"
 datastorePreferences = "1.0.0"
 datastoreCoreAndroid = "1.1.1"
@@ -25,14 +27,21 @@ navigationComposeVersion = "2.9.0"
 datastoreCoreAndroidVersion = "1.1.7"
 preference = "1.2.1"
 protobufJavalite = "3.21.9"
-roomCompiler = "2.6.1"
+roomCompiler = "2.8.4"
+roomKtx = "2.8.4"
+roomKtxVersion = "2.8.4"
+roomRuntime = "2.8.4"
+roomRuntimeVersion = "2.8.4"
 uiTestAndroid = "1.8.2"
 tvMaterial = "1.0.0"
 graphicsShapesAndroid = "1.0.1"
-roomCompilerProcessingTesting = "2.7.1"
+roomCompilerProcessingTesting = "2.8.4"
 composeCompilerVersion = "1.5.13-rc01"
-workRuntimeKtx = "2.10.1"
+workRuntimeKtx = "2.11.0"
 constraintlayout = "2.2.1"
+protobuf = "0.9.6"  # または "0.9.6"
+kotlinSerialization = "2.3.0" # あなたのKotlinのバージョンに合わせる
+
 
 [libraries]
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistFlowlayout" }
@@ -47,6 +56,10 @@ androidx-navigation-compose-v277 = { module = "androidx.navigation:navigation-co
 androidx-navigation-compose-v284 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-preference = { module = "androidx.preference:preference", version.ref = "preference" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
+androidx-room-ktx-v261 = { module = "androidx.room:room-ktx", version.ref = "roomKtxVersion" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-room-runtime-v261 = { module = "androidx.room:room-runtime", version.ref = "roomRuntimeVersion" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 dataframe-v100beta3 = { module = "org.jetbrains.kotlinx:dataframe", version.ref = "dataframe" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -77,3 +90,6 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

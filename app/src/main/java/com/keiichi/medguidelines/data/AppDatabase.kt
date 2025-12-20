@@ -1,0 +1,53 @@
+// C:/Users/tamaikeiichi/StudioProjects/MedGuidelines/app/src/main/java/com/keiichi/medguidelines/data/AppDatabase.kt
+
+package com.keiichi.medguidelines.data
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+
+/**
+ * アプリケーションのRoomデータベース本体。
+ * このクラスは、データベースのインスタンスを生成し、DAOへのアクセスを提供します。
+ */
+@Database(entities = [IcdEntity::class], version = 1, exportSchema = false)
+abstract class AppDatabase : RoomDatabase() {
+
+    /**
+     * DPC関連のデータアクセスオブジェクト(DAO)を取得します。
+     * Roomがこのメソッドの実装を自動生成します。
+     * @return DpcDaoのインスタンス
+     */
+    abstract fun dpcDao(): DpcDao
+
+    companion object {
+        // @Volatileアノテーションにより、INSTANCE変数が複数スレッドからアクセスされても
+        // 常に最新の値であることが保証されます。
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
+        /**
+         * データベースのシングルトンインスタンスを取得します。
+         * インスタンスがまだ存在しない場合は、スレッドセーフに新しいデータベースを生成します。
+         *
+         * @param context アプリケーションコンテキスト
+         * @return AppDatabaseのシングルトンインスタンス
+         */
+        fun getDatabase(context: Context): AppDatabase {
+            // INSTANCEがnullでなければそれを返し、nullならデータベースを生成します
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "dpc_database" // データベースファイル名
+                )
+                    // .fallbackToDestructiveMigration() // マイグレーション戦略（今回は省略）
+                    .build()
+                INSTANCE = instance
+                // 生成したインスタンスを返す
+                instance
+            }
+        }
+    }
+}

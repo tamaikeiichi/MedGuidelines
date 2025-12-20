@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,8 +33,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.IcdEntity
 import com.keiichi.medguidelines.data.dpcByotai
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
@@ -42,14 +46,14 @@ import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectable
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
+import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
-import org.jetbrains.kotlinx.dataframe.api.concat
-import org.jetbrains.kotlinx.dataframe.api.distinct
 import org.jetbrains.kotlinx.dataframe.api.drop
 import org.jetbrains.kotlinx.dataframe.api.filter
 import org.jetbrains.kotlinx.dataframe.api.firstOrNull
@@ -91,14 +95,24 @@ data class DpcCode(
     var icd: String? = "x"
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DpcScreen(navController: NavHostController) {
+fun DpcScreen(
+    navController: NavHostController,
+    dpcScreenViewModel: DpcScreenViewModel = viewModel(factory = DpcScreenViewModel.Factory)
+) {
+    Log.d("DPC", "before launched effect")
     val context = LocalContext.current
     var dpcMaster by remember { mutableStateOf(DpcDataSheets()) }
     var dpcCodeFirst by remember { mutableStateOf(DpcCode()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var loadingMessage by remember { mutableStateOf("Starting to load data...") }
+
+    // データベースからの検索結果を購読
+    val displayedItemsIcd by dpcScreenViewModel.displayedItemsIcd.collectAsState()
+
+    var query by remember { mutableStateOf("J16") }
 
     LaunchedEffect(Unit) {
         delay(500)
@@ -108,18 +122,18 @@ fun DpcScreen(navController: NavHostController) {
                 val deferredMdc = async { loadDpcData(context, "１）ＭＤＣ名称") }
                 val deferredBunrui = async { loadDpcData(context, "２）分類名称") }
                 val deferredByotai = async { loadDpcData(context, "３）病態等分類") }
-                val deferredIcd = async { loadDpcData(context, "４）ＩＣＤ") }
-                val deferredNenrei = async { loadDpcData(context, "５）年齢、出生時体重等") }
-                val deferredShujutu = async { loadDpcData(context, "６）手術 ") }
-                val deferredShochi1 = async { loadDpcData(context, "７）手術・処置等１") }
-                val deferredShochi2 = async { loadDpcData(context, "８）手術・処置等２") }
-                val deferredFukubyomei = async { loadDpcData(context, "９）定義副傷病名") }
-                val deferredJushodoJcs = async { loadDpcData(context, "10－1）重症度等（ＪＣＳ等）") }
-                val deferredJushodoShujutu = async { loadDpcData(context, "10－2）重症度等（手術等）") }
-                val deferredJushodoJushou =
-                    async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
-                val deferredJushodoRankin =
-                    async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
+//                val deferredIcd = async { loadDpcData(context, "４）ＩＣＤ") }
+//                val deferredNenrei = async { loadDpcData(context, "５）年齢、出生時体重等") }
+//                val deferredShujutu = async { loadDpcData(context, "６）手術 ") }
+//                val deferredShochi1 = async { loadDpcData(context, "７）手術・処置等１") }
+//                val deferredShochi2 = async { loadDpcData(context, "８）手術・処置等２") }
+//                val deferredFukubyomei = async { loadDpcData(context, "９）定義副傷病名") }
+//                val deferredJushodoJcs = async { loadDpcData(context, "10－1）重症度等（ＪＣＳ等）") }
+//                val deferredJushodoShujutu = async { loadDpcData(context, "10－2）重症度等（手術等）") }
+//                val deferredJushodoJushou =
+//                    async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
+//                val deferredJushodoRankin =
+//                    async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
 
                 loadingMessage = "DPCマスタ読込中..."
 
@@ -127,16 +141,16 @@ fun DpcScreen(navController: NavHostController) {
                     deferredMdc,
                     deferredBunrui,
                     deferredByotai,
-                    deferredIcd,
-                    deferredNenrei,
-                    deferredShujutu,
-                    deferredShochi1,
-                    deferredShochi2,
-                    deferredFukubyomei,
-                    deferredJushodoJcs,
-                    deferredJushodoShujutu,
-                    deferredJushodoJushou,
-                    deferredJushodoRankin
+//                    deferredIcd,
+//                    deferredNenrei,
+//                    deferredShujutu,
+//                    deferredShochi1,
+//                    deferredShochi2,
+//                    deferredFukubyomei,
+//                    deferredJushodoJcs,
+//                    deferredJushodoShujutu,
+//                    deferredJushodoJushou,
+//                    deferredJushodoRankin
                 )
             }
 
@@ -145,16 +159,16 @@ fun DpcScreen(navController: NavHostController) {
                     mdc = loadedData[0],
                     bunrui = loadedData[1],
                     byotai = loadedData[2],
-                    icd = loadedData[3],
-                    nenrei = loadedData[4],
-                    shujutu = loadedData[5],
-                    shochi1 = loadedData[6],
-                    shochi2 = loadedData[7],
-                    fukubyomei = loadedData[8],
-                    jushodoJcs = loadedData[9],
-                    jushodoShujutu = loadedData[10],
-                    jushodoJushou = loadedData[11],
-                    jushodoRankin = loadedData[12]
+//                    icd = loadedData[3],
+//                    nenrei = loadedData[4],
+//                    shujutu = loadedData[5],
+//                    shochi1 = loadedData[6],
+//                    shochi2 = loadedData[7],
+//                    fukubyomei = loadedData[8],
+//                    jushodoJcs = loadedData[9],
+//                    jushodoShujutu = loadedData[10],
+//                    jushodoJushou = loadedData[11],
+//                    jushodoRankin = loadedData[12]
                 )
                 loadingMessage = "loaded"
             }
@@ -166,36 +180,10 @@ fun DpcScreen(navController: NavHostController) {
         }
     }
 
-    DpcScreenContent(
-        navController = navController,
-        dpcMaster = dpcMaster,
-        isLoading = isLoading,
-        errorMessage = errorMessage,
-        loadingMessage = loadingMessage,
-        dpcCodeFirst = dpcCodeFirst,
-        onDpcCodeChange = { newDpcCode ->
-            dpcCodeFirst = newDpcCode
-        }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DpcScreenContent(
-    navController: NavHostController,
-    dpcMaster: DpcDataSheets,
-    isLoading: Boolean,
-    errorMessage: String?,
-    loadingMessage: String,
-    dpcCodeFirst: DpcCode,
-    onDpcCodeChange: (DpcCode) -> Unit
-) {
-    // --- START: 検索と選択のためのStateを追加 ---
-    var query by remember { mutableStateOf("J16") }
     var bunruiIcdSelectedIcdItem by remember { mutableStateOf<String?>(null) }
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
-    var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
+    //var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
     var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
     var currentMdc by remember { mutableStateOf("xx") }
     var currentBunrui by remember { mutableStateOf("xxxx") }
@@ -213,31 +201,31 @@ private fun DpcScreenContent(
         2
     )?.distinct()?.map { it.toString() }
 
-    LaunchedEffect(query, dpcMaster.icd) {
-        if (query.isBlank()) {
-            displayedItemsIcd = DataFrame.empty()
-            return@LaunchedEffect
-        }
-        currentMdc = "xx"
-        currentBunrui = "xxxx"
-        val filteredResult: DataFrame<*> = withContext(Dispatchers.Default) {
-            // 1. 3列目(targetRow=2)でフィルタリング
-            val filteredByThirdColumn = filterDpcMaster(
-                icdDataFrame = dpcMaster.icd,
-                query = query,
-                targetRow = 2
-            )
-            val filteredByFourthColumn = filterDpcMaster(
-                icdDataFrame = dpcMaster.icd,
-                query = query,
-                targetRow = 3
-            )
-            filteredByThirdColumn.concat(filteredByFourthColumn).distinct()
-        }
-        withContext(Dispatchers.Main) {
-            displayedItemsIcd = filteredResult
-        }
-    }
+//    LaunchedEffect(query, dpcMaster.icd) {
+//        if (query.isBlank()) {
+//            displayedItemsIcd = DataFrame.empty() as List<IcdEntity>
+//            return@LaunchedEffect
+//        }
+//        currentMdc = "xx"
+//        currentBunrui = "xxxx"
+//        val filteredResult: DataFrame<*> = withContext(Dispatchers.Default) {
+//            // 1. 3列目(targetRow=2)でフィルタリング
+//            val filteredByThirdColumn = filterDpcMaster(
+//                icdDataFrame = dpcMaster.icd,
+//                query = query,
+//                targetRow = 2
+//            )
+//            val filteredByFourthColumn = filterDpcMaster(
+//                icdDataFrame = dpcMaster.icd,
+//                query = query,
+//                targetRow = 3
+//            )
+//            filteredByThirdColumn.concat(filteredByFourthColumn).distinct()
+//        }
+//        withContext(Dispatchers.Main) {
+//            displayedItemsIcd = filteredResult
+//        }
+//    }
 
     LaunchedEffect(query) {
         if (query.isBlank()) {
@@ -296,18 +284,21 @@ private fun DpcScreenContent(
 
                     MyCustomSearchBar(
                         searchQuery = query,
-                        onSearchQueryChange = { query = it },
+                        onSearchQueryChange = {
+                            query = it
+                            dpcScreenViewModel.onQueryChanged(it)
+                                              },
                         onSearch = { query = it },
                         isLoading = false,
                         placeholderText = R.string.searchIcd
                     )
 
                     if (dpcCodeFirst.mdc == "xx" && dpcCodeFirst.bunrui == "xxxx") {
-                        val icdItemsList = displayedItemsIcd?.rows()?.toList()
+                        val icdItemsList = displayedItemsIcd.toList()
                         val bunruiItemsList = displayedItemsBunrui?.rows()?.toList()
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             // --- ICDコードの結果 ---
-                            if (!icdItemsList.isNullOrEmpty()) {
+                            if (icdItemsList.isNotEmpty()) {
                                 stickyHeader {
                                     MedGuidelinesCard {
                                         Text(
@@ -319,24 +310,22 @@ private fun DpcScreenContent(
                                     }
                                 }
                                 items(icdItemsList) { row ->
-                                    val itemText = row[2]?.toString() ?: ""
-                                    val icdCodeSelected = row[3]?.toString() ?: ""
-                                    mdcSelected = row[0]?.toString() ?: ""
-                                    bunruiSelected = row[1]?.toString() ?: ""
+                                    val itemText = row.icdName ?: ""
+                                    val icdCodeSelected = row.icdCode ?: ""
+                                    mdcSelected = row.mdcCode ?: ""
+                                    bunruiSelected = row.bunruiCode ?: ""
                                     Text(
                                         text = itemText,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clickable {
                                                 bunruiIcdSelectedIcdItem = itemText
-                                                onDpcCodeChange(
-                                                    dpcCodeFirst.copy(
-                                                        icd = icdCodeSelected,
-                                                        mdc = mdcSelected,
-                                                        bunrui = bunruiSelected,
+                                                dpcCodeFirst.copy(
+                                                    icd = icdCodeSelected,
+                                                    mdc = mdcSelected,
+                                                    bunrui = bunruiSelected,
 
-                                                        )
-                                                )
+                                                    )
                                                 currentMdc = mdcSelected
                                                 currentBunrui = bunruiSelected
                                             }
@@ -422,7 +411,7 @@ private fun DpcScreenContent(
                                                             ?.toDoubleOrNull()?.toInt()?.toString()
 
                                                     if (byotaiCode != null) {
-                                                        onDpcCodeChange(dpcCodeFirst.copy(byotai = byotaiCode))
+                                                        dpcCodeFirst.copy(byotai = byotaiCode)
                                                     }
                                                 },
                                                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
@@ -518,9 +507,35 @@ private suspend fun filterDpcMaster(
     }
 }
 
-@Preview(showBackground = false)
+//@Preview(showBackground = false)
+//@Composable
+//fun DpcScreenPreview() {
+//    DpcScreen(navController = NavHostController(LocalContext.current))
+//}
+
+@Preview(showBackground = true) // 背景をtrueにすると見やすいです
 @Composable
 fun DpcScreenPreview() {
-    DpcScreen(navController = NavHostController(LocalContext.current))
-}
+    // プレビュー用のViewModelの偽物（フェイク）を作成します。
+    // このフェイクViewModelは、実際のデータベースやファイルアクセスを行いません。
+    class FakeDpcScreenViewModel : ViewModel() {
+        val isLoading = MutableStateFlow(false)
+        val errorMessage = MutableStateFlow<String?>(null)
+        val displayedItemsIcd = MutableStateFlow(
+            // プレビューで表示したいダミーデータをここに定義します
+            listOf(
+                IcdEntity(id = 1, mdcCode = "", bunruiCode = "", icdName = "プレビュー用項目１", icdCode = "A001"),
+                IcdEntity(id = 2, mdcCode = "", bunruiCode = "",icdName = "プレビュー用項目２", icdCode = "B002")
+            )
+        )
+        fun onQueryChanged(query: String) {
+            // プレビューでは何もしない
+        }
+    }
 
+    // DpcScreenコンポーザブルに、偽物のViewModelを渡して呼び出します。
+//    DpcScreen(
+//        navController = NavHostController(LocalContext.current),
+//        dpcScreenViewModel = FakeDpcScreenViewModel() // ここで偽物を渡す
+//    )
+}
