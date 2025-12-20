@@ -11,7 +11,15 @@ import androidx.room.RoomDatabase
  * アプリケーションのRoomデータベース本体。
  * このクラスは、データベースのインスタンスを生成し、DAOへのアクセスを提供します。
  */
-@Database(entities = [IcdEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [
+        IcdEntity::class,
+        ByotaiEntity::class,
+        BunruiEntity::class,
+        MdcEntity::class
+               ],
+    version = 3,
+    exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     /**
@@ -42,7 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "dpc_database" // データベースファイル名
                 )
-                    // .fallbackToDestructiveMigration() // マイグレーション戦略（今回は省略）
+                    .fallbackToDestructiveMigration(false)
                     .build()
                 INSTANCE = instance
                 // 生成したインスタンスを返す

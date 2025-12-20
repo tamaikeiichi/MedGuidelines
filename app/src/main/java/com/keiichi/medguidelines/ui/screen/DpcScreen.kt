@@ -52,6 +52,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.drop
@@ -62,24 +63,13 @@ import org.jetbrains.kotlinx.dataframe.api.map
 import org.jetbrains.kotlinx.dataframe.api.rows
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readExcel
+import kotlin.text.firstOrNull
 
 
 // 読み込んだDataFrameを保持するためのデータクラス
-data class DpcDataSheets(
-    var mdc: DataFrame<*>? = null,
-    var bunrui: DataFrame<*>? = null,
-    var byotai: DataFrame<*>? = null,
-    var icd: DataFrame<*>? = null,
-    var nenrei: DataFrame<*>? = null,
-    var shujutu: DataFrame<*>? = null,
-    var shochi1: DataFrame<*>? = null,
-    var shochi2: DataFrame<*>? = null,
-    var fukubyomei: DataFrame<*>? = null,
-    var jushodoJcs: DataFrame<*>? = null,
-    var jushodoShujutu: DataFrame<*>? = null,
-    var jushodoJushou: DataFrame<*>? = null,
-    var jushodoRankin: DataFrame<*>? = null
-)
+//data class DpcDataSheets(
+//    var mdc: DataFrame<*>? = null,
+//)
 
 data class DpcCode(
     var mdc: String? = "xx",
@@ -101,86 +91,28 @@ fun DpcScreen(
     navController: NavHostController,
     dpcScreenViewModel: DpcScreenViewModel = viewModel(factory = DpcScreenViewModel.Factory)
 ) {
-    Log.d("DPC", "before launched effect")
+    Log.d("tamai", "before launched effect")
     val context = LocalContext.current
-    var dpcMaster by remember { mutableStateOf(DpcDataSheets()) }
+    //var dpcMaster by remember { mutableStateOf(DpcDataSheets()) }
     var dpcCodeFirst by remember { mutableStateOf(DpcCode()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var loadingMessage by remember { mutableStateOf("Starting to load data...") }
+    val showByotaiSelection by dpcScreenViewModel.showByotaiSelection.collectAsState()
+    val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
+
+    var bunruiIcdSelectedIcdItem by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf<String?>(
+            null
+        )
+    }
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
 
     // データベースからの検索結果を購読
     val displayedItemsIcd by dpcScreenViewModel.displayedItemsIcd.collectAsState()
 
     var query by remember { mutableStateOf("J16") }
 
-    LaunchedEffect(Unit) {
-        delay(500)
-        isLoading = true
-        try {
-            val loadedData = withContext(Dispatchers.IO) {
-                val deferredMdc = async { loadDpcData(context, "１）ＭＤＣ名称") }
-                val deferredBunrui = async { loadDpcData(context, "２）分類名称") }
-                val deferredByotai = async { loadDpcData(context, "３）病態等分類") }
-//                val deferredIcd = async { loadDpcData(context, "４）ＩＣＤ") }
-//                val deferredNenrei = async { loadDpcData(context, "５）年齢、出生時体重等") }
-//                val deferredShujutu = async { loadDpcData(context, "６）手術 ") }
-//                val deferredShochi1 = async { loadDpcData(context, "７）手術・処置等１") }
-//                val deferredShochi2 = async { loadDpcData(context, "８）手術・処置等２") }
-//                val deferredFukubyomei = async { loadDpcData(context, "９）定義副傷病名") }
-//                val deferredJushodoJcs = async { loadDpcData(context, "10－1）重症度等（ＪＣＳ等）") }
-//                val deferredJushodoShujutu = async { loadDpcData(context, "10－2）重症度等（手術等）") }
-//                val deferredJushodoJushou =
-//                    async { loadDpcData(context, "10－3）重症度等（重症・軽症）") }
-//                val deferredJushodoRankin =
-//                    async { loadDpcData(context, "10－4）重症度等（発症前Rankin Scale等）") }
-
-                loadingMessage = "DPCマスタ読込中..."
-
-                awaitAll(
-                    deferredMdc,
-                    deferredBunrui,
-                    deferredByotai,
-//                    deferredIcd,
-//                    deferredNenrei,
-//                    deferredShujutu,
-//                    deferredShochi1,
-//                    deferredShochi2,
-//                    deferredFukubyomei,
-//                    deferredJushodoJcs,
-//                    deferredJushodoShujutu,
-//                    deferredJushodoJushou,
-//                    deferredJushodoRankin
-                )
-            }
-
-            withContext(Dispatchers.Main) {
-                dpcMaster = dpcMaster.copy(
-                    mdc = loadedData[0],
-                    bunrui = loadedData[1],
-                    byotai = loadedData[2],
-//                    icd = loadedData[3],
-//                    nenrei = loadedData[4],
-//                    shujutu = loadedData[5],
-//                    shochi1 = loadedData[6],
-//                    shochi2 = loadedData[7],
-//                    fukubyomei = loadedData[8],
-//                    jushodoJcs = loadedData[9],
-//                    jushodoShujutu = loadedData[10],
-//                    jushodoJushou = loadedData[11],
-//                    jushodoRankin = loadedData[12]
-                )
-                loadingMessage = "loaded"
-            }
-        } catch (t: Throwable) {
-            errorMessage = t.message ?: "An unknown error occurred"
-            t.printStackTrace()
-        } finally {
-            isLoading = false
-        }
-    }
-
-    var bunruiIcdSelectedIcdItem by remember { mutableStateOf<String?>(null) }
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
     //var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
@@ -189,43 +121,6 @@ fun DpcScreen(
     var currentBunrui by remember { mutableStateOf("xxxx") }
     var mdcSelected by remember { mutableStateOf("xx") }
     var bunruiSelected by remember { mutableStateOf("xxxx") }
-
-    val byotaiMdcUnique = dpcMaster.byotai?.columns()?.getOrNull(
-        0
-    )?.drop(
-        2
-    )?.distinct()?.map { it.toString() }
-    val byotaiBunruiUnique = dpcMaster.byotai?.columns()?.getOrNull(
-        1
-    )?.drop(
-        2
-    )?.distinct()?.map { it.toString() }
-
-//    LaunchedEffect(query, dpcMaster.icd) {
-//        if (query.isBlank()) {
-//            displayedItemsIcd = DataFrame.empty() as List<IcdEntity>
-//            return@LaunchedEffect
-//        }
-//        currentMdc = "xx"
-//        currentBunrui = "xxxx"
-//        val filteredResult: DataFrame<*> = withContext(Dispatchers.Default) {
-//            // 1. 3列目(targetRow=2)でフィルタリング
-//            val filteredByThirdColumn = filterDpcMaster(
-//                icdDataFrame = dpcMaster.icd,
-//                query = query,
-//                targetRow = 2
-//            )
-//            val filteredByFourthColumn = filterDpcMaster(
-//                icdDataFrame = dpcMaster.icd,
-//                query = query,
-//                targetRow = 3
-//            )
-//            filteredByThirdColumn.concat(filteredByFourthColumn).distinct()
-//        }
-//        withContext(Dispatchers.Main) {
-//            displayedItemsIcd = filteredResult
-//        }
-//    }
 
     LaunchedEffect(query) {
         if (query.isBlank()) {
@@ -287,7 +182,7 @@ fun DpcScreen(
                         onSearchQueryChange = {
                             query = it
                             dpcScreenViewModel.onQueryChanged(it)
-                                              },
+                        },
                         onSearch = { query = it },
                         isLoading = false,
                         placeholderText = R.string.searchIcd
@@ -336,113 +231,66 @@ fun DpcScreen(
                         }
 
                     }
+                    // if (dpcCodeFirst.mdc == "xx" ...) の終わり
 
-                    if (byotaiMdcUnique?.contains(currentMdc) == true &&
-                        byotaiBunruiUnique?.contains(currentBunrui) == true
-                    ) {
-                        var defaultSelectedOption by remember { mutableIntStateOf(dpcByotai[1].labelResId) }
-                        val dpcByotaiAgeScore = buttonAndScoreWithScoreDisplayedSelectable(
-                            optionsWithScores = dpcByotai,
-                            title = R.string.space,
-                            defaultSelectedOption = defaultSelectedOption,
-                            isNumberDisplayed = false,
-                            onOptionSelected = { newSelection ->
-                                defaultSelectedOption = newSelection
-                            },
-                        )
-                        if (dpcByotaiAgeScore == 0) {
-                            dpcCodeFirst.byotai == "0"
-                        } else {
-                            var expanded by remember { mutableStateOf(false) }
-                            val options = dpcMaster.byotai?.columns()[7]?.drop(3)?.map {
-                                it.toString()
-                            }
-                            var selectedOption by remember { mutableStateOf("院内肺炎又は市中肺炎") }
-                            MedGuidelinesCard(
-                                //modifier = Modifier.fillMaxWidth(),
+                    // --- ここからが修正箇所 ---
+
+                    // --- 病態選択UI ---
+                    // ViewModelのshowByotaiSelectionの値に基づいて、UIの表示を切り替える                    if (showByotaiSelection) {
+                    var expanded by remember { mutableStateOf(false) }
+                    // byotaiOptionsが更新されたらselectedOptionもリセットする
+                    var selectedOption by remember(byotaiOptions) {
+                        mutableStateOf(byotaiOptions.firstOrNull() ?: "選択してください")
+                    }
+
+                    MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded }
+                        ) {
+                            TextField(
+                                value = selectedOption,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = {
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                },
+                                colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                    unfocusedContainerColor = Color.Transparent,
+                                    focusedContainerColor = Color.Transparent
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .menuAnchor()
+                            )
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false },
                             ) {
-                                ExposedDropdownMenuBox(
-                                    expanded = expanded,
-                                    onExpandedChange = { expanded = !expanded }
-                                ) {
-                                    TextField(
-                                        value = selectedOption,
-                                        onValueChange = {},
-                                        readOnly = true,
-                                        trailingIcon = {
-                                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                                        },
-                                        colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                            unfocusedContainerColor = Color.Transparent,
-                                            focusedContainerColor = Color.Transparent
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                                    )
-                                    ExposedDropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false },
-                                        //containerColor = MaterialTheme.colorScheme.primary
-                                    ) {
-                                        options?.forEach { option ->
-                                            DropdownMenuItem(
-                                                text = {
-                                                    Text(
-                                                        option,
-                                                        color = MaterialTheme.colorScheme.onSurface
-                                                    )
-                                                },
-                                                onClick = {
-                                                    selectedOption = option
-                                                    expanded = false
-                                                    val matchedRow = dpcMaster.byotai?.filter {
-                                                        // 8列目(index 7)の値が、選択されたoptionと一致するかチェック
-                                                        it[7]?.toString() == option
-                                                    }
-
-                                                    // 3. 一致した行から3列目(index 2)の値を取得し、dpcCodeFirstを更新
-                                                    // filterの結果から最初の行を取得
-                                                    val firstMatchedRow = matchedRow?.firstOrNull()
-// 取得した行から3列目(index 2)の値を取得
-                                                    // 取得した値をDoubleに変換し、その後Intに変換してからStringにする
-                                                    val byotaiCode =
-                                                        firstMatchedRow?.get(2)?.toString()
-                                                            ?.toDoubleOrNull()?.toInt()?.toString()
-
-                                                    if (byotaiCode != null) {
-                                                        dpcCodeFirst.copy(byotai = byotaiCode)
-                                                    }
-                                                },
-                                                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
-                                            )
+                                byotaiOptions.forEach { option ->
+                                    DropdownMenuItem(
+                                        text = { Text(option) },
+                                        onClick = {
+                                            selectedOption = option
+                                            expanded = false
+                                            // --- イベント: 病態名が選択された ---
+                                            coroutineScope.launch {
+                                                val byotaiCode =
+                                                    dpcScreenViewModel.getByotaiCode(option)
+                                                if (byotaiCode != null) {
+                                                    // 取得した病態コードでUIの状態を更新
+                                                    val finalByotaiCode =
+                                                        byotaiCode.toDoubleOrNull()?.toInt()
+                                                            ?.toString() ?: byotaiCode
+                                                    dpcCodeFirst =
+                                                        dpcCodeFirst.copy(byotai = finalByotaiCode)
+                                                }
+                                            }
                                         }
-                                    }
+                                    )
                                 }
-
                             }
                         }
-
-                        Text(
-                            text = "dpcCodeFirst.byotai ${dpcCodeFirst.byotai.toString()}",
-                            modifier = Modifier.padding(16.dp)
-                        )
-//                        Text(
-//                            text = "filteredByotai ${filteredByotai.toString()}",
-//                            modifier = Modifier.padding(16.dp)
-//                        )
-//                        Text(
-//                            text = "dpcCodeFirst.mdc ${dpcCodeFirst.mdc.toString()}",
-//                            modifier = Modifier.padding(16.dp)
-//                        )
-//                        Text(
-//                            text = "dpcCodeFirst.bunrui ${dpcCodeFirst.bunrui.toString()}",
-//                            modifier = Modifier.padding(16.dp)
-//                        )
-//                        Text(
-//                            text = "dpcMaster.byotai ${dpcMaster.byotai.toString()}",
-//                            modifier = Modifier.padding(16.dp)
-//                        )
                     }
                 }
             }
@@ -450,62 +298,63 @@ fun DpcScreen(
     }
 }
 
-private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
-    return try {
-        context.resources.openRawResource(R.raw.dpc001348055).use { inputStream ->
-            DataFrame.readExcel(
-                inputStream = inputStream,
-                sheetName = sheetName,
-                skipRows = 0,
-                nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
-                firstRowIsHeader = false,
 
-                //stringColumns = StringColumns
-            )//.convert { all() }.to<String>()
-        }
-    } catch (e: Exception) {
-        Log.e("DPC", "Error loading data for sheet $sheetName: ${e.message}")
-        e.printStackTrace()
-        DataFrame.empty() // Return an empty DataFrame instead of emptyList()
-    }
-}
+//private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
+//    return try {
+//        context.resources.openRawResource(R.raw.dpc001348055).use { inputStream ->
+//            DataFrame.readExcel(
+//                inputStream = inputStream,
+//                sheetName = sheetName,
+//                skipRows = 0,
+//                nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
+//                firstRowIsHeader = false,
+//
+//                //stringColumns = StringColumns
+//            )//.convert { all() }.to<String>()
+//        }
+//    } catch (e: Exception) {
+//        Log.e("DPC", "Error loading data for sheet $sheetName: ${e.message}")
+//        e.printStackTrace()
+//        DataFrame.empty() // Return an empty DataFrame instead of emptyList()
+//    }
+//}
 
 /** * ICDのDataFrameを検索クエリでフィルタリングするサスペンド関数
  * @param icdDataFrame フィルタリング対象のDataFrame
  * @param query ユーザーが入力した検索クエリ
  * @return フィルタリングされたDataFrame
  */
-private suspend fun filterDpcMaster(
-    icdDataFrame: DataFrame<*>?,
-    query: String,
-    targetRow: Int
-): DataFrame<*> {
-    // この関数はバックグラウンドスレッドで実行されることを想定
-    if (icdDataFrame == null || query.isBlank()) {
-        return DataFrame.empty()
-    }
-
-    val spaceRegex = Regex("[ 　]+")
-    val searchTerms = query
-        .split(spaceRegex)
-        .map { normalizeTextForSearch(it) }
-        .filter { it.isNotBlank() }
-
-    if (searchTerms.isEmpty()) {
-        return DataFrame.empty()
-    }
-
-    return icdDataFrame.filter { dataRow ->
-        // 3列目(インデックス2)の値を安全に取得してフィルタリング
-        val itemText = dataRow[targetRow]?.toString()
-        if (itemText != null) {
-            val normalizedItemText = normalizeTextForSearch(itemText)
-            searchTerms.all { term -> normalizedItemText.contains(term) }
-        } else {
-            false // 3列目がnullの場合は結果に含めない
-        }
-    }
-}
+//private suspend fun filterDpcMaster(
+//    icdDataFrame: DataFrame<*>?,
+//    query: String,
+//    targetRow: Int
+//): DataFrame<*> {
+//    // この関数はバックグラウンドスレッドで実行されることを想定
+//    if (icdDataFrame == null || query.isBlank()) {
+//        return DataFrame.empty()
+//    }
+//
+//    val spaceRegex = Regex("[ 　]+")
+//    val searchTerms = query
+//        .split(spaceRegex)
+//        .map { normalizeTextForSearch(it) }
+//        .filter { it.isNotBlank() }
+//
+//    if (searchTerms.isEmpty()) {
+//        return DataFrame.empty()
+//    }
+//
+//    return icdDataFrame.filter { dataRow ->
+//        // 3列目(インデックス2)の値を安全に取得してフィルタリング
+//        val itemText = dataRow[targetRow]?.toString()
+//        if (itemText != null) {
+//            val normalizedItemText = normalizeTextForSearch(itemText)
+//            searchTerms.all { term -> normalizedItemText.contains(term) }
+//        } else {
+//            false // 3列目がnullの場合は結果に含めない
+//        }
+//    }
+//}
 
 //@Preview(showBackground = false)
 //@Composable
@@ -524,10 +373,23 @@ fun DpcScreenPreview() {
         val displayedItemsIcd = MutableStateFlow(
             // プレビューで表示したいダミーデータをここに定義します
             listOf(
-                IcdEntity(id = 1, mdcCode = "", bunruiCode = "", icdName = "プレビュー用項目１", icdCode = "A001"),
-                IcdEntity(id = 2, mdcCode = "", bunruiCode = "",icdName = "プレビュー用項目２", icdCode = "B002")
+                IcdEntity(
+                    id = 1,
+                    mdcCode = "",
+                    bunruiCode = "",
+                    icdName = "プレビュー用項目１",
+                    icdCode = "A001"
+                ),
+                IcdEntity(
+                    id = 2,
+                    mdcCode = "",
+                    bunruiCode = "",
+                    icdName = "プレビュー用項目２",
+                    icdCode = "B002"
+                )
             )
         )
+
         fun onQueryChanged(query: String) {
             // プレビューでは何もしない
         }
