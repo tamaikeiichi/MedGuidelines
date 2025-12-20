@@ -199,12 +199,27 @@ private fun DpcScreenContent(
     var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
     var currentMdc by remember { mutableStateOf("xx") }
     var currentBunrui by remember { mutableStateOf("xxxx") }
+    var mdcSelected by remember { mutableStateOf("xx") }
+    var bunruiSelected by remember { mutableStateOf("xxxx") }
+
+    val byotaiMdcUnique = dpcMaster.byotai?.columns()?.getOrNull(
+        0
+    )?.drop(
+        2
+    )?.distinct()?.map { it.toString() }
+    val byotaiBunruiUnique = dpcMaster.byotai?.columns()?.getOrNull(
+        1
+    )?.drop(
+        2
+    )?.distinct()?.map { it.toString() }
 
     LaunchedEffect(query, dpcMaster.icd) {
         if (query.isBlank()) {
             displayedItemsIcd = DataFrame.empty()
             return@LaunchedEffect
         }
+        currentMdc = "xx"
+        currentBunrui = "xxxx"
         val filteredResult: DataFrame<*> = withContext(Dispatchers.Default) {
             // 1. 3列目(targetRow=2)でフィルタリング
             val filteredByThirdColumn = filterDpcMaster(
@@ -306,8 +321,8 @@ private fun DpcScreenContent(
                                 items(icdItemsList) { row ->
                                     val itemText = row[2]?.toString() ?: ""
                                     val icdCodeSelected = row[3]?.toString() ?: ""
-                                    val mdcSelected = row[0]?.toString() ?: ""
-                                    val bunruiSelected = row[1]?.toString() ?: ""
+                                    mdcSelected = row[0]?.toString() ?: ""
+                                    bunruiSelected = row[1]?.toString() ?: ""
                                     Text(
                                         text = itemText,
                                         modifier = Modifier
@@ -332,16 +347,7 @@ private fun DpcScreenContent(
                         }
 
                     }
-                    val byotaiMdcUnique = dpcMaster.byotai?.columns()?.getOrNull(
-                        0
-                    )?.drop(
-                        2
-                    )?.distinct()?.map { it.toString() }
-                    val byotaiBunruiUnique = dpcMaster.byotai?.columns()?.getOrNull(
-                        1
-                    )?.drop(
-                        2
-                    )?.distinct()?.map { it.toString() }
+
                     if (byotaiMdcUnique?.contains(currentMdc) == true &&
                         byotaiBunruiUnique?.contains(currentBunrui) == true
                     ) {
