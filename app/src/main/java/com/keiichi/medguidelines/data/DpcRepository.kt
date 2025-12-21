@@ -9,9 +9,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.api.ParserOptions
 import org.jetbrains.kotlinx.dataframe.api.rows
+import org.jetbrains.kotlinx.dataframe.io.ColType
 import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
+import org.jetbrains.kotlinx.dataframe.io.readCSV
 import org.jetbrains.kotlinx.dataframe.io.readExcel
+import java.io.InputStream
+import java.nio.charset.Charset
 import kotlin.collections.get
 import kotlin.toString
 
@@ -69,52 +74,57 @@ class DpcRepository(private val dpcDao: DpcDao) {
     suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
+                // ICDテーブルのチェックと投入 (CSVからまとめて読み込む)
                 if (dpcDao.getIcdCount() == 0) {
-                    Log.d("tamaiDpc", "icd reading")
-                    context.resources.openRawResource(excelResourceId).use { icdStream ->
-                        // Apache POIを直接使用してストリーミング処理
-                        val workbook = WorkbookFactory.create(icdStream)
-                        val sheet = workbook.getSheet("４）ＩＣＤ")
-
-                        val batchSize = 1  // バッチサイズを調整
-                        val batch = mutableListOf<IcdEntity>()
-                        Log.d("tamaiDpc", "set val")
-                        for (row in sheet) {
-                            if (row.rowNum == 0) continue  // ヘッダーをスキップ
-
-                            val entity = IcdEntity(
-                                mdcCode = row.getCell(0)?.toString(),
-                                bunruiCode = row.getCell(1)?.toString(),
-                                icdName = row.getCell(2)?.toString(),
-                                icdCode = row.getCell(3)?.toString()
-                            )
-                            batch.add(entity)
-                            Log.d("tamaiDpc", "batch added")
-                            if (batch.size >= batchSize) {
-                                dpcDao.insertAllIcd(batch)
-                                batch.clear()
-                                Log.d("tamaiDpc", "Inserted batch")
-                            }
-                        }
-
-                        // 残りを挿入
-                        if (batch.isNotEmpty()) {
-                            dpcDao.insertAllIcd(batch)
-                        }
-
-                        workbook.close()
+                    val headerNames = (1..4).map { it.toString() }
+                    val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
+                    val inputStream: InputStream = context.resources.openRawResource(R.raw.dpc001348055_4)
+                    Log.d("tamaiDpc", "icd reading from CSV...")
+                    // DataFrameを格納する変数を宣言
+                    val icdDf: DataFrame<*>
+                    inputStream.use { stream ->
+                        // CSVの全データをDataFrameとして一括で読み込む
+                        icdDf = DataFrame.readCSV(
+                            stream = stream,
+                            header = headerNames,
+                            charset = Charset.forName("Shift-JIS"),
+                            colTypes = columnTypes, // Specify that all columns should be read as String
+                            parserOptions = ParserOptions() // Keep default or adjust as needed
+                        )
                     }
-                    Log.d("tamaiDpc", "icd inserted")
+                    // 読み込んだDataFrameをIcdEntityのリストに変換する
+                    val icdList = icdDf.rows().map { row ->
+                        IcdEntity(
+                            mdcCode = row[0]?.toString(),
+                            bunruiCode = row[1]?.toString(),
+                            icdName = row[2]?.toString(),
+                            icdCode = row[3]?.toString()
+                        )
+                    }
+                    // 変換したリストをデータベースに挿入する
+                    dpcDao.insertAllIcd(icdList)
+                    Log.d("tamaiDpc", "icd inserted from CSV.")
                 }
 
             // Byotaiテーブルのチェックと投入
-            if (dpcDao.getByotaiCount() == 0) {
-                Log.d("tamaiDpc", "byotai reading")
-                val byotaiStream = context.resources.openRawResource(excelResourceId)
-                val byotaiDf = DataFrame.readExcel(byotaiStream, "３）病態等分類",
-                    skipRows = 0,
-                    nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
-                    firstRowIsHeader = false,)
+                if (dpcDao.getByotaiCount() == 0) {
+                    val headerNames = (1..10).map { it.toString() }
+                    val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
+                    val inputStream: InputStream = context.resources.openRawResource(R.raw.dpc001348055_3)
+                    Log.d("tamaiDpc", "byotai reading")
+                    // DataFrameを格納する変数を宣言
+                    val byotaiDf: DataFrame<*>
+                    inputStream.use { stream ->
+                        // CSVの全データをDataFrameとして一括で読み込む
+                        byotaiDf = DataFrame.readCSV(
+                            stream = stream,
+                            header = headerNames,
+                            charset = Charset.forName("Shift-JIS"),
+                            colTypes = columnTypes, // Specify that all columns should be read as String
+                            parserOptions = ParserOptions() // Keep default or adjust as needed
+                        )
+                    }
+
                 val byotaiList = byotaiDf.rows().map { row ->
                     ByotaiEntity(
                         mdcCode = row[0]?.toString(),
@@ -127,12 +137,22 @@ class DpcRepository(private val dpcDao: DpcDao) {
             }
             // --- ここからBunruiテーブルのチェックと投入処理を追加 ---
             if (dpcDao.getBunruiCount() == 0) {
+                val headerNames = (1..4).map { it.toString() }
+                val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
+                val inputStream: InputStream = context.resources.openRawResource(R.raw.dpc001348055_2)
                 Log.d("tamaiDpc", "bunrui reading")
-                val bunruiStream = context.resources.openRawResource(excelResourceId)
-                val bunruiDf = DataFrame.readExcel(bunruiStream, "２）分類名称",
-                    skipRows = 0,
-                    nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
-                    firstRowIsHeader = false,)
+                // DataFrameを格納する変数を宣言
+                val bunruiDf: DataFrame<*>
+                inputStream.use { stream ->
+                    // CSVの全データをDataFrameとして一括で読み込む
+                    bunruiDf = DataFrame.readCSV(
+                        stream = stream,
+                        header = headerNames,
+                        charset = Charset.forName("Shift-JIS"),
+                        colTypes = columnTypes, // Specify that all columns should be read as String
+                        parserOptions = ParserOptions() // Keep default or adjust as needed
+                    )
+                }
                 val bunruiList = bunruiDf.rows().map { row ->
                     BunruiEntity(
                         // BunruiEntityの定義に合わせて列を指定
@@ -144,14 +164,22 @@ class DpcRepository(private val dpcDao: DpcDao) {
                 dpcDao.insertAllBunrui(bunruiList)
             }
             if (dpcDao.getMdcCount() == 0) {
-                val mdcStream = context.resources.openRawResource(excelResourceId)
-                val mdcDf = DataFrame.readExcel(
-                    mdcStream,
-                    "１）ＭＤＣ名称",
-                    skipRows = 0,
-                    nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
-                    firstRowIsHeader = false,
+                val headerNames = (1..4).map { it.toString() }
+                val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
+                val inputStream: InputStream = context.resources.openRawResource(R.raw.dpc001348055_1)
+                Log.d("tamaiDpc", "mdc reading")
+                // DataFrameを格納する変数を宣言
+                val mdcDf: DataFrame<*>
+                inputStream.use { stream ->
+                    // CSVの全データをDataFrameとして一括で読み込む
+                    mdcDf = DataFrame.readCSV(
+                        stream = stream,
+                        header = headerNames,
+                        charset = Charset.forName("Shift-JIS"),
+                        colTypes = columnTypes, // Specify that all columns should be read as String
+                        parserOptions = ParserOptions() // Keep default or adjust as needed
                     )
+                }
                 val mdcList = mdcDf.rows().map { row ->
                     MdcEntity(
                         // MdcEntityの定義に合わせて列を指定
