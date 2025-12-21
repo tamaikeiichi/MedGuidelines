@@ -6,6 +6,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
  * アプリケーションのRoomデータベース本体。
@@ -18,7 +20,7 @@ import androidx.room.RoomDatabase
         BunruiEntity::class,
         MdcEntity::class
                ],
-    version = 3,
+    version = 1,
     exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -30,6 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun dpcDao(): DpcDao
 
     companion object {
+
         // @Volatileアノテーションにより、INSTANCE変数が複数スレッドからアクセスされても
         // 常に最新の値であることが保証されます。
         @Volatile

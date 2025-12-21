@@ -12,7 +12,9 @@ data class IcdEntity(
     val mdcCode: String?,       // 1列目: MDCコード
     val bunruiCode: String?,   // 2列目: 分類番号
     val icdName: String?,          // 3列目: 名称
-    val icdCode: String?      // 4列目: ICD10コード
+    val icdCode: String?,      // 4列目: ICD10コード,
+    @ColumnInfo(name = "normalized_icd_name")
+val normalizedIcdName: String?
 )
 
 @Entity(tableName = "byotai_master") // テーブル名を "byotai_master" に設定

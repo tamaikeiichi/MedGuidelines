@@ -1,6 +1,5 @@
 package com.keiichi.medguidelines.ui.screen
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,61 +14,32 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
-import com.keiichi.medguidelines.data.IcdEntity
-import com.keiichi.medguidelines.data.dpcByotai
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
-import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectable
-import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
-import org.jetbrains.kotlinx.dataframe.api.drop
-import org.jetbrains.kotlinx.dataframe.api.filter
-import org.jetbrains.kotlinx.dataframe.api.firstOrNull
-import org.jetbrains.kotlinx.dataframe.api.forEach
-import org.jetbrains.kotlinx.dataframe.api.map
 import org.jetbrains.kotlinx.dataframe.api.rows
-import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
-import org.jetbrains.kotlinx.dataframe.io.readExcel
-import kotlin.text.firstOrNull
-
-
-// 読み込んだDataFrameを保持するためのデータクラス
-//data class DpcDataSheets(
-//    var mdc: DataFrame<*>? = null,
-//)
 
 data class DpcCode(
     var mdc: String? = "xx",
@@ -92,14 +62,13 @@ fun DpcScreen(
     dpcScreenViewModel: DpcScreenViewModel = viewModel(factory = DpcScreenViewModel.Factory)
 ) {
     Log.d("tamai", "before launched effect")
-    val context = LocalContext.current
-    //var dpcMaster by remember { mutableStateOf(DpcDataSheets()) }
     var dpcCodeFirst by remember { mutableStateOf(DpcCode()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var loadingMessage by remember { mutableStateOf("Starting to load data...") }
     val showByotaiSelection by dpcScreenViewModel.showByotaiSelection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
+    var searchResultsVisible by remember { mutableStateOf(true) }
 
     var bunruiIcdSelectedIcdItem by androidx.compose.runtime.remember {
         mutableStateOf<String?>(
@@ -115,19 +84,7 @@ fun DpcScreen(
 
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
-    //var displayedItemsIcd by remember { mutableStateOf<DataFrame<*>?>(null) }
-    var filteredByotai by remember { mutableStateOf<DataFrame<*>?>(null) }
-    var currentMdc by remember { mutableStateOf("xx") }
-    var currentBunrui by remember { mutableStateOf("xxxx") }
-    var mdcSelected by remember { mutableStateOf("xx") }
-    var bunruiSelected by remember { mutableStateOf("xxxx") }
 
-//    LaunchedEffect(query) {
-//        if (query.isBlank()) {
-//            bunruiIcdSelectedIcdItem = null
-//            return@LaunchedEffect
-//        }
-//    }
     LaunchedEffect(Unit) {
         // ViewModelの検索メソッドを初期クエリで呼び出す
         dpcScreenViewModel.onQueryChanged(query)
@@ -154,6 +111,7 @@ fun DpcScreen(
                         }
                     }
                 }
+
                 errorMessage != null -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -183,13 +141,17 @@ fun DpcScreen(
                         onSearchQueryChange = {
                             query = it
                             dpcScreenViewModel.onQueryChanged(it)
+                            dpcScreenViewModel.resetByotaiSelection()
+                            dpcCodeFirst = DpcCode()
+                            bunruiIcdSelectedIcdItem = null
+                            searchResultsVisible = true
                         },
                         onSearch = { query = it },
                         isLoading = false,
                         placeholderText = R.string.searchIcd
                     )
 
-                    if (dpcCodeFirst.mdc == "xx" && dpcCodeFirst.bunrui == "xxxx") {
+                    if (searchResultsVisible) {
                         val icdItemsList = displayedItemsIcd.toList()
                         val bunruiItemsList = displayedItemsBunrui?.rows()?.toList()
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -205,14 +167,17 @@ fun DpcScreen(
                                         )
                                     }
                                 }
-                                items(items = icdItemsList, key = { it.icdCode ?: it.hashCode().toString() }) { icdItem ->
+                                items(
+                                    items = icdItemsList,
+                                    key = { it.icdCode ?: it.hashCode().toString() }) { icdItem ->
                                     // val itemText = icdItem.icdName ?: ""
                                     // val icdCodeSelected = icdItem.icdCode ?: ""
                                     // mdcSelected や bunruiSelected は不要なので削除
 
                                     MedGuidelinesCard {
                                         Text(
-                                            text = icdItem.icdName ?: "No Name", // itemTextの代わりに直接参照
+                                            text = icdItem.icdName
+                                                ?: "No Name", // itemTextの代わりに直接参照
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .clickable {
@@ -231,8 +196,11 @@ fun DpcScreen(
 
                                                     // 3. ViewModelのメソッドを呼び出してイベントを通知する
                                                     dpcScreenViewModel.onIcdItemSelected(icdItem)
-Log.d("tamaiDpc", " dpcScreenViewModel.onIcdItemSelected(icdItem) ran")
-
+                                                    Log.d(
+                                                        "tamaiDpc",
+                                                        " dpcScreenViewModel.onIcdItemSelected(icdItem) ran"
+                                                    )
+                                                    searchResultsVisible = false
                                                     // currentMdc や currentBunrui の更新は dpcCodeFirst が役割を担うので不要
                                                     // currentMdc = mdcSelected
                                                     // currentBunrui = bunruiSelected
@@ -286,26 +254,28 @@ Log.d("tamaiDpc", " dpcScreenViewModel.onIcdItemSelected(icdItem) ran")
                                     onDismissRequest = { expanded = false },
                                 ) {
                                     byotaiOptions.forEach { option ->
-                                        DropdownMenuItem(
-                                            text = { Text(option) },
-                                            onClick = {
-                                                selectedOption = option
-                                                expanded = false
-                                                // --- イベント: 病態名が選択された ---
-                                                coroutineScope.launch {
-                                                    val byotaiCode =
-                                                        dpcScreenViewModel.getByotaiCode(option)
-                                                    if (byotaiCode != null) {
-                                                        // 取得した病態コードでUIの状態を更新
-                                                        val finalByotaiCode =
-                                                            byotaiCode.toDoubleOrNull()?.toInt()
-                                                                ?.toString() ?: byotaiCode
-                                                        dpcCodeFirst =
-                                                            dpcCodeFirst.copy(byotai = finalByotaiCode)
+                                        if (option.isNotBlank()) {
+                                            DropdownMenuItem(
+                                                text = { Text(option) },
+                                                onClick = {
+                                                    selectedOption = option
+                                                    expanded = false
+                                                    // --- イベント: 病態名が選択された ---
+                                                    coroutineScope.launch {
+                                                        val byotaiCode =
+                                                            dpcScreenViewModel.getByotaiCode(option)
+                                                        if (byotaiCode != null) {
+                                                            // 取得した病態コードでUIの状態を更新
+                                                            val finalByotaiCode =
+                                                                byotaiCode.toDoubleOrNull()?.toInt()
+                                                                    ?.toString() ?: byotaiCode
+                                                            dpcCodeFirst =
+                                                                dpcCodeFirst.copy(byotai = finalByotaiCode)
+                                                        }
                                                     }
                                                 }
-                                            }
-                                        )
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -318,105 +288,8 @@ Log.d("tamaiDpc", " dpcScreenViewModel.onIcdItemSelected(icdItem) ran")
 }
 
 
-//private fun loadDpcData(context: Context, sheetName: String): DataFrame<*> {
-//    return try {
-//        context.resources.openRawResource(R.raw.dpc001348055).use { inputStream ->
-//            DataFrame.readExcel(
-//                inputStream = inputStream,
-//                sheetName = sheetName,
-//                skipRows = 0,
-//                nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
-//                firstRowIsHeader = false,
-//
-//                //stringColumns = StringColumns
-//            )//.convert { all() }.to<String>()
-//        }
-//    } catch (e: Exception) {
-//        Log.e("DPC", "Error loading data for sheet $sheetName: ${e.message}")
-//        e.printStackTrace()
-//        DataFrame.empty() // Return an empty DataFrame instead of emptyList()
-//    }
-//}
-
-/** * ICDのDataFrameを検索クエリでフィルタリングするサスペンド関数
- * @param icdDataFrame フィルタリング対象のDataFrame
- * @param query ユーザーが入力した検索クエリ
- * @return フィルタリングされたDataFrame
- */
-//private suspend fun filterDpcMaster(
-//    icdDataFrame: DataFrame<*>?,
-//    query: String,
-//    targetRow: Int
-//): DataFrame<*> {
-//    // この関数はバックグラウンドスレッドで実行されることを想定
-//    if (icdDataFrame == null || query.isBlank()) {
-//        return DataFrame.empty()
-//    }
-//
-//    val spaceRegex = Regex("[ 　]+")
-//    val searchTerms = query
-//        .split(spaceRegex)
-//        .map { normalizeTextForSearch(it) }
-//        .filter { it.isNotBlank() }
-//
-//    if (searchTerms.isEmpty()) {
-//        return DataFrame.empty()
-//    }
-//
-//    return icdDataFrame.filter { dataRow ->
-//        // 3列目(インデックス2)の値を安全に取得してフィルタリング
-//        val itemText = dataRow[targetRow]?.toString()
-//        if (itemText != null) {
-//            val normalizedItemText = normalizeTextForSearch(itemText)
-//            searchTerms.all { term -> normalizedItemText.contains(term) }
-//        } else {
-//            false // 3列目がnullの場合は結果に含めない
-//        }
-//    }
-//}
-
-//@Preview(showBackground = false)
-//@Composable
-//fun DpcScreenPreview() {
-//    DpcScreen(navController = NavHostController(LocalContext.current))
-//}
-
 @Preview(showBackground = true) // 背景をtrueにすると見やすいです
 @Composable
 fun DpcScreenPreview() {
-    // プレビュー用のViewModelの偽物（フェイク）を作成します。
-    // このフェイクViewModelは、実際のデータベースやファイルアクセスを行いません。
-    class FakeDpcScreenViewModel : ViewModel() {
-        val isLoading = MutableStateFlow(false)
-        val errorMessage = MutableStateFlow<String?>(null)
-        val displayedItemsIcd = MutableStateFlow(
-            // プレビューで表示したいダミーデータをここに定義します
-            listOf(
-                IcdEntity(
-                    id = 1,
-                    mdcCode = "",
-                    bunruiCode = "",
-                    icdName = "プレビュー用項目１",
-                    icdCode = "A001"
-                ),
-                IcdEntity(
-                    id = 2,
-                    mdcCode = "",
-                    bunruiCode = "",
-                    icdName = "プレビュー用項目２",
-                    icdCode = "B002"
-                )
-            )
-        )
 
-        fun onQueryChanged(query: String) {
-            // プレビューでは何もしない
-        }
-    }
-
-    // DpcScreenコンポーザブルに、偽物のViewModelを渡して呼び出します。
-//    DpcScreen(
-//        navController = NavHostController(LocalContext.current),
-//        dpcScreenViewModel = FakeDpcScreenViewModel() // ここで偽物を渡す
-//    )
 }

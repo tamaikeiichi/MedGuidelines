@@ -5,6 +5,7 @@ package com.keiichi.medguidelines.data
 import android.content.Context
 import android.util.Log
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.poi.ss.usermodel.WorkbookFactory
@@ -96,10 +97,11 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     // 読み込んだDataFrameをIcdEntityのリストに変換する
                     val icdList = icdDf.rows().map { row ->
                         IcdEntity(
-                            mdcCode = row[0]?.toString(),
-                            bunruiCode = row[1]?.toString(),
-                            icdName = row[2]?.toString(),
-                            icdCode = row[3]?.toString()
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
+                            icdName = row[2]?.toString() ?: "",
+                            icdCode = row[3]?.toString() ?: "",
+                            normalizedIcdName = normalizeTextForSearch(row[2]?.toString() ?: "")
                         )
                     }
                     // 変換したリストをデータベースに挿入する
@@ -109,7 +111,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
 
             // Byotaiテーブルのチェックと投入
                 if (dpcDao.getByotaiCount() == 0) {
-                    val headerNames = (1..10).map { it.toString() }
+                    val headerNames = (1..8).map { it.toString() }
                     val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
                     val inputStream: InputStream = context.resources.openRawResource(R.raw.dpc001348055_3)
                     Log.d("tamaiDpc", "byotai reading")
@@ -129,10 +131,10 @@ class DpcRepository(private val dpcDao: DpcDao) {
 
                 val byotaiList = byotaiDf.rows().map { row ->
                     ByotaiEntity(
-                        mdcCode = row[0]?.toString(),
-                        bunruiCode = row[1]?.toString(),
-                        byotaiCode = row[2]?.toString(),
-                        byotaiKubunMeisho = row[7]?.toString()
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        byotaiCode = row[2]?.toString() ?: "",
+                        byotaiKubunMeisho = row[7]?.toString() ?: ""
                     )
                 }
                 dpcDao.insertAllByotai(byotaiList)
@@ -159,9 +161,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
                 val bunruiList = bunruiDf.rows().map { row ->
                     BunruiEntity(
                         // BunruiEntityの定義に合わせて列を指定
-                        mdcCode = row[0]?.toString(),
-                        bunruiCode = row[1]?.toString(),
-                        bunruiName = row[2]?.toString()
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        bunruiName = row[2]?.toString() ?: ""
                     )
                 }
                 dpcDao.insertAllBunrui(bunruiList)
@@ -189,8 +191,8 @@ class DpcRepository(private val dpcDao: DpcDao) {
                 val mdcList = mdcDf.rows().map { row ->
                     MdcEntity(
                         // MdcEntityの定義に合わせて列を指定
-                        mdcCode = row[0]?.toString(),
-                        mdcName = row[1]?.toString()
+                        mdcCode = row[0]?.toString() ?: "",
+                        mdcName = row[1]?.toString() ?: ""
                     )
                 }
                 dpcDao.insertAllMdc(mdcList)

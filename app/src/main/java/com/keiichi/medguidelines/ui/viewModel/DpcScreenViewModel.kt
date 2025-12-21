@@ -12,6 +12,7 @@ import com.keiichi.medguidelines.data.AppDatabase
 import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.IcdEntity // IcdEntityをインポート
+import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -121,7 +122,9 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
      * 検索クエリを更新する
      */
     fun onQueryChanged(newQuery: String) {
-        _searchQuery.value = newQuery
+        val normalizedQuery = normalizeTextForSearch(newQuery)
+        _searchQuery.value = normalizedQuery // 正規化済みクエリをFlowに渡す
+
     }
 
     /**
@@ -195,5 +198,15 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 return DpcScreenViewModel(application) as T
             }
         }
+    }
+
+
+    /**
+     * 【追加】病態選択UIの状態をリセットする。
+     * 新しい検索が始まったときなどにUIから呼び出す。
+     */
+    fun resetByotaiSelection() {
+        _showByotaiSelection.value = false
+        _byotaiOptions.value = emptyList()
     }
 }

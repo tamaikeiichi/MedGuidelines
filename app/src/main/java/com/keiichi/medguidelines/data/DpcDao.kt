@@ -32,7 +32,7 @@ interface DpcDao {
      * @param query 検索文字列 (例: "%検索語%")
      * @return 条件に一致したIcdEntityのリストをFlowで返す
      */
-    @Query("SELECT * FROM icd_master WHERE icdName LIKE :query OR icdCode LIKE :query")
+    @Query("SELECT * FROM icd_master WHERE normalized_icd_name LIKE :query OR icdCode LIKE :query")
     fun searchIcd(query: String): Flow<List<IcdEntity>>
 
 
