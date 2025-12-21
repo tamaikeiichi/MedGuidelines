@@ -102,7 +102,7 @@ fun DpcScreen(
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
 
     var bunruiIcdSelectedIcdItem by androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf<String?>(
+        mutableStateOf<String?>(
             null
         )
     }
@@ -122,13 +122,16 @@ fun DpcScreen(
     var mdcSelected by remember { mutableStateOf("xx") }
     var bunruiSelected by remember { mutableStateOf("xxxx") }
 
-    LaunchedEffect(query) {
-        if (query.isBlank()) {
-            bunruiIcdSelectedIcdItem = null
-            return@LaunchedEffect
-        }
+//    LaunchedEffect(query) {
+//        if (query.isBlank()) {
+//            bunruiIcdSelectedIcdItem = null
+//            return@LaunchedEffect
+//        }
+//    }
+    LaunchedEffect(Unit) {
+        // ViewModelの検索メソッドを初期クエリで呼び出す
+        dpcScreenViewModel.onQueryChanged(query)
     }
-
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
@@ -151,7 +154,6 @@ fun DpcScreen(
                         }
                     }
                 }
-
                 errorMessage != null -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -174,7 +176,6 @@ fun DpcScreen(
                             )
 
                         }
-
                     }
 
                     MyCustomSearchBar(
@@ -204,28 +205,43 @@ fun DpcScreen(
                                         )
                                     }
                                 }
-                                items(icdItemsList) { row ->
-                                    val itemText = row.icdName ?: ""
-                                    val icdCodeSelected = row.icdCode ?: ""
-                                    mdcSelected = row.mdcCode ?: ""
-                                    bunruiSelected = row.bunruiCode ?: ""
-                                    Text(
-                                        text = itemText,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                bunruiIcdSelectedIcdItem = itemText
-                                                dpcCodeFirst.copy(
-                                                    icd = icdCodeSelected,
-                                                    mdc = mdcSelected,
-                                                    bunrui = bunruiSelected,
+                                items(items = icdItemsList, key = { it.icdCode ?: it.hashCode().toString() }) { icdItem ->
+                                    // val itemText = icdItem.icdName ?: ""
+                                    // val icdCodeSelected = icdItem.icdCode ?: ""
+                                    // mdcSelected や bunruiSelected は不要なので削除
 
+                                    MedGuidelinesCard {
+                                        Text(
+                                            text = icdItem.icdName ?: "No Name", // itemTextの代わりに直接参照
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    // --- ここからが修正箇所 ---
+
+                                                    // 1. UIの状態を更新
+                                                    bunruiIcdSelectedIcdItem = icdItem.icdName
+                                                    icdCode = icdItem.icdCode // これもUI表示用なのでここで更新
+
+                                                    // 2. Stateの更新は .copy() の結果を再代入する
+                                                    dpcCodeFirst = dpcCodeFirst.copy(
+                                                        icd = icdItem.icdCode,
+                                                        mdc = icdItem.mdcCode,
+                                                        bunrui = icdItem.bunruiCode
                                                     )
-                                                currentMdc = mdcSelected
-                                                currentBunrui = bunruiSelected
-                                            }
-                                            .padding(16.dp)
-                                    )
+
+                                                    // 3. ViewModelのメソッドを呼び出してイベントを通知する
+                                                    dpcScreenViewModel.onIcdItemSelected(icdItem)
+Log.d("tamaiDpc", " dpcScreenViewModel.onIcdItemSelected(icdItem) ran")
+
+                                                    // currentMdc や currentBunrui の更新は dpcCodeFirst が役割を担うので不要
+                                                    // currentMdc = mdcSelected
+                                                    // currentBunrui = bunruiSelected
+
+                                                    // --- ここまでが修正箇所 ---
+                                                }
+                                                .padding(16.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -236,58 +252,61 @@ fun DpcScreen(
                     // --- ここからが修正箇所 ---
 
                     // --- 病態選択UI ---
-                    // ViewModelのshowByotaiSelectionの値に基づいて、UIの表示を切り替える                    if (showByotaiSelection) {
-                    var expanded by remember { mutableStateOf(false) }
-                    // byotaiOptionsが更新されたらselectedOptionもリセットする
-                    var selectedOption by remember(byotaiOptions) {
-                        mutableStateOf(byotaiOptions.firstOrNull() ?: "選択してください")
-                    }
+                    // ViewModelのshowByotaiSelectionの値に基づいて、UIの表示を切り替える
+                    if (showByotaiSelection) {
+                        Log.d("tamaiDpc", "after if (showByotaiSelection)")
+                        var expanded by remember { mutableStateOf(false) }
+                        // byotaiOptionsが更新されたらselectedOptionもリセットする
+                        var selectedOption by remember(byotaiOptions) {
+                            mutableStateOf(byotaiOptions.firstOrNull() ?: "選択してください")
+                        }
 
-                    MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = { expanded = !expanded }
-                        ) {
-                            TextField(
-                                value = selectedOption,
-                                onValueChange = {},
-                                readOnly = true,
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                                },
-                                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                    unfocusedContainerColor = Color.Transparent,
-                                    focusedContainerColor = Color.Transparent
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor()
-                            )
-                            ExposedDropdownMenu(
+                        MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                            ExposedDropdownMenuBox(
                                 expanded = expanded,
-                                onDismissRequest = { expanded = false },
+                                onExpandedChange = { expanded = !expanded }
                             ) {
-                                byotaiOptions.forEach { option ->
-                                    DropdownMenuItem(
-                                        text = { Text(option) },
-                                        onClick = {
-                                            selectedOption = option
-                                            expanded = false
-                                            // --- イベント: 病態名が選択された ---
-                                            coroutineScope.launch {
-                                                val byotaiCode =
-                                                    dpcScreenViewModel.getByotaiCode(option)
-                                                if (byotaiCode != null) {
-                                                    // 取得した病態コードでUIの状態を更新
-                                                    val finalByotaiCode =
-                                                        byotaiCode.toDoubleOrNull()?.toInt()
-                                                            ?.toString() ?: byotaiCode
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(byotai = finalByotaiCode)
+                                TextField(
+                                    value = selectedOption,
+                                    onValueChange = {},
+                                    readOnly = true,
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                    },
+                                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                        unfocusedContainerColor = Color.Transparent,
+                                        focusedContainerColor = Color.Transparent
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .menuAnchor()
+                                )
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false },
+                                ) {
+                                    byotaiOptions.forEach { option ->
+                                        DropdownMenuItem(
+                                            text = { Text(option) },
+                                            onClick = {
+                                                selectedOption = option
+                                                expanded = false
+                                                // --- イベント: 病態名が選択された ---
+                                                coroutineScope.launch {
+                                                    val byotaiCode =
+                                                        dpcScreenViewModel.getByotaiCode(option)
+                                                    if (byotaiCode != null) {
+                                                        // 取得した病態コードでUIの状態を更新
+                                                        val finalByotaiCode =
+                                                            byotaiCode.toDoubleOrNull()?.toInt()
+                                                                ?.toString() ?: byotaiCode
+                                                        dpcCodeFirst =
+                                                            dpcCodeFirst.copy(byotai = finalByotaiCode)
+                                                    }
                                                 }
                                             }
-                                        }
-                                    )
+                                        )
+                                    }
                                 }
                             }
                         }

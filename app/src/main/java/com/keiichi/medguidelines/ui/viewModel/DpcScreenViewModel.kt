@@ -40,6 +40,54 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     val byotaiOptions: StateFlow<List<String>> = _byotaiOptions.asStateFlow()
 
 
+    /**
+     * 【修正案1】ICDリストの項目が選択されたときに呼び出されるメソッド
+     * @param item 選択された IcdEntity
+     */
+    fun onIcdItemSelected(item: IcdEntity) {
+        // 選択された項目のmdcCodeとbunruiCodeを使って、共通のチェック処理を呼び出す
+        checkAndShowByotaiSelection(item.mdcCode, item.bunruiCode)
+    }
+
+    /**
+     * 【修正案2】分類リストの項目が選択されたときに呼び出されるメソッド
+     * @param item 選択された BunruiEntity
+     */
+    fun onBunruiItemSelected(item: BunruiEntity) {
+        // 選択された項目のmdcCodeとbunruiCodeを使って、共通のチェック処理を呼び出す
+        checkAndShowByotaiSelection(item.mdcCode, item.bunruiCode)
+    }
+
+    /**
+     * MDCコードと分類コードを元に、病態選択UIの表示を制御する共通メソッド
+     * @param mdcCode チェックするMDCコード
+     * @param bunruiCode チェックする分類コード
+     */
+    private fun checkAndShowByotaiSelection(mdcCode: String?, bunruiCode: String?) {
+        viewModelScope.launch {
+            // mdcCodeとbunruiCodeがnullでないことを確認
+            if (mdcCode != null && bunruiCode != null) {
+                // 1. Repositoryに問い合わせて、対応する病態が存在するかチェック
+                val byotaiExists = repository.checkMdcAndBunruiExist(mdcCode, bunruiCode)
+
+                // 2. 存在する場合 (true の場合) のみ、UIの表示とデータ取得を行う
+                if (byotaiExists) {
+                    _byotaiOptions.value = repository.getByotaiNames(mdcCode, bunruiCode)
+                    _showByotaiSelection.value = true // ★ 病態選択UIを表示させる
+                } else {
+                    // 存在しない場合は、UIを非表示にする
+                    _showByotaiSelection.value = false
+                    _byotaiOptions.value = emptyList()
+                }
+            } else {
+                // mdcCodeまたはbunruiCodeがnullの場合は、UIを非表示にする
+                _showByotaiSelection.value = false
+                _byotaiOptions.value = emptyList()
+            }
+        }
+    }
+
+
 
     // 検索クエリを保持するStateFlow
     private val _searchQuery = MutableStateFlow("")

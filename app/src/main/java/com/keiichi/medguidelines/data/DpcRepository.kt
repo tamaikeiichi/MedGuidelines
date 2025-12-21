@@ -89,6 +89,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                             header = headerNames,
                             charset = Charset.forName("Shift-JIS"),
                             colTypes = columnTypes, // Specify that all columns should be read as String
+                            skipLines = 2,
                             parserOptions = ParserOptions() // Keep default or adjust as needed
                         )
                     }
@@ -121,6 +122,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                             header = headerNames,
                             charset = Charset.forName("Shift-JIS"),
                             colTypes = columnTypes, // Specify that all columns should be read as String
+                            skipLines = 2,
                             parserOptions = ParserOptions() // Keep default or adjust as needed
                         )
                     }
@@ -150,6 +152,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                         header = headerNames,
                         charset = Charset.forName("Shift-JIS"),
                         colTypes = columnTypes, // Specify that all columns should be read as String
+                        skipLines = 2,
                         parserOptions = ParserOptions() // Keep default or adjust as needed
                     )
                 }
@@ -179,6 +182,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                         header = headerNames,
                         charset = Charset.forName("Shift-JIS"),
                         colTypes = columnTypes, // Specify that all columns should be read as String
+                        skipLines = 2,
                         parserOptions = ParserOptions() // Keep default or adjust as needed
                     )
                 }
@@ -204,7 +208,5 @@ class DpcRepository(private val dpcDao: DpcDao) {
      * @return 検索結果のFlow
      */
     fun searchBunrui(query: String) = dpcDao.searchBunrui("%$query%")
-
-
 
 }
