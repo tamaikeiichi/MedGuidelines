@@ -162,7 +162,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     )
                 }
                 dpcDao.insertAllBunrui(bunruiList)
+                Log.d("tamaiDpc", "bunrui read")
             }
+
             if (dpcDao.getMdcCount() == 0) {
                 val headerNames = (1..4).map { it.toString() }
                 val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
