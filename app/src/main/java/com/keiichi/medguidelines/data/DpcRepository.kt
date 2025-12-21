@@ -3,16 +3,20 @@
 package com.keiichi.medguidelines.data
 
 import android.content.Context
+import android.util.Log
+import com.keiichi.medguidelines.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.rows
+import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readExcel
 import kotlin.collections.get
 import kotlin.toString
 
 class DpcRepository(private val dpcDao: DpcDao) {
-
+    val excelResourceId = R.raw.dpc001348055
     // 検索クエリに基づいてICDマスターを検索する
     // DAOのメソッドがFlowを返すので、そのままViewModelに渡す
     fun searchIcd(query: String) = dpcDao.searchIcd("%$query%")
@@ -64,25 +68,53 @@ class DpcRepository(private val dpcDao: DpcDao) {
      */
     suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
-            // ICDテーブルのチェックと投入
-            if (dpcDao.getIcdCount() == 0) {
-                val icdStream = context.assets.open("dpc/４）ＩＣＤ.xlsx")
-                val icdDf = DataFrame.readExcel(icdStream)
-                val icdList = icdDf.rows().map { row ->
-                    IcdEntity(
-                        mdcCode = row[0]?.toString(),
-                        bunruiCode = row[1]?.toString(),
-                        icdName = row[2]?.toString(),  // DpcDaoのクエリと一致させる
-                        icdCode = row[3]?.toString()
-                    )
+            try {
+                if (dpcDao.getIcdCount() == 0) {
+                    Log.d("tamaiDpc", "icd reading")
+                    context.resources.openRawResource(excelResourceId).use { icdStream ->
+                        // Apache POIを直接使用してストリーミング処理
+                        val workbook = WorkbookFactory.create(icdStream)
+                        val sheet = workbook.getSheet("４）ＩＣＤ")
+
+                        val batchSize = 1  // バッチサイズを調整
+                        val batch = mutableListOf<IcdEntity>()
+                        Log.d("tamaiDpc", "set val")
+                        for (row in sheet) {
+                            if (row.rowNum == 0) continue  // ヘッダーをスキップ
+
+                            val entity = IcdEntity(
+                                mdcCode = row.getCell(0)?.toString(),
+                                bunruiCode = row.getCell(1)?.toString(),
+                                icdName = row.getCell(2)?.toString(),
+                                icdCode = row.getCell(3)?.toString()
+                            )
+                            batch.add(entity)
+                            Log.d("tamaiDpc", "batch added")
+                            if (batch.size >= batchSize) {
+                                dpcDao.insertAllIcd(batch)
+                                batch.clear()
+                                Log.d("tamaiDpc", "Inserted batch")
+                            }
+                        }
+
+                        // 残りを挿入
+                        if (batch.isNotEmpty()) {
+                            dpcDao.insertAllIcd(batch)
+                        }
+
+                        workbook.close()
+                    }
+                    Log.d("tamaiDpc", "icd inserted")
                 }
-                dpcDao.insertAllIcd(icdList)
-            }
 
             // Byotaiテーブルのチェックと投入
             if (dpcDao.getByotaiCount() == 0) {
-                val byotaiStream = context.assets.open("dpc/３）病態等分類.xlsx")
-                val byotaiDf = DataFrame.readExcel(byotaiStream)
+                Log.d("tamaiDpc", "byotai reading")
+                val byotaiStream = context.resources.openRawResource(excelResourceId)
+                val byotaiDf = DataFrame.readExcel(byotaiStream, "３）病態等分類",
+                    skipRows = 0,
+                    nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
+                    firstRowIsHeader = false,)
                 val byotaiList = byotaiDf.rows().map { row ->
                     ByotaiEntity(
                         mdcCode = row[0]?.toString(),
@@ -95,8 +127,12 @@ class DpcRepository(private val dpcDao: DpcDao) {
             }
             // --- ここからBunruiテーブルのチェックと投入処理を追加 ---
             if (dpcDao.getBunruiCount() == 0) {
-                val bunruiStream = context.assets.open("dpc/２）分類名称.xlsx")
-                val bunruiDf = DataFrame.readExcel(bunruiStream)
+                Log.d("tamaiDpc", "bunrui reading")
+                val bunruiStream = context.resources.openRawResource(excelResourceId)
+                val bunruiDf = DataFrame.readExcel(bunruiStream, "２）分類名称",
+                    skipRows = 0,
+                    nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
+                    firstRowIsHeader = false,)
                 val bunruiList = bunruiDf.rows().map { row ->
                     BunruiEntity(
                         // BunruiEntityの定義に合わせて列を指定
@@ -108,8 +144,14 @@ class DpcRepository(private val dpcDao: DpcDao) {
                 dpcDao.insertAllBunrui(bunruiList)
             }
             if (dpcDao.getMdcCount() == 0) {
-                val mdcStream = context.assets.open("dpc/１）ＭＤＣ名称.xlsx")
-                val mdcDf = DataFrame.readExcel(mdcStream)
+                val mdcStream = context.resources.openRawResource(excelResourceId)
+                val mdcDf = DataFrame.readExcel(
+                    mdcStream,
+                    "１）ＭＤＣ名称",
+                    skipRows = 0,
+                    nameRepairStrategy = NameRepairStrategy.MAKE_UNIQUE,
+                    firstRowIsHeader = false,
+                    )
                 val mdcList = mdcDf.rows().map { row ->
                     MdcEntity(
                         // MdcEntityの定義に合わせて列を指定
@@ -119,7 +161,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
                 }
                 dpcDao.insertAllMdc(mdcList)
             }
-
+            } catch (e: Exception) {
+                Log.e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
             // TODO: 他のテーブルについても同様のチェックとデータ投入処理を追加
         }
     }
