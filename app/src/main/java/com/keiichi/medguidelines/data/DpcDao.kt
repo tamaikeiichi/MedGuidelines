@@ -110,6 +110,31 @@ interface DpcDao {
      */
     @androidx.room.Query("SELECT COUNT(*) FROM mdc_master")
     suspend fun getMdcCount(): Int
+
+    /**
+     * Nenreiマスターテーブルの件数を取得します。
+     */
+    @androidx.room.Query("SELECT COUNT(*) FROM nenrei_master")
+    suspend fun getNenreiCount(): Int
     // --- 必要に応じて、他の11個のテーブルに対する操作もここに追加していきます ---
 
+    /**
+     * Nenreiマスターテーブルに複数のデータを一括で挿入します。
+     */
+    @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    suspend fun insertAllNenrei(nenreiList: List<NenreiEntity>)
+
+    /**
+     * 指定されたMDCコードに一致する、ユニークなMDCコードのリストを取得します。
+     * （MDCコードが含まれているかどうかのチェック用）
+     */
+    @androidx.room.Query("SELECT DISTINCT nenrei_mdc_code FROM nenrei_master WHERE nenrei_mdc_code = :mdcCode")
+    suspend fun getUniqueMdcFromNenrei(mdcCode: String): List<String>
+
+    /**
+     * 指定された分類コードに一致する、ユニークな分類コードのリストを取得します。
+     * （分類コードが含まれているかどうかのチェック用）
+     */
+    @androidx.room.Query("SELECT DISTINCT nenrei_bunrui_code FROM nenrei_master WHERE nenrei_bunrui_code = :bunruiCode")
+    suspend fun getUniqueBunruiFromNenrei(bunruiCode: String): List<String>
 }

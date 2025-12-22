@@ -217,8 +217,6 @@ fun DpcScreen(
                     }
                     // if (dpcCodeFirst.mdc == "xx" ...) の終わり
 
-                    // --- ここからが修正箇所 ---
-
                     // --- 病態選択UI ---
                     // ViewModelのshowByotaiSelectionの値に基づいて、UIの表示を切り替える
                     if (showByotaiSelection) {
