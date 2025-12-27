@@ -137,4 +137,11 @@ interface DpcDao {
      */
     @androidx.room.Query("SELECT DISTINCT nenrei_bunrui_code FROM nenrei_master WHERE nenrei_bunrui_code = :bunruiCode")
     suspend fun getUniqueBunruiFromNenrei(bunruiCode: String): List<String>
+
+    /**
+     * 指定されたMDCコードと分類コードに一致する脳卒中発症時　区分名称
+     */
+    @androidx.room.Query("SELECT DISTINCT nenrei_stroke_name FROM nenrei_master WHERE nenrei_mdc_code = :mdcCode AND nenrei_bunrui_code = :bunruiCode")
+    suspend fun getStrokeNames(mdcCode: String, bunruiCode: String): List<String>
+
 }

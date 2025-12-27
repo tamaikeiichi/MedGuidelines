@@ -68,10 +68,14 @@ data class NenreiEntity(
     @ColumnInfo(name = "nenrei_joken_name")
     val jokenName: String?,
     @ColumnInfo(name = "nenrei_joken1_miman")
+    val joken1Ijo: String?,
+    @ColumnInfo(name = "nenrei_joken1_ijo")
     val joken1Miman: String?,
     @ColumnInfo(name = "nenrei_joken1_value")
     val joken1Value: String?,
     @ColumnInfo(name = "nenrei_joken2_miman")
+    val joken2Ijo: String?,
+    @ColumnInfo(name = "nenrei_joken2_ijo")
     val joken2Miman: String?,
     @ColumnInfo(name = "nenrei_joken2_value")
     val joken2Value: String?,
@@ -90,6 +94,8 @@ data class NenreiEntity(
     @ColumnInfo(name = "nenrei_joken5_ijo")
     val joken5Ijo: String?,
     @ColumnInfo(name = "nenrei_joken5_value")
+    val joken5Miman: String?,
+    @ColumnInfo(name = "nenrei_joken5_miman")
     val joken5Value: String?,
     @ColumnInfo(name = "nenrei_stroke_kubun")
     val strokeKubun: String?,
