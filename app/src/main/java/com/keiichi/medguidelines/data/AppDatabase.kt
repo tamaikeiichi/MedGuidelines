@@ -18,7 +18,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         IcdEntity::class,
         ByotaiEntity::class,
         BunruiEntity::class,
-        MdcEntity::class
+        MdcEntity::class,
+        NenreiEntity::class
                ],
     version = 1,
     exportSchema = false)
