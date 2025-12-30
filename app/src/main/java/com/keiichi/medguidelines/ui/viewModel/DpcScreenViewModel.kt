@@ -3,6 +3,7 @@
 package com.keiichi.medguidelines.ui.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -53,8 +54,131 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
      * @param item 選択された IcdEntity
      */
     fun onIcdItemSelected(item: IcdEntity) {
-        // 選択された項目のmdcCodeとbunruiCodeを使って、共通のチェック処理を呼び出す
-        checkAndShowByotaiSelection(item.mdcCode, item.bunruiCode)
+        viewModelScope.launch {
+            // --- 1. 病態選択UIの表示判断 ---
+            // 選択された項目のmdcCodeとbunruiCodeがnullでないことを確認
+            if (item.mdcCode != null && item.bunruiCode != null) {
+                // 対応する病態が存在するかチェック
+                val byotaiExists = repository.checkMdcAndBunruiExist(item.mdcCode, item.bunruiCode)
+                if (byotaiExists) {
+                    // 存在すれば、病態の選択肢を準備してUIを表示させる
+                    _byotaiOptions.value = repository.getByotaiNames(item.mdcCode, item.bunruiCode)
+                    _showByotaiSelection.value = true
+                } else {
+                    // 存在しなければ、UIを非表示にする
+                    _showByotaiSelection.value = false
+                    _byotaiOptions.value = emptyList()
+                }
+            } else {
+                _showByotaiSelection.value = false
+                _byotaiOptions.value = emptyList()
+            }
+
+            // --- 2. 年齢選択UIの表示判断 ---
+            // 選択された項目のbunruiCodeがnullでないことを確認
+            if (item.bunruiCode != null) {
+                // nenrei_masterテーブルにbunruiCodeが存在するかチェック
+                val nenreiDataExists = repository.checkBunruiExistsInNenrei(item.bunruiCode)
+                if (nenreiDataExists && item.mdcCode != null) {
+                    // ★ 存在すれば、年齢条件の選択肢リストを生成する
+                    _nenreiOptions.value = createNenreiOptionsList(item.mdcCode, item.bunruiCode)
+                    _showNenreiSelection.value = _nenreiOptions.value.isNotEmpty()
+                } else {
+                    // 存在しなければ、UIを非表示にする
+                    _showNenreiSelection.value = false
+                    _nenreiOptions.value = emptyList()
+                }
+            } else {
+                _showNenreiSelection.value = false
+                _nenreiOptions.value = emptyList()
+            }
+        }
+    }
+
+    /**
+     * 【追加】年齢条件の選択肢リストを生成するヘルパー関数
+     */
+    private suspend fun createNenreiOptionsList(mdcCode: String, bunruiCode: String): List<LabelStringAndScore> {
+        // リポジトリからjoken1〜5のすべての値を取得
+        val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
+        val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
+        val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
+        val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
+        val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
+        val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
+        val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
+        val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
+        val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
+        val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
+
+        val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
+        val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
+        val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
+        val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
+        val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
+        Log.d("tamaiDpc", "Ijo ${joken1Ijo} Miman ${joken1Miman}")
+        // ... joken1Miman, joken1Value, joken2Ijo ... joken5Value まで全て取得 ...
+        Log.d("tamaiDpc", "val joken done")
+        // 取得した値からラベル文字列を安全に生成
+        // 取得した値からラベル文字列を安全に生成する
+        val joken1String: String? = if (!joken1Ijo.isNullOrBlank() && !joken1Miman.isNullOrBlank()) {
+            "${joken1Ijo.toInt()}歳以上${joken1Miman.toInt()}歳未満"
+        } else {
+            null
+        }
+        Log.d("tamaiDpc", "Ijo ${joken1Ijo} Miman ${joken1Miman}")
+        val joken2String: String? = if (!joken2Ijo.isNullOrBlank() && !joken2Miman.isNullOrBlank()) {
+            "${joken2Ijo.toInt()}歳以上${joken2Miman.toInt()}歳未満"
+        } else {
+            null
+        }
+
+        val joken3String: String? = if (!joken3Ijo.isNullOrBlank() && !joken3Miman.isNullOrBlank()) {
+            "${joken3Ijo.toInt()}歳以上${joken3Miman.toInt()}歳未満"
+        } else {
+            null
+        }
+
+        val joken4String: String? = if (!joken4Ijo.isNullOrBlank() && !joken4Miman.isNullOrBlank()) {
+            "${joken4Ijo.toInt()}歳以上${joken4Miman.toInt()}歳未満"
+        } else {
+            null
+        }
+
+        val joken5String: String? = if (!joken5Ijo.isNullOrBlank() && !joken5Miman.isNullOrBlank()) {
+            "${joken5Ijo.toInt()}歳以上${joken5Miman.toInt()}歳未満"
+        } else {
+            null
+        }
+
+        Log.d("tamaiDpc", "val joken string done")
+        // ... joken2String 〜 joken5String まで同様に生成 ...
+
+        // nullでない有効な選択肢だけをリストに追加
+        // nullでない有効な選択肢だけをリストに追加する
+        return buildList {
+            // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (joken1String != null && joken1Value.isNotBlank()) {
+                add(LabelStringAndScore(joken1String, joken1Value.toInt()))
+            }
+            // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (joken2String != null && joken2Value.isNotBlank()) {
+                add(LabelStringAndScore(joken2String, joken2Value.toInt()))
+            }
+            // joken3: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (joken3String != null && joken3Value.isNotBlank()) {
+                add(LabelStringAndScore(joken3String, joken3Value.toInt()))
+            }
+            // joken4: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (joken4String != null && joken4Value.isNotBlank()) {
+                add(LabelStringAndScore(joken4String, joken4Value.toInt()))
+            }
+            // joken5: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (joken5String != null && joken5Value.isNotBlank()) {
+                add(LabelStringAndScore(joken5String, joken5Value.toInt()))
+            }
+        }
+
     }
 
     /**
@@ -78,66 +202,68 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 _showNenreiSelection.value = false // 必要な情報がなければ非表示
                 return@launch
             }
+            // ★★★★★ ここからが修正箇所 ★★★★★
+            // 1. nenrei_master に bunruiCode が存在するかチェック
+            val nenreiDataExists = repository.checkBunruiExistsInNenrei(bunruiCode)
 
-            // --- ここでViewModelがロジックを実行 ---
-            // リポジトリやDAO経由で年齢条件を取得する (この関数はRepositoryに実装する必要がある)
-            val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
-            val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
-            val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
-            val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
-            val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
-            val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
-            val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
-            val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
-            val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
-            val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
+            // 2. 存在する場合 (true) のみ、年齢条件のUIを表示するロジックを実行
+            if (nenreiDataExists) {
+                // --- ここでViewModelがロジックを実行 ---
+                // リポジトリやDAO経由で年齢条件を取得する (この関数はRepositoryに実装する必要がある)
+                val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
+                val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
+                val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
+                val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
+                val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
+                val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
+                val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
+                val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
+                val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
+                val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
 
-            val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
-            val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
-            val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
-            val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
-            val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
+                val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
+                val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
+                val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
+                val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
+                val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
 
+                // ... joken2, 3, 4, 5も同様に取得 ...
+                val joken1String =
+                    joken1Ijo.toInt().toString() + "歳以上" + joken1Miman.toInt().toString() + "歳未満"
+                val joken2String: String? = if (joken2Ijo != null) {
+                    joken2Ijo.toInt().toString() + "歳以上" + joken2Miman.toInt().toString() + "歳未満"
+                } else {
+                    null
+                }
+                val joken3String: String? = if (joken3Ijo != null) {
+                    joken3Ijo.toInt().toString() + "歳以上" + joken3Miman.toInt().toString() + "歳未満"
+                } else {
+                    null
+                }
+                val joken4String: String? = if (joken4Ijo != null) {
+                    joken4Ijo.toInt().toString() + "歳以上" + joken4Miman.toInt().toString() + "歳未満"
+                } else {
+                    null
+                }
+                val joken5String: String? = if (joken5Ijo != null) {
+                    joken5Ijo.toInt().toString() + "歳以上" + joken5Miman.toInt().toString() + "歳未満"
+                } else {
+                    null
+                }
 
-
-
-            // ... joken2, 3, 4, 5も同様に取得 ...
-            val joken1String =
-                joken1Ijo.toInt().toString() + "以上" + joken1Miman.toInt().toString() + "未満"
-            val joken2String: String? = if (joken2Ijo != null) {
-                joken2Ijo.toInt().toString() + "以上" + joken2Miman.toInt().toString() + "未満"
+                // 有効な選択肢だけをリストにする
+                val options: List<LabelStringAndScore> = buildList {
+                    add(LabelStringAndScore(joken1String, joken1Value.toInt()))
+                    add(LabelStringAndScore(joken2String, joken2Value.toInt()))
+                    add(LabelStringAndScore(joken3String, joken3Value.toInt()))
+                    add(LabelStringAndScore(joken4String, joken4Value.toInt()))
+                    add(LabelStringAndScore(joken5String, joken5Value.toInt()))
+                }
+                // 年齢条件UIを表示するためのロジック (以前の会話で作成したもの)
+                // (リポジトリからjoken1Ijoなどを取得し、_nenreiOptionsを更新する処理)
+                _showNenreiSelection.value = true // ★ true にする
             } else {
-                null
-            }
-            val joken3String: String? = if (joken3Ijo != null) {
-                joken3Ijo.toInt().toString() + "以上" + joken3Miman.toInt().toString() + "未満"
-            } else {
-                null
-            }
-            val joken4String: String? = if (joken4Ijo != null) {
-                joken4Ijo.toInt().toString() + "以上" + joken4Miman.toInt().toString() + "未満"
-            } else {
-                null
-            }
-            val joken5String: String? = if (joken5Ijo != null) {
-                joken5Ijo.toInt().toString() + "以上" + joken5Miman.toInt().toString() + "未満"
-            } else {
-                null
-            }
-
-            // 有効な選択肢だけをリストにする
-            val options: List<LabelStringAndScore> = buildList {
-                add(LabelStringAndScore(joken1String, joken1Value.toInt()))
-                add(LabelStringAndScore(joken2String, joken2Value.toInt()))
-                add(LabelStringAndScore(joken3String, joken3Value.toInt()))
-                add(LabelStringAndScore(joken4String, joken4Value.toInt()))
-                add(LabelStringAndScore(joken5String, joken5Value.toInt()))
-            }
-
-            if (options.isNotEmpty()) {
-                _nenreiOptions.value = options
-                _showNenreiSelection.value = true // ★ 年齢選択UIを表示
-            } else {
+                // 存在しない場合は、UIを非表示にする
                 _showNenreiSelection.value = false
             }
         }
@@ -203,19 +329,19 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
                 // 2. 取得した値からラベル文字列を安全に生成する
                 val joken1String: String? = if (joken1Ijo != null && joken1Miman != null) {
-                    "${joken1Ijo.toInt()}以上${joken1Miman.toInt()}未満"
+                    "${joken1Ijo.toInt()}歳以上${joken1Miman.toInt()}歳未満"
                 } else { null }
                 val joken2String: String? = if (joken2Ijo != null && joken2Miman != null) {
-                    "${joken2Ijo.toInt()}以上${joken2Miman.toInt()}未満"
+                    "${joken2Ijo.toInt()}歳以上${joken2Miman.toInt()}歳未満"
                 } else { null }
                 val joken3String: String? = if (joken3Ijo != null && joken3Miman != null) {
-                    "${joken3Ijo.toInt()}以上${joken3Miman.toInt()}未満"
+                    "${joken3Ijo.toInt()}歳以上${joken3Miman.toInt()}歳未満"
                 } else { null }
                 val joken4String: String? = if (joken4Ijo != null && joken4Miman != null) {
-                    "${joken4Ijo.toInt()}以上${joken4Miman.toInt()}未満"
+                    "${joken4Ijo.toInt()}歳以上${joken4Miman.toInt()}歳未満"
                 } else { null }
                 val joken5String: String? = if (joken5Ijo != null && joken5Miman != null) {
-                    "${joken5Ijo.toInt()}以上${joken5Miman.toInt()}未満"
+                    "${joken5Ijo.toInt()}歳以上${joken5Miman.toInt()}歳未満"
                 } else { null }
 
                 // 3. nullでない有効な選択肢だけをリストに追加する

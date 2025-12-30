@@ -59,6 +59,7 @@ data class MdcEntity(
 data class NenreiEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+
     @ColumnInfo(name = "mdc_code")
     val mdcCode: String?,
     @ColumnInfo(name = "bunrui_code")
@@ -67,18 +68,23 @@ data class NenreiEntity(
     val jokenKubun: String?,
     @ColumnInfo(name = "nenrei_joken_name")
     val jokenName: String?,
-    @ColumnInfo(name = "nenrei_joken1_miman")
+
+    @ColumnInfo(name = "nenrei_joken1_ijo")   // 修正: _ijo
     val joken1Ijo: String?,
-    @ColumnInfo(name = "nenrei_joken1_ijo")
+
+    @ColumnInfo(name = "nenrei_joken1_miman") // 修正: _miman
     val joken1Miman: String?,
+
     @ColumnInfo(name = "nenrei_joken1_value")
     val joken1Value: String?,
-    @ColumnInfo(name = "nenrei_joken2_miman")
+
+    @ColumnInfo(name = "nenrei_joken2_ijo")   // 修正: _ijo
     val joken2Ijo: String?,
-    @ColumnInfo(name = "nenrei_joken2_ijo")
+    @ColumnInfo(name = "nenrei_joken2_miman") // 修正: _miman
     val joken2Miman: String?,
     @ColumnInfo(name = "nenrei_joken2_value")
     val joken2Value: String?,
+
     @ColumnInfo(name = "nenrei_joken3_ijo")
     val joken3Ijo: String?,
     @ColumnInfo(name = "nenrei_joken3_miman")
@@ -91,12 +97,14 @@ data class NenreiEntity(
     val joken4Miman: String?,
     @ColumnInfo(name = "nenrei_joken4_value")
     val joken4Value: String?,
+
     @ColumnInfo(name = "nenrei_joken5_ijo")
     val joken5Ijo: String?,
-    @ColumnInfo(name = "nenrei_joken5_value")
+    @ColumnInfo(name = "nenrei_joken5_miman") // 修正: _miman
     val joken5Miman: String?,
-    @ColumnInfo(name = "nenrei_joken5_miman")
+    @ColumnInfo(name = "nenrei_joken5_value") // 修正: _value
     val joken5Value: String?,
+
     @ColumnInfo(name = "nenrei_stroke_kubun")
     val strokeKubun: String?,
     @ColumnInfo(name = "nenrei_stroke_name")

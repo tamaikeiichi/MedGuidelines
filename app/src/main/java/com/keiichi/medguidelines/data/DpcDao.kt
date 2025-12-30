@@ -215,4 +215,13 @@ interface DpcDao {
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getStrokeNames(mdcCode: String, bunruiCode: String): List<String>
 
+    /**
+     * nenrei_masterテーブルに、指定されたbunruiCodeを持つレコードが存在するかどうかをチェックする
+     * @param bunruiCode チェックする分類コード
+     * @return 存在すれば true, しなければ false
+     */
+    @Query("SELECT EXISTS(SELECT 1 FROM nenrei_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
+    suspend fun existsBunruiInNenreiMaster(bunruiCode: String): Boolean
+
+
 }

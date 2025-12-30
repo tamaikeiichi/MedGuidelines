@@ -41,6 +41,10 @@ class DpcRepository(private val dpcDao: DpcDao) {
         }
     }
 
+    suspend fun checkBunruiExistsInNenrei(bunruiCode: String): Boolean {
+        return dpcDao.existsBunruiInNenreiMaster(bunruiCode)
+    }
+
     /**
      * MDCコードと分類コードに一致する病態名のリストを取得する。
      * @param mdcCode 検索するMDCコード

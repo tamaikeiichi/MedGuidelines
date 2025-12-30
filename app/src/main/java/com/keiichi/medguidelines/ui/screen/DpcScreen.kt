@@ -87,7 +87,7 @@ fun DpcScreen(
     // データベースからの検索結果を購読
     val displayedItemsIcd by dpcScreenViewModel.displayedItemsIcd.collectAsState()
 
-    var query by remember { mutableStateOf("J16") }
+    var query by remember { mutableStateOf("I63") }
 
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
@@ -203,6 +203,7 @@ fun DpcScreen(
 
                                                     // 3. ViewModelのメソッドを呼び出してイベントを通知する
                                                     dpcScreenViewModel.onIcdItemSelected(icdItem)
+
                                                     Log.d(
                                                         "tamaiDpc",
                                                         " dpcScreenViewModel.onIcdItemSelected(icdItem) ran"
@@ -302,7 +303,8 @@ fun DpcScreen(
                                         title = R.string.age,
                                         // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
                                         defaultSelectedOption = nenreiOptions.first().labelResId,
-                                        onOptionSelected = { selectedOption -> null }
+                                        onOptionSelected = { selectedOption -> null },
+                                        isNumberDisplayed = false
                                     )
                                 // 必要であれば、選択されたnenreiValueをdpcCodeFirstにセットする
                                 // LaunchedEffect(nenreiValue) {
