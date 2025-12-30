@@ -70,6 +70,71 @@ interface DpcDao {
     @androidx.room.Query("SELECT byotai_name FROM byotai_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getByotaiNames(mdcCode: String, bunruiCode: String): List<String>
 
+    @androidx.room.Query("SELECT nenrei_joken1_ijo " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken1Ijo(mdcCode: String, bunruiCode: String): String
+    @androidx.room.Query("SELECT nenrei_joken1_miman " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken1Miman(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken1_value " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken1Value(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken2_ijo " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken2Ijo(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken2_miman " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken2Miman(mdcCode: String, bunruiCode: String): String
+
+    @Query("SELECT nenrei_joken2_value " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken2Value(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken3_ijo " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken3Ijo(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken3_miman " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken3Miman(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken3_value " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken3Value(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken4_ijo " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode " )
+    suspend fun getNenreiJoken4Ijo(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken4_miman " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken4Miman(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken4_value " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken4Value(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken5_ijo " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken5Ijo(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken5_miman " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken5Miman(mdcCode: String, bunruiCode: String): String
+    @Query("SELECT nenrei_joken5_value " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getNenreiJoken5Value(mdcCode: String, bunruiCode: String): String
+
+
+
+
     /**
      * 指定された病態名に一致する行の病態コード（3列目）を取得します。
      */
@@ -128,20 +193,26 @@ interface DpcDao {
      * 指定されたMDCコードに一致する、ユニークなMDCコードのリストを取得します。
      * （MDCコードが含まれているかどうかのチェック用）
      */
-    @androidx.room.Query("SELECT DISTINCT nenrei_mdc_code FROM nenrei_master WHERE nenrei_mdc_code = :mdcCode")
+    @androidx.room.Query("SELECT DISTINCT mdc_code " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode")
     suspend fun getUniqueMdcFromNenrei(mdcCode: String): List<String>
 
     /**
      * 指定された分類コードに一致する、ユニークな分類コードのリストを取得します。
      * （分類コードが含まれているかどうかのチェック用）
      */
-    @androidx.room.Query("SELECT DISTINCT nenrei_bunrui_code FROM nenrei_master WHERE nenrei_bunrui_code = :bunruiCode")
+    @androidx.room.Query("SELECT DISTINCT bunrui_code " +
+            "FROM nenrei_master " +
+            "WHERE bunrui_code = :bunruiCode")
     suspend fun getUniqueBunruiFromNenrei(bunruiCode: String): List<String>
 
     /**
      * 指定されたMDCコードと分類コードに一致する脳卒中発症時　区分名称
      */
-    @androidx.room.Query("SELECT DISTINCT nenrei_stroke_name FROM nenrei_master WHERE nenrei_mdc_code = :mdcCode AND nenrei_bunrui_code = :bunruiCode")
+    @androidx.room.Query("SELECT DISTINCT nenrei_stroke_name " +
+            "FROM nenrei_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getStrokeNames(mdcCode: String, bunruiCode: String): List<String>
 
 }

@@ -45,14 +45,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.LabelAndScore
+import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun RadioButtonAndExpandWithScoreDisplayed(
-    options: List<LabelAndScore>, // Changed from radioOptions: List<Int>
-    selectedOption: LabelAndScore, // Changed from selectedOption: Int
-    onOptionSelected: (selectedOption: LabelAndScore) -> Unit, // Changed callback type
+fun RadioButtonAndExpandWithScoreDisplayedLabelString(
+    options: List<LabelStringAndScore>, // Changed from radioOptions: List<Int>
+    selectedOption: LabelStringAndScore, // Changed from selectedOption: Int
+    onOptionSelected: (selectedOption: LabelStringAndScore) -> Unit, // Changed callback type
     title: Int, // R.string resource for the title
     titleNote: Int, // R.string resource for the note, R.string.space if no note
     cardColor: Color = MaterialTheme.colorScheme.onPrimary,
@@ -142,10 +143,10 @@ fun RadioButtonAndExpandWithScoreDisplayed(
                                 )
                             }
                         }
-                            // The Spacer pushes the Icon to the far right
-                            //Spacer(modifier = Modifier.weight(1f))
+                        // The Spacer pushes the Icon to the far right
+                        //Spacer(modifier = Modifier.weight(1f))
 
-                        }
+                    }
 
                     if (expanded && hasTitleNote) {
                         Text(
@@ -178,69 +179,71 @@ fun RadioButtonAndExpandWithScoreDisplayed(
             ) {
                 options.forEach { option -> // Iterate over List<ScoreOption>
                     val isSelected = (option == selectedOption)
-                        Row(
-                            Modifier
-                                .selectable(
-                                    selected = (option == selectedOption), // Compare ScoreOption objects
-                                    onClick = { onOptionSelected(option) }, // Pass the selected ScoreOption
-                                    role = Role.RadioButton,
-                                )
-                                .padding(
-                                    horizontal = 4.dp,
-                                    vertical = 8.dp
-                                ), // Increased vertical padding
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                    Row(
+                        Modifier
+                            .selectable(
+                                selected = (option == selectedOption), // Compare ScoreOption objects
+                                onClick = { onOptionSelected(option) }, // Pass the selected ScoreOption
+                                role = Role.RadioButton,
+                            )
+                            .padding(
+                                horizontal = 4.dp,
+                                vertical = 8.dp
+                            ), // Increased vertical padding
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 // --- Start of Custom Overlay RadioButton ---
-                            val radioButtonSize = 24.dp
-                            Box(
-                                modifier = Modifier.size(radioButtonSize), // Standard RadioButton touch target size
-                                contentAlignment = Alignment.Center
-                            ) {
-                                // Layer 1: The RadioButton itself
-                                ThinRadioButton(
-                                    selected = isSelected,
-                                    strokeWidth = 1.dp,
-                                    size = radioButtonSize,
-                                    isNumberDisplayed = isNumberDisplayed
-                                )
-                                // Layer 2: The overlayed Text, shown only if the score is not 0
-                                if (isNumberDisplayed) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                        //.padding(bottom = 2.dp)
-                                        ,
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            modifier = Modifier,
-                                            //.padding(bottom = 1.dp)
-                                            //.wrapContentSize(),
-                                            //.offset(y = (-1).dp),
-                                            text = "${option.score}",
-                                            color = if (isSelected) {
-                                                // Change text color to be visible on the selected radio button color
-                                                MaterialTheme.colorScheme.onPrimary
-                                            } else {
-                                                // Use the default text color when not selected
-                                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                            },
-                                            style = TextStyle(
-                                                fontSize = 14.sp,
-                                            )
+                        val radioButtonSize = 24.dp
+                        Box(
+                            modifier = Modifier.size(radioButtonSize), // Standard RadioButton touch target size
+                            contentAlignment = Alignment.Center
+                        ) {
+                            // Layer 1: The RadioButton itself
+                            ThinRadioButton(
+                                selected = isSelected,
+                                strokeWidth = 1.dp,
+                                size = radioButtonSize,
+                                isNumberDisplayed = isNumberDisplayed
+                            )
+                            // Layer 2: The overlayed Text, shown only if the score is not 0
+                            if (isNumberDisplayed) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                    //.padding(bottom = 2.dp)
+                                    ,
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        modifier = Modifier,
+                                        //.padding(bottom = 1.dp)
+                                        //.wrapContentSize(),
+                                        //.offset(y = (-1).dp),
+                                        text = "${option.score}",
+                                        color = if (isSelected) {
+                                            // Change text color to be visible on the selected radio button color
+                                            MaterialTheme.colorScheme.onPrimary
+                                        } else {
+                                            // Use the default text color when not selected
+                                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                        },
+                                        style = TextStyle(
+                                            fontSize = 14.sp,
                                         )
-                                    }
+                                    )
                                 }
                             }
-                            // --- End of Custom Overlay RadioButton ---
+                        }
+                        // --- End of Custom Overlay RadioButton ---
 
+                        option.labelResId?.let {
                             Text(
-                                text = parseStyledString(option.labelResId), // Use labelResId from ScoreOption
+                                text = it, // Use labelResId from ScoreOption
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(start = 8.dp), // Increased start padding
                                 softWrap = true,
                             )
+                        }
 //                        }
                     }
                 }
@@ -256,7 +259,7 @@ fun RadioButtonAndExpandWithScoreDisplayed(
 
 @Preview
 @Composable
-fun RadioButtonAndExpandWithScoreDisplayedPreview(){
+fun RadioButtonAndExpandWithScoreDisplayedLabelStringPreview(){
     val previewOptions = listOf(
         LabelAndScore(R.string.none, 0),
         LabelAndScore(R.string.mild, 1),
@@ -275,7 +278,7 @@ fun RadioButtonAndExpandWithScoreDisplayedPreview(){
 
 @Preview
 @Composable
-fun RadioButtonAndExpandWithScoreDisplayedPreview2(){
+fun RadioButtonAndExpandWithScoreDisplayedLabelStringPreview2(){
     val previewOptions = listOf(
         LabelAndScore(R.string.none, 0),
         LabelAndScore(R.string.mild, 1),

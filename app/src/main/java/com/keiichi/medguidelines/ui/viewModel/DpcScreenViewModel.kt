@@ -13,6 +13,7 @@ import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.IcdEntity // IcdEntityをインポート
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
+import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -36,10 +37,16 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _showByotaiSelection = kotlinx.coroutines.flow.MutableStateFlow(false)
     val showByotaiSelection: StateFlow<Boolean> = _showByotaiSelection.asStateFlow()
 
+    private val _showNenreiSelection = MutableStateFlow(false)
+    val showNenreiSelection: StateFlow<Boolean> = _showNenreiSelection.asStateFlow()
+
     // 病態ドロップダウンの選択肢リスト
     private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
     val byotaiOptions: StateFlow<List<String>> = _byotaiOptions.asStateFlow()
 
+    // 年齢ラジオボタン
+    private val _nenreiOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
+    val nenreiOptions: StateFlow<List<LabelStringAndScore>> = _nenreiOptions.asStateFlow()
 
     /**
      * 【修正案1】ICDリストの項目が選択されたときに呼び出されるメソッド
@@ -57,6 +64,83 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     fun onBunruiItemSelected(item: BunruiEntity) {
         // 選択された項目のmdcCodeとbunruiCodeを使って、共通のチェック処理を呼び出す
         checkAndShowByotaiSelection(item.mdcCode, item.bunruiCode)
+    }
+
+    /**
+     * 病態名が選択されたときに呼び出される
+     * @param mdcCode 選択された項目のMDCコード
+     * @param bunruiCode 選択された項目の分類コード
+     * @param byotaiCode 選択された病態コード
+     */
+    fun onNenreiSelected(mdcCode: String?, bunruiCode: String?, byotaiCode: String?) {
+        viewModelScope.launch {
+            if (mdcCode == null || bunruiCode == null || byotaiCode == null) {
+                _showNenreiSelection.value = false // 必要な情報がなければ非表示
+                return@launch
+            }
+
+            // --- ここでViewModelがロジックを実行 ---
+            // リポジトリやDAO経由で年齢条件を取得する (この関数はRepositoryに実装する必要がある)
+            val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
+            val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
+            val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
+            val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
+            val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
+            val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
+            val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
+            val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
+            val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
+            val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
+
+            val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
+            val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
+            val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
+            val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
+            val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
+
+
+
+
+            // ... joken2, 3, 4, 5も同様に取得 ...
+            val joken1String =
+                joken1Ijo.toInt().toString() + "以上" + joken1Miman.toInt().toString() + "未満"
+            val joken2String: String? = if (joken2Ijo != null) {
+                joken2Ijo.toInt().toString() + "以上" + joken2Miman.toInt().toString() + "未満"
+            } else {
+                null
+            }
+            val joken3String: String? = if (joken3Ijo != null) {
+                joken3Ijo.toInt().toString() + "以上" + joken3Miman.toInt().toString() + "未満"
+            } else {
+                null
+            }
+            val joken4String: String? = if (joken4Ijo != null) {
+                joken4Ijo.toInt().toString() + "以上" + joken4Miman.toInt().toString() + "未満"
+            } else {
+                null
+            }
+            val joken5String: String? = if (joken5Ijo != null) {
+                joken5Ijo.toInt().toString() + "以上" + joken5Miman.toInt().toString() + "未満"
+            } else {
+                null
+            }
+
+            // 有効な選択肢だけをリストにする
+            val options: List<LabelStringAndScore> = buildList {
+                add(LabelStringAndScore(joken1String, joken1Value.toInt()))
+                add(LabelStringAndScore(joken2String, joken2Value.toInt()))
+                add(LabelStringAndScore(joken3String, joken3Value.toInt()))
+                add(LabelStringAndScore(joken4String, joken4Value.toInt()))
+                add(LabelStringAndScore(joken5String, joken5Value.toInt()))
+            }
+
+            if (options.isNotEmpty()) {
+                _nenreiOptions.value = options
+                _showNenreiSelection.value = true // ★ 年齢選択UIを表示
+            } else {
+                _showNenreiSelection.value = false
+            }
+        }
     }
 
     /**
@@ -87,6 +171,76 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
+// DpcScreenViewModel.kt
+
+    private fun checkAndShowNenreiSelection(mdcCode: String?, bunruiCode: String?) {
+        viewModelScope.launch {
+            // mdcCodeとbunruiCodeがnullでないことを確認
+            if (mdcCode != null && bunruiCode != null) {
+                // --- ここからが修正箇所 ---
+
+                // 1. 年齢条件を決定するために必要な値をすべてリポジトリから取得する
+                val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
+                val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
+                val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
+
+                val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
+                val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
+                val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
+
+                val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
+                val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
+                val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
+
+                val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
+                val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
+                val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
+
+                val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
+                val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
+                val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
+
+                // 2. 取得した値からラベル文字列を安全に生成する
+                val joken1String: String? = if (joken1Ijo != null && joken1Miman != null) {
+                    "${joken1Ijo.toInt()}以上${joken1Miman.toInt()}未満"
+                } else { null }
+                val joken2String: String? = if (joken2Ijo != null && joken2Miman != null) {
+                    "${joken2Ijo.toInt()}以上${joken2Miman.toInt()}未満"
+                } else { null }
+                val joken3String: String? = if (joken3Ijo != null && joken3Miman != null) {
+                    "${joken3Ijo.toInt()}以上${joken3Miman.toInt()}未満"
+                } else { null }
+                val joken4String: String? = if (joken4Ijo != null && joken4Miman != null) {
+                    "${joken4Ijo.toInt()}以上${joken4Miman.toInt()}未満"
+                } else { null }
+                val joken5String: String? = if (joken5Ijo != null && joken5Miman != null) {
+                    "${joken5Ijo.toInt()}以上${joken5Miman.toInt()}未満"
+                } else { null }
+
+                // 3. nullでない有効な選択肢だけをリストに追加する
+                val options: List<LabelStringAndScore> = buildList {
+                    if (joken1String != null && joken1Value != null) add(LabelStringAndScore(joken1String, joken1Value.toInt()))
+                    if (joken2String != null && joken2Value != null) add(LabelStringAndScore(joken2String, joken2Value.toInt()))
+                    if (joken3String != null && joken3Value != null) add(LabelStringAndScore(joken3String, joken3Value.toInt()))
+                    if (joken4String != null && joken4Value != null) add(LabelStringAndScore(joken4String, joken4Value.toInt()))
+                    if (joken5String != null && joken5Value != null) add(LabelStringAndScore(joken5String, joken5Value.toInt()))
+                }
+
+                // 4. 生成したリストをStateFlowにセットし、UIの表示を制御する
+                _nenreiOptions.value = options
+                _showNenreiSelection.value = options.isNotEmpty()
+
+                // --- ここまでが修正箇所 ---
+
+            } else {
+                // mdcCodeまたはbunruiCodeがnullの場合は、UIを非表示にする
+                _showNenreiSelection.value = false
+                _nenreiOptions.value = emptyList()
+            }
+        }
+    }
+
 
 
 

@@ -59,10 +59,10 @@ data class MdcEntity(
 data class NenreiEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    @ColumnInfo(name = "nenrei_mdc_code")
-    val nenreiMdcCode: String?,
-    @ColumnInfo(name = "nenrei_bunrui_code")
-    val nenreiBunruiCode: String?,
+    @ColumnInfo(name = "mdc_code")
+    val mdcCode: String?,
+    @ColumnInfo(name = "bunrui_code")
+    val bunruiCode: String?,
     @ColumnInfo(name = "nenrei_joken_kubun")
     val jokenKubun: String?,
     @ColumnInfo(name = "nenrei_joken_name")

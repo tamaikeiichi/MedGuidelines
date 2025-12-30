@@ -36,6 +36,7 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
+import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectableLabelString
 import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlinx.dataframe.DataFrame
@@ -55,6 +56,11 @@ data class DpcCode(
     var icd: String? = "x"
 )
 
+data class LabelStringAndScore(
+    val labelResId: String?, // ★ Int から String に変更
+    val score: Int
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DpcScreen(
@@ -67,6 +73,7 @@ fun DpcScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var loadingMessage by remember { mutableStateOf("Starting to load data...") }
     val showByotaiSelection by dpcScreenViewModel.showByotaiSelection.collectAsState()
+    val showNenreiSelection by dpcScreenViewModel.showNenreiSelection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var searchResultsVisible by remember { mutableStateOf(true) }
 
@@ -279,6 +286,32 @@ fun DpcScreen(
                             }
                         }
                     }
+                    // --- 年齢選択UI ---
+                    if (showNenreiSelection) {
+                        Log.d("tamaiDpc", "after if (showNenreiSelection)")
+
+                        // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                        val nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+
+                        // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
+                        if (nenreiOptions.isNotEmpty()) {
+                            MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                                val nenreiValue =
+                                    buttonAndScoreWithScoreDisplayedSelectableLabelString(
+                                        optionsWithScores = nenreiOptions,
+                                        title = R.string.age,
+                                        // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
+                                        defaultSelectedOption = nenreiOptions.first().labelResId,
+                                        onOptionSelected = { selectedOption -> null }
+                                    )
+                                // 必要であれば、選択されたnenreiValueをdpcCodeFirstにセットする
+                                // LaunchedEffect(nenreiValue) {
+                                //     dpcCodeFirst = dpcCodeFirst.copy(nenrei = nenreiValue.toString())
+                                // }
+                            }
+                        }
+                    }
+
                 }
             }
         }

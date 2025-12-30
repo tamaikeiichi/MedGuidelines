@@ -8,18 +8,13 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.ParserOptions
 import org.jetbrains.kotlinx.dataframe.api.rows
 import org.jetbrains.kotlinx.dataframe.io.ColType
-import org.jetbrains.kotlinx.dataframe.io.NameRepairStrategy
 import org.jetbrains.kotlinx.dataframe.io.readCSV
-import org.jetbrains.kotlinx.dataframe.io.readExcel
 import java.io.InputStream
 import java.nio.charset.Charset
-import kotlin.collections.get
-import kotlin.toString
 
 class DpcRepository(private val dpcDao: DpcDao) {
     val excelResourceId = R.raw.dpc001348055
@@ -57,6 +52,85 @@ class DpcRepository(private val dpcDao: DpcDao) {
             dpcDao.getByotaiNames(mdcCode, bunruiCode)
         }
     }
+
+    suspend fun getNenreiJoken1Ijo(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken1Ijo(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken1Miman(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken1Miman(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken1Value(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken1Value(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken2Ijo(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken2Ijo(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken2Miman(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken2Miman(mdcCode, bunruiCode)
+        }
+        }
+    suspend fun getNenreiJoken2Value(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken2Value(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken3Ijo(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken3Ijo(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken3Miman(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken3Miman(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken3Value(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken3Value(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken4Ijo(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken4Ijo(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken4Miman(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken4Miman(mdcCode, bunruiCode)
+        }
+        }
+    suspend fun getNenreiJoken4Value(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken4Value(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken5Ijo(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken5Ijo(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getNenreiJoken5Miman(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken5Miman(mdcCode, bunruiCode)
+
+        }
+    }
+    suspend fun getNenreiJoken5Value(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getNenreiJoken5Value(mdcCode, bunruiCode)
+        }
+    }
+
+
 
     /**
      * 病態名から対応する病態コードを取得する。
@@ -230,8 +304,8 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     val nenreiList = nenreiDf.rows().map { row ->
                         NenreiEntity(
                             // nenreiEntityの定義に合わせて列を指定
-                            nenreiMdcCode = row[0]?.toString() ?: "",
-                            nenreiBunruiCode = row[1]?.toString() ?: "",
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
                             jokenKubun = row[2]?.toString() ?: "",
                             jokenName = row[3]?.toString() ?: "",
                             joken1Ijo = row[4]?.toString() ?: "",
