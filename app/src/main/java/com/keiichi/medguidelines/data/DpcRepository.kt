@@ -333,6 +333,39 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     }
                     dpcDao.insertAllNenrei(nenreiList)
                 }
+
+                if (ShujutsuDao.getShujutsuCount() == 0) {
+                    val headerNames = (1..21).map { it.toString() }
+                    val columnTypes: Map<String, ColType> =
+                        headerNames.associateWith { ColType.String }
+                    val inputStream: InputStream =
+                        context.resources.openRawResource(R.raw.dpc001348055_6)
+                    Log.d("tamaiDpc", "shujutsu reading")
+                    // DataFrameを格納する変数を宣言
+                    val shujutsuDf: DataFrame<*>
+                    inputStream.use { stream ->
+                        // CSVの全データをDataFrameとして一括で読み込む
+                        shujutsuDf = DataFrame.readCSV(
+                            stream = stream,
+                            header = headerNames,
+                            charset = Charset.forName("Shift-JIS"),
+                            colTypes = columnTypes, // Specify that all columns should be read as String
+                            skipLines = 2,
+                            parserOptions = ParserOptions() // Keep default or adjust as needed
+                        )
+                    }
+                    val shujutsuList = shujutsuDf.rows().map { row ->
+                        ShujutsuEntity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
+                            taiouCode = row[5]?.toString() ?: "",
+                            shujutsu1Name = row[6]?.toString() ?: "",
+                            shujutsu2Name = row[7]?.toString() ?: "",
+                        )
+                    }
+                    dpcDao.insertAllNenrei(shujutsuList)
+                }
             } catch (e: Exception) {
                 Log.e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
             }

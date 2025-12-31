@@ -110,3 +110,20 @@ data class NenreiEntity(
     @ColumnInfo(name = "nenrei_stroke_name")
     val strokeName: String?,
 )
+
+@Entity(tableName = "shujutsu_master")
+data class ShujutsuEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    @ColumnInfo(name = "mdc_code")
+    val mdcCode: String?,
+    @ColumnInfo(name = "bunrui_code")
+    val bunruiCode: String?,
+    @ColumnInfo(name = "taiou_code")
+    val taiouCode: String?,
+    @ColumnInfo(name = "shujutsu1_name")
+    val shujutsu1Name: String?,
+    @ColumnInfo(name = "shujutsu2_name")
+    val shujutsu2Name: String?,
+)

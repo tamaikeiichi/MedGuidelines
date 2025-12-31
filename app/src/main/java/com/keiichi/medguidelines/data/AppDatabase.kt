@@ -19,7 +19,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ByotaiEntity::class,
         BunruiEntity::class,
         MdcEntity::class,
-        NenreiEntity::class
+        NenreiEntity::class,
+        ShujutsuEntity::class,
                ],
     version = 1,
     exportSchema = false)

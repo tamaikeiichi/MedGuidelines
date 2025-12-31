@@ -296,20 +296,24 @@ fun DpcScreen(
 
                         // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
                         if (nenreiOptions.isNotEmpty()) {
+                            var selectedNenrei: String? by remember(nenreiOptions) {
+                                mutableStateOf(nenreiOptions.first().labelResId)
+                            }
                             MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
                                 val nenreiValue =
                                     buttonAndScoreWithScoreDisplayedSelectableLabelString(
                                         optionsWithScores = nenreiOptions,
                                         title = R.string.age,
                                         // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
-                                        defaultSelectedOption = nenreiOptions.first().labelResId,
-                                        onOptionSelected = { selectedOption -> null },
+                                        defaultSelectedOption = selectedNenrei,
+                                        onOptionSelected = { newSelection ->
+                                            selectedNenrei = newSelection
+                                        },
                                         isNumberDisplayed = false
                                     )
-                                // 必要であれば、選択されたnenreiValueをdpcCodeFirstにセットする
-                                // LaunchedEffect(nenreiValue) {
-                                //     dpcCodeFirst = dpcCodeFirst.copy(nenrei = nenreiValue.toString())
-                                // }
+                                LaunchedEffect(selectedNenrei) {
+                                    dpcCodeFirst = dpcCodeFirst.copy(nenrei = selectedNenrei.toString())
+                                }
                             }
                         }
                     }
