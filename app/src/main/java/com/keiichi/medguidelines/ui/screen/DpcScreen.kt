@@ -74,6 +74,7 @@ fun DpcScreen(
     var loadingMessage by remember { mutableStateOf("Starting to load data...") }
     val showByotaiSelection by dpcScreenViewModel.showByotaiSelection.collectAsState()
     val showNenreiSelection by dpcScreenViewModel.showNenreiSelection.collectAsState()
+    val showShujutsuSelection by dpcScreenViewModel.showShujutsuSelection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var searchResultsVisible by remember { mutableStateOf(true) }
 
@@ -313,6 +314,73 @@ fun DpcScreen(
                                     )
                                 LaunchedEffect(selectedNenrei) {
                                     dpcCodeFirst = dpcCodeFirst.copy(nenrei = selectedNenrei.toString())
+                                }
+                            }
+                        }
+                    }
+
+                    if (showShujutsuSelection) {
+                        Log.d("tamaiDpc", "after if (showShujutsuSelection)")
+                        var expanded by remember { mutableStateOf(false) }
+                        // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                        val shujutsuOptions by dpcScreenViewModel.shujutsuOptions.collectAsState()
+                        var selectedOption by remember(shujutsuOptions) {
+                            mutableStateOf(shujutsuOptions.firstOrNull() ?: "選択してください")
+                        }
+                        // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
+                        if (shujutsuOptions.isNotEmpty()) {
+                            var selectedShujutsu: String? by remember(shujutsuOptions) {
+                                mutableStateOf(shujutsuOptions.first().labelResId)
+                            }
+                            MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                                ExposedDropdownMenuBox(
+                                    expanded = expanded,
+                                    onExpandedChange = { expanded = !expanded }
+                                ) {
+                                    TextField(
+                                        value = selectedOption,
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        trailingIcon = {
+                                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                        },
+                                        colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                            unfocusedContainerColor = Color.Transparent,
+                                            focusedContainerColor = Color.Transparent
+                                        ),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .menuAnchor()
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false },
+                                    ) {
+                                        byotaiOptions.forEach { option ->
+                                            if (option.isNotBlank()) {
+                                                DropdownMenuItem(
+                                                    text = { Text(option) },
+                                                    onClick = {
+                                                        selectedOption = option
+                                                        expanded = false
+                                                        // --- イベント: 病態名が選択された ---
+                                                        coroutineScope.launch {
+                                                            val shujutsuCode =
+                                                                dpcScreenViewModel.getByotaiCode(option)
+                                                            if (shujutsuCode != null) {
+                                                                // 取得した病態コードでUIの状態を更新
+                                                                val finalCode =
+                                                                    shujutsuCode.toDoubleOrNull()?.toInt()
+                                                                        ?.toString() ?: shujutsuCode
+                                                                dpcCodeFirst =
+                                                                    dpcCodeFirst.copy(shujutu = finalCode)
+                                                            }
+                                                        }
+                                                    }
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

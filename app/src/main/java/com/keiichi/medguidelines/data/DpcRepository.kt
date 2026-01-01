@@ -4,6 +4,7 @@ package com.keiichi.medguidelines.data
 
 import android.content.Context
 import android.util.Log
+import android.util.Log.e
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +46,10 @@ class DpcRepository(private val dpcDao: DpcDao) {
         return dpcDao.existsBunruiInNenreiMaster(bunruiCode)
     }
 
+    suspend fun checkBunruiExistsInShujutsu(bunruiCode: String): Boolean {
+        return dpcDao.existsBunruiInShujutsuMaster(bunruiCode)
+    }
+
     /**
      * MDCコードと分類コードに一致する病態名のリストを取得する。
      * @param mdcCode 検索するMDCコード
@@ -56,6 +61,10 @@ class DpcRepository(private val dpcDao: DpcDao) {
             dpcDao.getByotaiNames(mdcCode, bunruiCode)
         }
     }
+
+
+
+
 
     suspend fun getNenreiJoken1Ijo(mdcCode: String, bunruiCode: String): String {
         return withContext(Dispatchers.IO) {
@@ -334,7 +343,35 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     dpcDao.insertAllNenrei(nenreiList)
                 }
 
-                if (ShujutsuDao.getShujutsuCount() == 0) {
+
+            } catch (e: Exception) {
+                Log.e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
+            // TODO: 他のテーブルについても同様のチェックとデータ投入処理を追加
+        }
+    }
+
+    /**
+     * 分類マスターテーブルを検索する。
+     * DAOのメソッドがFlowを返すので、そのままViewModelに渡す。
+     * @param query 検索文字列
+     * @return 検索結果のFlow
+     */
+    fun searchBunrui(query: String) = dpcDao.searchBunrui("%$query%")
+
+}
+
+class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
+    suspend fun getShujutsuNames(mdcCode: String, bunruiCode: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            shujutsuDao.getShujutsuNames(mdcCode, bunruiCode)
+        }
+    }
+
+    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                if (shujutsuDao.getShujutsuCount() == 0) {
                     val headerNames = (1..21).map { it.toString() }
                     val columnTypes: Map<String, ColType> =
                         headerNames.associateWith { ColType.String }
@@ -364,21 +401,13 @@ class DpcRepository(private val dpcDao: DpcDao) {
                             shujutsu2Name = row[7]?.toString() ?: "",
                         )
                     }
-                    dpcDao.insertAllNenrei(shujutsuList)
+                    shujutsuDao.insertAllShujutsu(shujutsuList)
                 }
+
             } catch (e: Exception) {
-                Log.e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
             }
-            // TODO: 他のテーブルについても同様のチェックとデータ投入処理を追加
+
         }
     }
-
-    /**
-     * 分類マスターテーブルを検索する。
-     * DAOのメソッドがFlowを返すので、そのままViewModelに渡す。
-     * @param query 検索文字列
-     * @return 検索結果のFlow
-     */
-    fun searchBunrui(query: String) = dpcDao.searchBunrui("%$query%")
-
 }

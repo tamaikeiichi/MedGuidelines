@@ -13,6 +13,8 @@ import com.keiichi.medguidelines.data.AppDatabase
 import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.IcdEntity // IcdEntityをインポート
+import com.keiichi.medguidelines.data.ShujutsuDao
+import com.keiichi.medguidelines.data.ShujutsuRepository
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 class DpcScreenViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: DpcRepository
+    private val shujutsuRepository: ShujutsuRepository
 
     // --- StateFlowの定義 ---
     private val _isLoading = MutableStateFlow(false)
@@ -41,6 +44,9 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _showNenreiSelection = MutableStateFlow(false)
     val showNenreiSelection: StateFlow<Boolean> = _showNenreiSelection.asStateFlow()
 
+    private val _showShujutsuSelection = MutableStateFlow(false)
+    val showShujutsuSelection: StateFlow<Boolean> = _showShujutsuSelection.asStateFlow()
+
     // 病態ドロップダウンの選択肢リスト
     private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
     val byotaiOptions: StateFlow<List<String>> = _byotaiOptions.asStateFlow()
@@ -48,6 +54,9 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     // 年齢ラジオボタン
     private val _nenreiOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
     val nenreiOptions: StateFlow<List<LabelStringAndScore>> = _nenreiOptions.asStateFlow()
+
+    private val _shujutsuOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
+    val shujutsuOptions: StateFlow<List<String>> = _shujutsuOptions.asStateFlow()
 
     /**
      * 【修正案1】ICDリストの項目が選択されたときに呼び出されるメソッド
@@ -91,6 +100,23 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             } else {
                 _showNenreiSelection.value = false
                 _nenreiOptions.value = emptyList()
+            }
+
+            if (item.mdcCode != null && item.bunruiCode != null) {
+                // 対応する病態が存在するかチェック
+                val shujutsuExists = repository.checkBunruiExistsInShujutsu(item.mdcCode)
+                if (shujutsuExists) {
+                    // 存在すれば、病態の選択肢を準備してUIを表示させる
+                    _shujutsuOptions.value = shujutsuRepository.getShujutsuNames(item.mdcCode, item.bunruiCode)
+                    _showShujutsuSelection.value = true
+                } else {
+                    // 存在しなければ、UIを非表示にする
+                    _shujutsuOptions.value = emptyList()
+                    _showShujutsuSelection.value = false
+                }
+            } else {
+                _showByotaiSelection.value = false
+                _byotaiOptions.value = emptyList()
             }
         }
     }
@@ -376,7 +402,9 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         // データベースとリポジトリを初期化
         val dpcDao = AppDatabase.getDatabase(application).dpcDao()
+        val shujutsuDao = AppDatabase.getDatabase(application).shujutsuDao()
         repository = DpcRepository(dpcDao)
+        shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
 
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()

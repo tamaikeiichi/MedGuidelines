@@ -70,6 +70,8 @@ interface DpcDao {
     @androidx.room.Query("SELECT byotai_name FROM byotai_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getByotaiNames(mdcCode: String, bunruiCode: String): List<String>
 
+
+
     @androidx.room.Query("SELECT nenrei_joken1_ijo " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
@@ -222,6 +224,9 @@ interface DpcDao {
      */
     @Query("SELECT EXISTS(SELECT 1 FROM nenrei_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
     suspend fun existsBunruiInNenreiMaster(bunruiCode: String): Boolean
+
+    @Query("SELECT EXISTS(SELECT 1 FROM shujutsu_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
+    suspend fun existsBunruiInShujutsuMaster(bunruiCode: String): Boolean
 
 
 }

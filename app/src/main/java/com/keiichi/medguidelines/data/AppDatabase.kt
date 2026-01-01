@@ -32,6 +32,9 @@ abstract class AppDatabase : RoomDatabase() {
      * @return DpcDaoのインスタンス
      */
     abstract fun dpcDao(): DpcDao
+    abstract fun shujutsuDao(): ShujutsuDao // <--- この行を追加
+
+
 
     companion object {
 
