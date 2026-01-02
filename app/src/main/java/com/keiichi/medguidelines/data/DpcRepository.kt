@@ -413,4 +413,15 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
     suspend fun checkBunruiExistsInShujutsu(bunruiCode: String): Boolean {
         return shujutsuDao.existsBunruiInShujutsuMaster(bunruiCode)
     }
+
+    suspend fun getShujutsu1CodeByName(shujutsu1Name: String): String? {
+        return withContext(Dispatchers.IO) {
+            shujutsuDao.getShujutsu1CodeByName(shujutsu1Name)
+        }
+    }
 }
+
+class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
+}
+
+

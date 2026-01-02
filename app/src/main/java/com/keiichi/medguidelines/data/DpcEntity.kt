@@ -127,3 +127,21 @@ data class ShujutsuEntity(
     @ColumnInfo(name = "shujutsu2_name")
     val shujutsu2Name: String?,
 )
+
+@Entity(tableName = "shochi1_master")
+data class Shochi1Entity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    @ColumnInfo(name = "mdc_code")
+    val mdcCode: String?,
+    @ColumnInfo(name = "bunrui_code")
+    val bunruiCode: String?,
+    @ColumnInfo(name = "taiou_code")
+    val taiouCode: String?,
+    @ColumnInfo(name = "shochi1_name")
+    val shochi1Name: String?,
+    @ColumnInfo(name = "shochi2_name")
+    val shochi2Name: String?,
+)
+
+

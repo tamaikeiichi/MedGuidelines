@@ -41,6 +41,7 @@ import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.rows
+import kotlin.text.toDoubleOrNull
 
 
 data class DpcCode(
@@ -314,7 +315,8 @@ fun DpcScreen(
                                         isNumberDisplayed = false
                                     )
                                 LaunchedEffect(selectedNenrei) {
-                                    dpcCodeFirst = dpcCodeFirst.copy(nenrei = selectedNenrei.toString())
+                                    dpcCodeFirst =
+                                        dpcCodeFirst.copy(nenrei = selectedNenrei.toString())
                                 }
                             }
                         }
@@ -368,11 +370,14 @@ fun DpcScreen(
                                                         // --- イベント: 病態名が選択された ---
                                                         coroutineScope.launch {
                                                             val shujutsuCode =
-                                                                dpcScreenViewModel.getByotaiCode(option)
+                                                                dpcScreenViewModel.getShujutsu1Code(
+                                                                    option
+                                                                )
                                                             if (shujutsuCode != null) {
                                                                 // 取得した病態コードでUIの状態を更新
                                                                 val finalCode =
-                                                                    shujutsuCode.toDoubleOrNull()?.toInt()
+                                                                    shujutsuCode.toDoubleOrNull()
+                                                                        ?.toInt()
                                                                         ?.toString() ?: shujutsuCode
                                                                 dpcCodeFirst =
                                                                     dpcCodeFirst.copy(shujutu = finalCode)
@@ -389,6 +394,92 @@ fun DpcScreen(
                         }
                     }
 
+                    if (showShochi1Selection) {
+                        Log.d("tamaiDpc", "after if (showShochi1Selection)")
+                        val shochi1Options by dpcScreenViewModel.shochi1Options.collectAsState()
+                        DpcDropdownSelection(
+                            options = shochi1Options,
+                            onOptionSelected = { selectedShochi1 ->
+                                coroutineScope.launch {
+                                    val code = dpcScreenViewModel.getShochi1Code(selectedShochi1)
+                                    if (code != null)
+                                    {
+                                        val finalCode = code.toDoubleOrNull()?.toInt()?.toString() ?: code
+                                        // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
+                                        dpcCodeFirst = dpcCodeFirst.copy(shochi1 = finalCode) // shujutu -> shochi1 に
+                                    }
+                                }
+                            }
+                        )
+                    }                } // else の終わり
+            }
+        }
+    }
+}
+
+// ... DpcDropdownSelectionとDpcScreenPreview ...
+
+// DpcScreen.kt の DpcScreen 関数の外、ファイルの下部に追加
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DpcDropdownSelection(
+    options: List<String>,
+    onOptionSelected: (
+        selectedOption: String
+    ) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    // optionsリストが変更されたら、選択中の項目もリセットする
+    var selectedOption by remember(options) {
+        mutableStateOf(options.firstOrNull() ?: "選択してください")
+    }
+
+    if (options.isNotEmpty()) {
+        MedGuidelinesCard(
+            modifier = Modifier.padding(
+                vertical = 8
+                    .dp
+            )
+        ) {
+            ExposedDropdownMenuBox(
+                expanded = expanded, onExpandedChange = { expanded = !expanded }
+            ) {
+                TextField(
+                    value = selectedOption,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = expanded
+                        )
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                        unfocusedContainerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    options.forEach { option ->
+                        if (option.isNotBlank()) {
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    selectedOption = option
+                                    expanded = false
+                                    //
+                                    //選択された項目をコールバックで親に通知
+                                    onOptionSelected(option)
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }

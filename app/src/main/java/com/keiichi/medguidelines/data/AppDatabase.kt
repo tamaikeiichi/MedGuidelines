@@ -21,6 +21,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         MdcEntity::class,
         NenreiEntity::class,
         ShujutsuEntity::class,
+        Shochi1Entity::class,
                ],
     version = 1,
     exportSchema = false)
@@ -33,7 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
      */
     abstract fun dpcDao(): DpcDao
     abstract fun shujutsuDao(): ShujutsuDao // <--- この行を追加
-
+    abstract fun shochi1Dao(): Shochi1Dao // <--- この行を追加
 
 
     companion object {

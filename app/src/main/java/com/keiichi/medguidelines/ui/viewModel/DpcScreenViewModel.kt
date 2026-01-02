@@ -13,6 +13,7 @@ import com.keiichi.medguidelines.data.AppDatabase
 import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.IcdEntity // IcdEntityをインポート
+import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.ShujutsuDao
 import com.keiichi.medguidelines.data.ShujutsuRepository
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
@@ -27,6 +28,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val repository: DpcRepository
     private val shujutsuRepository: ShujutsuRepository
+
+    private val shochi1Repository: Shochi1Repository
 
     // --- StateFlowの定義 ---
     private val _isLoading = MutableStateFlow(false)
@@ -483,6 +486,14 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
      */
     suspend fun getByotaiCode(byotaiName: String): String? {
         return repository.getByotaiCodeByName(byotaiName)
+    }
+
+    suspend fun getShujutsu1Code(shujutsu1Name: String): String? {
+        return shujutsuRepository.getShujutsu1CodeByName(shujutsu1Name)
+    }
+
+    suspend fun getShochi1Code(shochi1Name: String): String? {
+        return shochi1Repository.getShujutsu1CodeByName(shochi1Name)
     }
 
     // --- ここからBunruiの検索結果を追加 ---

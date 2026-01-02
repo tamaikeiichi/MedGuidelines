@@ -19,4 +19,7 @@ interface ShujutsuDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM shujutsu_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
     suspend fun existsBunruiInShujutsuMaster(bunruiCode: String): Boolean
+
+    @androidx.room.Query("SELECT taiou_code FROM shujutsu_master WHERE shujutsu1_name = :shujutsu1Name LIMIT 1")
+    suspend fun getShujutsu1CodeByName(shujutsu1Name: String): String?
 }
