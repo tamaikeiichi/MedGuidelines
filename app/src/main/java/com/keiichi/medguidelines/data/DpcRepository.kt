@@ -46,9 +46,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
         return dpcDao.existsBunruiInNenreiMaster(bunruiCode)
     }
 
-    suspend fun checkBunruiExistsInShujutsu(bunruiCode: String): Boolean {
-        return dpcDao.existsBunruiInShujutsuMaster(bunruiCode)
-    }
+
 
     /**
      * MDCコードと分類コードに一致する病態名のリストを取得する。
@@ -371,6 +369,7 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
     suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
+                Log.d("tamaiDpc", "shujutsu check ${shujutsuDao.getShujutsuCount()}")
                 if (shujutsuDao.getShujutsuCount() == 0) {
                     val headerNames = (1..21).map { it.toString() }
                     val columnTypes: Map<String, ColType> =
@@ -409,5 +408,9 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
             }
 
         }
+    }
+
+    suspend fun checkBunruiExistsInShujutsu(bunruiCode: String): Boolean {
+        return shujutsuDao.existsBunruiInShujutsuMaster(bunruiCode)
     }
 }

@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.rows
 
+
 data class DpcCode(
     var mdc: String? = "xx",
     var bunrui: String? = "xxxx",
@@ -88,7 +89,7 @@ fun DpcScreen(
     // データベースからの検索結果を購読
     val displayedItemsIcd by dpcScreenViewModel.displayedItemsIcd.collectAsState()
 
-    var query by remember { mutableStateOf("I63") }
+    var query by remember { mutableStateOf("C700") }
 
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
@@ -323,14 +324,14 @@ fun DpcScreen(
                         Log.d("tamaiDpc", "after if (showShujutsuSelection)")
                         var expanded by remember { mutableStateOf(false) }
                         // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
-                        val shujutsuOptions by dpcScreenViewModel.shujutsuOptions.collectAsState()
-                        var selectedOption by remember(shujutsuOptions) {
-                            mutableStateOf(shujutsuOptions.firstOrNull() ?: "選択してください")
+                        val options by dpcScreenViewModel.shujutsuOptions.collectAsState()
+                        var selectedOption by remember(options) {
+                            mutableStateOf(options.firstOrNull() ?: "選択してください")
                         }
                         // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
-                        if (shujutsuOptions.isNotEmpty()) {
-                            var selectedShujutsu: String? by remember(shujutsuOptions) {
-                                mutableStateOf(shujutsuOptions.first().labelResId)
+                        if (options.isNotEmpty()) {
+                            var selectedShujutsu: String? by remember(options) {
+                                mutableStateOf(options.first())
                             }
                             MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
                                 ExposedDropdownMenuBox(
@@ -356,7 +357,8 @@ fun DpcScreen(
                                         expanded = expanded,
                                         onDismissRequest = { expanded = false },
                                     ) {
-                                        byotaiOptions.forEach { option ->
+
+                                        options.forEach { option ->
                                             if (option.isNotBlank()) {
                                                 DropdownMenuItem(
                                                     text = { Text(option) },
@@ -380,6 +382,7 @@ fun DpcScreen(
                                                 )
                                             }
                                         }
+
                                     }
                                 }
                             }

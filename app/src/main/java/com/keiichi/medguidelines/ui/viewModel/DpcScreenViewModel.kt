@@ -68,6 +68,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             // 選択された項目のmdcCodeとbunruiCodeがnullでないことを確認
             if (item.mdcCode != null && item.bunruiCode != null) {
                 // 対応する病態が存在するかチェック
+                Log.d("tamaiDpc", "after if (item.mdcCode != null && item.bunruiCode != null) mdcCode ${item.mdcCode} bunruiCode ${item.bunruiCode}")
                 val byotaiExists = repository.checkMdcAndBunruiExist(item.mdcCode, item.bunruiCode)
                 if (byotaiExists) {
                     // 存在すれば、病態の選択肢を準備してUIを表示させる
@@ -103,8 +104,11 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             }
 
             if (item.mdcCode != null && item.bunruiCode != null) {
+                Log.d("tamaiDpc", "for shujutsu, after if (item.mdcCode != null && item.bunruiCode != null) mdcCode ${item.mdcCode} bunruiCode ${item.bunruiCode}")
+
                 // 対応する病態が存在するかチェック
-                val shujutsuExists = repository.checkBunruiExistsInShujutsu(item.mdcCode)
+                val shujutsuExists = shujutsuRepository.checkBunruiExistsInShujutsu(item.bunruiCode)
+                Log.d("tamaiDpc", "shujutsuExists ${shujutsuExists} item.bunruiCode ${item.bunruiCode}")
                 if (shujutsuExists) {
                     // 存在すれば、病態の選択肢を準備してUIを表示させる
                     _shujutsuOptions.value = shujutsuRepository.getShujutsuNames(item.mdcCode, item.bunruiCode)
@@ -418,6 +422,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             _isLoading.value = true
             try {
                 repository.populateDatabaseFromExcelIfEmpty(getApplication())
+                shujutsuRepository.populateDatabaseFromExcelIfEmpty(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "データベースの初期化に失敗しました: ${e.message}"
             } finally {

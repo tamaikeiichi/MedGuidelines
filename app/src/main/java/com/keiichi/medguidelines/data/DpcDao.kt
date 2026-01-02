@@ -225,8 +225,7 @@ interface DpcDao {
     @Query("SELECT EXISTS(SELECT 1 FROM nenrei_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
     suspend fun existsBunruiInNenreiMaster(bunruiCode: String): Boolean
 
-    @Query("SELECT EXISTS(SELECT 1 FROM shujutsu_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
-    suspend fun existsBunruiInShujutsuMaster(bunruiCode: String): Boolean
+
 
 
 }

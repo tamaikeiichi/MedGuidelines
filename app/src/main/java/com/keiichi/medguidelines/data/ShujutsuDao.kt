@@ -1,6 +1,7 @@
 package com.keiichi.medguidelines.data
 
 import androidx.room.Dao
+import androidx.room.Query
 
 @Dao
 interface ShujutsuDao {
@@ -15,4 +16,7 @@ interface ShujutsuDao {
 
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAllShujutsu(shujutsuList: List<ShujutsuEntity>)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM shujutsu_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
+    suspend fun existsBunruiInShujutsuMaster(bunruiCode: String): Boolean
 }
