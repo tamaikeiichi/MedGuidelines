@@ -171,4 +171,21 @@ data class Shochi2Entity(
     val shochi2Code: String?,
 )
 
+@Entity(tableName = "fukushobyo_master")
+data class FukushobyoEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    @ColumnInfo(name = "mdc_code")
+    val mdcCode: String?,
+    @ColumnInfo(name = "bunrui_code")
+    val bunruiCode: String?,
+    @ColumnInfo(name = "taiou_code")
+    val taiouCode: String?,
+    @ColumnInfo(name = "name")
+    val name: String?,
+    @ColumnInfo(name = "code")
+    val code: String?,
+)
+
+
 

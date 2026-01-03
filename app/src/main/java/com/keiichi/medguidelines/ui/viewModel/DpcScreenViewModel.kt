@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.keiichi.medguidelines.data.AppDatabase
 import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
+import com.keiichi.medguidelines.data.FukushobyoRepository
 import com.keiichi.medguidelines.data.IcdEntity // IcdEntityをインポート
 import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Repository
@@ -30,6 +31,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val shujutsuRepository: ShujutsuRepository
     private val shochi1Repository: Shochi1Repository
     private val shochi2Repository: Shochi2Repository
+    private val fukushobyoRepository: FukushobyoRepository
+
 
     // --- StateFlowの定義 ---
     private val _isLoading = MutableStateFlow(false)
@@ -55,6 +58,9 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _showShochi2Selection = MutableStateFlow(false)
     val showShochi2Selection: StateFlow<Boolean> = _showShochi2Selection.asStateFlow()
+    private val _showFukushobyoSelection = MutableStateFlow(false)
+    val showFukushobyoSelection: StateFlow<Boolean> = _showFukushobyoSelection.asStateFlow()
+
 
 
     // 病態ドロップダウンの選択肢リスト
@@ -73,6 +79,9 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _shochi2Options = MutableStateFlow<List<String>>(emptyList())
     val shochi2Options: StateFlow<List<String>> = _shochi2Options.asStateFlow()
+
+    private val _fukushobyoOptions = MutableStateFlow<List<String>>(emptyList())
+    val fukushobyoOptions: StateFlow<List<String>> = _fukushobyoOptions.asStateFlow()
 
 
     /**
@@ -127,6 +136,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 val shujutsuExists = shujutsuRepository.checkBunruiExistsInShujutsu(item.bunruiCode)
                 val shochi1Exists = shochi1Repository.checkBunruiExistsInShochi1(item.bunruiCode)
                 val shochi2Exists = shochi2Repository.checkBunruiExistsInMaster(item.bunruiCode)
+                val fukushobyoExists = fukushobyoRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 Log.d("tamaiDpc", "shujutsuExists ${shujutsuExists} item.bunruiCode ${item.bunruiCode}")
                 if (shujutsuExists) {
                     // 存在すれば、病態の選択肢を準備してUIを表示させる
@@ -154,6 +164,15 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     // 存在しなければ、UIを非表示にする
                     _shochi2Options.value = emptyList()
                     _showShochi2Selection.value = false
+                }
+                if (fukushobyoExists) {
+                    // 存在すれば、病態の選択肢を準備してUIを表示させる
+                    _fukushobyoOptions.value = fukushobyoRepository.getNames(item.mdcCode, item.bunruiCode)
+                    _showFukushobyoSelection.value = true
+                } else {
+                    // 存在しなければ、UIを非表示にする
+                    _fukushobyoOptions.value = emptyList()
+                    _showFukushobyoSelection.value = false
                 }
             } else {
                 _showByotaiSelection.value = false
@@ -443,12 +462,13 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         val shujutsuDao = AppDatabase.getDatabase(application).shujutsuDao()
         val shochi1Dao = AppDatabase.getDatabase(application).shochi1Dao()
         val shochi2Dao = AppDatabase.getDatabase(application).shochi2Dao()
+        val fukushobyoDao = AppDatabase.getDatabase(application).fukushobyoDao()
 
         repository = DpcRepository(dpcDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
         shochi1Repository = Shochi1Repository(shochi1Dao)
         shochi2Repository = Shochi2Repository(shochi2Dao)
-
+        fukushobyoRepository = FukushobyoRepository(fukushobyoDao)
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()
     }
@@ -464,6 +484,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 shujutsuRepository.populateDatabaseFromExcelIfEmpty(getApplication())
                 shochi1Repository.populateDatabaseFromExcelIfEmpty(getApplication())
                 shochi2Repository.populateDatabaseFromExcelIfEmpty(getApplication())
+                fukushobyoRepository.populateDatabaseFromExcelIfEmpty(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "データベースの初期化に失敗しました: ${e.message}"
             } finally {
@@ -532,6 +553,14 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     suspend fun getShochi1Code(shochi1Name: String): String? {
         return shochi1Repository.getCodeByName(shochi1Name)
+    }
+
+    suspend fun getShochi2Code(name: String): String? {
+        return shochi2Repository.getCodeByName(name)
+    }
+
+    suspend fun getFukushobyoCode(name: String): String? {
+        return fukushobyoRepository.getCodeByName(name)
     }
 
     // --- ここからBunruiの検索結果を追加 ---

@@ -532,4 +532,62 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
     }
 }
 
+class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
+    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                Log.d("tamaiDpc", "fukushobyo check ${fukushobyoDao.getCount()}")
+                if (fukushobyoDao.getCount() == 0) {
+                    val headerNames = (1..21).map { it.toString() }
+                    val columnTypes: Map<String, ColType> =
+                        headerNames.associateWith { ColType.String }
+                    val inputStream: InputStream =
+                        context.resources.openRawResource(R.raw.dpc001348055_9)
+                    Log.d("tamaiDpc", "fukushobyo reading")
+                    // DataFrameを格納する変数を宣言
+                    val df: DataFrame<*>
+                    inputStream.use { stream ->
+                        // CSVの全データをDataFrameとして一括で読み込む
+                        df = DataFrame.readCSV(
+                            stream = stream,
+                            header = headerNames,
+                            charset = Charset.forName("Shift-JIS"),
+                            colTypes = columnTypes, // Specify that all columns should be read as String
+                            skipLines = 2,
+                            parserOptions = ParserOptions() // Keep default or adjust as needed
+                        )
+                    }
+                    val list = df.rows().map { row ->
+                        FukushobyoEntity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
+                            taiouCode = row[2]?.toString() ?: "",
+                            name = row[4]?.toString() ?: "",
+                            code = row[5]?.toString() ?: "",
+                        )
+                    }
+                    fukushobyoDao.insertAlldata(list)
+                }
+            } catch (e: Exception) {
+                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
+
+        }
+    }
+    suspend fun getCodeByName(name: String): String? {
+        return withContext(Dispatchers.IO) {
+            fukushobyoDao.getCodeByName(name)
+        }
+    }
+    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
+        return fukushobyoDao.existsBunruiInMaster(bunruiCode)
+    }
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            fukushobyoDao.getNames(mdcCode, bunruiCode)
+        }
+    }
+}
+
 
