@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.ui.component.Dimensions
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
@@ -91,7 +92,7 @@ fun DpcScreen(
     // データベースからの検索結果を購読
     val displayedItemsIcd by dpcScreenViewModel.displayedItemsIcd.collectAsState()
 
-    var query by remember { mutableStateOf("C700") }
+    var query by remember { mutableStateOf("I60") }
 
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
@@ -328,78 +329,31 @@ fun DpcScreen(
                         var expanded by remember { mutableStateOf(false) }
                         // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
                         val options by dpcScreenViewModel.shujutsuOptions.collectAsState()
-                        var selectedOption by remember(options) {
-                            mutableStateOf(options.firstOrNull() ?: "選択してください")
-                        }
                         // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
-                        if (options.isNotEmpty()) {
-                            var selectedShujutsu: String? by remember(options) {
-                                mutableStateOf(options.first())
-                            }
-                            MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                                ExposedDropdownMenuBox(
-                                    expanded = expanded,
-                                    onExpandedChange = { expanded = !expanded }
-                                ) {
-                                    TextField(
-                                        value = selectedOption,
-                                        onValueChange = {},
-                                        readOnly = true,
-                                        trailingIcon = {
-                                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                                        },
-                                        colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                            unfocusedContainerColor = Color.Transparent,
-                                            focusedContainerColor = Color.Transparent
-                                        ),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .menuAnchor()
-                                    )
-                                    ExposedDropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false },
-                                    ) {
-
-                                        options.forEach { option ->
-                                            if (option.isNotBlank()) {
-                                                DropdownMenuItem(
-                                                    text = { Text(option) },
-                                                    onClick = {
-                                                        selectedOption = option
-                                                        expanded = false
-                                                        // --- イベント: 病態名が選択された ---
-                                                        coroutineScope.launch {
-                                                            val shujutsuCode =
-                                                                dpcScreenViewModel.getShujutsu1Code(
-                                                                    option
-                                                                )
-                                                            if (shujutsuCode != null) {
-                                                                // 取得した病態コードでUIの状態を更新
-                                                                val finalCode =
-                                                                    shujutsuCode.toDoubleOrNull()
-                                                                        ?.toInt()
-                                                                        ?.toString() ?: shujutsuCode
-                                                                dpcCodeFirst =
-                                                                    dpcCodeFirst.copy(shujutu = finalCode)
-                                                            }
-                                                        }
-                                                    }
-                                                )
-                                            }
-                                        }
-
+                        Log.d("tamaiDpc", "here?")
+                        DpcDropdownSelection(
+                            title = "手術",
+                            options = options,
+                            onOptionSelected = { selectedName ->
+                                coroutineScope.launch {
+                                    val code = dpcScreenViewModel.getShujutsu1Code(selectedName)
+                                    if (code != null)
+                                    {
+                                        val finalCode = code.toDoubleOrNull()?.toInt()?.toString() ?: code
+                                        // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
+                                        dpcCodeFirst = dpcCodeFirst.copy(shujutu = finalCode) // shujutu -> shochi1 に
                                     }
                                 }
                             }
-                        }
+                        )
                     }
 
                     if (showShochi1Selection) {
                         Log.d("tamaiDpc", "after if (showShochi1Selection)")
-                        val shochi1Options by dpcScreenViewModel.shochi1Options.collectAsState()
+                        val options by dpcScreenViewModel.shochi1Options.collectAsState()
                         DpcDropdownSelection(
-                            options = shochi1Options,
+                            title = "手術・処置等１",
+                            options = options,
                             onOptionSelected = { selectedShochi1 ->
                                 coroutineScope.launch {
                                     val code = dpcScreenViewModel.getShochi1Code(selectedShochi1)
@@ -412,15 +366,12 @@ fun DpcScreen(
                                 }
                             }
                         )
-                    }                } // else の終わり
+                    }
+                } // else の終わり
             }
         }
     }
 }
-
-// ... DpcDropdownSelectionとDpcScreenPreview ...
-
-// DpcScreen.kt の DpcScreen 関数の外、ファイルの下部に追加
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -428,7 +379,8 @@ private fun DpcDropdownSelection(
     options: List<String>,
     onOptionSelected: (
         selectedOption: String
-    ) -> Unit
+    ) -> Unit,
+    title: String
 ) {
     var expanded by remember { mutableStateOf(false) }
     // optionsリストが変更されたら、選択中の項目もリセットする
@@ -439,50 +391,56 @@ private fun DpcDropdownSelection(
     if (options.isNotEmpty()) {
         MedGuidelinesCard(
             modifier = Modifier.padding(
-                vertical = 8
-                    .dp
+                Dimensions.cardPadding
             )
         ) {
-            ExposedDropdownMenuBox(
-                expanded = expanded, onExpandedChange = { expanded = !expanded }
-            ) {
-                TextField(
-                    value = selectedOption,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(
-                            expanded = expanded
-                        )
-                    },
-                    colors = ExposedDropdownMenuDefaults.textFieldColors(
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor()
+            Column(){
+                Text(
+                    text = title,
+                    modifier = Modifier.padding(Dimensions.textPadding)
                 )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
+                ExposedDropdownMenuBox(
+                    expanded = expanded, onExpandedChange = { expanded = !expanded }
                 ) {
-                    options.forEach { option ->
-                        if (option.isNotBlank()) {
-                            DropdownMenuItem(
-                                text = { Text(option) },
-                                onClick = {
-                                    selectedOption = option
-                                    expanded = false
-                                    //
-                                    //選択された項目をコールバックで親に通知
-                                    onOptionSelected(option)
-                                }
+                    TextField(
+                        value = selectedOption,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expanded
                             )
+                        },
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                    ) {
+                        options.forEach { option ->
+                            if (option.isNotBlank()) {
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        selectedOption = option
+                                        expanded = false
+                                        //
+                                        //選択された項目をコールバックで親に通知
+                                        onOptionSelected(option)
+                                    }
+                                )
+                            }
                         }
                     }
                 }
             }
+
         }
     }
 }
