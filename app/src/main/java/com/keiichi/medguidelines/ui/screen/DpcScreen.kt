@@ -81,6 +81,7 @@ fun DpcScreen(
     val showShochi1Selection by dpcScreenViewModel.showShochi1Selection.collectAsState()
     val showShochi2Selection by dpcScreenViewModel.showShochi2Selection.collectAsState()
     val showFukushobyoSelection by dpcScreenViewModel.showFukushobyoSelection.collectAsState()
+    val showJushodoJcsSelection by dpcScreenViewModel.showJushodoJcsSelection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var searchResultsVisible by remember { mutableStateOf(true) }
 
@@ -448,9 +449,42 @@ fun DpcScreen(
                                     )
                                 }
                             }
+                            item {
+                                if (showJushodoJcsSelection) {
+                                    Log.d("tamaiDpc", "after if (showNenreiSelection)")
+
+                                    // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                                    val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()
+
+                                    // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
+                                    if (options.isNotEmpty()) {
+                                        var selectedOption: String? by remember(options) {
+                                            mutableStateOf(options.first().joken1Value)
+                                        }
+
+                                        MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                                            val nenreiValue =
+                                                buttonAndScoreWithScoreDisplayedSelectableLabelString(
+                                                    optionsWithScores = options,
+                                                    title = R.string.age,
+                                                    // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
+                                                    defaultSelectedOption = selectedOption,
+                                                    onOptionSelected = { newSelection ->
+                                                        selectedOption = newSelection
+                                                    },
+                                                    isNumberDisplayed = false
+                                                )
+                                            LaunchedEffect(selectedOption) {
+                                                dpcCodeFirst =
+                                                    dpcCodeFirst.copy(nenrei = selectedOption.toString())
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                } // else の終わり
+                }
             }
         }
     }

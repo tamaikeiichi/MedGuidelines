@@ -14,16 +14,32 @@ import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.FukushobyoRepository
 import com.keiichi.medguidelines.data.IcdEntity // IcdEntityをインポート
+import com.keiichi.medguidelines.data.JushodoJcsJoken
+import com.keiichi.medguidelines.data.JushodoJcsRepository
 import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Repository
 import com.keiichi.medguidelines.data.ShujutsuDao
 import com.keiichi.medguidelines.data.ShujutsuRepository
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+
+// DpcScreenViewModel.kt のファイルレベルに追加
+
+/**
+ * DPCコードの各選択肢UIの状態とロジックを管理するためのデータクラス
+ * @param T 選択肢の型 (例: String, JushodoJcsJoken)
+ */
+private data class SelectionState<T>(
+    val showFlow: MutableStateFlow<Boolean>,
+    val optionsFlow: MutableStateFlow<List<T>>,
+    val checkExists: suspend (String) -> Boolean,
+    val getOptions: suspend (String, String) -> List<T>
+)
 
 // AndroidViewModelを継承して、Applicationコンテキストを使えるようにする
 class DpcScreenViewModel(application: Application) : AndroidViewModel(application) {
@@ -32,7 +48,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val shochi1Repository: Shochi1Repository
     private val shochi2Repository: Shochi2Repository
     private val fukushobyoRepository: FukushobyoRepository
-
+    private val jushodoJcsRepository: JushodoJcsRepository
 
     // --- StateFlowの定義 ---
     private val _isLoading = MutableStateFlow(false)
@@ -61,6 +77,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _showFukushobyoSelection = MutableStateFlow(false)
     val showFukushobyoSelection: StateFlow<Boolean> = _showFukushobyoSelection.asStateFlow()
 
+    private val _showJushodoJcsSelection = MutableStateFlow(false)
+    val showJushodoJcsSelection: StateFlow<Boolean> = _showJushodoJcsSelection.asStateFlow()
 
 
     // 病態ドロップダウンの選択肢リスト
@@ -82,6 +100,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _fukushobyoOptions = MutableStateFlow<List<String>>(emptyList())
     val fukushobyoOptions: StateFlow<List<String>> = _fukushobyoOptions.asStateFlow()
+
+    private val _jushodoJcsOptions = MutableStateFlow<List<JushodoJcsJoken>>(emptyList())
+    val jushodoJcsOptions: StateFlow<List<JushodoJcsJoken>> = _jushodoJcsOptions.asStateFlow()
+
 
 
     /**
@@ -137,43 +159,50 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 val shochi1Exists = shochi1Repository.checkBunruiExistsInShochi1(item.bunruiCode)
                 val shochi2Exists = shochi2Repository.checkBunruiExistsInMaster(item.bunruiCode)
                 val fukushobyoExists = fukushobyoRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                val jushodoJcsExists = jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 Log.d("tamaiDpc", "shujutsuExists ${shujutsuExists} item.bunruiCode ${item.bunruiCode}")
-                if (shujutsuExists) {
-                    // 存在すれば、病態の選択肢を準備してUIを表示させる
-                    _shujutsuOptions.value = shujutsuRepository.getShujutsuNames(item.mdcCode, item.bunruiCode)
-                    _showShujutsuSelection.value = true
-                } else {
-                    // 存在しなければ、UIを非表示にする
-                    _shujutsuOptions.value = emptyList()
-                    _showShujutsuSelection.value = false
-                }
-                if (shochi1Exists) {
-                    // 存在すれば、病態の選択肢を準備してUIを表示させる
-                    _shochi1Options.value = shochi1Repository.getNames(item.mdcCode, item.bunruiCode)
-                    _showShochi1Selection.value = true
-                } else {
-                    // 存在しなければ、UIを非表示にする
-                    _shochi1Options.value = emptyList()
-                    _showShochi1Selection.value = false
-                }
-                if (shochi2Exists) {
-                    // 存在すれば、病態の選択肢を準備してUIを表示させる
-                    _shochi2Options.value = shochi2Repository.getNames(item.mdcCode, item.bunruiCode)
-                    _showShochi2Selection.value = true
-                } else {
-                    // 存在しなければ、UIを非表示にする
-                    _shochi2Options.value = emptyList()
-                    _showShochi2Selection.value = false
-                }
-                if (fukushobyoExists) {
-                    // 存在すれば、病態の選択肢を準備してUIを表示させる
-                    _fukushobyoOptions.value = fukushobyoRepository.getNames(item.mdcCode, item.bunruiCode)
-                    _showFukushobyoSelection.value = true
-                } else {
-                    // 存在しなければ、UIを非表示にする
-                    _fukushobyoOptions.value = emptyList()
-                    _showFukushobyoSelection.value = false
-                }
+
+                // --- updateSelectionStateヘルパー関数を使って、各選択UIの状態を更新 ---
+
+                updateSelectionState(
+                    exists = shujutsuExists,
+                    optionsFlow = _shujutsuOptions,
+                    showSelectionFlow = _showShujutsuSelection,
+                    getOptions = { shujutsuRepository.getShujutsuNames(item.mdcCode, item.bunruiCode) }
+                )
+
+                updateSelectionState(
+                    exists = shochi1Exists,
+                    optionsFlow = _shochi1Options,
+                    showSelectionFlow = _showShochi1Selection,
+                    getOptions = { shochi1Repository.getNames(item.mdcCode, item.bunruiCode) }
+                )
+
+                updateSelectionState(
+                    exists = shochi2Exists,
+                    optionsFlow = _shochi2Options,
+                    showSelectionFlow = _showShochi2Selection,
+                    getOptions = { shochi2Repository.getNames(item.mdcCode, item.bunruiCode) }
+                )
+
+                updateSelectionState(
+                    exists = fukushobyoExists,
+                    optionsFlow = _fukushobyoOptions,
+                    showSelectionFlow = _showFukushobyoSelection,
+                    getOptions = { fukushobyoRepository.getNames(item.mdcCode, item.bunruiCode) }
+                )
+
+                // jushodoJcsOptionsはList<JushodoJcsJoken>型だが、ジェネリクス<T>のおかげで同じ関数を使える
+                updateSelectionState(
+                    exists = jushodoJcsExists,
+                    optionsFlow = _jushodoJcsOptions,
+                    showSelectionFlow = _showJushodoJcsSelection,
+                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
+                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
+                    getOptions = { jushodoJcsRepository.getJushodoJoken(item.mdcCode, item.bunruiCode) }
+                )
+
+
             } else {
                 _showByotaiSelection.value = false
                 _byotaiOptions.value = emptyList()
@@ -386,72 +415,72 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
 // DpcScreenViewModel.kt
 
-    private fun checkAndShowNenreiSelection(mdcCode: String?, bunruiCode: String?) {
-        viewModelScope.launch {
-            // mdcCodeとbunruiCodeがnullでないことを確認
-            if (mdcCode != null && bunruiCode != null) {
-                // --- ここからが修正箇所 ---
-
-                // 1. 年齢条件を決定するために必要な値をすべてリポジトリから取得する
-                val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
-                val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
-                val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
-
-                val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
-                val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
-                val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
-
-                val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
-                val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
-                val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
-
-                val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
-                val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
-                val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
-
-                val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
-                val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
-                val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
-
-                // 2. 取得した値からラベル文字列を安全に生成する
-                val joken1String: String? = if (joken1Ijo != null && joken1Miman != null) {
-                    "${joken1Ijo.toInt()}歳以上${joken1Miman.toInt()}歳未満"
-                } else { null }
-                val joken2String: String? = if (joken2Ijo != null && joken2Miman != null) {
-                    "${joken2Ijo.toInt()}歳以上${joken2Miman.toInt()}歳未満"
-                } else { null }
-                val joken3String: String? = if (joken3Ijo != null && joken3Miman != null) {
-                    "${joken3Ijo.toInt()}歳以上${joken3Miman.toInt()}歳未満"
-                } else { null }
-                val joken4String: String? = if (joken4Ijo != null && joken4Miman != null) {
-                    "${joken4Ijo.toInt()}歳以上${joken4Miman.toInt()}歳未満"
-                } else { null }
-                val joken5String: String? = if (joken5Ijo != null && joken5Miman != null) {
-                    "${joken5Ijo.toInt()}歳以上${joken5Miman.toInt()}歳未満"
-                } else { null }
-
-                // 3. nullでない有効な選択肢だけをリストに追加する
-                val options: List<LabelStringAndScore> = buildList {
-                    if (joken1String != null && joken1Value != null) add(LabelStringAndScore(joken1String, joken1Value.toInt()))
-                    if (joken2String != null && joken2Value != null) add(LabelStringAndScore(joken2String, joken2Value.toInt()))
-                    if (joken3String != null && joken3Value != null) add(LabelStringAndScore(joken3String, joken3Value.toInt()))
-                    if (joken4String != null && joken4Value != null) add(LabelStringAndScore(joken4String, joken4Value.toInt()))
-                    if (joken5String != null && joken5Value != null) add(LabelStringAndScore(joken5String, joken5Value.toInt()))
-                }
-
-                // 4. 生成したリストをStateFlowにセットし、UIの表示を制御する
-                _nenreiOptions.value = options
-                _showNenreiSelection.value = options.isNotEmpty()
-
-                // --- ここまでが修正箇所 ---
-
-            } else {
-                // mdcCodeまたはbunruiCodeがnullの場合は、UIを非表示にする
-                _showNenreiSelection.value = false
-                _nenreiOptions.value = emptyList()
-            }
-        }
-    }
+//    private fun checkAndShowNenreiSelection(mdcCode: String?, bunruiCode: String?) {
+//        viewModelScope.launch {
+//            // mdcCodeとbunruiCodeがnullでないことを確認
+//            if (mdcCode != null && bunruiCode != null) {
+//                // --- ここからが修正箇所 ---
+//
+//                // 1. 年齢条件を決定するために必要な値をすべてリポジトリから取得する
+//                val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
+//                val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
+//                val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
+//
+//                val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
+//                val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
+//                val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
+//
+//                val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
+//                val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
+//                val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
+//
+//                val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
+//                val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
+//                val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
+//
+//                val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
+//                val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
+//                val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
+//
+//                // 2. 取得した値からラベル文字列を安全に生成する
+//                val joken1String: String? = if (joken1Ijo != null && joken1Miman != null) {
+//                    "${joken1Ijo.toInt()}歳以上${joken1Miman.toInt()}歳未満"
+//                } else { null }
+//                val joken2String: String? = if (joken2Ijo != null && joken2Miman != null) {
+//                    "${joken2Ijo.toInt()}歳以上${joken2Miman.toInt()}歳未満"
+//                } else { null }
+//                val joken3String: String? = if (joken3Ijo != null && joken3Miman != null) {
+//                    "${joken3Ijo.toInt()}歳以上${joken3Miman.toInt()}歳未満"
+//                } else { null }
+//                val joken4String: String? = if (joken4Ijo != null && joken4Miman != null) {
+//                    "${joken4Ijo.toInt()}歳以上${joken4Miman.toInt()}歳未満"
+//                } else { null }
+//                val joken5String: String? = if (joken5Ijo != null && joken5Miman != null) {
+//                    "${joken5Ijo.toInt()}歳以上${joken5Miman.toInt()}歳未満"
+//                } else { null }
+//
+//                // 3. nullでない有効な選択肢だけをリストに追加する
+//                val options: List<LabelStringAndScore> = buildList {
+//                    if (joken1String != null && joken1Value != null) add(LabelStringAndScore(joken1String, joken1Value.toInt()))
+//                    if (joken2String != null && joken2Value != null) add(LabelStringAndScore(joken2String, joken2Value.toInt()))
+//                    if (joken3String != null && joken3Value != null) add(LabelStringAndScore(joken3String, joken3Value.toInt()))
+//                    if (joken4String != null && joken4Value != null) add(LabelStringAndScore(joken4String, joken4Value.toInt()))
+//                    if (joken5String != null && joken5Value != null) add(LabelStringAndScore(joken5String, joken5Value.toInt()))
+//                }
+//
+//                // 4. 生成したリストをStateFlowにセットし、UIの表示を制御する
+//                _nenreiOptions.value = options
+//                _showNenreiSelection.value = options.isNotEmpty()
+//
+//                // --- ここまでが修正箇所 ---
+//
+//            } else {
+//                // mdcCodeまたはbunruiCodeがnullの場合は、UIを非表示にする
+//                _showNenreiSelection.value = false
+//                _nenreiOptions.value = emptyList()
+//            }
+//        }
+//    }
 
     // 検索クエリを保持するStateFlow
     private val _searchQuery = MutableStateFlow("")
@@ -463,12 +492,15 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         val shochi1Dao = AppDatabase.getDatabase(application).shochi1Dao()
         val shochi2Dao = AppDatabase.getDatabase(application).shochi2Dao()
         val fukushobyoDao = AppDatabase.getDatabase(application).fukushobyoDao()
+        val jushodoJcsDao = AppDatabase.getDatabase(application).jushodoJcsDao()
 
         repository = DpcRepository(dpcDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
         shochi1Repository = Shochi1Repository(shochi1Dao)
         shochi2Repository = Shochi2Repository(shochi2Dao)
         fukushobyoRepository = FukushobyoRepository(fukushobyoDao)
+        jushodoJcsRepository = JushodoJcsRepository(jushodoJcsDao)
+
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()
     }
@@ -485,6 +517,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 shochi1Repository.populateDatabaseFromExcelIfEmpty(getApplication())
                 shochi2Repository.populateDatabaseFromExcelIfEmpty(getApplication())
                 fukushobyoRepository.populateDatabaseFromExcelIfEmpty(getApplication())
+                jushodoJcsRepository.populateDatabaseFromExcelIfEmpty(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "データベースの初期化に失敗しました: ${e.message}"
             } finally {
@@ -563,6 +596,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         return fukushobyoRepository.getCodeByName(name)
     }
 
+    suspend fun getJushodoJcsJoken(mdcCode: String, bunruiCode: String): List<JushodoJcsJoken> {
+        return jushodoJcsRepository.getJushodoJoken(mdcCode, bunruiCode)
+    }
+
     // --- ここからBunruiの検索結果を追加 ---
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val displayedItemsBunrui: StateFlow<List<BunruiEntity>> = _searchQuery
@@ -600,4 +637,84 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         _showByotaiSelection.value = false
         _byotaiOptions.value = emptyList()
     }
+
+    private suspend fun createJushoJcsJokenOptionsList(
+        mdcCode: String, bunruiCode: String
+    ): List<LabelStringAndScore> {
+        // リポジトリからjoken1〜5のすべての値を取得
+        val jushoJcsJoken = jushodoJcsRepository.getJushodoJoken(mdcCode, bunruiCode)
+
+        val joken1String: String? = if (
+            !jushoJcsJoken.first().joken1Ijo.isNullOrBlank()
+            && !jushoJcsJoken.first().joken1Miman.isNullOrBlank()) {
+            "${jushoJcsJoken.first().joken1Ijo?.toInt()}歳以上${jushoJcsJoken.first().joken1Miman?.toInt()}歳未満"
+        } else {
+            null
+        }
+        val joken2String: String? = if (
+            !jushoJcsJoken.first().joken2Ijo.isNullOrBlank()
+            && !jushoJcsJoken.first().joken2Miman.isNullOrBlank()) {
+            "${jushoJcsJoken.first().joken2Ijo?.toInt()}歳以上${jushoJcsJoken.first().joken2Miman?.toInt()}歳未満"
+        } else {
+            null
+        }
+
+        Log.d("tamaiDpc", "val joken string done")
+
+        // nullでない有効な選択肢だけをリストに追加する
+        return buildList {
+            // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (joken1String != null && jushoJcsJoken.first().joken1Value?.isNotBlank() == true) {
+                add(LabelStringAndScore(
+                    joken1String,
+                    jushoJcsJoken.first().joken1Value?.toInt() ?: 0 ))
+            }
+            // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (joken2String != null && jushoJcsJoken.first().joken2Value?.isNotBlank() == true) {
+                add(LabelStringAndScore(
+                    joken2String,
+                    jushoJcsJoken.first().joken2Value?.toInt() ?: 0))
+            }
+        }
+    }
 }
+
+/*** 【共通化】選択UIの表示状態と選択肢リストを更新するヘルパー関数
+ * @param T 選択肢の型 (String, JushodoJcsJoken など)
+ *      * @param exists 該当データが存在するかどうかのBoolean
+ *      * @param optionsFlow 更新する選択肢のMutableStateFlow
+ *      * @param showSelectionFlow 更新する表示状態のMutableStateFlow
+ *      * @param getOptions
+ *  データを取得するためのsuspend関数
+ *      */
+
+private fun <T> CoroutineScope.updateSelectionState(
+    exists: Boolean,
+    optionsFlow: MutableStateFlow<List<T>>,
+    showSelectionFlow: MutableStateFlow<Boolean>,
+    getOptions: suspend () -> List<T>
+) {
+    launch {
+        if (exists) {
+            optionsFlow.value = getOptions()
+            showSelectionFlow.value = true
+        } else {
+            optionsFlow.value = emptyList()
+            showSelectionFlow.value = false
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -23,7 +23,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ShujutsuEntity::class,
         Shochi1Entity::class,
         Shochi2Entity::class,
-        FukushobyoEntity::class
+        FukushobyoEntity::class,
+        JushodoJcsEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -40,8 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun shochi1Dao(): Shochi1Dao // <--- この行を追加
     abstract fun shochi2Dao(): Shochi2Dao
     abstract fun fukushobyoDao(): FukushobyoDao
-
-
+    abstract fun jushodoJcsDao(): JushodoJcsDao
 
     companion object {
         // @Volatileアノテーションにより、INSTANCE変数が複数スレッドからアクセスされても

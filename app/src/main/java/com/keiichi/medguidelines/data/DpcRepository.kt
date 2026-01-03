@@ -361,26 +361,10 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
             try {
                 Log.d("tamaiDpc", "shujutsu check ${shujutsuDao.getShujutsuCount()}")
                 if (shujutsuDao.getShujutsuCount() == 0) {
-                    val headerNames = (1..21).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_6)
+                    val df = readDpcCsv(context, R.raw.dpc001348055_6)
                     Log.d("tamaiDpc", "shujutsu reading")
                     // DataFrameを格納する変数を宣言
-                    val shujutsuDf: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        shujutsuDf = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
-                    val shujutsuList = shujutsuDf.rows().map { row ->
+                    val list = df.rows().map { row ->
                         ShujutsuEntity(
                             // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
@@ -390,7 +374,7 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
                             shujutsu2Name = row[7]?.toString() ?: "",
                         )
                     }
-                    shujutsuDao.insertAllShujutsu(shujutsuList)
+                    shujutsuDao.insertAllShujutsu(list)
                 }
 
             } catch (e: Exception) {
@@ -417,25 +401,9 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
             try {
                 Log.d("tamaiDpc", "shuochi1 check ${shochi1Dao.getCount()}")
                 if (shochi1Dao.getCount() == 0) {
-                    val headerNames = (1..21).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_7)
+                    val df = readDpcCsv(context, R.raw.dpc001348055_7)
                     Log.d("tamaiDpc", "shochi1 reading")
                     // DataFrameを格納する変数を宣言
-                    val df: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        df = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
                     val list = df.rows().map { row ->
                         Shochi1Entity(
                             // nenreiEntityの定義に合わせて列を指定
@@ -478,25 +446,9 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
             try {
                 Log.d("tamaiDpc", "shuochi1 check ${shochi2Dao.getCount()}")
                 if (shochi2Dao.getCount() == 0) {
-                    val headerNames = (1..21).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_8)
+                    val df = readDpcCsv(context, R.raw.dpc001348055_8)
                     Log.d("tamaiDpc", "shochi2 reading")
                     // DataFrameを格納する変数を宣言
-                    val df: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        df = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
                     val list = df.rows().map { row ->
                         Shochi2Entity(
                             // nenreiEntityの定義に合わせて列を指定
@@ -538,25 +490,9 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
             try {
                 Log.d("tamaiDpc", "fukushobyo check ${fukushobyoDao.getCount()}")
                 if (fukushobyoDao.getCount() == 0) {
-                    val headerNames = (1..21).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_9)
+                    val df = readDpcCsv(context, R.raw.dpc001348055_9)
                     Log.d("tamaiDpc", "fukushobyo reading")
                     // DataFrameを格納する変数を宣言
-                    val df: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        df = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
                     val list = df.rows().map { row ->
                         FukushobyoEntity(
                             // nenreiEntityの定義に合わせて列を指定
@@ -587,6 +523,75 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
         return withContext(Dispatchers.IO) {
             fukushobyoDao.getNames(mdcCode, bunruiCode)
         }
+    }
+}
+
+class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
+    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                Log.d("tamaiDpc", "jushodo jcs check ${jushodoJcsDao.getCount()}")
+                if (jushodoJcsDao.getCount() == 0) {
+                    val df = readDpcCsv(context, R.raw.dpc001348055_10_1)
+                    Log.d("tamaiDpc", "jushodo jcs reading")
+                    val list = df.rows().map { row ->
+                        JushodoJcsEntity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
+                            jokenName = row[3]?.toString() ?:"",
+                            joken1Ijo = row[4]?.toString() ?: "",
+                            joken1Miman = row[5]?.toString() ?: "",
+                            joken1Value = row[6]?.toString() ?: "",
+                            joken2Ijo = row[7]?.toString() ?: "",
+                            joken2Miman = row[8]?.toString() ?: "",
+                            joken2Value = row[9]?.toString() ?: "",
+
+                        )
+                    }
+                    jushodoJcsDao.insertAlldata(list)
+                }
+            } catch (e: Exception) {
+                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
+
+        }
+    }
+    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoJcsJoken> {
+        return withContext(Dispatchers.IO) {
+            jushodoJcsDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
+        }
+    }
+    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
+        return jushodoJcsDao.existsBunruiInMaster(bunruiCode)
+    }
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            jushodoJcsDao.getNames(mdcCode, bunruiCode)
+        }
+    }
+}
+
+/**
+ * 指定されたリソースIDのCSVファイルを読み込み、DataFrameとして返す共通関数
+ * @param context
+コンテキスト
+ * @param resourceId 読み込むCSVファイルのリソースID (例: R.raw.dpc001348055_6)
+ * @return 読み込まれたDataFrame
+ */
+private fun readDpcCsv(context: Context, resourceId: Int): DataFrame<*> {
+    val headerNames = (1..21).map { it.toString() }
+    val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
+    val inputStream: InputStream = context.resources.openRawResource(resourceId)
+
+    inputStream.use { stream ->
+        return DataFrame.readCSV(
+            stream = stream,
+            header = headerNames,            charset = Charset.forName("Shift-JIS"),
+            colTypes = columnTypes,
+            skipLines = 2,
+            parserOptions = ParserOptions()
+        )
     }
 }
 
