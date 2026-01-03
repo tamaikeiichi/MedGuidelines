@@ -89,7 +89,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _nenreiOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
     val nenreiOptions: StateFlow<List<LabelStringAndScore>> = _nenreiOptions.asStateFlow()
 
-    private val _shujutsuOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
+    private val _shujutsuOptions =
+        kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
     val shujutsuOptions: StateFlow<List<String>> = _shujutsuOptions.asStateFlow()
 
     private val _shochi1Options = MutableStateFlow<List<String>>(emptyList())
@@ -101,9 +102,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _fukushobyoOptions = MutableStateFlow<List<String>>(emptyList())
     val fukushobyoOptions: StateFlow<List<String>> = _fukushobyoOptions.asStateFlow()
 
-    private val _jushodoJcsOptions = MutableStateFlow<List<JushodoJcsJoken>>(emptyList())
-    val jushodoJcsOptions: StateFlow<List<JushodoJcsJoken>> = _jushodoJcsOptions.asStateFlow()
-
+    private val _jushodoJcsOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
+    val jushodoJcsOptions: StateFlow<List<LabelStringAndScore>> = _jushodoJcsOptions.asStateFlow()
 
 
     /**
@@ -116,7 +116,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             // 選択された項目のmdcCodeとbunruiCodeがnullでないことを確認
             if (item.mdcCode != null && item.bunruiCode != null) {
                 // 対応する病態が存在するかチェック
-                Log.d("tamaiDpc", "after if (item.mdcCode != null && item.bunruiCode != null) mdcCode ${item.mdcCode} bunruiCode ${item.bunruiCode}")
+                Log.d(
+                    "tamaiDpc",
+                    "after if (item.mdcCode != null && item.bunruiCode != null) mdcCode ${item.mdcCode} bunruiCode ${item.bunruiCode}"
+                )
                 val byotaiExists = repository.checkMdcAndBunruiExist(item.mdcCode, item.bunruiCode)
                 if (byotaiExists) {
                     // 存在すれば、病態の選択肢を準備してUIを表示させる
@@ -137,6 +140,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             if (item.bunruiCode != null) {
                 // nenrei_masterテーブルにbunruiCodeが存在するかチェック
                 val nenreiDataExists = repository.checkBunruiExistsInNenrei(item.bunruiCode)
+                val jushodoJcsDateExists =
+                    jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 if (nenreiDataExists && item.mdcCode != null) {
                     // ★ 存在すれば、年齢条件の選択肢リストを生成する
                     _nenreiOptions.value = createNenreiOptionsList(item.mdcCode, item.bunruiCode)
@@ -146,21 +151,39 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     _showNenreiSelection.value = false
                     _nenreiOptions.value = emptyList()
                 }
+                if (jushodoJcsDateExists && item.mdcCode != null) {
+                    // ★ 存在すれば、年齢条件の選択肢リストを生成する
+                    _jushodoJcsOptions.value =
+                        createJushoJcsJokenOptionsList(item.mdcCode, item.bunruiCode)
+                    _showJushodoJcsSelection.value = _nenreiOptions.value.isNotEmpty()
+                } else {
+                    // 存在しなければ、UIを非表示にする
+                    _showJushodoJcsSelection.value = false
+                    _jushodoJcsOptions.value = emptyList()
+                }
             } else {
                 _showNenreiSelection.value = false
                 _nenreiOptions.value = emptyList()
             }
 
             if (item.mdcCode != null && item.bunruiCode != null) {
-                Log.d("tamaiDpc", "for shujutsu, after if (item.mdcCode != null && item.bunruiCode != null) mdcCode ${item.mdcCode} bunruiCode ${item.bunruiCode}")
+                Log.d(
+                    "tamaiDpc",
+                    "for shujutsu, after if (item.mdcCode != null && item.bunruiCode != null) mdcCode ${item.mdcCode} bunruiCode ${item.bunruiCode}"
+                )
 
                 // 対応する病態が存在するかチェック
                 val shujutsuExists = shujutsuRepository.checkBunruiExistsInShujutsu(item.bunruiCode)
                 val shochi1Exists = shochi1Repository.checkBunruiExistsInShochi1(item.bunruiCode)
                 val shochi2Exists = shochi2Repository.checkBunruiExistsInMaster(item.bunruiCode)
-                val fukushobyoExists = fukushobyoRepository.checkBunruiExistsInMaster(item.bunruiCode)
-                val jushodoJcsExists = jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
-                Log.d("tamaiDpc", "shujutsuExists ${shujutsuExists} item.bunruiCode ${item.bunruiCode}")
+                val fukushobyoExists =
+                    fukushobyoRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                val jushodoJcsExists =
+                    jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                Log.d(
+                    "tamaiDpc",
+                    "shujutsuExists ${shujutsuExists} item.bunruiCode ${item.bunruiCode}"
+                )
 
                 // --- updateSelectionStateヘルパー関数を使って、各選択UIの状態を更新 ---
 
@@ -168,7 +191,12 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     exists = shujutsuExists,
                     optionsFlow = _shujutsuOptions,
                     showSelectionFlow = _showShujutsuSelection,
-                    getOptions = { shujutsuRepository.getShujutsuNames(item.mdcCode, item.bunruiCode) }
+                    getOptions = {
+                        shujutsuRepository.getShujutsuNames(
+                            item.mdcCode,
+                            item.bunruiCode
+                        )
+                    }
                 )
 
                 updateSelectionState(
@@ -199,10 +227,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     showSelectionFlow = _showJushodoJcsSelection,
                     // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
                     // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-                    getOptions = { jushodoJcsRepository.getJushodoJoken(item.mdcCode, item.bunruiCode) }
+                    getOptions = { createJushoJcsJokenOptionsList(item.mdcCode, item.bunruiCode) }
                 )
-
-
             } else {
                 _showByotaiSelection.value = false
                 _byotaiOptions.value = emptyList()
@@ -213,7 +239,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     /**
      * 【追加】年齢条件の選択肢リストを生成するヘルパー関数
      */
-    private suspend fun createNenreiOptionsList(mdcCode: String, bunruiCode: String): List<LabelStringAndScore> {
+    private suspend fun createNenreiOptionsList(
+        mdcCode: String,
+        bunruiCode: String
+    ): List<LabelStringAndScore> {
         // リポジトリからjoken1〜5のすべての値を取得
         val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
         val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
@@ -236,35 +265,40 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d("tamaiDpc", "val joken done")
         // 取得した値からラベル文字列を安全に生成
         // 取得した値からラベル文字列を安全に生成する
-        val joken1String: String? = if (!joken1Ijo.isNullOrBlank() && !joken1Miman.isNullOrBlank()) {
-            "${joken1Ijo.toInt()}歳以上${joken1Miman.toInt()}歳未満"
-        } else {
-            null
-        }
+        val joken1String: String? =
+            if (!joken1Ijo.isNullOrBlank() && !joken1Miman.isNullOrBlank()) {
+                "${joken1Ijo.toInt()}歳以上${joken1Miman.toInt()}歳未満"
+            } else {
+                null
+            }
         Log.d("tamaiDpc", "Ijo ${joken1Ijo} Miman ${joken1Miman}")
-        val joken2String: String? = if (!joken2Ijo.isNullOrBlank() && !joken2Miman.isNullOrBlank()) {
-            "${joken2Ijo.toInt()}歳以上${joken2Miman.toInt()}歳未満"
-        } else {
-            null
-        }
+        val joken2String: String? =
+            if (!joken2Ijo.isNullOrBlank() && !joken2Miman.isNullOrBlank()) {
+                "${joken2Ijo.toInt()}歳以上${joken2Miman.toInt()}歳未満"
+            } else {
+                null
+            }
 
-        val joken3String: String? = if (!joken3Ijo.isNullOrBlank() && !joken3Miman.isNullOrBlank()) {
-            "${joken3Ijo.toInt()}歳以上${joken3Miman.toInt()}歳未満"
-        } else {
-            null
-        }
+        val joken3String: String? =
+            if (!joken3Ijo.isNullOrBlank() && !joken3Miman.isNullOrBlank()) {
+                "${joken3Ijo.toInt()}歳以上${joken3Miman.toInt()}歳未満"
+            } else {
+                null
+            }
 
-        val joken4String: String? = if (!joken4Ijo.isNullOrBlank() && !joken4Miman.isNullOrBlank()) {
-            "${joken4Ijo.toInt()}歳以上${joken4Miman.toInt()}歳未満"
-        } else {
-            null
-        }
+        val joken4String: String? =
+            if (!joken4Ijo.isNullOrBlank() && !joken4Miman.isNullOrBlank()) {
+                "${joken4Ijo.toInt()}歳以上${joken4Miman.toInt()}歳未満"
+            } else {
+                null
+            }
 
-        val joken5String: String? = if (!joken5Ijo.isNullOrBlank() && !joken5Miman.isNullOrBlank()) {
-            "${joken5Ijo.toInt()}歳以上${joken5Miman.toInt()}歳未満"
-        } else {
-            null
-        }
+        val joken5String: String? =
+            if (!joken5Ijo.isNullOrBlank() && !joken5Miman.isNullOrBlank()) {
+                "${joken5Ijo.toInt()}歳以上${joken5Miman.toInt()}歳未満"
+            } else {
+                null
+            }
 
         Log.d("tamaiDpc", "val joken string done")
         // ... joken2String 〜 joken5String まで同様に生成 ...
@@ -344,24 +378,29 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
                 // ... joken2, 3, 4, 5も同様に取得 ...
                 val joken1String =
-                    joken1Ijo.toInt().toString() + "歳以上" + joken1Miman.toInt().toString() + "歳未満"
+                    joken1Ijo.toInt().toString() + "歳以上" + joken1Miman.toInt()
+                        .toString() + "歳未満"
                 val joken2String: String? = if (joken2Ijo != null) {
-                    joken2Ijo.toInt().toString() + "歳以上" + joken2Miman.toInt().toString() + "歳未満"
+                    joken2Ijo.toInt().toString() + "歳以上" + joken2Miman.toInt()
+                        .toString() + "歳未満"
                 } else {
                     null
                 }
                 val joken3String: String? = if (joken3Ijo != null) {
-                    joken3Ijo.toInt().toString() + "歳以上" + joken3Miman.toInt().toString() + "歳未満"
+                    joken3Ijo.toInt().toString() + "歳以上" + joken3Miman.toInt()
+                        .toString() + "歳未満"
                 } else {
                     null
                 }
                 val joken4String: String? = if (joken4Ijo != null) {
-                    joken4Ijo.toInt().toString() + "歳以上" + joken4Miman.toInt().toString() + "歳未満"
+                    joken4Ijo.toInt().toString() + "歳以上" + joken4Miman.toInt()
+                        .toString() + "歳未満"
                 } else {
                     null
                 }
                 val joken5String: String? = if (joken5Ijo != null) {
-                    joken5Ijo.toInt().toString() + "歳以上" + joken5Miman.toInt().toString() + "歳未満"
+                    joken5Ijo.toInt().toString() + "歳以上" + joken5Miman.toInt()
+                        .toString() + "歳未満"
                 } else {
                     null
                 }
@@ -551,6 +590,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             started = SharingStarted.WhileSubscribed(5000), // UIがアクティブな間だけ監視
             initialValue = emptyList() // 初期値は空のリスト
         )
+
     /**
      * ICDが選択されたときにUIから呼び出されるメソッド
      * @param mdcCode 選択されたMDCコード
@@ -613,6 +653,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000), // UIがアクティブな間だけ監視
             initialValue = emptyList() // 初期値は空リスト
         )
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -621,7 +662,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 extras: CreationExtras
             ): T {
                 // Applicationのインスタンスを取得
-                val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+                val application =
+                    checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
                 // DpcScreenViewModelのインスタンスを生成して返す
                 return DpcScreenViewModel(application) as T
             }
@@ -646,34 +688,45 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
         val joken1String: String? = if (
             !jushoJcsJoken.first().joken1Ijo.isNullOrBlank()
-            && !jushoJcsJoken.first().joken1Miman.isNullOrBlank()) {
-            "${jushoJcsJoken.first().joken1Ijo?.toInt()}歳以上${jushoJcsJoken.first().joken1Miman?.toInt()}歳未満"
+            && !jushoJcsJoken.first().joken1Miman.isNullOrBlank()
+        ) {
+            "${jushoJcsJoken.first().joken1Ijo?.toInt()}以上${jushoJcsJoken.first().joken1Miman?.toInt()}未満"
         } else {
             null
         }
         val joken2String: String? = if (
             !jushoJcsJoken.first().joken2Ijo.isNullOrBlank()
-            && !jushoJcsJoken.first().joken2Miman.isNullOrBlank()) {
-            "${jushoJcsJoken.first().joken2Ijo?.toInt()}歳以上${jushoJcsJoken.first().joken2Miman?.toInt()}歳未満"
+            && !jushoJcsJoken.first().joken2Miman.isNullOrBlank()
+        ) {
+            "${jushoJcsJoken.first().joken2Ijo?.toInt()}以上${jushoJcsJoken.first().joken2Miman?.toInt()}未満"
         } else {
             null
         }
 
-        Log.d("tamaiDpc", "val joken string done")
+        Log.d("tamaiDpc", "val jushoJcs string done")
 
         // nullでない有効な選択肢だけをリストに追加する
         return buildList {
             // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
             if (joken1String != null && jushoJcsJoken.first().joken1Value?.isNotBlank() == true) {
-                add(LabelStringAndScore(
-                    joken1String,
-                    jushoJcsJoken.first().joken1Value?.toInt() ?: 0 ))
+                add(
+                    LabelStringAndScore(
+                        joken1String,
+                        jushoJcsJoken.first().joken1Value?.toInt() ?: 0,
+                        label = jushoJcsJoken.first().jokenName
+                    ),
+                )
             }
+            Log.d("tamaiDpc", "here?1")
             // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
             if (joken2String != null && jushoJcsJoken.first().joken2Value?.isNotBlank() == true) {
-                add(LabelStringAndScore(
-                    joken2String,
-                    jushoJcsJoken.first().joken2Value?.toInt() ?: 0))
+                add(
+                    LabelStringAndScore(
+                        joken2String,
+                        jushoJcsJoken.first().joken2Value?.toInt() ?: 0,
+                        label = jushoJcsJoken.first().jokenName
+                    ),
+                )
             }
         }
     }

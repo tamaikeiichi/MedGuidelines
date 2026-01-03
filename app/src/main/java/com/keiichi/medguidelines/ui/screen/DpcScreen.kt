@@ -61,7 +61,8 @@ data class DpcCode(
 
 data class LabelStringAndScore(
     val labelResId: String?, // ★ Int から String に変更
-    val score: Int
+    val score: Int,
+    val label: String? = ""
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -153,7 +154,7 @@ fun DpcScreen(
                             placeholderText = R.string.searchIcd
                         )
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            item{
+                            item {
                                 if (bunruiIcdSelectedIcdItem != null) {
                                     MedGuidelinesCard() {
                                         Text(
@@ -304,8 +305,8 @@ fun DpcScreen(
                             }
                             // --- 年齢選択UI ---
                             item {
-                            if (showNenreiSelection) {
-                                Log.d("tamaiDpc", "after if (showNenreiSelection)")
+                                if (showNenreiSelection) {
+                                    Log.d("tamaiDpc", "after if (showNenreiSelection)")
 
                                     // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
                                     val nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
@@ -338,8 +339,8 @@ fun DpcScreen(
                                 }
                             }
                             item {
-                            if (showShujutsuSelection) {
-                                Log.d("tamaiDpc", "after if (showShujutsuSelection)")
+                                if (showShujutsuSelection) {
+                                    Log.d("tamaiDpc", "after if (showShujutsuSelection)")
 
                                     var expanded by remember { mutableStateOf(false) }
                                     // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
@@ -368,8 +369,8 @@ fun DpcScreen(
                                 }
                             }
                             item {
-                            if (showShochi1Selection) {
-                                Log.d("tamaiDpc", "after if (showShochi1Selection)")
+                                if (showShochi1Selection) {
+                                    Log.d("tamaiDpc", "after if (showShochi1Selection)")
 
                                     val options by dpcScreenViewModel.shochi1Options.collectAsState()
 
@@ -396,8 +397,8 @@ fun DpcScreen(
                                 }
                             }
                             item {
-                            if (showShochi2Selection) {
-                                Log.d("tamaiDpc", "after if (showShochi2Selection)")
+                                if (showShochi2Selection) {
+                                    Log.d("tamaiDpc", "after if (showShochi2Selection)")
 
                                     val options by dpcScreenViewModel.shochi2Options.collectAsState()
 
@@ -422,8 +423,8 @@ fun DpcScreen(
                                 }
                             }
                             item {
-                            if (showFukushobyoSelection) {
-                                Log.d("tamaiDpc", "after if (showFukushobyoSelection)")
+                                if (showFukushobyoSelection) {
+                                    Log.d("tamaiDpc", "after if (showFukushobyoSelection)")
 
                                     val options by dpcScreenViewModel.fukushobyoOptions.collectAsState()
 
@@ -451,7 +452,7 @@ fun DpcScreen(
                             }
                             item {
                                 if (showJushodoJcsSelection) {
-                                    Log.d("tamaiDpc", "after if (showNenreiSelection)")
+                                    Log.d("tamaiDpc", "after if (showJushodoJcsSelection)")
 
                                     // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
                                     val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()
@@ -459,14 +460,20 @@ fun DpcScreen(
                                     // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
                                     if (options.isNotEmpty()) {
                                         var selectedOption: String? by remember(options) {
-                                            mutableStateOf(options.first().joken1Value)
+                                            mutableStateOf(options.first().labelResId)
                                         }
-
                                         MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                                            val nenreiValue =
+                                            val title = if (options.first().label == "年齢") {
+                                                R.string.age
+                                            } else {
+                                                R.string.jcs
+                                            }
+                                            Log.d("tamaiDpc", "title: $title")
+                                            val value =
                                                 buttonAndScoreWithScoreDisplayedSelectableLabelString(
                                                     optionsWithScores = options,
-                                                    title = R.string.age,
+                                                    title = title,
+                                                    //R.string.jushodoJcs,
                                                     // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
                                                     defaultSelectedOption = selectedOption,
                                                     onOptionSelected = { newSelection ->
@@ -476,7 +483,7 @@ fun DpcScreen(
                                                 )
                                             LaunchedEffect(selectedOption) {
                                                 dpcCodeFirst =
-                                                    dpcCodeFirst.copy(nenrei = selectedOption.toString())
+                                                    dpcCodeFirst.copy(jushodo = value.toString())
                                             }
                                         }
                                     }

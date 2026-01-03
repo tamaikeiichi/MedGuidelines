@@ -6,6 +6,7 @@ import androidx.room.Query
 
 data class JushodoJcsJoken(
     // データベースの列名と一致するように@ColumnInfoを使うのが確実
+    @ColumnInfo(name = "joken_name") val jokenName: String?,
     @ColumnInfo(name = "joken1_ijo") val joken1Ijo: String?,
     @ColumnInfo(name = "joken1_miman") val joken1Miman: String?,
     @ColumnInfo(name = "joken1_value") val joken1Value: String?,
@@ -37,7 +38,7 @@ interface JushodoJcsDao {
      *      * @return JushodoJokenオブジェクト。見つからなければnull。
      *      */
     @Query(
-        "SELECT joken1_ijo, joken1_miman, joken1_value, joken2_ijo, joken2_miman, joken2_value " +
+        "SELECT joken_name, joken1_ijo, joken1_miman, joken1_value, joken2_ijo, joken2_miman, joken2_value " +
                 "FROM jushodo_jcs_master " +
                 "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode " +
                 "LIMIT 1"

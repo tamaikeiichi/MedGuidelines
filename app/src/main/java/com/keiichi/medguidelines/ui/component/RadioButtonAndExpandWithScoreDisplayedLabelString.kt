@@ -120,7 +120,6 @@ fun RadioButtonAndExpandWithScoreDisplayedLabelString(
                             ) {
                                 Text(
                                     text = parseStyledString(title), // Using stringResource directly for simplicity
-                                    // Replace with parseStyledString(title) if styling is needed
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = if (onTitleClick != null) {
                                         textModifier.clickable(

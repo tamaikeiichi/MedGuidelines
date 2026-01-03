@@ -749,4 +749,6 @@
     <string name="diseaseNamePlaceholder" translatable="false">MAP</string>
     <string name="below15">15歳未満</string>
     <string name="fifteenOrMore">15歳以上</string>
+    <string name="jushodoJcs">重症度等（ＪＣＳ等）</string>
+    <string name="jcs">ＪＣＳ</string>
 </resources>

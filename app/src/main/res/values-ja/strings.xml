@@ -449,4 +449,6 @@
     <string name="dopamine15"><![CDATA[ドパミン >15 あるいはエピネフリン >0.1 あるいはノルエピネフリン >0.1]]></string>
     <string name="belowTwoHundred"><![CDATA[<200 (26.7) +人工呼吸]]></string>
     <string name="belowOneHundredWithRespiratorySupport"><![CDATA[<100 (13.3) +人口呼吸]]></string>
+    <string name="jushodoJcs">重症度等（ＪＣＳ等）</string>
+    <string name="jcs">ＪＣＳ</string>
 </resources>
