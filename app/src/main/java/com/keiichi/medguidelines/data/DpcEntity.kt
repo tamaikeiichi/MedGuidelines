@@ -151,4 +151,24 @@ data class Shochi1Entity(
     val shochi2Code: String?,
 )
 
+@Entity(tableName = "shochi2_master")
+data class Shochi2Entity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    @ColumnInfo(name = "mdc_code")
+    val mdcCode: String?,
+    @ColumnInfo(name = "bunrui_code")
+    val bunruiCode: String?,
+    @ColumnInfo(name = "taiou_code")
+    val taiouCode: String?,
+    @ColumnInfo(name = "shochi1_name")
+    val shochi1Name: String?,
+    @ColumnInfo(name = "shochi1_code")
+    val shochi1Code: String?,
+    @ColumnInfo(name = "shochi2_name")
+    val shochi2Name: String?,
+    @ColumnInfo(name = "shochi2_code")
+    val shochi2Code: String?,
+)
+
 

@@ -472,4 +472,64 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
 
 }
 
+class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
+    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                Log.d("tamaiDpc", "shuochi1 check ${shochi2Dao.getCount()}")
+                if (shochi2Dao.getCount() == 0) {
+                    val headerNames = (1..21).map { it.toString() }
+                    val columnTypes: Map<String, ColType> =
+                        headerNames.associateWith { ColType.String }
+                    val inputStream: InputStream =
+                        context.resources.openRawResource(R.raw.dpc001348055_8)
+                    Log.d("tamaiDpc", "shochi2 reading")
+                    // DataFrameを格納する変数を宣言
+                    val df: DataFrame<*>
+                    inputStream.use { stream ->
+                        // CSVの全データをDataFrameとして一括で読み込む
+                        df = DataFrame.readCSV(
+                            stream = stream,
+                            header = headerNames,
+                            charset = Charset.forName("Shift-JIS"),
+                            colTypes = columnTypes, // Specify that all columns should be read as String
+                            skipLines = 2,
+                            parserOptions = ParserOptions() // Keep default or adjust as needed
+                        )
+                    }
+                    val list = df.rows().map { row ->
+                        Shochi2Entity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
+                            taiouCode = row[2]?.toString() ?: "",
+                            shochi1Name = row[4]?.toString() ?: "",
+                            shochi1Code = row[5]?.toString() ?: "",
+                            shochi2Name = row[6]?.toString() ?: "",
+                            shochi2Code = row[7]?.toString() ?: "",
+                        )
+                    }
+                    shochi2Dao.insertAlldata(list)
+                }
+            } catch (e: Exception) {
+                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
+
+        }
+    }
+    suspend fun getCodeByName(name: String): String? {
+        return withContext(Dispatchers.IO) {
+            shochi2Dao.getCodeByName(name)
+        }
+    }
+    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
+        return shochi2Dao.existsBunruiInMaster(bunruiCode)
+    }
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            shochi2Dao.getNames(mdcCode, bunruiCode)
+        }
+    }
+}
+
 

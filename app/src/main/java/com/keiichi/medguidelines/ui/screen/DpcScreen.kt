@@ -79,6 +79,7 @@ fun DpcScreen(
     val showNenreiSelection by dpcScreenViewModel.showNenreiSelection.collectAsState()
     val showShujutsuSelection by dpcScreenViewModel.showShujutsuSelection.collectAsState()
     val showShochi1Selection by dpcScreenViewModel.showShochi1Selection.collectAsState()
+    val showShochi2Selection by dpcScreenViewModel.showShochi2Selection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var searchResultsVisible by remember { mutableStateOf(true) }
 
@@ -362,6 +363,26 @@ fun DpcScreen(
                                         val finalCode = code.toDoubleOrNull()?.toInt()?.toString() ?: code
                                         // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
                                         dpcCodeFirst = dpcCodeFirst.copy(shochi1 = finalCode) // shujutu -> shochi1 に
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    if (showShochi2Selection) {
+                        Log.d("tamaiDpc", "after if (showShochi2Selection)")
+                        val options by dpcScreenViewModel.shochi2Options.collectAsState()
+                        DpcDropdownSelection(
+                            title = "手術・処置等２",
+                            options = options,
+                            onOptionSelected = { selectedOption ->
+                                coroutineScope.launch {
+                                    val code = dpcScreenViewModel.getShochi1Code(selectedOption)
+                                    if (code != null)
+                                    {
+                                        val finalCode = code.toDoubleOrNull()?.toInt()?.toString() ?: code
+                                        // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
+                                        dpcCodeFirst = dpcCodeFirst.copy(shochi2 = finalCode) // shujutu -> shochi1 に
                                     }
                                 }
                             }
