@@ -28,7 +28,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val repository: DpcRepository
     private val shujutsuRepository: ShujutsuRepository
-
     private val shochi1Repository: Shochi1Repository
 
     // --- StateFlowの定義 ---
@@ -50,6 +49,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _showShujutsuSelection = MutableStateFlow(false)
     val showShujutsuSelection: StateFlow<Boolean> = _showShujutsuSelection.asStateFlow()
 
+    private val _showShochi1Selection = MutableStateFlow(false)
+    val showShochi1Selection: StateFlow<Boolean> = _showShochi1Selection.asStateFlow()
+
+
     // 病態ドロップダウンの選択肢リスト
     private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
     val byotaiOptions: StateFlow<List<String>> = _byotaiOptions.asStateFlow()
@@ -60,6 +63,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _shujutsuOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
     val shujutsuOptions: StateFlow<List<String>> = _shujutsuOptions.asStateFlow()
+
+    private val _shochi1Options = MutableStateFlow<List<String>>(emptyList())
+    val shochi1Options: StateFlow<List<String>> = _shochi1Options.asStateFlow()
+
 
     /**
      * 【修正案1】ICDリストの項目が選択されたときに呼び出されるメソッド
@@ -111,6 +118,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
                 // 対応する病態が存在するかチェック
                 val shujutsuExists = shujutsuRepository.checkBunruiExistsInShujutsu(item.bunruiCode)
+                val shochi1Exists = shochi1Repository.checkBunruiExistsInShochi1(item.bunruiCode)
                 Log.d("tamaiDpc", "shujutsuExists ${shujutsuExists} item.bunruiCode ${item.bunruiCode}")
                 if (shujutsuExists) {
                     // 存在すれば、病態の選択肢を準備してUIを表示させる
@@ -120,6 +128,15 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     // 存在しなければ、UIを非表示にする
                     _shujutsuOptions.value = emptyList()
                     _showShujutsuSelection.value = false
+                }
+                if (shochi1Exists) {
+                    // 存在すれば、病態の選択肢を準備してUIを表示させる
+                    _shochi1Options.value = shochi1Repository.getNames(item.mdcCode, item.bunruiCode)
+                    _showShochi1Selection.value = true
+                } else {
+                    // 存在しなければ、UIを非表示にする
+                    _shochi1Options.value = emptyList()
+                    _showShochi1Selection.value = false
                 }
             } else {
                 _showByotaiSelection.value = false
@@ -410,8 +427,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         // データベースとリポジトリを初期化
         val dpcDao = AppDatabase.getDatabase(application).dpcDao()
         val shujutsuDao = AppDatabase.getDatabase(application).shujutsuDao()
+        val shochi1Dao = AppDatabase.getDatabase(application).shochi1Dao()
         repository = DpcRepository(dpcDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
+        shochi1Repository= Shochi1Repository(shochi1Dao)
 
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()
@@ -426,6 +445,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             try {
                 repository.populateDatabaseFromExcelIfEmpty(getApplication())
                 shujutsuRepository.populateDatabaseFromExcelIfEmpty(getApplication())
+                shochi1Repository.populateDatabaseFromExcelIfEmpty(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "データベースの初期化に失敗しました: ${e.message}"
             } finally {
@@ -493,7 +513,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     suspend fun getShochi1Code(shochi1Name: String): String? {
-        return shochi1Repository.getShujutsu1CodeByName(shochi1Name)
+        return shochi1Repository.getCodeByName(shochi1Name)
     }
 
     // --- ここからBunruiの検索結果を追加 ---

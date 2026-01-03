@@ -11,7 +11,7 @@ interface Shochi1Dao {
     @androidx.room.Query("SELECT COUNT(*) FROM shochi1_master")
     suspend fun getCount(): Int
 
-    @androidx.room.Query("SELECT shujutsu1_name FROM shochi1_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    @androidx.room.Query("SELECT shochi1_name FROM shochi1_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNames(mdcCode: String, bunruiCode: String): List<String>
 
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
@@ -22,4 +22,5 @@ interface Shochi1Dao {
 
     @androidx.room.Query("SELECT taiou_code FROM shochi1_master WHERE shochi1_name = :shochi1Name LIMIT 1")
     suspend fun getCodeByName(shochi1Name: String): String?
+
 }

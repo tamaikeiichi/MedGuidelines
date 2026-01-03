@@ -45,9 +45,6 @@ class DpcRepository(private val dpcDao: DpcDao) {
     suspend fun checkBunruiExistsInNenrei(bunruiCode: String): Boolean {
         return dpcDao.existsBunruiInNenreiMaster(bunruiCode)
     }
-
-
-
     /**
      * MDCコードと分類コードに一致する病態名のリストを取得する。
      * @param mdcCode 検索するMDCコード
@@ -59,11 +56,6 @@ class DpcRepository(private val dpcDao: DpcDao) {
             dpcDao.getByotaiNames(mdcCode, bunruiCode)
         }
     }
-
-
-
-
-
     suspend fun getNenreiJoken1Ijo(mdcCode: String, bunruiCode: String): String {
         return withContext(Dispatchers.IO) {
             dpcDao.getNenreiJoken1Ijo(mdcCode, bunruiCode)
@@ -140,8 +132,6 @@ class DpcRepository(private val dpcDao: DpcDao) {
             dpcDao.getNenreiJoken5Value(mdcCode, bunruiCode)
         }
     }
-
-
 
     /**
      * 病態名から対応する病態コードを取得する。
@@ -422,6 +412,64 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
 }
 
 class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
+    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                Log.d("tamaiDpc", "shuochi1 check ${shochi1Dao.getCount()}")
+                if (shochi1Dao.getCount() == 0) {
+                    val headerNames = (1..21).map { it.toString() }
+                    val columnTypes: Map<String, ColType> =
+                        headerNames.associateWith { ColType.String }
+                    val inputStream: InputStream =
+                        context.resources.openRawResource(R.raw.dpc001348055_7)
+                    Log.d("tamaiDpc", "shochi1 reading")
+                    // DataFrameを格納する変数を宣言
+                    val df: DataFrame<*>
+                    inputStream.use { stream ->
+                        // CSVの全データをDataFrameとして一括で読み込む
+                        df = DataFrame.readCSV(
+                            stream = stream,
+                            header = headerNames,
+                            charset = Charset.forName("Shift-JIS"),
+                            colTypes = columnTypes, // Specify that all columns should be read as String
+                            skipLines = 2,
+                            parserOptions = ParserOptions() // Keep default or adjust as needed
+                        )
+                    }
+                    val list = df.rows().map { row ->
+                        Shochi1Entity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
+                            taiouCode = row[2]?.toString() ?: "",
+                            shochi1Name = row[5]?.toString() ?: "",
+                            shochi1Code = row[6]?.toString() ?: "",
+                            shochi2Name = row[7]?.toString() ?: "",
+                            shochi2Code = row[8]?.toString() ?: "",
+                        )
+                    }
+                    shochi1Dao.insertAlldata(list)
+                }
+            } catch (e: Exception) {
+                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
+
+        }
+    }
+    suspend fun getCodeByName(name: String): String? {
+        return withContext(Dispatchers.IO) {
+            shochi1Dao.getCodeByName(name)
+        }
+    }
+    suspend fun checkBunruiExistsInShochi1(bunruiCode: String): Boolean {
+        return shochi1Dao.existsBunruiInMaster(bunruiCode)
+    }
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            shochi1Dao.getNames(mdcCode, bunruiCode)
+        }
+    }
+
 }
 
 

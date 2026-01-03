@@ -124,8 +124,11 @@ data class ShujutsuEntity(
     val taiouCode: String?,
     @ColumnInfo(name = "shujutsu1_name")
     val shujutsu1Name: String?,
+
+
     @ColumnInfo(name = "shujutsu2_name")
     val shujutsu2Name: String?,
+
 )
 
 @Entity(tableName = "shochi1_master")
@@ -140,8 +143,12 @@ data class Shochi1Entity(
     val taiouCode: String?,
     @ColumnInfo(name = "shochi1_name")
     val shochi1Name: String?,
+    @ColumnInfo(name = "shochi1_code")
+    val shochi1Code: String?,
     @ColumnInfo(name = "shochi2_name")
     val shochi2Name: String?,
+    @ColumnInfo(name = "shochi2_code")
+    val shochi2Code: String?,
 )
 
 

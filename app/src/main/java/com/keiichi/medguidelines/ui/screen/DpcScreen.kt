@@ -77,6 +77,7 @@ fun DpcScreen(
     val showByotaiSelection by dpcScreenViewModel.showByotaiSelection.collectAsState()
     val showNenreiSelection by dpcScreenViewModel.showNenreiSelection.collectAsState()
     val showShujutsuSelection by dpcScreenViewModel.showShujutsuSelection.collectAsState()
+    val showShochi1Selection by dpcScreenViewModel.showShochi1Selection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var searchResultsVisible by remember { mutableStateOf(true) }
 
