@@ -75,70 +75,67 @@ interface DpcDao {
 
 
 
-    @androidx.room.Query("SELECT nenrei_joken1_ijo " +
+    @androidx.room.Query("SELECT joken1_ijo " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken1Ijo(mdcCode: String, bunruiCode: String): String
-    @androidx.room.Query("SELECT nenrei_joken1_miman " +
+    @androidx.room.Query("SELECT joken1_miman " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken1Miman(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken1_value " +
+    @Query("SELECT joken1_value " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken1Value(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken2_ijo " +
+    @Query("SELECT joken2_ijo " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken2Ijo(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken2_miman " +
+    @Query("SELECT joken2_miman " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken2Miman(mdcCode: String, bunruiCode: String): String
 
-    @Query("SELECT nenrei_joken2_value " +
+    @Query("SELECT joken2_value " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken2Value(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken3_ijo " +
+    @Query("SELECT joken3_ijo " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken3Ijo(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken3_miman " +
+    @Query("SELECT joken3_miman " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken3Miman(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken3_value " +
+    @Query("SELECT joken3_value " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken3Value(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken4_ijo " +
+    @Query("SELECT joken4_ijo " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode " )
     suspend fun getNenreiJoken4Ijo(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken4_miman " +
+    @Query("SELECT joken4_miman " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken4Miman(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken4_value " +
+    @Query("SELECT joken4_value " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken4Value(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken5_ijo " +
+    @Query("SELECT joken5_ijo " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken5Ijo(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken5_miman " +
+    @Query("SELECT joken5_miman " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken5Miman(mdcCode: String, bunruiCode: String): String
-    @Query("SELECT nenrei_joken5_value " +
+    @Query("SELECT joken5_value " +
             "FROM nenrei_master " +
             "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
     suspend fun getNenreiJoken5Value(mdcCode: String, bunruiCode: String): String
-
-
-
 
     /**
      * 指定された病態名に一致する行の病態コード（3列目）を取得します。

@@ -20,6 +20,7 @@ import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Repository
 import com.keiichi.medguidelines.data.ShujutsuDao
 import com.keiichi.medguidelines.data.ShujutsuRepository
+import com.keiichi.medguidelines.data.NenreiRepository
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 import kotlinx.coroutines.CoroutineScope
@@ -49,6 +50,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val shochi2Repository: Shochi2Repository
     private val fukushobyoRepository: FukushobyoRepository
     private val jushodoJcsRepository: JushodoJcsRepository
+    private val nenreiRepository: NenreiRepository
+
 
     // --- StateFlowの定義 ---
     private val _isLoading = MutableStateFlow(false)
@@ -243,90 +246,53 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         mdcCode: String,
         bunruiCode: String
     ): List<LabelStringAndScore> {
-        // リポジトリからjoken1〜5のすべての値を取得
-        val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
-        val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
-        val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
-        val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
-        val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
-        val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
-        val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
-        val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
-        val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
-        val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
+        val nenreiJoken = nenreiRepository.getNenreiJoken(mdcCode, bunruiCode)
+            ?: return emptyList() // データがなければ空リストを返して終了
 
-        val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
-        val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
-        val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
-        val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
-        val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
-        Log.d("tamaiDpc", "Ijo ${joken1Ijo} Miman ${joken1Miman}")
-        // ... joken1Miman, joken1Value, joken2Ijo ... joken5Value まで全て取得 ...
-        Log.d("tamaiDpc", "val joken done")
-        // 取得した値からラベル文字列を安全に生成
-        // 取得した値からラベル文字列を安全に生成する
-        val joken1String: String? =
-            if (!joken1Ijo.isNullOrBlank() && !joken1Miman.isNullOrBlank()) {
-                "${joken1Ijo.toInt()}歳以上${joken1Miman.toInt()}歳未満"
-            } else {
-                null
-            }
-        Log.d("tamaiDpc", "Ijo ${joken1Ijo} Miman ${joken1Miman}")
-        val joken2String: String? =
-            if (!joken2Ijo.isNullOrBlank() && !joken2Miman.isNullOrBlank()) {
-                "${joken2Ijo.toInt()}歳以上${joken2Miman.toInt()}歳未満"
-            } else {
-                null
-            }
+        Log.d("tamaiDpc", "nenreiJoken data: $nenreiJoken")
 
-        val joken3String: String? =
-            if (!joken3Ijo.isNullOrBlank() && !joken3Miman.isNullOrBlank()) {
-                "${joken3Ijo.toInt()}歳以上${joken3Miman.toInt()}歳未満"
-            } else {
-                null
-            }
-
-        val joken4String: String? =
-            if (!joken4Ijo.isNullOrBlank() && !joken4Miman.isNullOrBlank()) {
-                "${joken4Ijo.toInt()}歳以上${joken4Miman.toInt()}歳未満"
-            } else {
-                null
-            }
-
-        val joken5String: String? =
-            if (!joken5Ijo.isNullOrBlank() && !joken5Miman.isNullOrBlank()) {
-                "${joken5Ijo.toInt()}歳以上${joken5Miman.toInt()}歳未満"
-            } else {
-                null
-            }
-
-        Log.d("tamaiDpc", "val joken string done")
-        // ... joken2String 〜 joken5String まで同様に生成 ...
-
-        // nullでない有効な選択肢だけをリストに追加
-        // nullでない有効な選択肢だけをリストに追加する
+        // 2. 取得したデータオブジェクトを使ってリストを構築
         return buildList {
-            // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (joken1String != null && joken1Value.isNotBlank()) {
-                add(LabelStringAndScore(joken1String, joken1Value.toInt()))
+            //joken1
+            if (!nenreiJoken.joken1Ijo.isNullOrBlank() && !nenreiJoken.joken1Miman.isNullOrBlank() && !nenreiJoken.joken1Value.isNullOrBlank()) {
+                val label =
+                    "${nenreiJoken.joken1Ijo.toInt()}歳以上${nenreiJoken.joken1Miman.toInt()}歳未満"
+                val score = nenreiJoken.joken1Value.toInt()
+                add(LabelStringAndScore(label, score))
             }
-            // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (joken2String != null && joken2Value.isNotBlank()) {
-                add(LabelStringAndScore(joken2String, joken2Value.toInt()))
+            // joken2
+            if (!nenreiJoken.joken2Ijo.isNullOrBlank() && !nenreiJoken.joken2Miman.isNullOrBlank() && !nenreiJoken.joken2Value.isNullOrBlank()) {
+                val label =
+                    "${nenreiJoken.joken2Ijo.toInt()}歳以上${nenreiJoken.joken2Miman.toInt()}歳未満"
+                val score = nenreiJoken.joken2Value.toInt()
+                add(LabelStringAndScore(label, score))
             }
-            // joken3: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (joken3String != null && joken3Value.isNotBlank()) {
-                add(LabelStringAndScore(joken3String, joken3Value.toInt()))
+            // joken3
+            if (!nenreiJoken.joken3Ijo.isNullOrBlank() && !nenreiJoken.joken3Miman.isNullOrBlank() && !nenreiJoken.joken3Value.isNullOrBlank()) {
+                val label =
+                    "${nenreiJoken.joken3Ijo.toInt()}歳以上${nenreiJoken.joken3Miman.toInt()}歳未満"
+                val score = nenreiJoken.joken3Value.toInt()
+                add(LabelStringAndScore(label, score))
             }
-            // joken4: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (joken4String != null && joken4Value.isNotBlank()) {
-                add(LabelStringAndScore(joken4String, joken4Value.toInt()))
+            // joken4
+            if (!nenreiJoken.joken4Ijo.isNullOrBlank() && !nenreiJoken.joken4Miman.isNullOrBlank() && !nenreiJoken.joken4Value.isNullOrBlank()) {
+                val label =
+                    "${nenreiJoken.joken4Ijo.toInt()}歳以上${nenreiJoken.joken4Miman.toInt()}歳未満"
+                val score = nenreiJoken.joken4Value.toInt()
+                add(LabelStringAndScore(label, score))
             }
-            // joken5: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (joken5String != null && joken5Value.isNotBlank()) {
-                add(LabelStringAndScore(joken5String, joken5Value.toInt()))
+            // joken5
+            if (!nenreiJoken.joken5Ijo.isNullOrBlank() && !nenreiJoken.joken5Miman.isNullOrBlank() && !nenreiJoken.joken5Value.isNullOrBlank()) {
+                val label =
+                    "${nenreiJoken.joken5Ijo.toInt()}歳以上${nenreiJoken.joken5Miman.toInt()}歳未満"
+                val score = nenreiJoken.joken5Value.toInt()
+                add(LabelStringAndScore(label, score))
             }
         }
+
+
+        // リポジトリからjoken1〜5のすべての値を取得
+
 
     }
 
@@ -464,6 +430,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         val shochi2Dao = AppDatabase.getDatabase(application).shochi2Dao()
         val fukushobyoDao = AppDatabase.getDatabase(application).fukushobyoDao()
         val jushodoJcsDao = AppDatabase.getDatabase(application).jushodoJcsDao()
+        val nenreiDao = AppDatabase.getDatabase(application).nenreiDao()
+
 
         repository = DpcRepository(dpcDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
@@ -471,6 +439,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         shochi2Repository = Shochi2Repository(shochi2Dao)
         fukushobyoRepository = FukushobyoRepository(fukushobyoDao)
         jushodoJcsRepository = JushodoJcsRepository(jushodoJcsDao)
+        nenreiRepository = NenreiRepository(nenreiDao)
+
 
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()
@@ -617,7 +587,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     ): List<LabelStringAndScore> {
         // リポジトリからjoken1〜5のすべての値を取得
         val jushoJcsJoken = jushodoJcsRepository.getJushodoJoken(mdcCode, bunruiCode)
-        Log.d("tamaiDpc", "val jushoJcsJoken done $jushoJcsJoken")
+        Log.d("tamaiDpc", "val jushoJcsJoken done $jushoJcsJoken $mdcCode $bunruiCode")
 
         // 2. オブジェクトがnullなら、空のリストを返して処理を終了（クラッシュ回避）
         if (jushoJcsJoken == null) {

@@ -195,8 +195,6 @@ fun DpcScreen(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .clickable {
-                                                        // --- ここからが修正箇所 ---
-
                                                         // 1. UIの状態を更新
                                                         bunruiIcdSelectedIcdItem = icdItem.icdName
                                                         icdCode =
@@ -217,11 +215,6 @@ fun DpcScreen(
                                                             " dpcScreenViewModel.onIcdItemSelected(icdItem) ran"
                                                         )
                                                         searchResultsVisible = false
-                                                        // currentMdc や currentBunrui の更新は dpcCodeFirst が役割を担うので不要
-                                                        // currentMdc = mdcSelected
-                                                        // currentBunrui = bunruiSelected
-
-                                                        // --- ここまでが修正箇所 ---
                                                     }
                                                     .padding(16.dp)
                                             )

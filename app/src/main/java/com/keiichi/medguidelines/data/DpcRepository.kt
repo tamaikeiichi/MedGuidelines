@@ -572,6 +572,14 @@ class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
     }
 }
 
+
+class NenreiRepository(private val nenreiDao: NenreiDao) {
+    suspend fun getNenreiJoken(mdcCode: String, bunruiCode: String): NenreiJoken? {
+        return withContext(Dispatchers.IO) {
+            nenreiDao.getNenreiJoken(mdcCode, bunruiCode)
+        }
+    }
+}
 /**
  * 指定されたリソースIDのCSVファイルを読み込み、DataFrameとして返す共通関数
  * @param context
