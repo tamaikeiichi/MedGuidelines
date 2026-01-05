@@ -13,20 +13,26 @@ import com.keiichi.medguidelines.data.AppDatabase
 import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.FukushobyoRepository
-import com.keiichi.medguidelines.data.IcdEntity // IcdEntityをインポート
+import com.keiichi.medguidelines.data.IcdEntity
 import com.keiichi.medguidelines.data.JushodoJcsJoken
 import com.keiichi.medguidelines.data.JushodoJcsRepository
+import com.keiichi.medguidelines.data.NenreiRepository
 import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Repository
-import com.keiichi.medguidelines.data.ShujutsuDao
 import com.keiichi.medguidelines.data.ShujutsuRepository
-import com.keiichi.medguidelines.data.NenreiRepository
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 // DpcScreenViewModel.kt のファイルレベルに追加
