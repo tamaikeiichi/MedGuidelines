@@ -62,7 +62,7 @@ data class DpcCode(
 data class LabelStringAndScore(
     val labelResId: String?, // ★ Int から String に変更
     val score: Int,
-    val label: String? = ""
+    val label: String = ""
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,6 +83,7 @@ fun DpcScreen(
     val showShochi2Selection by dpcScreenViewModel.showShochi2Selection.collectAsState()
     val showFukushobyoSelection by dpcScreenViewModel.showFukushobyoSelection.collectAsState()
     val showJushodoJcsSelection by dpcScreenViewModel.showJushodoJcsSelection.collectAsState()
+    val showJushodoShujutsuSelection by dpcScreenViewModel.showJushodoShujutsuSelection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var searchResultsVisible by remember { mutableStateOf(true) }
 
@@ -466,6 +467,40 @@ fun DpcScreen(
                                                 buttonAndScoreWithScoreDisplayedSelectableLabelString(
                                                     optionsWithScores = options,
                                                     title = title,
+                                                    //R.string.jushodoJcs,
+                                                    // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
+                                                    defaultSelectedOption = selectedOption,
+                                                    onOptionSelected = { newSelection ->
+                                                        selectedOption = newSelection
+                                                    },
+                                                    isNumberDisplayed = false
+                                                )
+                                            LaunchedEffect(selectedOption) {
+                                                dpcCodeFirst =
+                                                    dpcCodeFirst.copy(jushodo = value.toString())
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            item {
+                                if (showJushodoShujutsuSelection) {
+                                    Log.d("tamaiDpc", "after if (showJushodoShujutsuSelection)")
+
+                                    // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                                    val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()
+
+                                    // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
+                                    if (options.isNotEmpty()) {
+                                        var selectedOption: String? by remember(options) {
+                                            mutableStateOf(options.first().labelResId)
+                                        }
+                                        MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                                            Log.d("tamaiDpc", "title: $options.first().labelResId")
+                                            val value =
+                                                buttonAndScoreWithScoreDisplayedSelectableLabelString(
+                                                    optionsWithScores = options,
+                                                    title = options.first().label,
                                                     //R.string.jushodoJcs,
                                                     // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
                                                     defaultSelectedOption = selectedOption,

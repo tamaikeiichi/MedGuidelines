@@ -24,7 +24,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         Shochi1Entity::class,
         Shochi2Entity::class,
         FukushobyoEntity::class,
-        JushodoJcsEntity::class
+        JushodoJcsEntity::class,
+        JushodoShujutsuEntity::class,
     ],
     version = 1,
     exportSchema = false
@@ -43,6 +44,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun fukushobyoDao(): FukushobyoDao
     abstract fun jushodoJcsDao(): JushodoJcsDao
     abstract fun nenreiDao(): NenreiDao
+    abstract fun jushodoShujutsuDao(): JushodoShujutsuDao
+
 
 
     companion object {

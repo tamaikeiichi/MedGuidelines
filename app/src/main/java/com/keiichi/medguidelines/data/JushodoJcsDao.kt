@@ -6,13 +6,13 @@ import androidx.room.Query
 
 data class JushodoJcsJoken(
     // データベースの列名と一致するように@ColumnInfoを使うのが確実
-    @ColumnInfo(name = "joken_name") val jokenName: String?,
-    @ColumnInfo(name = "joken1_ijo") val joken1Ijo: String?,
-    @ColumnInfo(name = "joken1_miman") val joken1Miman: String?,
-    @ColumnInfo(name = "joken1_value") val joken1Value: String?,
-    @ColumnInfo(name = "joken2_ijo") val joken2Ijo: String?,
-    @ColumnInfo(name = "joken2_miman") val joken2Miman: String?,
-    @ColumnInfo(name = "joken2_value") val joken2Value: String?
+    @ColumnInfo(name = "joken_name") val jokenName: String,
+    @ColumnInfo(name = "joken1_ijo") val joken1Ijo: String,
+    @ColumnInfo(name = "joken1_miman") val joken1Miman: String,
+    @ColumnInfo(name = "joken1_value") val joken1Value: String,
+    @ColumnInfo(name = "joken2_ijo") val joken2Ijo: String,
+    @ColumnInfo(name = "joken2_miman") val joken2Miman: String,
+    @ColumnInfo(name = "joken2_value") val joken2Value: String
 )
 
 @Dao

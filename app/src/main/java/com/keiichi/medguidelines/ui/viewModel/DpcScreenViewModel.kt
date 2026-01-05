@@ -16,6 +16,7 @@ import com.keiichi.medguidelines.data.FukushobyoRepository
 import com.keiichi.medguidelines.data.IcdEntity
 import com.keiichi.medguidelines.data.JushodoJcsJoken
 import com.keiichi.medguidelines.data.JushodoJcsRepository
+import com.keiichi.medguidelines.data.JushodoShujutsuRepository
 import com.keiichi.medguidelines.data.NenreiRepository
 import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Repository
@@ -57,6 +58,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val fukushobyoRepository: FukushobyoRepository
     private val jushodoJcsRepository: JushodoJcsRepository
     private val nenreiRepository: NenreiRepository
+    private val jushodoShujutsuRepository: JushodoShujutsuRepository
+
 
 
     // --- StateFlowの定義 ---
@@ -89,6 +92,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _showJushodoJcsSelection = MutableStateFlow(false)
     val showJushodoJcsSelection: StateFlow<Boolean> = _showJushodoJcsSelection.asStateFlow()
 
+    private val _showJushodoShujutsuSelection = MutableStateFlow(false)
+    val showJushodoShujutsuSelection: StateFlow<Boolean> = _showJushodoShujutsuSelection.asStateFlow()
+
+
 
     // 病態ドロップダウンの選択肢リスト
     private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
@@ -113,6 +120,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _jushodoJcsOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
     val jushodoJcsOptions: StateFlow<List<LabelStringAndScore>> = _jushodoJcsOptions.asStateFlow()
+    private val _jushodoShujutsuOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
+    val jushodoShujutsuOptions: StateFlow<List<LabelStringAndScore>> = _jushodoShujutsuOptions.asStateFlow()
 
 
     /**
@@ -151,6 +160,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 val nenreiDataExists = repository.checkBunruiExistsInNenrei(item.bunruiCode)
                 val jushodoJcsDateExists =
                     jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                val jushodoShujutsuDataExists =
+                    jushodoShujutsuRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 if (nenreiDataExists && item.mdcCode != null) {
                     // ★ 存在すれば、年齢条件の選択肢リストを生成する
                     _nenreiOptions.value = createNenreiOptionsList(item.mdcCode, item.bunruiCode)
@@ -169,6 +180,16 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     // 存在しなければ、UIを非表示にする
                     _showJushodoJcsSelection.value = false
                     _jushodoJcsOptions.value = emptyList()
+                }
+                if (jushodoShujutsuDataExists && item.mdcCode != null) {
+                    // ★ 存在すれば、年齢条件の選択肢リストを生成する
+                    _jushodoShujutsuOptions.value =
+                        createJushoShujutsuJokenOptionsList(item.mdcCode, item.bunruiCode)
+                    _showJushodoShujutsuSelection.value = true
+                } else {
+                    // 存在しなければ、UIを非表示にする
+                    _showJushodoShujutsuSelection.value = false
+                    _jushodoShujutsuOptions.value = emptyList()
                 }
             } else {
                 _showNenreiSelection.value = false
@@ -437,7 +458,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         val fukushobyoDao = AppDatabase.getDatabase(application).fukushobyoDao()
         val jushodoJcsDao = AppDatabase.getDatabase(application).jushodoJcsDao()
         val nenreiDao = AppDatabase.getDatabase(application).nenreiDao()
-
+        val jushodoShujutsuDao = AppDatabase.getDatabase(application).jushodoShujutsuDao()
 
         repository = DpcRepository(dpcDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
@@ -446,7 +467,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         fukushobyoRepository = FukushobyoRepository(fukushobyoDao)
         jushodoJcsRepository = JushodoJcsRepository(jushodoJcsDao)
         nenreiRepository = NenreiRepository(nenreiDao)
-
+        jushodoShujutsuRepository = JushodoShujutsuRepository(jushodoShujutsuDao)
 
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()
@@ -645,12 +666,52 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             }
             Log.d("tamaiDpc", "here?1")
             // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (joken2String != null && jushoJcsJoken.first().joken2Value?.isNotBlank() == true) {
+            if (joken2String != null && jushoJcsJoken.first().joken2Value.isNotBlank() == true) {
                 add(
                     LabelStringAndScore(
                         joken2String,
                         jushoJcsJoken.first().joken2Value?.toInt() ?: 0,
                         label = jushoJcsJoken.first().jokenName
+                    ),
+                )
+            }
+        }
+    }
+
+    private suspend fun createJushoShujutsuJokenOptionsList(
+        mdcCode: String, bunruiCode: String
+    ): List<LabelStringAndScore> {
+        // リポジトリからjoken1〜5のすべての値を取得
+        val jushoShujutsuJoken = jushodoShujutsuRepository.getJushodoJoken(mdcCode, bunruiCode)
+        Log.d("tamaiDpc", "val jushoShujutsuJoken done $jushoShujutsuJoken $mdcCode $bunruiCode")
+
+        // 2. オブジェクトがnullなら、空のリストを返して処理を終了（クラッシュ回避）
+        if (jushoShujutsuJoken == null) {
+            return emptyList()
+        }
+
+        Log.d("tamaiDpc", "val jushoShujutsu string done ")
+
+        // nullでない有効な選択肢だけをリストに追加する
+        return buildList {
+            // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (jushoShujutsuJoken.first().joken1Name != null && jushoShujutsuJoken.first().joken1Code?.isNotBlank() == true) {
+                add(
+                    LabelStringAndScore(
+                        jushoShujutsuJoken.first().joken1Name,
+                        jushoShujutsuJoken.first().joken1Code?.toInt() ?: 0,
+                        label = jushoShujutsuJoken.first().jokenName
+                    ),
+                )
+            }
+            Log.d("tamaiDpc", "here?1")
+            // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+            if (jushoShujutsuJoken.first().joken2Name != null && jushoShujutsuJoken.first().joken2Code.isNotBlank() == true) {
+                add(
+                    LabelStringAndScore(
+                        jushoShujutsuJoken.first().joken2Name,
+                        jushoShujutsuJoken.first().joken2Code?.toInt() ?: 0,
+                        label = jushoShujutsuJoken.first().jokenName
                     ),
                 )
             }

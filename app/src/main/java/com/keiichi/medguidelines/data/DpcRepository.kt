@@ -580,6 +580,49 @@ class NenreiRepository(private val nenreiDao: NenreiDao) {
         }
     }
 }
+
+class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuDao) {
+    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                Log.d("tamaiDpc", "jushodo jcs check ${jushodoShujutsuDao.getCount()}")
+                if (jushodoShujutsuDao.getCount() == 0) {
+                    val df = readDpcCsv(context, R.raw.dpc001348055_10_1)
+                    Log.d("tamaiDpc", "jushodo jcs reading")
+                    val list = df.rows().map { row ->
+                        JushodoShujutsuEntity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
+                            jokenName = row[3]?.toString() ?:"",
+                            joken1Name = row[4]?.toString() ?: "",
+                            joken1Code = row[5]?.toString() ?: "",
+                            joken2Name = row[6]?.toString() ?: "",
+                            joken2Code = row[7]?.toString() ?: "",
+                            )
+                    }
+                    jushodoShujutsuDao.insertAlldata(list)
+                }
+            } catch (e: Exception) {
+                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
+
+        }
+    }
+    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoShujutsuJoken> {
+        return withContext(Dispatchers.IO) {
+            jushodoShujutsuDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
+        }
+    }
+    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
+        return jushodoShujutsuDao.existsBunruiInMaster(bunruiCode)
+    }
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            jushodoShujutsuDao.getNames(mdcCode, bunruiCode)
+        }
+    }
+    }
 /**
  * 指定されたリソースIDのCSVファイルを読み込み、DataFrameとして返す共通関数
  * @param context
