@@ -96,7 +96,7 @@ fun DpcScreen(
     // データベースからの検索結果を購読
     val displayedItemsIcd by dpcScreenViewModel.displayedItemsIcd.collectAsState()
 
-    var query by remember { mutableStateOf("010") }
+    var query by remember { mutableStateOf("040") }
 
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
