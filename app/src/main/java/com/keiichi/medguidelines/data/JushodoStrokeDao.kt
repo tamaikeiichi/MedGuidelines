@@ -44,8 +44,7 @@ interface JushodoStrokeDao {
     @Query(
         "SELECT mdc_code, bunrui_code, code,label, joken1_name " +
                 "FROM jushodo_stroke_master " +
-                "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode " +
-                "LIMIT 1"
+                "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode "
     )
     suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoStrokeJoken>
 

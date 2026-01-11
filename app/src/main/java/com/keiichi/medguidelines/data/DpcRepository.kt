@@ -7,7 +7,6 @@ import android.util.Log
 import android.util.Log.e
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
-import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
@@ -633,8 +632,8 @@ class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
             try {
                 Log.d("tamaiDpc", "jushodo Stroke check ${jushodoStrokeDao.getCount()}")
                 if (jushodoStrokeDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_10_1)
-                    Log.d("tamaiDpc", "jushodo jcs reading")
+                    val df = readDpcCsv(context, R.raw.dpc001593946_10_4)
+                    Log.d("tamaiDpc", "jushodo stroke reading")
                     val list = df.rows().map { row ->
                         JushodoStrokeEntity(
                             // nenreiEntityの定義に合わせて列を指定
@@ -659,7 +658,7 @@ class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
             jushodoStrokeDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
         }
     }
-    suspend fun checkBunruiExistsInMaster(mdcCode: String?, bunruiCode: String): Boolean {
+    suspend fun checkMdcAndBunruiExistInMaster(mdcCode: String?, bunruiCode: String): Boolean {
         Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $mdcCode $bunruiCode")
         return jushodoStrokeDao.existsBunruiInMaster(mdcCode, bunruiCode)
     }

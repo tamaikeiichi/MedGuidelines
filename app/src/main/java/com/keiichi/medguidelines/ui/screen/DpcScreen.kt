@@ -425,6 +425,7 @@ fun DpcScreen(
                                     )
                                 }
                             }
+                            //副傷病名
                             item {
                                 if (showFukushobyoSelection) {
                                     Log.d("tamaiDpc", "after if (showFukushobyoSelection)")
@@ -540,7 +541,7 @@ fun DpcScreen(
                                     val labelIdList = options.map { it.labelResId }
 
                                     DpcDropdownSelection(
-                                        title = "手術・処置等１",
+                                        title = options.first().label,
                                         options = labelIdList as List<String>,
                                         onOptionSelected = { selectedShochi1 ->
                                             coroutineScope.launch {
@@ -552,9 +553,8 @@ fun DpcScreen(
                                                     val finalCode =
                                                         code.toDoubleOrNull()?.toInt()?.toString()
                                                             ?: code
-                                                    // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
                                                     dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shochi1 = finalCode) // shujutu -> shochi1 に
+                                                        dpcCodeFirst.copy(jushodo = finalCode) // shujutu -> shochi1 に
                                                 }
                                             }
                                         }

@@ -129,8 +129,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _jushodoShujutsuOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
     val jushodoShujutsuOptions: StateFlow<List<LabelStringAndScore>> = _jushodoShujutsuOptions.asStateFlow()
 
-    private val _jushodoStrokeOptions = MutableStateFlow<List<String>>(emptyList())
-    val jushodoStrokeOptions: StateFlow<List<String>> = _jushodoStrokeOptions.asStateFlow()
+    private val _jushodoStrokeOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
+    val jushodoStrokeOptions: StateFlow<List<LabelStringAndScore>> = _jushodoStrokeOptions.asStateFlow()
 
 
     /**
@@ -172,7 +172,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 val jushodoShujutsuDataExists =
                     jushodoShujutsuRepository.checkBunruiExistsInMaster(item.mdcCode,item.bunruiCode)
                 val jushodoStrokeDataExists =
-                    jushodoStrokeRepository.checkBunruiExistsInMaster(item.mdcCode,item.bunruiCode)
+                    jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(item.mdcCode,item.bunruiCode)
                 Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $jushodoShujutsuDataExists")
                 if (nenreiDataExists && item.mdcCode != null) {
                     // ★ 存在すれば、年齢条件の選択肢リストを生成する
@@ -206,7 +206,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 if (jushodoStrokeDataExists && item.mdcCode != null) {
                     // ★ 存在すれば、年齢条件の選択肢リストを生成する
                     _jushodoStrokeOptions.value =
-                        createJushodoStrokeJokenOptionsList(item.mdcCode, item.bunruiCode)
+                        createJushoStrokeJokenOptionsList(item.mdcCode, item.bunruiCode)
                     _showJushodoStrokeSelection.value = true
                 } else {
                     // 存在しなければ、UIを非表示にする
@@ -232,7 +232,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     fukushobyoRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 val jushodoJcsExists =
                     jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
-                val jushodoStrokeExists = jushodoStrokeRepository.checkBunruiExistsInMaster(item.mdcCode,item.bunruiCode)
+                val jushodoStrokeExists = jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(item.mdcCode,item.bunruiCode)
 
                 Log.d(
                     "tamaiDpc",
@@ -290,7 +290,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     showSelectionFlow = _showJushodoStrokeSelection,
                     // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
                     // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-                    getOptions = { jushodoStrokeRepository.getNames(item.mdcCode, item.bunruiCode) }
+                    getOptions = { createJushoStrokeJokenOptionsList(item.mdcCode, item.bunruiCode) }
                 )
             } else {
                 _showByotaiSelection.value = false
@@ -526,6 +526,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 shochi2Repository.populateDatabaseFromExcelIfEmpty(getApplication())
                 fukushobyoRepository.populateDatabaseFromExcelIfEmpty(getApplication())
                 jushodoJcsRepository.populateDatabaseFromExcelIfEmpty(getApplication())
+                jushodoStrokeRepository.populateDatabaseFromExcelIfEmpty(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "データベースの初期化に失敗しました: ${e.message}"
             } finally {
@@ -761,47 +762,38 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
-}
 
-private suspend fun createJushoStrokeJokenOptionsList(
-    mdcCode: String, bunruiCode: String
-): List<LabelStringAndScore> {
-    val jushoStrokeJoken = jushodoStrokeRepository.getJushodoJoken(mdcCode, bunruiCode)
-    Log.d("tamaiDpc", "val jushoStrokeJoken done $jushoStrokeJoken $mdcCode $bunruiCode")
+    private suspend fun createJushoStrokeJokenOptionsList(
+        mdcCode: String, bunruiCode: String
+    ): List<LabelStringAndScore> {
+        val jushoStrokeJoken = jushodoStrokeRepository.getJushodoJoken(mdcCode, bunruiCode)
+        Log.d("tamaiDpc", "val jushoStrokeJoken done $jushoStrokeJoken $mdcCode $bunruiCode")
 
-    // 2. オブジェクトがnullなら、空のリストを返して処理を終了（クラッシュ回避）
-    if (jushoStrokeJoken == null) {
-        return emptyList()
-    }
-
-    Log.d("tamaiDpc", "val jushoShujutsu string done ")
-
-    // nullでない有効な選択肢だけをリストに追加する
-    return buildList {
-        // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-        if (jushoShujutsuJoken.first().joken1Name != null && jushoShujutsuJoken.first().joken1Code?.isNotBlank() == true) {
-            add(
-                LabelStringAndScore(
-                    jushoShujutsuJoken.first().joken1Name,
-                    jushoShujutsuJoken.first().joken1Code?.toInt() ?: 0,
-                    label = jushoShujutsuJoken.first().jokenName
-                ),
-            )
+        // 2. オブジェクトがnullなら、空のリストを返して処理を終了（クラッシュ回避）
+        if (jushoStrokeJoken == null) {
+            return emptyList()
         }
-        Log.d("tamaiDpc", "here?1")
-        // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-        if (jushoShujutsuJoken.first().joken2Name != null && jushoShujutsuJoken.first().joken2Code.isNotBlank() == true) {
-            add(
+
+        Log.d("tamaiDpc", "val jushoShujutsu string done ")
+
+        // nullでない有効な選択肢だけをリストに追加する
+        return jushoStrokeJoken.mapNotNull { item ->
+            // 名称とコードが両方存在する場合のみ、LabelStringAndScoreを作成
+            if (item.joken1Name != null && !item.code.isNullOrBlank()) {
                 LabelStringAndScore(
-                    jushoShujutsuJoken.first().joken2Name,
-                    jushoShujutsuJoken.first().joken2Code?.toInt() ?: 0,
-                    label = jushoShujutsuJoken.first().jokenName
-                ),
-            )
+                    labelResId = item.joken1Name,
+                    score = item.code.toIntOrNull() ?: 0,
+                    label = item.label
+                )
+            } else {
+                null // 条件に合わないデータは除外される
+            }
         }
     }
 }
-}
+
+
+
 
 /*** 【共通化】選択UIの表示状態と選択肢リストを更新するヘルパー関数
  * @param T 選択肢の型 (String, JushodoJcsJoken など)
