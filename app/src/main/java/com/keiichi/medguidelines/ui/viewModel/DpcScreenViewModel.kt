@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.collections.first
 
 // DpcScreenViewModel.kt のファイルレベルに追加
 
@@ -760,6 +761,46 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+}
+
+private suspend fun createJushoStrokeJokenOptionsList(
+    mdcCode: String, bunruiCode: String
+): List<LabelStringAndScore> {
+    val jushoStrokeJoken = jushodoStrokeRepository.getJushodoJoken(mdcCode, bunruiCode)
+    Log.d("tamaiDpc", "val jushoStrokeJoken done $jushoStrokeJoken $mdcCode $bunruiCode")
+
+    // 2. オブジェクトがnullなら、空のリストを返して処理を終了（クラッシュ回避）
+    if (jushoStrokeJoken == null) {
+        return emptyList()
+    }
+
+    Log.d("tamaiDpc", "val jushoShujutsu string done ")
+
+    // nullでない有効な選択肢だけをリストに追加する
+    return buildList {
+        // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+        if (jushoShujutsuJoken.first().joken1Name != null && jushoShujutsuJoken.first().joken1Code?.isNotBlank() == true) {
+            add(
+                LabelStringAndScore(
+                    jushoShujutsuJoken.first().joken1Name,
+                    jushoShujutsuJoken.first().joken1Code?.toInt() ?: 0,
+                    label = jushoShujutsuJoken.first().jokenName
+                ),
+            )
+        }
+        Log.d("tamaiDpc", "here?1")
+        // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
+        if (jushoShujutsuJoken.first().joken2Name != null && jushoShujutsuJoken.first().joken2Code.isNotBlank() == true) {
+            add(
+                LabelStringAndScore(
+                    jushoShujutsuJoken.first().joken2Name,
+                    jushoShujutsuJoken.first().joken2Code?.toInt() ?: 0,
+                    label = jushoShujutsuJoken.first().jokenName
+                ),
+            )
+        }
+    }
+}
 }
 
 /*** 【共通化】選択UIの表示状態と選択肢リストを更新するヘルパー関数
