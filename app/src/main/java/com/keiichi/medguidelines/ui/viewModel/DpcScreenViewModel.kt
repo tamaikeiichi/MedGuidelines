@@ -17,6 +17,7 @@ import com.keiichi.medguidelines.data.IcdEntity
 import com.keiichi.medguidelines.data.JushodoJcsJoken
 import com.keiichi.medguidelines.data.JushodoJcsRepository
 import com.keiichi.medguidelines.data.JushodoShujutsuRepository
+import com.keiichi.medguidelines.data.JushodoStrokeRepository
 import com.keiichi.medguidelines.data.NenreiRepository
 import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Repository
@@ -59,6 +60,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val jushodoJcsRepository: JushodoJcsRepository
     private val nenreiRepository: NenreiRepository
     private val jushodoShujutsuRepository: JushodoShujutsuRepository
+    private val jushodoStrokeRepository: JushodoStrokeRepository
+
 
 
 
@@ -95,6 +98,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _showJushodoShujutsuSelection = MutableStateFlow(false)
     val showJushodoShujutsuSelection: StateFlow<Boolean> = _showJushodoShujutsuSelection.asStateFlow()
 
+    private val _showJushodoStrokeSelection = MutableStateFlow(false)
+    val showJushodoStrokeSelection: StateFlow<Boolean> = _showJushodoStrokeSelection.asStateFlow()
 
 
     // 病態ドロップダウンの選択肢リスト
@@ -122,6 +127,9 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     val jushodoJcsOptions: StateFlow<List<LabelStringAndScore>> = _jushodoJcsOptions.asStateFlow()
     private val _jushodoShujutsuOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
     val jushodoShujutsuOptions: StateFlow<List<LabelStringAndScore>> = _jushodoShujutsuOptions.asStateFlow()
+
+    private val _jushodoStrokeOptions = MutableStateFlow<List<String>>(emptyList())
+    val jushodoStrokeOptions: StateFlow<List<String>> = _jushodoStrokeOptions.asStateFlow()
 
 
     /**
@@ -162,6 +170,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 val jushodoShujutsuDataExists =
                     jushodoShujutsuRepository.checkBunruiExistsInMaster(item.mdcCode,item.bunruiCode)
+                val jushodoStrokeDataExists =
+                    jushodoStrokeRepository.checkBunruiExistsInMaster(item.mdcCode,item.bunruiCode)
                 Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $jushodoShujutsuDataExists")
                 if (nenreiDataExists && item.mdcCode != null) {
                     // ★ 存在すれば、年齢条件の選択肢リストを生成する
@@ -192,6 +202,16 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     _showJushodoShujutsuSelection.value = false
                     _jushodoShujutsuOptions.value = emptyList()
                 }
+                if (jushodoStrokeDataExists && item.mdcCode != null) {
+                    // ★ 存在すれば、年齢条件の選択肢リストを生成する
+                    _jushodoStrokeOptions.value =
+                        createJushodoStrokeJokenOptionsList(item.mdcCode, item.bunruiCode)
+                    _showJushodoStrokeSelection.value = true
+                } else {
+                    // 存在しなければ、UIを非表示にする
+                    _showJushodoStrokeSelection.value = false
+                    _jushodoStrokeOptions.value = emptyList()
+                }
             } else {
                 _showNenreiSelection.value = false
                 _nenreiOptions.value = emptyList()
@@ -211,6 +231,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     fukushobyoRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 val jushodoJcsExists =
                     jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                val jushodoStrokeExists = jushodoStrokeRepository.checkBunruiExistsInMaster(item.mdcCode,item.bunruiCode)
+
                 Log.d(
                     "tamaiDpc",
                     "shujutsuExists ${shujutsuExists} item.bunruiCode ${item.bunruiCode}"
@@ -259,6 +281,15 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
                     // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
                     getOptions = { createJushoJcsJokenOptionsList(item.mdcCode, item.bunruiCode) }
+                )
+
+                updateSelectionState(
+                    exists = jushodoStrokeExists,
+                    optionsFlow = _jushodoStrokeOptions,
+                    showSelectionFlow = _showJushodoStrokeSelection,
+                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
+                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
+                    getOptions = { jushodoStrokeRepository.getNames(item.mdcCode, item.bunruiCode) }
                 )
             } else {
                 _showByotaiSelection.value = false
@@ -465,6 +496,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         val jushodoJcsDao = AppDatabase.getDatabase(application).jushodoJcsDao()
         val nenreiDao = AppDatabase.getDatabase(application).nenreiDao()
         val jushodoShujutsuDao = AppDatabase.getDatabase(application).jushodoShujutsuDao()
+        val jushodoStrokeDao = AppDatabase.getDatabase(application).jushodoStrokeDao()
+
 
         repository = DpcRepository(dpcDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
@@ -474,7 +507,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         jushodoJcsRepository = JushodoJcsRepository(jushodoJcsDao)
         nenreiRepository = NenreiRepository(nenreiDao)
         jushodoShujutsuRepository = JushodoShujutsuRepository(jushodoShujutsuDao)
-
+        jushodoStrokeRepository = JushodoStrokeRepository(jushodoStrokeDao)
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()
     }
@@ -573,6 +606,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     suspend fun getJushodoJcsJoken(mdcCode: String, bunruiCode: String): List<JushodoJcsJoken> {
         return jushodoJcsRepository.getJushodoJoken(mdcCode, bunruiCode)
+    }
+
+    suspend fun getJushodoStrokeCode(name: String): String? {
+        return jushodoStrokeRepository.getCodeByName(name)
     }
 
     // --- ここからBunruiの検索結果を追加 ---

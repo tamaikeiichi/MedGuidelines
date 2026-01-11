@@ -7,6 +7,7 @@ import android.util.Log
 import android.util.Log.e
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
+import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
@@ -625,6 +626,55 @@ class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuD
         }
     }
     }
+
+class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
+    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                Log.d("tamaiDpc", "jushodo Stroke check ${jushodoStrokeDao.getCount()}")
+                if (jushodoStrokeDao.getCount() == 0) {
+                    val df = readDpcCsv(context, R.raw.dpc001593946_10_1)
+                    Log.d("tamaiDpc", "jushodo jcs reading")
+                    val list = df.rows().map { row ->
+                        JushodoStrokeEntity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            mdcCode = row[0]?.toString() ?: "",
+                            bunruiCode = row[1]?.toString() ?: "",
+                            code = row[2]?.toString() ?: "",
+                            label = row[5]?.toString() ?:"",
+                            joken1Name = row[7]?.toString() ?: "",
+
+                        )
+                    }
+                    jushodoStrokeDao.insertAlldata(list)
+                }
+            } catch (e: Exception) {
+                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
+
+        }
+    }
+    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoStrokeJoken> {
+        return withContext(Dispatchers.IO) {
+            jushodoStrokeDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
+        }
+    }
+    suspend fun checkBunruiExistsInMaster(mdcCode: String?, bunruiCode: String): Boolean {
+        Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $mdcCode $bunruiCode")
+        return jushodoStrokeDao.existsBunruiInMaster(mdcCode, bunruiCode)
+    }
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            jushodoStrokeDao.getNames(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getCodeByName(name: String): String? {
+        return withContext(Dispatchers.IO) {
+            jushodoStrokeDao.getCodeByName(name)
+        }
+    }
+}
+
 /**
  * 指定されたリソースIDのCSVファイルを読み込み、DataFrameとして返す共通関数
  * @param context

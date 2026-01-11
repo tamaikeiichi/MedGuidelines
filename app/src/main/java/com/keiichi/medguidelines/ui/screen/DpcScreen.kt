@@ -84,6 +84,7 @@ fun DpcScreen(
     val showFukushobyoSelection by dpcScreenViewModel.showFukushobyoSelection.collectAsState()
     val showJushodoJcsSelection by dpcScreenViewModel.showJushodoJcsSelection.collectAsState()
     val showJushodoShujutsuSelection by dpcScreenViewModel.showJushodoShujutsuSelection.collectAsState()
+    val showJushodoStrokeSelection by dpcScreenViewModel.showJushodoStrokeSelection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var searchResultsVisible by remember { mutableStateOf(true) }
 
@@ -369,6 +370,7 @@ fun DpcScreen(
                                     )
                                 }
                             }
+                            //処置１
                             item {
                                 if (showShochi1Selection) {
                                     Log.d("tamaiDpc", "after if (showShochi1Selection)")
@@ -451,6 +453,7 @@ fun DpcScreen(
                                     )
                                 }
                             }
+                            //重症度JCS
                             item {
                                 if (showJushodoJcsSelection) {
                                     Log.d("tamaiDpc", "after if (showJushodoJcsSelection)")
@@ -525,6 +528,37 @@ fun DpcScreen(
                                             }
                                         }
                                     }
+                                }
+                            }
+                            //重症度脳卒中
+                            item {
+                                if (showJushodoStrokeSelection) {
+                                    Log.d("tamaiDpc", "after if (showShochi1Selection)")
+
+                                    val options by dpcScreenViewModel.jushodoStrokeOptions.collectAsState()
+                                    // options から labelResId だけを抽出したリストを作成
+                                    val labelIdList = options.map { it.labelResId }
+
+                                    DpcDropdownSelection(
+                                        title = "手術・処置等１",
+                                        options = labelIdList as List<String>,
+                                        onOptionSelected = { selectedShochi1 ->
+                                            coroutineScope.launch {
+                                                val code =
+                                                    dpcScreenViewModel.getJushodoStrokeCode(
+                                                        selectedShochi1
+                                                    )
+                                                if (code != null) {
+                                                    val finalCode =
+                                                        code.toDoubleOrNull()?.toInt()?.toString()
+                                                            ?: code
+                                                    // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
+                                                    dpcCodeFirst =
+                                                        dpcCodeFirst.copy(shochi1 = finalCode) // shujutu -> shochi1 に
+                                                }
+                                            }
+                                        }
+                                    )
                                 }
                             }
                         }

@@ -231,4 +231,20 @@ data class JushodoShujutsuEntity(
     val joken2Code: String?,
 )
 
+@Entity(tableName = "jushodo_stroke_master")
+data class JushodoStrokeEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    @ColumnInfo(name = "mdc_code")
+    val mdcCode: String?,
+    @ColumnInfo(name = "bunrui_code")
+    val bunruiCode: String?,
+    @ColumnInfo(name = "code")
+    val code: String?,
+    @ColumnInfo(name = "label")
+    val label: String?,
+    @ColumnInfo(name = "joken1_name")
+    val joken1Name: String?,
+)
+
 
