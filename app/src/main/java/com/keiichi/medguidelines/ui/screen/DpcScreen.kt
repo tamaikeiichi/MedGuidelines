@@ -158,10 +158,16 @@ fun DpcScreen(
                             item {
                                 if (bunruiIcdSelectedIcdItem != null) {
                                     MedGuidelinesCard() {
-                                        Text(
-                                            text = "$bunruiIcdSelectedIcdItem",
-                                            modifier = Modifier.padding(16.dp)
-                                        )
+                                        Column() {
+                                            Text(
+                                                text = "$bunruiIcdSelectedIcdItem",
+                                                modifier = Modifier.padding(Dimensions.textPadding)
+                                            )
+                                            Text(
+                                                text = dpcCodeFirst.toString(),
+                                                modifier = Modifier.padding(Dimensions.textPadding)
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -308,30 +314,31 @@ fun DpcScreen(
                                     // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
                                     if (nenreiOptions.isNotEmpty()) {
 
-                                        var selectedNenrei: String? by remember(nenreiOptions) {
-                                            mutableStateOf(nenreiOptions.first().labelResId)
+                                        var selectedlabelResId: String? by remember(nenreiOptions) {
+                                            mutableStateOf(nenreiOptions.first().labelResId.toString())
                                         }
 
                                         MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                                            val nenreiValue =
+                                            val selectedValue =
                                                 buttonAndScoreWithScoreDisplayedSelectableLabelString(
                                                     optionsWithScores = nenreiOptions,
                                                     title = R.string.age,
                                                     // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
-                                                    defaultSelectedOption = selectedNenrei,
-                                                    onOptionSelected = { newSelection ->
-                                                        selectedNenrei = newSelection
+                                                    defaultSelectedOption = selectedlabelResId,
+                                                    onOptionSelected = { onSelected ->
+                                                        selectedlabelResId = onSelected
                                                     },
                                                     isNumberDisplayed = false
                                                 )
-                                            LaunchedEffect(selectedNenrei) {
+                                            LaunchedEffect(selectedlabelResId) {
                                                 dpcCodeFirst =
-                                                    dpcCodeFirst.copy(nenrei = selectedNenrei.toString())
+                                                    dpcCodeFirst.copy(nenrei = selectedValue.toString())
                                             }
                                         }
                                     }
                                 }
                             }
+                            //手術
                             item {
                                 if (showShujutsuSelection) {
                                     Log.d("tamaiDpc", "after if (showShujutsuSelection)")
@@ -483,9 +490,12 @@ fun DpcScreen(
                                     }
                                 }
                             }
+                            //重症度手術
                             item {
+                                Log.d("tamaiDpc", "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}")
+
                                 if (showJushodoShujutsuSelection) {
-                                    Log.d("tamaiDpc", "after if (showJushodoShujutsuSelection)")
+                                    Log.d("tamaiDpc", "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}")
 
                                     // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
                                     val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()

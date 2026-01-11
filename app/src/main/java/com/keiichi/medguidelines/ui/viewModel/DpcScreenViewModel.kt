@@ -161,7 +161,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 val jushodoJcsDateExists =
                     jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 val jushodoShujutsuDataExists =
-                    jushodoShujutsuRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                    jushodoShujutsuRepository.checkBunruiExistsInMaster(item.mdcCode,item.bunruiCode)
+                Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $jushodoShujutsuDataExists")
                 if (nenreiDataExists && item.mdcCode != null) {
                     // ★ 存在すれば、年齢条件の選択肢リストを生成する
                     _nenreiOptions.value = createNenreiOptionsList(item.mdcCode, item.bunruiCode)
@@ -282,38 +283,43 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         return buildList {
             //joken1
             if (!nenreiJoken.joken1Ijo.isNullOrBlank() && !nenreiJoken.joken1Miman.isNullOrBlank() && !nenreiJoken.joken1Value.isNullOrBlank()) {
-                val label =
+                val labelResId =
                     "${nenreiJoken.joken1Ijo.toInt()}歳以上${nenreiJoken.joken1Miman.toInt()}歳未満"
                 val score = nenreiJoken.joken1Value.toInt()
-                add(LabelStringAndScore(label, score))
+                val label = nenreiJoken.jokenName
+                add(LabelStringAndScore(labelResId, score, label))
             }
             // joken2
             if (!nenreiJoken.joken2Ijo.isNullOrBlank() && !nenreiJoken.joken2Miman.isNullOrBlank() && !nenreiJoken.joken2Value.isNullOrBlank()) {
-                val label =
+                val labelResId =
                     "${nenreiJoken.joken2Ijo.toInt()}歳以上${nenreiJoken.joken2Miman.toInt()}歳未満"
                 val score = nenreiJoken.joken2Value.toInt()
-                add(LabelStringAndScore(label, score))
+                val label = nenreiJoken.jokenName
+                add(LabelStringAndScore(labelResId, score, label))
             }
             // joken3
             if (!nenreiJoken.joken3Ijo.isNullOrBlank() && !nenreiJoken.joken3Miman.isNullOrBlank() && !nenreiJoken.joken3Value.isNullOrBlank()) {
-                val label =
+                val labelResId =
                     "${nenreiJoken.joken3Ijo.toInt()}歳以上${nenreiJoken.joken3Miman.toInt()}歳未満"
                 val score = nenreiJoken.joken3Value.toInt()
-                add(LabelStringAndScore(label, score))
+                val label = nenreiJoken.jokenName
+                add(LabelStringAndScore(labelResId, score, label))
             }
             // joken4
             if (!nenreiJoken.joken4Ijo.isNullOrBlank() && !nenreiJoken.joken4Miman.isNullOrBlank() && !nenreiJoken.joken4Value.isNullOrBlank()) {
-                val label =
+                val labelResId =
                     "${nenreiJoken.joken4Ijo.toInt()}歳以上${nenreiJoken.joken4Miman.toInt()}歳未満"
                 val score = nenreiJoken.joken4Value.toInt()
-                add(LabelStringAndScore(label, score))
+                val label = nenreiJoken.jokenName
+                add(LabelStringAndScore(labelResId, score, label))
             }
             // joken5
             if (!nenreiJoken.joken5Ijo.isNullOrBlank() && !nenreiJoken.joken5Miman.isNullOrBlank() && !nenreiJoken.joken5Value.isNullOrBlank()) {
-                val label =
+                val labelResId =
                     "${nenreiJoken.joken5Ijo.toInt()}歳以上${nenreiJoken.joken5Miman.toInt()}歳未満"
                 val score = nenreiJoken.joken5Value.toInt()
-                add(LabelStringAndScore(label, score))
+                val label = nenreiJoken.jokenName
+                add(LabelStringAndScore(labelResId, score, label))
             }
         }
 

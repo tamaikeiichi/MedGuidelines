@@ -18,7 +18,6 @@ import java.io.InputStream
 import java.nio.charset.Charset
 
 class DpcRepository(private val dpcDao: DpcDao) {
-    val excelResourceId = R.raw.dpc001348055
 
     // 検索クエリに基づいてICDマスターを検索する
     // DAOのメソッドがFlowを返すので、そのままViewModelに渡す
@@ -157,7 +156,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     val columnTypes: Map<String, ColType> =
                         headerNames.associateWith { ColType.String }
                     val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_4)
+                        context.resources.openRawResource(R.raw.dpc001593946_4)
                     Log.d("tamaiDpc", "icd reading from CSV...")
                     // DataFrameを格納する変数を宣言
                     val icdDf: DataFrame<*>
@@ -193,7 +192,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     val columnTypes: Map<String, ColType> =
                         headerNames.associateWith { ColType.String }
                     val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_3)
+                        context.resources.openRawResource(R.raw.dpc001593946_3)
                     Log.d("tamaiDpc", "byotai reading")
                     // DataFrameを格納する変数を宣言
                     val byotaiDf: DataFrame<*>
@@ -225,7 +224,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     val columnTypes: Map<String, ColType> =
                         headerNames.associateWith { ColType.String }
                     val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_2)
+                        context.resources.openRawResource(R.raw.dpc001593946_2)
                     Log.d("tamaiDpc", "bunrui reading")
                     // DataFrameを格納する変数を宣言
                     val bunruiDf: DataFrame<*>
@@ -257,7 +256,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     val columnTypes: Map<String, ColType> =
                         headerNames.associateWith { ColType.String }
                     val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_1)
+                        context.resources.openRawResource(R.raw.dpc001593946_1)
                     Log.d("tamaiDpc", "mdc reading")
                     // DataFrameを格納する変数を宣言
                     val mdcDf: DataFrame<*>
@@ -287,7 +286,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     val columnTypes: Map<String, ColType> =
                         headerNames.associateWith { ColType.String }
                     val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001348055_5)
+                        context.resources.openRawResource(R.raw.dpc001593946_5)
                     Log.d("tamaiDpc", "nenrei reading")
                     // DataFrameを格納する変数を宣言
                     val nenreiDf: DataFrame<*>
@@ -361,7 +360,7 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
             try {
                 Log.d("tamaiDpc", "shujutsu check ${shujutsuDao.getShujutsuCount()}")
                 if (shujutsuDao.getShujutsuCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001348055_6)
+                    val df = readDpcCsv(context, R.raw.dpc001593946_6)
                     Log.d("tamaiDpc", "shujutsu reading")
                     // DataFrameを格納する変数を宣言
                     val list = df.rows().map { row ->
@@ -393,6 +392,7 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
             shujutsuDao.getShujutsu1CodeByName(shujutsu1Name)
         }
     }
+
 }
 
 class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
@@ -401,7 +401,7 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
             try {
                 Log.d("tamaiDpc", "shuochi1 check ${shochi1Dao.getCount()}")
                 if (shochi1Dao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001348055_7)
+                    val df = readDpcCsv(context, R.raw.dpc001593946_7)
                     Log.d("tamaiDpc", "shochi1 reading")
                     // DataFrameを格納する変数を宣言
                     val list = df.rows().map { row ->
@@ -446,7 +446,7 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
             try {
                 Log.d("tamaiDpc", "shuochi1 check ${shochi2Dao.getCount()}")
                 if (shochi2Dao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001348055_8)
+                    val df = readDpcCsv(context, R.raw.dpc001593946_8)
                     Log.d("tamaiDpc", "shochi2 reading")
                     // DataFrameを格納する変数を宣言
                     val list = df.rows().map { row ->
@@ -490,7 +490,7 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
             try {
                 Log.d("tamaiDpc", "fukushobyo check ${fukushobyoDao.getCount()}")
                 if (fukushobyoDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001348055_9)
+                    val df = readDpcCsv(context, R.raw.dpc001593946_9)
                     Log.d("tamaiDpc", "fukushobyo reading")
                     // DataFrameを格納する変数を宣言
                     val list = df.rows().map { row ->
@@ -532,7 +532,7 @@ class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
             try {
                 Log.d("tamaiDpc", "jushodo jcs check ${jushodoJcsDao.getCount()}")
                 if (jushodoJcsDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001348055_10_1)
+                    val df = readDpcCsv(context, R.raw.dpc001593946_10_1)
                     Log.d("tamaiDpc", "jushodo jcs reading")
                     val list = df.rows().map { row ->
                         JushodoJcsEntity(
@@ -579,6 +579,7 @@ class NenreiRepository(private val nenreiDao: NenreiDao) {
             nenreiDao.getNenreiJoken(mdcCode, bunruiCode)
         }
     }
+
 }
 
 class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuDao) {
@@ -587,7 +588,7 @@ class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuD
             try {
                 Log.d("tamaiDpc", "jushodo jcs check ${jushodoShujutsuDao.getCount()}")
                 if (jushodoShujutsuDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001348055_10_1)
+                    val df = readDpcCsv(context, R.raw.dpc001593946_10_1)
                     Log.d("tamaiDpc", "jushodo jcs reading")
                     val list = df.rows().map { row ->
                         JushodoShujutsuEntity(
@@ -614,8 +615,9 @@ class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuD
             jushodoShujutsuDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
         }
     }
-    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
-        return jushodoShujutsuDao.existsBunruiInMaster(bunruiCode)
+    suspend fun checkBunruiExistsInMaster(mdcCode: String?, bunruiCode: String): Boolean {
+        Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $mdcCode $bunruiCode")
+        return jushodoShujutsuDao.existsBunruiInMaster(mdcCode, bunruiCode)
     }
     suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
         return withContext(Dispatchers.IO) {
@@ -627,7 +629,7 @@ class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuD
  * 指定されたリソースIDのCSVファイルを読み込み、DataFrameとして返す共通関数
  * @param context
 コンテキスト
- * @param resourceId 読み込むCSVファイルのリソースID (例: R.raw.dpc001348055_6)
+ * @param resourceId 読み込むCSVファイルのリソースID (例: R.raw.dpc001593946_6)
  * @return 読み込まれたDataFrame
  */
 private fun readDpcCsv(context: Context, resourceId: Int): DataFrame<*> {

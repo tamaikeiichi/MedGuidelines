@@ -8,6 +8,7 @@ import androidx.room.ColumnInfo
  * nenrei_masterテーブルからjoken関連の値をまとめて取得するためのデータクラス
  */
 data class NenreiJoken(
+    @ColumnInfo(name = "nenrei_joken_name") val jokenName: String,
     @ColumnInfo(name = "joken1_ijo") val joken1Ijo: String?,
     @ColumnInfo(name = "joken1_miman") val joken1Miman: String?,
     @ColumnInfo(name = "joken1_value") val joken1Value: String?,
@@ -38,7 +39,7 @@ interface NenreiDao {
     * joken1〜5に関連するすべての値を一度に取得します。
     * @return NenreiJokenオブジェクト。見つからなければnull。
     */
-    @Query("SELECT " +
+    @Query("SELECT nenrei_joken_name," +
             "joken1_ijo, joken1_miman, joken1_value, " +
             "joken2_ijo, joken2_miman, joken2_value, " +
             "joken3_ijo, joken3_miman, joken3_value, "+
@@ -49,8 +50,7 @@ interface NenreiDao {
             "LIMIT 1"    )
     suspend fun getNenreiJoken(mdcCode: String, bunruiCode: String): NenreiJoken?
 
-    // --- ここまでが修正箇所 ---
-    // (以前の15個のget...メソッドはすべて削除します)
+
 }
 
 

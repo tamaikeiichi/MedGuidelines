@@ -29,8 +29,13 @@ interface JushodoShujutsuDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAlldata(list: List<JushodoShujutsuEntity>)
 
-    @Query("SELECT EXISTS(SELECT 1 FROM jushodo_shujutsu_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
-    suspend fun existsBunruiInMaster(bunruiCode: String): Boolean
+    /**
+     * 指定された MDCコード と 分類コード の両方が一致する行が
+     * マスターテーブルに存在するかどうかをチェックします。
+     */
+    @Query("SELECT EXISTS(SELECT 1 FROM jushodo_shujutsu_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
+    suspend fun existsBunruiInMaster(mdcCode: String?, bunruiCode: String): Boolean
+
 
     /**
      * 指定されたMDCコードと分類コードに一致する行から、
