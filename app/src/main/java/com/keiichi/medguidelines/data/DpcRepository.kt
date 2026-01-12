@@ -24,7 +24,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
     fun searchIcd(query: String) = dpcDao.searchIcd("%$query%")
 
     /**
-     * データベースにデータが存在しない場合、Excelから読み込んで挿入する
+     * データベースにデータが存在しない場合、CSVから読み込んで挿入する
      */
 
     /**
@@ -144,7 +144,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
     }
 
     /**
-     * データベースにデータが存在しない場合、Excelから読み込んで挿入する。
+     * データベースにデータが存在しない場合、CSVから読み込んで挿入する。
      * @param context アプリケーションコンテキスト
      */
     suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
@@ -332,7 +332,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
 
 
             } catch (e: Exception) {
-                Log.e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                Log.e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
             // TODO: 他のテーブルについても同様のチェックとデータ投入処理を追加
         }
@@ -355,7 +355,7 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
         }
     }
 
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 Log.d("tamaiDpc", "shujutsu check ${shujutsuDao.getShujutsuCount()}")
@@ -377,7 +377,7 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
                 }
 
             } catch (e: Exception) {
-                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
 
         }
@@ -396,7 +396,7 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
 }
 
 class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 Log.d("tamaiDpc", "shuochi1 check ${shochi1Dao.getCount()}")
@@ -419,7 +419,7 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
                     shochi1Dao.insertAlldata(list)
                 }
             } catch (e: Exception) {
-                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
 
         }
@@ -447,7 +447,7 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
 }
 
 class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 Log.d("tamaiDpc", "shuochi1 check ${shochi2Dao.getCount()}")
@@ -470,7 +470,7 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
                     shochi2Dao.insertAlldata(list)
                 }
             } catch (e: Exception) {
-                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
 
         }
@@ -518,7 +518,7 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
                     fukushobyoDao.insertAlldata(list)
                 }
             } catch (e: Exception) {
-                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
 
         }
@@ -570,7 +570,7 @@ class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
                     jushodoJcsDao.insertAlldata(list)
                 }
             } catch (e: Exception) {
-                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
 
         }
@@ -623,7 +623,7 @@ class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuD
                     jushodoShujutsuDao.insertAlldata(list)
                 }
             } catch (e: Exception) {
-                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
 
         }
@@ -666,7 +666,7 @@ class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
                     jushodoStrokeDao.insertAlldata(list)
                 }
             } catch (e: Exception) {
-                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
 
         }
@@ -693,12 +693,16 @@ class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
 }
 
 class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao: ShindangunBunruiTensuhyoDao){
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 Log.d("tamaiDpc", "shindangunBunruiTensuhyo check ${shindangunBunruiTensuhyoDao.getCount()}")
                 if (shindangunBunruiTensuhyoDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_11)
+                    val df = readDpcCsv(
+                        context,
+                        R.raw.dpc001593946_11,
+                        skipLines = 4,
+                    )
                     Log.d("tamaiDpc", "shindangunBunruiTensuhyo reading")
                     // DataFrameを格納する変数を宣言
                     val list = df.rows().map { row ->
@@ -717,28 +721,22 @@ class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao
                     shindangunBunruiTensuhyoDao.insertAlldata(list)
                 }
             } catch (e: Exception) {
-                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
 
         }
     }
     suspend fun getCodeByName(name: String): String? {
         return withContext(Dispatchers.IO) {
-            fukushobyoDao.getCodeByName(name)
+            shindangunBunruiTensuhyoDao.getCodeByName(name)
         }
     }
-    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
-        return fukushobyoDao.existsBunruiInMaster(bunruiCode)
+    suspend fun checkCodeExistsInMaster(code: String): Boolean {
+        return shindangunBunruiTensuhyoDao.existsCodeInMaster(code)
     }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<FukushobyoJoken> {
+    suspend fun getNames(code: String): List<ShindangunBunruiTensuhyoJoken> {
         return withContext(Dispatchers.IO) {
-            val results = fukushobyoDao.getNames(mdcCode, bunruiCode)
-            listOf(
-                FukushobyoJoken(
-                    code = "0",
-                    name = "なし"
-                )
-            ) + results
+            shindangunBunruiTensuhyoDao.getNames(code)
         }
     }
 }
@@ -749,7 +747,11 @@ class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao
  * @param resourceId 読み込むCSVファイルのリソースID (例: R.raw.dpc001593946_6)
  * @return 読み込まれたDataFrame
  */
-private fun readDpcCsv(context: Context, resourceId: Int): DataFrame<*> {
+private fun readDpcCsv(
+    context: Context,
+    resourceId: Int,
+    skipLines: Int = 2,
+    ): DataFrame<*> {
     val headerNames = (1..21).map { it.toString() }
     val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
     val inputStream: InputStream = context.resources.openRawResource(resourceId)
@@ -759,7 +761,7 @@ private fun readDpcCsv(context: Context, resourceId: Int): DataFrame<*> {
             stream = stream,
             header = headerNames,            charset = Charset.forName("Shift-JIS"),
             colTypes = columnTypes,
-            skipLines = 2,
+            skipLines = skipLines,
             parserOptions = ParserOptions()
         )
     }

@@ -47,12 +47,10 @@ import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.rows
 import kotlin.text.toDoubleOrNull
 
-
 data class DpcCode(
     var mdc: String? = "xx",
     var bunrui: String? = "xxxx",
     var byotai: String? = "x",
-    var nyuin: String? = "x",
     var nenrei: String? = "x",
     var shujutu: String? = "xx",
     var shochi1: String? = "x",
@@ -82,7 +80,6 @@ fun DpcScreen(
                 dpcCodesFirst.mdc,
                 dpcCodesFirst.bunrui,
                 dpcCodesFirst.byotai,
-                dpcCodesFirst.nyuin,
                 dpcCodesFirst.nenrei,
                 dpcCodesFirst.shujutu,
                 dpcCodesFirst.shochi1,
@@ -122,7 +119,15 @@ fun DpcScreen(
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
 
-    val shindangunBunruiTensuhyo by dpcScreenViewModel.shindangunBunruiTensuhyo.collectAsState()
+    val shindangunBunruiTensuhyo by dpcScreenViewModel.shindangunBunruiTensuhyoOptions.collectAsState()
+
+    // 2. コードが確定したタイミング（例：ICD選択時や、特定のロジック後）でイベントを投げる
+    LaunchedEffect(dpcCodeFirst) {
+        if (dpcCodeFirst.isNotEmpty()) {
+            Log.d("tamaiDpc", "dpcCodeFirst: $dpcCodeFirst")
+            dpcScreenViewModel.onShindangunCodeChanged(dpcCodeFirst)
+        }
+    }
 
     LaunchedEffect(Unit) {
         // ViewModelの検索メソッドを初期クエリで呼び出す
@@ -141,6 +146,9 @@ fun DpcScreen(
                 displayText = buildAnnotatedString {
                     append("DPCコード: ")
                     append(dpcCodeFirst)
+                    if(shindangunBunruiTensuhyo.isNotEmpty()) {
+                            append(shindangunBunruiTensuhyo.first().nyuinbiI)
+                        }
                 }
             )
         }

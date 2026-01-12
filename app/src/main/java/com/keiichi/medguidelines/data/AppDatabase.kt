@@ -48,7 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun nenreiDao(): NenreiDao
     abstract fun jushodoShujutsuDao(): JushodoShujutsuDao
     abstract fun jushodoStrokeDao(): JushodoStrokeDao
-    abstract fun sindangunBunruiTensuhyoDao(): ShindangunBunruiTensuhyoDao
+    abstract fun shindangunBunruiTensuhyoDao(): ShindangunBunruiTensuhyoDao
 
     companion object {
         // @Volatileアノテーションにより、INSTANCE変数が複数スレッドからアクセスされても

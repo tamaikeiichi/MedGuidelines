@@ -23,8 +23,10 @@ interface ShindangunBunruiTensuhyoDao {
     @androidx.room.Query("SELECT COUNT(*) FROM shindangunBunruiTensuhyo_master")
     suspend fun getCount(): Int
 
-    @androidx.room.Query("SELECT code, name, nyuinBiI, nyuinBiII, nyuinBiIII, nyuinKikanI, nyuinKikanII, nyuinKikanIII" +
-            " FROM shindangunBunruiTensuhyo_master WHERE code LIKE :code")
+    @androidx.room.Query("""        SELECT code, name, nyuinBiI, nyuinBiII, nyuinBiIII, nyuinKikanI, nyuinKikanII, nyuinKikanIII
+        FROM shindangunBunruiTensuhyo_master 
+        WHERE :code LIKE REPLACE(code, 'x', '_')
+    """)
     suspend fun getNames(code: String): List<ShindangunBunruiTensuhyoJoken>
 
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)

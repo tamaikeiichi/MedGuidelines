@@ -21,6 +21,7 @@ import com.keiichi.medguidelines.data.JushodoShujutsuRepository
 import com.keiichi.medguidelines.data.JushodoStrokeRepository
 import com.keiichi.medguidelines.data.NenreiRepository
 import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoJoken
+import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoRepository
 import com.keiichi.medguidelines.data.Shochi1Joken
 import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Joken
@@ -99,7 +100,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     val showJushodoJcsSelection: StateFlow<Boolean> = _showJushodoJcsSelection.asStateFlow()
 
     private val _showJushodoShujutsuSelection = MutableStateFlow(false)
-    val showJushodoShujutsuSelection: StateFlow<Boolean> = _showJushodoShujutsuSelection.asStateFlow()
+    val showJushodoShujutsuSelection: StateFlow<Boolean> =
+        _showJushodoShujutsuSelection.asStateFlow()
 
     private val _showJushodoStrokeSelection = MutableStateFlow(false)
     val showJushodoStrokeSelection: StateFlow<Boolean> = _showJushodoStrokeSelection.asStateFlow()
@@ -129,17 +131,42 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _jushodoJcsOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
     val jushodoJcsOptions: StateFlow<List<LabelStringAndScore>> = _jushodoJcsOptions.asStateFlow()
     private val _jushodoShujutsuOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
-    val jushodoShujutsuOptions: StateFlow<List<LabelStringAndScore>> = _jushodoShujutsuOptions.asStateFlow()
+    val jushodoShujutsuOptions: StateFlow<List<LabelStringAndScore>> =
+        _jushodoShujutsuOptions.asStateFlow()
 
     private val _jushodoStrokeOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
-    val jushodoStrokeOptions: StateFlow<List<LabelStringAndScore>> = _jushodoStrokeOptions.asStateFlow()
+    val jushodoStrokeOptions: StateFlow<List<LabelStringAndScore>> =
+        _jushodoStrokeOptions.asStateFlow()
 
-    private val _shindangunBunruiTensuhyoOptions = MutableStateFlow<List<ShindangunBunruiTensuhyoJoken>>(emptyList())
-    val shindangunBunruiTensuhyoOptions: StateFlow<List<ShindangunBunruiTensuhyoJoken>> = _shindangunBunruiTensuhyoOptions.asStateFlow()
+    private val _shindangunBunruiTensuhyoOptions =
+        MutableStateFlow<List<ShindangunBunruiTensuhyoJoken>>(emptyList())
+    val shindangunBunruiTensuhyoOptions: StateFlow<List<ShindangunBunruiTensuhyoJoken>> =
+        _shindangunBunruiTensuhyoOptions.asStateFlow()
 
-    fun getShindangunBunruiTensuhyoOptions(): List<ShindangunBunruiTensuhyoJoken> {
-        _shindangunBunruiTensuhyoOptions.value = shindangunBunruiTensuhyoRepository.getShindangunBunruiTensuhyo()
+// DpcScreenViewModel.kt
+
+    // 戻り値を List<> から Unit (なし) に変更
+    // DpcScreenViewModel.kt
+
+    fun onShindangunCodeChanged(code: String) {
+        viewModelScope.launch {
+            // 引数自体は置換せず、そのまま渡す
+            try {
+                val result = shindangunBunruiTensuhyoRepository.getNames(code)
+                _shindangunBunruiTensuhyoOptions.value = result
+
+                Log.d("tamaiDpc", "Shindangun options updated: ${result.size} items")
+            } catch (e: Exception) {
+                Log.e("tamaiDpc", "Failed to fetch Shindangun options", e)
+                _shindangunBunruiTensuhyoOptions.value = emptyList()
+            }
+        }
     }
+
+
+
+
+
 
 
     /**
@@ -532,13 +559,13 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             _isLoading.value = true
             try {
                 repository.populateDatabaseFromCsvIfEmpty(getApplication())
-                shujutsuRepository.populateDatabaseFromExcelIfEmpty(getApplication())
-                shochi1Repository.populateDatabaseFromExcelIfEmpty(getApplication())
-                shochi2Repository.populateDatabaseFromExcelIfEmpty(getApplication())
+                shujutsuRepository.populateDatabaseFromCsvIfEmpty(getApplication())
+                shochi1Repository.populateDatabaseFromCsvIfEmpty(getApplication())
+                shochi2Repository.populateDatabaseFromCsvIfEmpty(getApplication())
                 fukushobyoRepository.populateDatabaseFromExcelIfEmpty(getApplication())
                 jushodoJcsRepository.populateDatabaseFromExcelIfEmpty(getApplication())
                 jushodoStrokeRepository.populateDatabaseFromExcelIfEmpty(getApplication())
-                shindangunBunruiTensuhyoRepository.populateDatabaseFromExcelIfEmpty(getApplication())
+                shindangunBunruiTensuhyoRepository.populateDatabaseFromCsvIfEmpty(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "データベースの初期化に失敗しました: ${e.message}"
             } finally {
