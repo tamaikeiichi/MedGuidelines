@@ -531,7 +531,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.populateDatabaseFromExcelIfEmpty(getApplication())
+                repository.populateDatabaseFromCsvIfEmpty(getApplication())
                 shujutsuRepository.populateDatabaseFromExcelIfEmpty(getApplication())
                 shochi1Repository.populateDatabaseFromExcelIfEmpty(getApplication())
                 shochi2Repository.populateDatabaseFromExcelIfEmpty(getApplication())

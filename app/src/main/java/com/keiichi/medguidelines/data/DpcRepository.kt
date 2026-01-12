@@ -147,7 +147,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
      * データベースにデータが存在しない場合、Excelから読み込んで挿入する。
      * @param context アプリケーションコンテキスト
      */
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 // ICDテーブルのチェックと投入 (CSVからまとめて読み込む)
