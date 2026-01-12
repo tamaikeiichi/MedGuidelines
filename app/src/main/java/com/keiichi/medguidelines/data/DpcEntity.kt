@@ -247,4 +247,25 @@ data class JushodoStrokeEntity(
     val joken1Name: String?,
 )
 
+@Entity(tableName = "shindangunBunruiTensuhyo_master")
+data class ShindangunBunruiTensuhyoEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    @ColumnInfo(name = "code")
+    val code: String?,
+    @ColumnInfo(name = "name")
+    val name: String?,
+    @ColumnInfo(name = "nyuinBiI")
+    val nyuinBiI: String?,
+    @ColumnInfo(name = "nyuinBiII")
+    val nyuinBiII: String?,
+    @ColumnInfo(name = "nyuinBiIII")
+    val nyuinBiIII: String?,
+    @ColumnInfo(name = "nyuinKikanI")
+    val nyuinKikanI: String?,
+    @ColumnInfo(name = "nyuinKikanII")
+    val nyuinKikanII: String?,
+    @ColumnInfo(name = "nyuinKikanIII")
+    val nyuinKikanIII: String?,
+)
 

@@ -26,7 +26,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         FukushobyoEntity::class,
         JushodoJcsEntity::class,
         JushodoShujutsuEntity::class,
-        JushodoStrokeEntity::class
+        JushodoStrokeEntity::class,
+        ShindangunBunruiTensuhyoEntity::class,
     ],
     version = 1,
     exportSchema = false
@@ -47,9 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun nenreiDao(): NenreiDao
     abstract fun jushodoShujutsuDao(): JushodoShujutsuDao
     abstract fun jushodoStrokeDao(): JushodoStrokeDao
-
-
-
+    abstract fun sindangunBunruiTensuhyoDao(): ShindangunBunruiTensuhyoDao
 
     companion object {
         // @Volatileアノテーションにより、INSTANCE変数が複数スレッドからアクセスされても

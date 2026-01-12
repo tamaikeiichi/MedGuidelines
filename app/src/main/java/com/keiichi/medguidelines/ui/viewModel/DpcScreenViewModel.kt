@@ -20,6 +20,7 @@ import com.keiichi.medguidelines.data.JushodoJcsRepository
 import com.keiichi.medguidelines.data.JushodoShujutsuRepository
 import com.keiichi.medguidelines.data.JushodoStrokeRepository
 import com.keiichi.medguidelines.data.NenreiRepository
+import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoJoken
 import com.keiichi.medguidelines.data.Shochi1Joken
 import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Joken
@@ -65,9 +66,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val nenreiRepository: NenreiRepository
     private val jushodoShujutsuRepository: JushodoShujutsuRepository
     private val jushodoStrokeRepository: JushodoStrokeRepository
-
-
-
+    private val shindangunBunruiTensuhyoRepository: ShindangunBunruiTensuhyoRepository
 
     // --- StateFlowの定義 ---
     private val _isLoading = MutableStateFlow(false)
@@ -134,6 +133,13 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _jushodoStrokeOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
     val jushodoStrokeOptions: StateFlow<List<LabelStringAndScore>> = _jushodoStrokeOptions.asStateFlow()
+
+    private val _shindangunBunruiTensuhyoOptions = MutableStateFlow<List<ShindangunBunruiTensuhyoJoken>>(emptyList())
+    val shindangunBunruiTensuhyoOptions: StateFlow<List<ShindangunBunruiTensuhyoJoken>> = _shindangunBunruiTensuhyoOptions.asStateFlow()
+
+    fun getShindangunBunruiTensuhyoOptions(): List<ShindangunBunruiTensuhyoJoken> {
+        _shindangunBunruiTensuhyoOptions.value = shindangunBunruiTensuhyoRepository.getShindangunBunruiTensuhyo()
+    }
 
 
     /**
@@ -501,7 +507,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         val nenreiDao = AppDatabase.getDatabase(application).nenreiDao()
         val jushodoShujutsuDao = AppDatabase.getDatabase(application).jushodoShujutsuDao()
         val jushodoStrokeDao = AppDatabase.getDatabase(application).jushodoStrokeDao()
-
+        val shindangunBunruiTensuhyoDao = AppDatabase.getDatabase(application).shindangunBunruiTensuhyoDao()
 
         repository = DpcRepository(dpcDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
@@ -512,6 +518,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         nenreiRepository = NenreiRepository(nenreiDao)
         jushodoShujutsuRepository = JushodoShujutsuRepository(jushodoShujutsuDao)
         jushodoStrokeRepository = JushodoStrokeRepository(jushodoStrokeDao)
+        shindangunBunruiTensuhyoRepository = ShindangunBunruiTensuhyoRepository(shindangunBunruiTensuhyoDao)
+
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()
     }
@@ -530,6 +538,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 fukushobyoRepository.populateDatabaseFromExcelIfEmpty(getApplication())
                 jushodoJcsRepository.populateDatabaseFromExcelIfEmpty(getApplication())
                 jushodoStrokeRepository.populateDatabaseFromExcelIfEmpty(getApplication())
+                shindangunBunruiTensuhyoRepository.populateDatabaseFromExcelIfEmpty(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "データベースの初期化に失敗しました: ${e.message}"
             } finally {

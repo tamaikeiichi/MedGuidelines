@@ -122,6 +122,8 @@ fun DpcScreen(
     var icdCode by remember { mutableStateOf<String?>(null) }
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
 
+    val shindangunBunruiTensuhyo by dpcScreenViewModel.shindangunBunruiTensuhyo.collectAsState()
+
     LaunchedEffect(Unit) {
         // ViewModelの検索メソッドを初期クエリで呼び出す
         dpcScreenViewModel.onQueryChanged(query)

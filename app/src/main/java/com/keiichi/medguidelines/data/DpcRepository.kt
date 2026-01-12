@@ -692,6 +692,56 @@ class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
     }
 }
 
+class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao: ShindangunBunruiTensuhyoDao){
+    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                Log.d("tamaiDpc", "shindangunBunruiTensuhyo check ${shindangunBunruiTensuhyoDao.getCount()}")
+                if (shindangunBunruiTensuhyoDao.getCount() == 0) {
+                    val df = readDpcCsv(context, R.raw.dpc001593946_11)
+                    Log.d("tamaiDpc", "shindangunBunruiTensuhyo reading")
+                    // DataFrameを格納する変数を宣言
+                    val list = df.rows().map { row ->
+                        ShindangunBunruiTensuhyoEntity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            code = row[2]?.toString() ?: "",
+                            name = row[3]?.toString() ?: "",
+                            nyuinBiI = row[11]?.toString() ?: "",
+                            nyuinBiII = row[12]?.toString() ?: "",
+                            nyuinBiIII = row[13]?.toString() ?: "",
+                            nyuinKikanI = row[14]?.toString() ?: "",
+                            nyuinKikanII = row[15]?.toString() ?: "",
+                            nyuinKikanIII = row[16]?.toString() ?: "",
+                        )
+                    }
+                    shindangunBunruiTensuhyoDao.insertAlldata(list)
+                }
+            } catch (e: Exception) {
+                e("DpcRepository", "Excelからのデータベース構築に失敗しました。", e)
+            }
+
+        }
+    }
+    suspend fun getCodeByName(name: String): String? {
+        return withContext(Dispatchers.IO) {
+            fukushobyoDao.getCodeByName(name)
+        }
+    }
+    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
+        return fukushobyoDao.existsBunruiInMaster(bunruiCode)
+    }
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<FukushobyoJoken> {
+        return withContext(Dispatchers.IO) {
+            val results = fukushobyoDao.getNames(mdcCode, bunruiCode)
+            listOf(
+                FukushobyoJoken(
+                    code = "0",
+                    name = "なし"
+                )
+            ) + results
+        }
+    }
+}
 /**
  * 指定されたリソースIDのCSVファイルを読み込み、DataFrameとして返す共通関数
  * @param context
