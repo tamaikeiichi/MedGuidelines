@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.keiichi.medguidelines.data.AppDatabase
 import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
+import com.keiichi.medguidelines.data.FukushobyoJoken
 import com.keiichi.medguidelines.data.FukushobyoRepository
 import com.keiichi.medguidelines.data.IcdEntity
 import com.keiichi.medguidelines.data.JushodoJcsJoken
@@ -19,7 +20,9 @@ import com.keiichi.medguidelines.data.JushodoJcsRepository
 import com.keiichi.medguidelines.data.JushodoShujutsuRepository
 import com.keiichi.medguidelines.data.JushodoStrokeRepository
 import com.keiichi.medguidelines.data.NenreiRepository
+import com.keiichi.medguidelines.data.Shochi1Joken
 import com.keiichi.medguidelines.data.Shochi1Repository
+import com.keiichi.medguidelines.data.Shochi2Joken
 import com.keiichi.medguidelines.data.Shochi2Repository
 import com.keiichi.medguidelines.data.ShujutsuRepository
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
@@ -115,14 +118,14 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
     val shujutsuOptions: StateFlow<List<String>> = _shujutsuOptions.asStateFlow()
 
-    private val _shochi1Options = MutableStateFlow<List<String>>(emptyList())
-    val shochi1Options: StateFlow<List<String>> = _shochi1Options.asStateFlow()
+    private val _shochi1Options = MutableStateFlow<List<Shochi1Joken>>(emptyList())
+    val shochi1Options: StateFlow<List<Shochi1Joken>> = _shochi1Options.asStateFlow()
 
-    private val _shochi2Options = MutableStateFlow<List<String>>(emptyList())
-    val shochi2Options: StateFlow<List<String>> = _shochi2Options.asStateFlow()
+    private val _shochi2Options = MutableStateFlow<List<Shochi2Joken>>(emptyList())
+    val shochi2Options: StateFlow<List<Shochi2Joken>> = _shochi2Options.asStateFlow()
 
-    private val _fukushobyoOptions = MutableStateFlow<List<String>>(emptyList())
-    val fukushobyoOptions: StateFlow<List<String>> = _fukushobyoOptions.asStateFlow()
+    private val _fukushobyoOptions = MutableStateFlow<List<FukushobyoJoken>>(emptyList())
+    val fukushobyoOptions: StateFlow<List<FukushobyoJoken>> = _fukushobyoOptions.asStateFlow()
 
     private val _jushodoJcsOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
     val jushodoJcsOptions: StateFlow<List<LabelStringAndScore>> = _jushodoJcsOptions.asStateFlow()
@@ -782,7 +785,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             if (item.joken1Name != null && !item.code.isNullOrBlank()) {
                 LabelStringAndScore(
                     labelResId = item.joken1Name,
-                    score = item.code.toIntOrNull() ?: 0,
+                    code = item.code.toIntOrNull() ?: 0,
                     label = item.label
                 )
             } else {

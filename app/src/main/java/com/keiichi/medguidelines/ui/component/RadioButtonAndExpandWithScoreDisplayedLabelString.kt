@@ -2,7 +2,6 @@ package com.keiichi.medguidelines.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,11 +35,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.keiichi.medguidelines.R
@@ -219,7 +215,7 @@ fun RadioButtonAndExpandWithScoreDisplayedLabelString(
                                         //.padding(bottom = 1.dp)
                                         //.wrapContentSize(),
                                         //.offset(y = (-1).dp),
-                                        text = "${option.score}",
+                                        text = "${option.code}",
                                         color = if (isSelected) {
                                             // Change text color to be visible on the selected radio button color
                                             MaterialTheme.colorScheme.onPrimary
@@ -423,7 +419,7 @@ fun RadioButtonAndExpandWithScoreDisplayedLabelString(
                                         //.padding(bottom = 1.dp)
                                         //.wrapContentSize(),
                                         //.offset(y = (-1).dp),
-                                        text = "${option.score}",
+                                        text = "${option.code}",
                                         color = if (isSelected) {
                                             // Change text color to be visible on the selected radio button color
                                             MaterialTheme.colorScheme.onPrimary

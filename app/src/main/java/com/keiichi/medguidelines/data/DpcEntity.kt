@@ -139,8 +139,8 @@ data class Shochi1Entity(
     val mdcCode: String?,
     @ColumnInfo(name = "bunrui_code")
     val bunruiCode: String?,
-    @ColumnInfo(name = "taiou_code")
-    val taiouCode: String?,
+    @ColumnInfo(name = "code")
+    val code: String?,
     @ColumnInfo(name = "shochi1_name")
     val shochi1Name: String?,
     @ColumnInfo(name = "shochi1_code")
@@ -159,8 +159,8 @@ data class Shochi2Entity(
     val mdcCode: String?,
     @ColumnInfo(name = "bunrui_code")
     val bunruiCode: String?,
-    @ColumnInfo(name = "taiou_code")
-    val taiouCode: String?,
+    @ColumnInfo(name = "code")
+    val code: String?,
     @ColumnInfo(name = "shochi1_name")
     val shochi1Name: String?,
     @ColumnInfo(name = "shochi1_code")
@@ -179,12 +179,12 @@ data class FukushobyoEntity(
     val mdcCode: String?,
     @ColumnInfo(name = "bunrui_code")
     val bunruiCode: String?,
-    @ColumnInfo(name = "taiou_code")
-    val taiouCode: String?,
-    @ColumnInfo(name = "name")
-    val name: String?,
     @ColumnInfo(name = "code")
     val code: String?,
+    @ColumnInfo(name = "name")
+    val name: String?,
+    @ColumnInfo(name = "IcdCode")
+    val IcdCode: String?,
 )
 
 @Entity(tableName = "jushodo_jcs_master")

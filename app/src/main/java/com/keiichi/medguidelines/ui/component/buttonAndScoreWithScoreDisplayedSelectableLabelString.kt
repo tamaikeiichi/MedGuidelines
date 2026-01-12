@@ -5,7 +5,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.keiichi.medguidelines.R // Assuming your R file is here
-import com.keiichi.medguidelines.data.LabelAndScore
 import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 
 @Composable
@@ -51,7 +50,7 @@ fun buttonAndScoreWithScoreDisplayedSelectableLabelString(
     )
 
     // 4. The score is now derived directly from the controlled state object, which is always in sync.
-    return currentSelectedOptionObject.score
+    return currentSelectedOptionObject.code
 }
 
 @Composable
@@ -97,5 +96,5 @@ fun buttonAndScoreWithScoreDisplayedSelectableLabelString(
     )
 
     // 4. The score is now derived directly from the controlled state object, which is always in sync.
-    return currentSelectedOptionObject.score
+    return currentSelectedOptionObject.code
 }

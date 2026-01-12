@@ -409,7 +409,7 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
                             // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
-                            taiouCode = row[2]?.toString() ?: "",
+                            code = row[2]?.toString() ?: "",
                             shochi1Name = row[5]?.toString() ?: "",
                             shochi1Code = row[6]?.toString() ?: "",
                             shochi2Name = row[7]?.toString() ?: "",
@@ -432,9 +432,15 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
     suspend fun checkBunruiExistsInShochi1(bunruiCode: String): Boolean {
         return shochi1Dao.existsBunruiInMaster(bunruiCode)
     }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<Shochi1Joken> {
         return withContext(Dispatchers.IO) {
-            shochi1Dao.getNames(mdcCode, bunruiCode)
+            val results = shochi1Dao.getNames(mdcCode, bunruiCode)
+            listOf(
+                Shochi1Joken(
+                    code = "0",
+                    shochi1Name = "なし"
+                )
+            ) + results
         }
     }
 
@@ -454,7 +460,7 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
                             // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
-                            taiouCode = row[2]?.toString() ?: "",
+                            code = row[2]?.toString() ?: "",
                             shochi1Name = row[4]?.toString() ?: "",
                             shochi1Code = row[5]?.toString() ?: "",
                             shochi2Name = row[6]?.toString() ?: "",
@@ -477,9 +483,15 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
     suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
         return shochi2Dao.existsBunruiInMaster(bunruiCode)
     }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<Shochi2Joken> {
         return withContext(Dispatchers.IO) {
-            shochi2Dao.getNames(mdcCode, bunruiCode)
+            val results = shochi2Dao.getNames(mdcCode, bunruiCode)
+            listOf(
+                Shochi2Joken(
+                    code = "0",
+                    shochi1Name = "なし"
+                )
+            ) + results
         }
     }
 }
@@ -498,9 +510,9 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
                             // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
-                            taiouCode = row[2]?.toString() ?: "",
+                            code = row[2]?.toString() ?: "",
                             name = row[4]?.toString() ?: "",
-                            code = row[5]?.toString() ?: "",
+                            IcdCode = row[5]?.toString() ?: "",
                         )
                     }
                     fukushobyoDao.insertAlldata(list)
@@ -519,9 +531,15 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
     suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
         return fukushobyoDao.existsBunruiInMaster(bunruiCode)
     }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<FukushobyoJoken> {
         return withContext(Dispatchers.IO) {
-            fukushobyoDao.getNames(mdcCode, bunruiCode)
+            val results = fukushobyoDao.getNames(mdcCode, bunruiCode)
+            listOf(
+                FukushobyoJoken(
+                    code = "0",
+                    name = "なし"
+                )
+            ) + results
         }
     }
 }
