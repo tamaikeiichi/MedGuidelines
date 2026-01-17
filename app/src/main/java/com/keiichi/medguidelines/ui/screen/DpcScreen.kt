@@ -28,9 +28,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
@@ -155,8 +158,10 @@ fun DpcScreen(
         bottomBar = {
             ScoreBottomAppBarVariable(
                 displayText = buildAnnotatedString {
-                    append("DPCコード: ")
-                    append(dpcCodeFirst)
+                    withStyle(style = SpanStyle(fontSize = 14.sp)) {
+                        append("DPCコード: ")
+                        append(dpcCodeFirst)
+                    }
                     if (shindangunBunruiTensuhyo.isNotEmpty()) {
                         val data = shindangunBunruiTensuhyo.first()
                         append("\n点数表名称: ${data.name}")
@@ -394,6 +399,19 @@ fun DpcScreen(
                                     // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
                                     Log.d("tamaiDpc", "here?")
 
+                                    LaunchedEffect(options) {
+                                        if (options.isNotEmpty()) {
+                                            val firstOptionName = options.first()
+                                            if (firstOptionName.isNotBlank()) {
+                                                val code = dpcScreenViewModel.getShujutsu1Code(firstOptionName)
+                                                if (code != null) {
+                                                    val finalCode = code.toDoubleOrNull()?.toInt()?.toString() ?: code
+                                                    dpcCodesFirst = dpcCodesFirst.copy(shujutu = finalCode)
+                                                    Log.d("tamaiDpc", "shujutsu initialized with: $finalCode")
+                                                }
+                                            }
+                                        }
+                                    }
                                     DpcDropdownSelection(
                                         title = "手術",
                                         options = options,
@@ -420,6 +438,18 @@ fun DpcScreen(
                                     Log.d("tamaiDpc", "after if (showShochi1Selection)")
                                     val options by dpcScreenViewModel.shochi1Options.collectAsState()
                                     val labelIdList = options.map { it.shochi1Name }
+
+                                    LaunchedEffect(options) {
+                                        if (options.isNotEmpty()) {
+                                            val firstItem = options.first()
+                                            val initialCode = firstItem.code?.toDoubleOrNull()?.toInt()?.toString() ?: firstItem.code
+                                            if (initialCode != null) {
+                                                dpcCodesFirst = dpcCodesFirst.copy(shochi1 = initialCode)
+                                                Log.d("tamaiDpc", "shochi1 initialized with: $initialCode")
+                                            }
+                                        }
+                                    }
+
                                     DpcDropdownSelection(
                                         title = "手術・処置等１",
                                         options = labelIdList,
@@ -446,6 +476,17 @@ fun DpcScreen(
 
                                     val options by dpcScreenViewModel.shochi2Options.collectAsState()
                                     val labelIdList = options.map { it.shochi1Name }
+
+                                    LaunchedEffect(options) {
+                                        if (options.isNotEmpty()) {
+                                            val firstItem = options.first()
+                                            val initialCode = firstItem.code?.toDoubleOrNull()?.toInt()?.toString() ?: firstItem.code
+                                            if (initialCode != null) {
+                                                dpcCodesFirst = dpcCodesFirst.copy(shochi2 = initialCode)
+                                                Log.d("tamaiDpc", "shochi1 initialized with: $initialCode")
+                                            }
+                                        }
+                                    }
                                     DpcDropdownSelection(
                                         title = "手術・処置等２",
                                         options = labelIdList,
@@ -472,6 +513,18 @@ fun DpcScreen(
                                     Log.d("tamaiDpc", "after if (showFukushobyoSelection)")
                                     val options by dpcScreenViewModel.fukushobyoOptions.collectAsState()
                                     val labelIdList = options.map { it.name }
+
+                                    LaunchedEffect(options) {
+                                        if (options.isNotEmpty()) {
+                                            val firstItem = options.first()
+                                            val initialCode = firstItem.code?.toDoubleOrNull()?.toInt()?.toString() ?: firstItem.code
+                                            if (initialCode != null) {
+                                                dpcCodesFirst = dpcCodesFirst.copy(fukushobyo = initialCode)
+                                                Log.d("tamaiDpc", "shochi1 initialized with: $initialCode")
+                                            }
+                                        }
+                                    }
+
                                     DpcDropdownSelection(
                                         title = "定義副傷病名",
                                         options = labelIdList,
@@ -578,6 +631,16 @@ fun DpcScreen(
                                     // options から labelResId だけを抽出したリストを作成
                                     val labelIdList = options.map { it.labelResId }
 
+                                    LaunchedEffect(options) {
+                                        if (options.isNotEmpty()) {
+                                            val firstItem = options.first()
+                                            val initialCode = firstItem.code.toString() ?: firstItem.code.toString()
+                                            if (initialCode != null) {
+                                                dpcCodesFirst = dpcCodesFirst.copy(jushodo = initialCode)
+                                                Log.d("tamaiDpc", "shochi1 initialized with: $initialCode")
+                                            }
+                                        }
+                                    }
                                     DpcDropdownSelection(
                                         title = options.first().label,
                                         options = labelIdList as List<String>,
