@@ -708,14 +708,14 @@ class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao
                     val list = df.rows().map { row ->
                         ShindangunBunruiTensuhyoEntity(
                             // nenreiEntityの定義に合わせて列を指定
-                            code = row[2]?.toString() ?: "",
-                            name = row[3]?.toString() ?: "",
-                            nyuinBiI = row[11]?.toString() ?: "",
-                            nyuinBiII = row[12]?.toString() ?: "",
-                            nyuinBiIII = row[13]?.toString() ?: "",
-                            nyuinKikanI = row[14]?.toString() ?: "",
-                            nyuinKikanII = row[15]?.toString() ?: "",
-                            nyuinKikanIII = row[16]?.toString() ?: "",
+                            code = row[1]?.toString() ?: "",
+                            name = row[2]?.toString() ?: "",
+                            nyuinBiI = row[8]?.toString() ?: "",
+                            nyuinBiII = row[9]?.toString() ?: "",
+                            nyuinBiIII = row[10]?.toString() ?: "",
+                            nyuinKikanI = row[11]?.toString() ?: "",
+                            nyuinKikanII = row[12]?.toString() ?: "",
+                            nyuinKikanIII = row[13]?.toString() ?: "",
                         )
                     }
                     shindangunBunruiTensuhyoDao.insertAlldata(list)
@@ -736,8 +736,12 @@ class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao
     }
     suspend fun getNames(code: String): List<ShindangunBunruiTensuhyoJoken> {
         return withContext(Dispatchers.IO) {
+            Log.d("tamaiDpc", "run getNames($code)")
             shindangunBunruiTensuhyoDao.getNames(code)
         }
+    }
+    suspend fun getFirstThreeRows(): List<String> {
+        return shindangunBunruiTensuhyoDao.getFirstThreeRows()
     }
 }
 /**

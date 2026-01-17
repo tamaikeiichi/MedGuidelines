@@ -13,6 +13,7 @@ data class ShindangunBunruiTensuhyoJoken(
     @ColumnInfo(name = "nyuinKikanI") val nyuinKikanI: String,
     @ColumnInfo(name = "nyuinKikanII") val nyuinKikanII: String,
     @ColumnInfo(name = "nyuinKikanIII") val nyuinKikanIII: String,
+    @ColumnInfo(name = "debugPart") val debugPart: String? = null
 )
 
 @Dao
@@ -37,5 +38,16 @@ interface ShindangunBunruiTensuhyoDao {
 
     @androidx.room.Query("SELECT code FROM shindangunBunruiTensuhyo_master WHERE name = :name LIMIT 1")
     suspend fun getCodeByName(name: String): String?
+
+    @androidx.room.Query("""
+        SELECT code, name, nyuinBiI, nyuinBiII, nyuinBiIII, nyuinKikanI, nyuinKikanII, nyuinKikanIII,
+               SUBSTR(code, 7, 4) AS debugPart  -- 7桁目から4文字分を抽出してdebugPartという名前にする
+        FROM shindangunBunruiTensuhyo_master 
+        WHERE :code LIKE REPLACE(code, 'x', '_')
+    """)
+    suspend fun getNamesDebug(code: String): List<ShindangunBunruiTensuhyoJoken>
+
+    @androidx.room.Query("SELECT code FROM shindangunBunruiTensuhyo_master LIMIT 3")
+    suspend fun getFirstThreeRows(): List<String>
 
 }

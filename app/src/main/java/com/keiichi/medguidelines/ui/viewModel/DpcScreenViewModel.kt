@@ -20,6 +20,7 @@ import com.keiichi.medguidelines.data.JushodoJcsRepository
 import com.keiichi.medguidelines.data.JushodoShujutsuRepository
 import com.keiichi.medguidelines.data.JushodoStrokeRepository
 import com.keiichi.medguidelines.data.NenreiRepository
+import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoDao
 import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoJoken
 import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoRepository
 import com.keiichi.medguidelines.data.Shochi1Joken
@@ -143,11 +144,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     val shindangunBunruiTensuhyoOptions: StateFlow<List<ShindangunBunruiTensuhyoJoken>> =
         _shindangunBunruiTensuhyoOptions.asStateFlow()
 
-// DpcScreenViewModel.kt
-
-    // 戻り値を List<> から Unit (なし) に変更
-    // DpcScreenViewModel.kt
-
     fun onShindangunCodeChanged(code: String) {
         viewModelScope.launch {
             // 引数自体は置換せず、そのまま渡す
@@ -155,7 +151,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 val result = shindangunBunruiTensuhyoRepository.getNames(code)
                 _shindangunBunruiTensuhyoOptions.value = result
 
-                Log.d("tamaiDpc", "Shindangun options updated: ${result.size} items")
+                Log.d("tamaiDpc", "Shindangun options updated: ${result.size} items, ")
             } catch (e: Exception) {
                 Log.e("tamaiDpc", "Failed to fetch Shindangun options", e)
                 _shindangunBunruiTensuhyoOptions.value = emptyList()
@@ -164,7 +160,11 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
 
-
+    // DpcScreenViewModel.kt 内
+    suspend fun getDebugRows(): List<String> {
+        // repository経由、あるいは直接daoから取得
+        return shindangunBunruiTensuhyoRepository.getFirstThreeRows()
+    }
 
 
 

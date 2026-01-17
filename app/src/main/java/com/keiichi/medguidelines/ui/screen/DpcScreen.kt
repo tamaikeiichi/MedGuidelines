@@ -2,6 +2,7 @@ package com.keiichi.medguidelines.ui.screen
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.forEach
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoDao
 import com.keiichi.medguidelines.ui.component.Dimensions
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
@@ -120,12 +122,21 @@ fun DpcScreen(
     var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
 
     val shindangunBunruiTensuhyo by dpcScreenViewModel.shindangunBunruiTensuhyoOptions.collectAsState()
+    Log.d("tamaiDpcUI", "Current List Size in UI: ${shindangunBunruiTensuhyo.size}")
 
     // 2. コードが確定したタイミング（例：ICD選択時や、特定のロジック後）でイベントを投げる
     LaunchedEffect(dpcCodeFirst) {
         if (dpcCodeFirst.isNotEmpty()) {
             Log.d("tamaiDpc", "dpcCodeFirst: $dpcCodeFirst")
+
+            // 引数 code を使わず、DBの最初の3行を取得する
+            val debugResults = dpcScreenViewModel.getDebugRows()
+            debugResults.forEach {
+                Log.d("tamaiDpc", "DB stored pattern: $it, ")
+            }
+
             dpcScreenViewModel.onShindangunCodeChanged(dpcCodeFirst)
+            Log.d("tamaiDpc", "shindangunBunruiTensuhyo: $shindangunBunruiTensuhyo")
         }
     }
 
@@ -146,9 +157,13 @@ fun DpcScreen(
                 displayText = buildAnnotatedString {
                     append("DPCコード: ")
                     append(dpcCodeFirst)
-                    if(shindangunBunruiTensuhyo.isNotEmpty()) {
-                            append(shindangunBunruiTensuhyo.first().nyuinbiI)
-                        }
+                    if (shindangunBunruiTensuhyo.isNotEmpty()) {
+                        val data = shindangunBunruiTensuhyo.first()
+                        append("\n点数表名称: ${data.name}")
+                        append("\n入院期間I: ${data.nyuinbiI}") // プロパティ名に注意 (nyuinbiI か nyuinBiI か)
+                    } else {
+                        append("\n(該当する点数設定が見つかりません)")
+                    }
                 }
             )
         }
