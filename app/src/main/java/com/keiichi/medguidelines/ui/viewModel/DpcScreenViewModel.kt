@@ -4,6 +4,7 @@ package com.keiichi.medguidelines.ui.viewModel
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -366,43 +367,73 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         return buildList {
             //joken1
             if (!nenreiJoken.joken1Ijo.isNullOrBlank() && !nenreiJoken.joken1Miman.isNullOrBlank() && !nenreiJoken.joken1Value.isNullOrBlank()) {
-                val labelResId =
-                    "${nenreiJoken.joken1Ijo.toInt()}歳以上${nenreiJoken.joken1Miman.toInt()}歳未満"
+                val labelResId = buildAnnotatedString {
+                    if (nenreiJoken.joken1Ijo.toInt() != 0) {
+                        append("${nenreiJoken.joken1Ijo.toInt()}歳以上)")
+                    }
+                    if (nenreiJoken.joken1Miman.toInt() != 999) {
+                        append("${nenreiJoken.joken1Miman.toInt()}歳未満")
+                    }
+            }
                 val score = nenreiJoken.joken1Value.toInt()
                 val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId, score, label))
+                add(LabelStringAndScore(labelResId.toString(), score, label))
             }
             // joken2
             if (!nenreiJoken.joken2Ijo.isNullOrBlank() && !nenreiJoken.joken2Miman.isNullOrBlank() && !nenreiJoken.joken2Value.isNullOrBlank()) {
-                val labelResId =
-                    "${nenreiJoken.joken2Ijo.toInt()}歳以上${nenreiJoken.joken2Miman.toInt()}歳未満"
+                val labelResId = buildAnnotatedString {
+                    if (nenreiJoken.joken2Ijo.toInt() != 0) {
+                        append("${nenreiJoken.joken2Ijo.toInt()}歳以上")
+                    }
+                    if (nenreiJoken.joken2Miman.toInt() != 999) {
+                        append("${nenreiJoken.joken2Miman.toInt()}歳未満")
+                    }
+                }
                 val score = nenreiJoken.joken2Value.toInt()
                 val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId, score, label))
+                add(LabelStringAndScore(labelResId.toString(), score, label))
             }
             // joken3
             if (!nenreiJoken.joken3Ijo.isNullOrBlank() && !nenreiJoken.joken3Miman.isNullOrBlank() && !nenreiJoken.joken3Value.isNullOrBlank()) {
-                val labelResId =
-                    "${nenreiJoken.joken3Ijo.toInt()}歳以上${nenreiJoken.joken3Miman.toInt()}歳未満"
+                val labelResId =buildAnnotatedString {
+                    if (nenreiJoken.joken3Ijo.toInt() != 0) {
+                        append("${nenreiJoken.joken3Ijo.toInt()}歳以上")
+                    }
+                    if (nenreiJoken.joken3Miman.toInt() != 999) {
+                        append("${nenreiJoken.joken3Miman.toInt()}歳未満")
+                    }
+                }
                 val score = nenreiJoken.joken3Value.toInt()
                 val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId, score, label))
+                add(LabelStringAndScore(labelResId.toString(), score, label))
             }
             // joken4
             if (!nenreiJoken.joken4Ijo.isNullOrBlank() && !nenreiJoken.joken4Miman.isNullOrBlank() && !nenreiJoken.joken4Value.isNullOrBlank()) {
-                val labelResId =
-                    "${nenreiJoken.joken4Ijo.toInt()}歳以上${nenreiJoken.joken4Miman.toInt()}歳未満"
+                val labelResId =buildAnnotatedString {
+                    if (nenreiJoken.joken4Ijo.toInt() != 0) {
+                        append("${nenreiJoken.joken4Ijo.toInt()}歳以上")
+                    }
+                    if (nenreiJoken.joken4Miman.toInt() != 999) {
+                        append("${nenreiJoken.joken4Miman.toInt()}歳未満")
+                    }
+                }
                 val score = nenreiJoken.joken4Value.toInt()
                 val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId, score, label))
+                add(LabelStringAndScore(labelResId.toString(), score, label))
             }
             // joken5
             if (!nenreiJoken.joken5Ijo.isNullOrBlank() && !nenreiJoken.joken5Miman.isNullOrBlank() && !nenreiJoken.joken5Value.isNullOrBlank()) {
-                val labelResId =
-                    "${nenreiJoken.joken5Ijo.toInt()}歳以上${nenreiJoken.joken5Miman.toInt()}歳未満"
+                val labelResId =buildAnnotatedString {
+                    if (nenreiJoken.joken5Ijo.toInt() != 0) {
+                        append("${nenreiJoken.joken5Ijo.toInt()}歳以上")
+                    }
+                    if (nenreiJoken.joken5Miman.toInt() != 999) {
+                        append("${nenreiJoken.joken5Miman.toInt()}歳未満")
+                    }
+                }
                 val score = nenreiJoken.joken5Value.toInt()
                 val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId, score, label))
+                add(LabelStringAndScore(labelResId.toString(), score, label))
             }
         }
 
