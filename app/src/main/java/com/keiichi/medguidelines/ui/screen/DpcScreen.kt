@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,6 +23,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.Dimensions
+import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
@@ -105,7 +110,9 @@ fun DpcScreen(
     val showJushodoStrokeSelection by dpcScreenViewModel.showJushodoStrokeSelection.collectAsState()
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var searchResultsVisible by remember { mutableStateOf(true) }
-
+    val days = remember { mutableDoubleStateOf(1.0) }
+    var cost = remember { mutableIntStateOf(0) }
+    var coeff = remember { mutableDoubleStateOf(1.0) } //JRは1.3071
     var bunruiIcdSelectedIcdItem by androidx.compose.runtime.remember {
         mutableStateOf<String?>(
             null
@@ -160,8 +167,16 @@ fun DpcScreen(
                     }
                     if (shindangunBunruiTensuhyo.isNotEmpty()) {
                         val data = shindangunBunruiTensuhyo.first()
-                        append("\n点数表名称: ${data.name}")
-                        append("\n入院期間I: ${data.nyuinbiI}") // プロパティ名に注意 (nyuinbiI か nyuinBiI か)
+                        cost.intValue = calculateNyuinCost(
+                            days = days.doubleValue.toInt(),
+                            nyuinbiI = data.nyuinbiI.toInt(),
+                            nyuinbiII = data.nyuinbiII.toInt(),
+                            nyuinbiIII = data.nyuinbiIII.toInt(),
+                            nyuinKikanI = data.nyuinKikanI.toInt(),
+                            nyuinKikanII = data.nyuinKikanII.toInt(),
+                            nyuinKikanIII = data.nyuinKikanIII.toInt()
+                        )
+                        append("\n包括金額合計:${(cost.intValue * 10 * coeff.doubleValue).toInt()}円")
                     } else {
                         if (dpcCodeFirst == DpcCode())
                             append("\n(病名を選択してください)")
@@ -229,6 +244,25 @@ fun DpcScreen(
                                                 text = "$bunruiIcdSelectedIcdItem",
                                                 modifier = Modifier.padding(Dimensions.textPadding)
                                             )
+                                            FlowRow(
+                                                modifier = Modifier
+                                                    .padding(4.dp)
+                                                    .wrapContentHeight(
+                                                        align = Alignment.Bottom
+                                                    ),
+                                                itemVerticalAlignment = Alignment.Bottom
+                                            ) {
+                                                InputValue(
+                                                    label = R.string.daysOfInHospital,
+                                                    value = days,
+                                                    japaneseUnit = R.string.days,
+                                                )
+                                                InputValue(
+                                                    label = R.string.coeffOfHospital,
+                                                    value = coeff,
+                                                    japaneseUnit = R.string.space,
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -397,11 +431,19 @@ fun DpcScreen(
                                         if (options.isNotEmpty()) {
                                             val firstOptionName = options.first()
                                             if (firstOptionName.isNotBlank()) {
-                                                val code = dpcScreenViewModel.getShujutsu1Code(firstOptionName)
+                                                val code = dpcScreenViewModel.getShujutsu1Code(
+                                                    firstOptionName
+                                                )
                                                 if (code != null) {
-                                                    val finalCode = code.toDoubleOrNull()?.toInt()?.toString() ?: code
-                                                    dpcCodeFirst = dpcCodeFirst.copy(shujutu = finalCode)
-                                                    Log.d("tamaiDpc", "shujutsu initialized with: $finalCode")
+                                                    val finalCode =
+                                                        code.toDoubleOrNull()?.toInt()?.toString()
+                                                            ?: code
+                                                    dpcCodeFirst =
+                                                        dpcCodeFirst.copy(shujutu = finalCode)
+                                                    Log.d(
+                                                        "tamaiDpc",
+                                                        "shujutsu initialized with: $finalCode"
+                                                    )
                                                 }
                                             }
                                         }
@@ -436,10 +478,16 @@ fun DpcScreen(
                                     LaunchedEffect(options) {
                                         if (options.isNotEmpty()) {
                                             val firstItem = options.first()
-                                            val initialCode = firstItem.code?.toDoubleOrNull()?.toInt()?.toString() ?: firstItem.code
+                                            val initialCode =
+                                                firstItem.code?.toDoubleOrNull()?.toInt()
+                                                    ?.toString() ?: firstItem.code
                                             if (initialCode != null) {
-                                                dpcCodeFirst = dpcCodeFirst.copy(shochi1 = initialCode)
-                                                Log.d("tamaiDpc", "shochi1 initialized with: $initialCode")
+                                                dpcCodeFirst =
+                                                    dpcCodeFirst.copy(shochi1 = initialCode)
+                                                Log.d(
+                                                    "tamaiDpc",
+                                                    "shochi1 initialized with: $initialCode"
+                                                )
                                             }
                                         }
                                     }
@@ -451,7 +499,8 @@ fun DpcScreen(
                                             coroutineScope.launch {
                                                 // optionsリストの中から名称が一致する最初の項目を探し、そのcodeを取得する
                                                 val code = options.find {
-                                                    it.shochi1Name == selectedName }?.code
+                                                    it.shochi1Name == selectedName
+                                                }?.code
                                                 if (code != null) {
                                                     val finalCode =
                                                         code.toDoubleOrNull()?.toInt()?.toString()
@@ -474,10 +523,16 @@ fun DpcScreen(
                                     LaunchedEffect(options) {
                                         if (options.isNotEmpty()) {
                                             val firstItem = options.first()
-                                            val initialCode = firstItem.code?.toDoubleOrNull()?.toInt()?.toString() ?: firstItem.code
+                                            val initialCode =
+                                                firstItem.code?.toDoubleOrNull()?.toInt()
+                                                    ?.toString() ?: firstItem.code
                                             if (initialCode != null) {
-                                                dpcCodeFirst = dpcCodeFirst.copy(shochi2 = initialCode)
-                                                Log.d("tamaiDpc", "shochi1 initialized with: $initialCode")
+                                                dpcCodeFirst =
+                                                    dpcCodeFirst.copy(shochi2 = initialCode)
+                                                Log.d(
+                                                    "tamaiDpc",
+                                                    "shochi1 initialized with: $initialCode"
+                                                )
                                             }
                                         }
                                     }
@@ -487,7 +542,8 @@ fun DpcScreen(
                                         onOptionSelected = { selectedName ->
                                             coroutineScope.launch {
                                                 val code = options.find {
-                                                    it.shochi1Name == selectedName }?.code
+                                                    it.shochi1Name == selectedName
+                                                }?.code
                                                 if (code != null) {
                                                     val finalCode =
                                                         code.toDoubleOrNull()?.toInt()?.toString()
@@ -511,10 +567,16 @@ fun DpcScreen(
                                     LaunchedEffect(options) {
                                         if (options.isNotEmpty()) {
                                             val firstItem = options.first()
-                                            val initialCode = firstItem.code?.toDoubleOrNull()?.toInt()?.toString() ?: firstItem.code
+                                            val initialCode =
+                                                firstItem.code?.toDoubleOrNull()?.toInt()
+                                                    ?.toString() ?: firstItem.code
                                             if (initialCode != null) {
-                                                dpcCodeFirst = dpcCodeFirst.copy(fukushobyo = initialCode)
-                                                Log.d("tamaiDpc", "shochi1 initialized with: $initialCode")
+                                                dpcCodeFirst =
+                                                    dpcCodeFirst.copy(fukushobyo = initialCode)
+                                                Log.d(
+                                                    "tamaiDpc",
+                                                    "shochi1 initialized with: $initialCode"
+                                                )
                                             }
                                         }
                                     }
@@ -525,7 +587,8 @@ fun DpcScreen(
                                         onOptionSelected = { selectedOption ->
                                             coroutineScope.launch {
                                                 val code = options.find {
-                                                    it.name == selectedOption }?.code
+                                                    it.name == selectedOption
+                                                }?.code
                                                 if (code != null) {
                                                     val finalCode =
                                                         code.toDoubleOrNull()?.toInt()?.toString()
@@ -581,10 +644,16 @@ fun DpcScreen(
                             }
                             //重症度手術
                             item {
-                                Log.d("tamaiDpc", "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}")
+                                Log.d(
+                                    "tamaiDpc",
+                                    "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}"
+                                )
 
                                 if (showJushodoShujutsuSelection) {
-                                    Log.d("tamaiDpc", "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}")
+                                    Log.d(
+                                        "tamaiDpc",
+                                        "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}"
+                                    )
 
                                     // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
                                     val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()
@@ -628,10 +697,15 @@ fun DpcScreen(
                                     LaunchedEffect(options) {
                                         if (options.isNotEmpty()) {
                                             val firstItem = options.first()
-                                            val initialCode = firstItem.code.toString() ?: firstItem.code.toString()
+                                            val initialCode = firstItem.code.toString()
+                                                ?: firstItem.code.toString()
                                             if (initialCode != null) {
-                                                dpcCodeFirst = dpcCodeFirst.copy(jushodo = initialCode)
-                                                Log.d("tamaiDpc", "shochi1 initialized with: $initialCode")
+                                                dpcCodeFirst =
+                                                    dpcCodeFirst.copy(jushodo = initialCode)
+                                                Log.d(
+                                                    "tamaiDpc",
+                                                    "shochi1 initialized with: $initialCode"
+                                                )
                                             }
                                         }
                                     }
@@ -641,7 +715,8 @@ fun DpcScreen(
                                         onOptionSelected = { selectedName ->
                                             coroutineScope.launch {
                                                 val code = options.find {
-                                                    it.labelResId == selectedName }?.code
+                                                    it.labelResId == selectedName
+                                                }?.code
                                                 if (code != null) {
                                                     val finalCode =
                                                         code.toString()
@@ -733,6 +808,34 @@ private fun DpcDropdownSelection(
     }
 }
 
+private fun calculateNyuinCost(
+    days: Int,
+    nyuinbiI: Int,
+    nyuinbiII: Int,
+    nyuinbiIII: Int,
+    nyuinKikanI: Int,
+    nyuinKikanII: Int,
+    nyuinKikanIII: Int
+): Int {
+    val cost: Int
+    if (days <= nyuinbiI) {
+        cost = days.times(nyuinKikanI)
+    } else if (days <= nyuinbiII) {
+        cost = nyuinbiI.times(nyuinKikanI) +
+                (days - nyuinbiI).times(nyuinKikanII)
+    } else if (days <= nyuinbiIII) {
+        cost =
+            nyuinbiI.times(nyuinKikanI) +
+                    (nyuinbiII - nyuinbiI).times(nyuinKikanII) +
+                    (days - nyuinbiII).times(nyuinKikanIII)
+    } else {
+        cost =
+            nyuinbiI.times(nyuinKikanI) +
+                    (nyuinbiII - nyuinbiI).times(nyuinKikanII) +
+                    (nyuinbiIII - nyuinbiII).times(nyuinKikanIII)
+    }
+    return cost
+}
 
 @Preview(showBackground = true) // 背景をtrueにすると見やすいです
 @Composable

@@ -751,4 +751,6 @@
     <string name="fifteenOrMore">15歳以上</string>
     <string name="jushodoJcs">重症度等（ＪＣＳ等）</string>
     <string name="jcs">ＪＣＳ</string>
+    <string name="daysOfInHospital">入院日数</string>
+    <string name="coeffOfHospital">医療機関別係数</string>
 </resources>
