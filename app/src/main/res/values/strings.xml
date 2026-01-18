@@ -753,4 +753,7 @@
     <string name="jcs">ＪＣＳ</string>
     <string name="daysOfInHospital">入院日数</string>
     <string name="coeffOfHospital">医療機関別係数</string>
+    <string name="aboutDpc">令和7年11月11日更新分を使用</string>
+    <string name="dpcUrl">https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000198757_00008.html</string>
+    <string name="mhlwHp">厚生労働省ホームページ</string>
 </resources>

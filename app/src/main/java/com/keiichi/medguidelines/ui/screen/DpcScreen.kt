@@ -125,8 +125,6 @@ fun DpcScreen(
 
     var query by remember { mutableStateOf("060") }
 
-    var displayedItemsBunrui by remember { mutableStateOf<DataFrame<*>?>(null) }
-
     val shindangunBunruiTensuhyo by dpcScreenViewModel.shindangunBunruiTensuhyoOptions.collectAsState()
     Log.d("tamaiDpcUI", "Current List Size in UI: ${shindangunBunruiTensuhyo.size}")
 
@@ -155,7 +153,8 @@ fun DpcScreen(
             TitleTopAppBar(
                 title = R.string.dpcTitle,
                 navController = navController,
-                references = listOf(TextAndUrl(R.string.space, R.string.space))
+                references = listOf(TextAndUrl(R.string.mhlwHp, R.string.dpcUrl)),
+                helpMessageResId = R.string.aboutDpc,
             )
         },
         bottomBar = {

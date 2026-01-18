@@ -131,6 +131,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     fun onShindangunCodeChanged(code: String) {
         viewModelScope.launch {
             // 引数自体は置換せず、そのまま渡す
+           _isLoading.value = true
             try {
                 val result = shindangunBunruiTensuhyoRepository.getNames(code)
                 _shindangunBunruiTensuhyoOptions.value = result
@@ -139,6 +140,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             } catch (e: Exception) {
                 Log.e("tamaiDpc", "Failed to fetch Shindangun options", e)
                 _shindangunBunruiTensuhyoOptions.value = emptyList()
+            } finally {
+               _isLoading.value = false
             }
         }
     }
@@ -203,9 +206,15 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 val jushodoJcsDateExists =
                     jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 val jushodoShujutsuDataExists =
-                    jushodoShujutsuRepository.checkBunruiExistsInMaster(item.mdcCode,item.bunruiCode)
+                    jushodoShujutsuRepository.checkBunruiExistsInMaster(
+                        item.mdcCode,
+                        item.bunruiCode
+                    )
                 val jushodoStrokeDataExists =
-                    jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(item.mdcCode,item.bunruiCode)
+                    jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(
+                        item.mdcCode,
+                        item.bunruiCode
+                    )
                 Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $jushodoShujutsuDataExists")
                 if (nenreiDataExists && item.mdcCode != null) {
                     // ★ 存在すれば、年齢条件の選択肢リストを生成する
@@ -265,7 +274,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     fukushobyoRepository.checkBunruiExistsInMaster(item.bunruiCode)
                 val jushodoJcsExists =
                     jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
-                val jushodoStrokeExists = jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(item.mdcCode,item.bunruiCode)
+                val jushodoStrokeExists = jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(
+                    item.mdcCode,
+                    item.bunruiCode
+                )
 
                 Log.d(
                     "tamaiDpc",
@@ -317,7 +329,12 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     showSelectionFlow = _showJushodoStrokeSelection,
                     // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
                     // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-                    getOptions = { createJushoStrokeJokenOptionsList(item.mdcCode, item.bunruiCode) }
+                    getOptions = {
+                        createJushoStrokeJokenOptionsList(
+                            item.mdcCode,
+                            item.bunruiCode
+                        )
+                    }
                 )
             } else {
                 _showByotaiSelection.value = false
@@ -377,7 +394,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         val nenreiDao = AppDatabase.getDatabase(application).nenreiDao()
         val jushodoShujutsuDao = AppDatabase.getDatabase(application).jushodoShujutsuDao()
         val jushodoStrokeDao = AppDatabase.getDatabase(application).jushodoStrokeDao()
-        val shindangunBunruiTensuhyoDao = AppDatabase.getDatabase(application).shindangunBunruiTensuhyoDao()
+        val shindangunBunruiTensuhyoDao =
+            AppDatabase.getDatabase(application).shindangunBunruiTensuhyoDao()
 
         repository = DpcRepository(dpcDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
@@ -388,7 +406,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         nenreiRepository = NenreiRepository(nenreiDao)
         jushodoShujutsuRepository = JushodoShujutsuRepository(jushodoShujutsuDao)
         jushodoStrokeRepository = JushodoStrokeRepository(jushodoStrokeDao)
-        shindangunBunruiTensuhyoRepository = ShindangunBunruiTensuhyoRepository(shindangunBunruiTensuhyoDao)
+        shindangunBunruiTensuhyoRepository =
+            ShindangunBunruiTensuhyoRepository(shindangunBunruiTensuhyoDao)
 
         // アプリ起動時にデータベースの初期化処理を呼び出す
         initializeDatabase()
@@ -465,6 +484,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     suspend fun getByotaiCode(byotaiName: String): String? {
         return repository.getByotaiCodeByName(byotaiName)
     }
+
     suspend fun getShujutsu1Code(shujutsu1Name: String): String? {
         return shujutsuRepository.getShujutsu1CodeByName(shujutsu1Name)
     }
@@ -496,61 +516,57 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         if (jushoJcsJoken == null) {
             return emptyList()
         }
-
-        val joken1String: String? =
-            if (jushoJcsJoken.isNotEmpty()) {
-                if (
-                    !jushoJcsJoken.first().joken1Ijo.isNullOrBlank()
-                    && !jushoJcsJoken.first().joken1Miman.isNullOrBlank()
-                ) {
-                    "${jushoJcsJoken.first().joken1Ijo?.toInt()}以上${jushoJcsJoken.first().joken1Miman?.toInt()}未満"
-
-                } else {
-                    null
-                }
-            } else {
-                return emptyList()
-            }
-
-        val joken2String: String? =
-            if (jushoJcsJoken.isNotEmpty()) {
-                if (
-                    !jushoJcsJoken.first().joken2Ijo.isNullOrBlank()
-                    && !jushoJcsJoken.first().joken2Miman.isNullOrBlank()
-                ) {
-                    "${jushoJcsJoken.first().joken2Ijo?.toInt()}以上${jushoJcsJoken.first().joken2Miman?.toInt()}未満"
-                } else {
-                    null
-                }
-            } else {
-                return emptyList()
-            }
-
-        Log.d("tamaiDpc", "val jushoJcs string done $joken1String $joken2String")
-
-        // nullでない有効な選択肢だけをリストに追加する
+        val data = jushoJcsJoken.first()
         return buildList {
-            // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (joken1String != null && jushoJcsJoken.first().joken1Value?.isNotBlank() == true) {
-                add(
-                    LabelStringAndScore(
-                        joken1String,
-                        jushoJcsJoken.first().joken1Value?.toInt() ?: 0,
-                        label = jushoJcsJoken.first().jokenName
-                    ),
-                )
+            // joken1 用の処理
+            processJoken(
+                data.jokenName,
+                data.joken1Ijo,
+                data.joken1Miman,
+                data.joken1Value
+            )?.let { add(it) }
+
+            // joken2 用の処理
+            processJoken(
+                data.jokenName,
+                data.joken2Ijo,
+                data.joken2Miman,
+                data.joken2Value
+            )?.let { add(it) }
+
+            // 必要に応じて joken3〜5 も同様に追加
+        }
+    }
+
+    /**
+     * jokenNameが「年齢」かそれ以外かを判定し、LabelStringAndScoreを生成するヘルパー
+     */
+    private fun processJoken(
+        jokenName: String,
+        ijo: String?,
+        miman: String?,
+        value: String?
+    ): LabelStringAndScore? {
+        if (value.isNullOrBlank()) return null
+
+        val score = value.toIntOrNull() ?: 0
+
+        val labelText = if (jokenName == "年齢") {
+            // 年齢の場合はカプセル化した関数を使用
+            formatNenreiLabel(ijo, miman)
+        } else if (jokenName == "ＪＣＳ") {
+            formatJcsLabel(ijo, miman)
+        } else {
+            // それ以外（JCSなど）の場合は単純な結合
+            if (!ijo.isNullOrBlank() && !miman.isNullOrBlank()) {
+                "${ijo.toIntOrNull()}以上${miman.toIntOrNull()}未満"
+            } else {
+                null
             }
-            Log.d("tamaiDpc", "here?1")
-            // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (joken2String != null && jushoJcsJoken.first().joken2Value.isNotBlank() == true) {
-                add(
-                    LabelStringAndScore(
-                        joken2String,
-                        jushoJcsJoken.first().joken2Value?.toInt() ?: 0,
-                        label = jushoJcsJoken.first().jokenName
-                    ),
-                )
-            }
+        }
+
+        return labelText?.let {
+            LabelStringAndScore(it, score, jokenName)
         }
     }
 
@@ -639,6 +655,21 @@ private fun formatNenreiLabel(ijo: String?, miman: String?): String? {
         }
         if (mimanVal != 999) {
             append("${mimanVal}歳未満")
+        }
+    }
+}
+
+private fun formatJcsLabel(ijo: String?, miman: String?): String? {
+    val ijoVal = ijo?.toIntOrNull()
+    val mimanVal = miman?.toIntOrNull()
+
+    // どちらも無効なデータならnullを返す（または空文字）
+    if (ijoVal == null || mimanVal == null) return null
+
+    return buildString {
+        append("${ijoVal}以上")
+        if (mimanVal != 999) {
+            append("${mimanVal}未満")
         }
     }
 }

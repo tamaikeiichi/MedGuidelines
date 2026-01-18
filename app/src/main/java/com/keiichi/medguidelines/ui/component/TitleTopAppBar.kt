@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
@@ -157,7 +158,10 @@ fun TitleTopAppBar(
                 fontSize = 14.sp
             ) }, // "Help" or similar
             text = { Text(text = stringResource(id = helpMessageResId),
-                fontSize = 22.sp) },
+                fontSize = 22.sp,
+                lineHeight = 1.2.em
+            )
+                   },
             confirmButton = {
                 TextButton(onClick = { showHelpDialog = false }) {
                     Text(stringResource(id = R.string.ok)) // "OK"
