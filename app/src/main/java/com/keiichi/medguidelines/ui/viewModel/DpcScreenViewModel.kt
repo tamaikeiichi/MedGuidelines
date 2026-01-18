@@ -159,15 +159,30 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    // DpcScreenViewModel.kt 内に追加または修正
+
+    fun resetAllSelections() {
+        _showByotaiSelection.value = false
+        _showNenreiSelection.value = false
+        _showShujutsuSelection.value = false
+        _showShochi1Selection.value = false
+        _showShochi2Selection.value = false
+        _showFukushobyoSelection.value = false
+        _showJushodoJcsSelection.value = false
+        _showJushodoShujutsuSelection.value = false
+        _showJushodoStrokeSelection.value = false
+
+        // 必要に応じてオプションリストもクリア
+        _byotaiOptions.value = emptyList()
+        // 他のオプション（shindangun等）もあればここでリセット
+    }
+
 
     // DpcScreenViewModel.kt 内
     suspend fun getDebugRows(): List<String> {
         // repository経由、あるいは直接daoから取得
         return shindangunBunruiTensuhyoRepository.getFirstThreeRows()
     }
-
-
-
 
     /**
      * 【修正案1】ICDリストの項目が選択されたときに呼び出されるメソッド
@@ -592,8 +607,24 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         .filter { it.isNotBlank() } // クエリが空でない場合のみ処理
         .debounce(300) // 300ミリ秒待ってから検索を実行（入力中の負荷を軽減）
         .flatMapLatest { query ->
-            repository.searchIcd(query)
+            // --- 修正箇所: スペースでクエリを分割する ---
+            val words = query.trim().split(Regex("\\s+"))
+
+            // DAOの設計（最大3単語など）に合わせて単語を抽出
+            val word1 = "%${words.getOrElse(0) { "" }}%"
+            val word2 = if (words.size > 1) "%${words[1]}%" else "%%"
+            val word3 = if (words.size > 2) "%${words[2]}%" else "%%"
+            val word4 = if (words.size > 3) "%${words[3]}%" else "%%"
+
+            Log.d("tamaiDpc", "word")
+
+            // リポジトリの検索メソッドを呼び出す
+            // (リポジトリ/DAO側もこれに合わせて3引数を受け取れるようにしておく必要があります)
+            repository.searchIcdMulti(word1, word2, word3, word4)
         }
+//        .flatMapLatest { query ->
+//            repository.searchIcd(query)
+//        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000), // UIがアクティブな間だけ監視

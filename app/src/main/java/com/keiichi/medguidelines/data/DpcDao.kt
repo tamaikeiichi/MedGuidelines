@@ -38,6 +38,24 @@ interface DpcDao {
             "OR  bunruiCode LIKE :query")
     fun searchIcd(query: String): Flow<List<IcdEntity>>
 
+    // C:/Users/tamai/StudioProjects/MedGuidelines/app/src/main/java/com/keiichi/medguidelines/data/DpcDao.kt
+    /**
+    * スペース区切りのAND検索に対応させるため、複数の検索ワードを受け取れるようにします。
+    * 3つまでの単語に対応する例です。
+    */
+    @Query("""
+        SELECT * FROM icd_master 
+        WHERE (normalized_icd_name LIKE :word1 OR mdcCode LIKE :word1 OR bunruiCode LIKE :word1 OR icdCode LIKE :word1)
+        AND (normalized_icd_name LIKE :word2 OR mdcCode LIKE :word2 OR bunruiCode LIKE :word2 OR icdCode LIKE :word2)
+        AND (normalized_icd_name LIKE :word3 OR mdcCode LIKE :word3 OR bunruiCode LIKE :word3 OR icdCode LIKE :word3)
+        AND (normalized_icd_name LIKE :word4 OR mdcCode LIKE :word4 OR bunruiCode LIKE :word4 OR icdCode LIKE :word4)
+    """)
+    fun searchIcdMulti(
+        word1: String,
+        word2: String = "%%",
+        word3: String = "%%",
+        word4: String = "%%"
+    ): Flow<List<IcdEntity>>
 
     // --- 病態マスターテーブル (byotai_master) に対する操作 ---
     /**

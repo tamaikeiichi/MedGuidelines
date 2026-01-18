@@ -745,7 +745,7 @@
     <string name="shock">Shock</string>
     <string name="map">MAP</string>
     <string name="dpcTitle">DPC算定</string>
-    <string name="searchIcd">病名あるいはICDコード</string>
+    <string name="searchIcd">病名あるいはICD/MDC/分類 コード</string>
     <string name="diseaseNamePlaceholder" translatable="false">MAP</string>
     <string name="below15">15歳未満</string>
     <string name="fifteenOrMore">15歳以上</string>

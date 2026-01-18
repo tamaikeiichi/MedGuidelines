@@ -23,6 +23,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
     // DAOのメソッドがFlowを返すので、そのままViewModelに渡す
     fun searchIcd(query: String) = dpcDao.searchIcd("%$query%")
 
+    // 3つのワードによるAND検索をDAOに依頼する
+    fun searchIcdMulti(word1: String, word2: String, word3: String, word4: String) =
+        dpcDao.searchIcdMulti(word1, word2, word3, word4)
     /**
      * データベースにデータが存在しない場合、CSVから読み込んで挿入する
      */
