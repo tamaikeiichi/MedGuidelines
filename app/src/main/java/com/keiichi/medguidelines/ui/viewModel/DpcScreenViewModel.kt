@@ -366,81 +366,31 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         // 2. 取得したデータオブジェクトを使ってリストを構築
         return buildList {
             //joken1
-            if (!nenreiJoken.joken1Ijo.isNullOrBlank() && !nenreiJoken.joken1Miman.isNullOrBlank() && !nenreiJoken.joken1Value.isNullOrBlank()) {
-                val labelResId = buildAnnotatedString {
-                    if (nenreiJoken.joken1Ijo.toInt() != 0) {
-                        append("${nenreiJoken.joken1Ijo.toInt()}歳以上)")
-                    }
-                    if (nenreiJoken.joken1Miman.toInt() != 999) {
-                        append("${nenreiJoken.joken1Miman.toInt()}歳未満")
-                    }
-            }
-                val score = nenreiJoken.joken1Value.toInt()
-                val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId.toString(), score, label))
+            formatNenreiLabel(nenreiJoken.joken1Ijo, nenreiJoken.joken1Miman)?.let { labelText ->
+                val score = nenreiJoken.joken1Value?.toIntOrNull() ?: 0
+                add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
             // joken2
-            if (!nenreiJoken.joken2Ijo.isNullOrBlank() && !nenreiJoken.joken2Miman.isNullOrBlank() && !nenreiJoken.joken2Value.isNullOrBlank()) {
-                val labelResId = buildAnnotatedString {
-                    if (nenreiJoken.joken2Ijo.toInt() != 0) {
-                        append("${nenreiJoken.joken2Ijo.toInt()}歳以上")
-                    }
-                    if (nenreiJoken.joken2Miman.toInt() != 999) {
-                        append("${nenreiJoken.joken2Miman.toInt()}歳未満")
-                    }
-                }
-                val score = nenreiJoken.joken2Value.toInt()
-                val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId.toString(), score, label))
+            formatNenreiLabel(nenreiJoken.joken2Ijo, nenreiJoken.joken2Miman)?.let { labelText ->
+                val score = nenreiJoken.joken2Value?.toIntOrNull() ?: 0
+                add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
             // joken3
-            if (!nenreiJoken.joken3Ijo.isNullOrBlank() && !nenreiJoken.joken3Miman.isNullOrBlank() && !nenreiJoken.joken3Value.isNullOrBlank()) {
-                val labelResId =buildAnnotatedString {
-                    if (nenreiJoken.joken3Ijo.toInt() != 0) {
-                        append("${nenreiJoken.joken3Ijo.toInt()}歳以上")
-                    }
-                    if (nenreiJoken.joken3Miman.toInt() != 999) {
-                        append("${nenreiJoken.joken3Miman.toInt()}歳未満")
-                    }
-                }
-                val score = nenreiJoken.joken3Value.toInt()
-                val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId.toString(), score, label))
+            formatNenreiLabel(nenreiJoken.joken3Ijo, nenreiJoken.joken3Miman)?.let { labelText ->
+                val score = nenreiJoken.joken3Value?.toIntOrNull() ?: 0
+                add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
             // joken4
-            if (!nenreiJoken.joken4Ijo.isNullOrBlank() && !nenreiJoken.joken4Miman.isNullOrBlank() && !nenreiJoken.joken4Value.isNullOrBlank()) {
-                val labelResId =buildAnnotatedString {
-                    if (nenreiJoken.joken4Ijo.toInt() != 0) {
-                        append("${nenreiJoken.joken4Ijo.toInt()}歳以上")
-                    }
-                    if (nenreiJoken.joken4Miman.toInt() != 999) {
-                        append("${nenreiJoken.joken4Miman.toInt()}歳未満")
-                    }
-                }
-                val score = nenreiJoken.joken4Value.toInt()
-                val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId.toString(), score, label))
+            formatNenreiLabel(nenreiJoken.joken4Ijo, nenreiJoken.joken4Miman)?.let { labelText ->
+                val score = nenreiJoken.joken4Value?.toIntOrNull() ?: 0
+                add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
             // joken5
-            if (!nenreiJoken.joken5Ijo.isNullOrBlank() && !nenreiJoken.joken5Miman.isNullOrBlank() && !nenreiJoken.joken5Value.isNullOrBlank()) {
-                val labelResId =buildAnnotatedString {
-                    if (nenreiJoken.joken5Ijo.toInt() != 0) {
-                        append("${nenreiJoken.joken5Ijo.toInt()}歳以上")
-                    }
-                    if (nenreiJoken.joken5Miman.toInt() != 999) {
-                        append("${nenreiJoken.joken5Miman.toInt()}歳未満")
-                    }
-                }
-                val score = nenreiJoken.joken5Value.toInt()
-                val label = nenreiJoken.jokenName
-                add(LabelStringAndScore(labelResId.toString(), score, label))
+            formatNenreiLabel(nenreiJoken.joken5Ijo, nenreiJoken.joken5Miman)?.let { labelText ->
+                val score = nenreiJoken.joken5Value?.toIntOrNull() ?: 0
+                add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
         }
-
-
-        // リポジトリからjoken1〜5のすべての値を取得
-
-
     }
 
     /**
@@ -893,7 +843,25 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 }
 
+/**
+ * 年齢の「以上」「未満」の条件から表示用ラベルを生成する
+ */
+private fun formatNenreiLabel(ijo: String?, miman: String?): String? {
+    val ijoVal = ijo?.toIntOrNull()
+    val mimanVal = miman?.toIntOrNull()
 
+    // どちらも無効なデータならnullを返す（または空文字）
+    if (ijoVal == null || mimanVal == null) return null
+
+    return buildString {
+        if (ijoVal != 0) {
+            append("${ijoVal}歳以上")
+        }
+        if (mimanVal != 999) {
+            append("${mimanVal}歳未満")
+        }
+    }
+}
 
 
 /*** 【共通化】選択UIの表示状態と選択肢リストを更新するヘルパー関数
