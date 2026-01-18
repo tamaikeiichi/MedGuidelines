@@ -4,24 +4,20 @@ package com.keiichi.medguidelines.ui.viewModel
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.keiichi.medguidelines.data.AppDatabase
-import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.FukushobyoJoken
 import com.keiichi.medguidelines.data.FukushobyoRepository
 import com.keiichi.medguidelines.data.IcdEntity
-import com.keiichi.medguidelines.data.JushodoJcsJoken
 import com.keiichi.medguidelines.data.JushodoJcsRepository
 import com.keiichi.medguidelines.data.JushodoShujutsuRepository
 import com.keiichi.medguidelines.data.JushodoStrokeRepository
 import com.keiichi.medguidelines.data.NenreiRepository
-import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoDao
 import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoJoken
 import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoRepository
 import com.keiichi.medguidelines.data.Shochi1Joken
@@ -44,19 +40,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.collections.first
-
-// DpcScreenViewModel.kt のファイルレベルに追加
-
-/**
- * DPCコードの各選択肢UIの状態とロジックを管理するためのデータクラス
- * @param T 選択肢の型 (例: String, JushodoJcsJoken)
- */
-private data class SelectionState<T>(
-    val showFlow: MutableStateFlow<Boolean>,
-    val optionsFlow: MutableStateFlow<List<T>>,
-    val checkExists: suspend (String) -> Boolean,
-    val getOptions: suspend (String, String) -> List<T>
-)
 
 // AndroidViewModelを継承して、Applicationコンテキストを使えるようにする
 class DpcScreenViewModel(application: Application) : AndroidViewModel(application) {
@@ -178,8 +161,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         // 他のオプション（shindangun等）もあればここでリセット
     }
 
-
-    // DpcScreenViewModel.kt 内
     suspend fun getDebugRows(): List<String> {
         // repository経由、あるいは直接daoから取得
         return shindangunBunruiTensuhyoRepository.getFirstThreeRows()
@@ -292,7 +273,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 )
 
                 // --- updateSelectionStateヘルパー関数を使って、各選択UIの状態を更新 ---
-
                 updateSelectionState(
                     exists = shujutsuExists,
                     optionsFlow = _shujutsuOptions,
@@ -304,28 +284,24 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                         )
                     }
                 )
-
                 updateSelectionState(
                     exists = shochi1Exists,
                     optionsFlow = _shochi1Options,
                     showSelectionFlow = _showShochi1Selection,
                     getOptions = { shochi1Repository.getNames(item.mdcCode, item.bunruiCode) }
                 )
-
                 updateSelectionState(
                     exists = shochi2Exists,
                     optionsFlow = _shochi2Options,
                     showSelectionFlow = _showShochi2Selection,
                     getOptions = { shochi2Repository.getNames(item.mdcCode, item.bunruiCode) }
                 )
-
                 updateSelectionState(
                     exists = fukushobyoExists,
                     optionsFlow = _fukushobyoOptions,
                     showSelectionFlow = _showFukushobyoSelection,
                     getOptions = { fukushobyoRepository.getNames(item.mdcCode, item.bunruiCode) }
                 )
-
                 // jushodoJcsOptionsはList<JushodoJcsJoken>型だが、ジェネリクス<T>のおかげで同じ関数を使える
                 updateSelectionState(
                     exists = jushodoJcsExists,
@@ -335,7 +311,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
                     getOptions = { createJushoJcsJokenOptionsList(item.mdcCode, item.bunruiCode) }
                 )
-
                 updateSelectionState(
                     exists = jushodoStrokeExists,
                     optionsFlow = _jushodoStrokeOptions,
@@ -365,156 +340,28 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
         // 2. 取得したデータオブジェクトを使ってリストを構築
         return buildList {
-            //joken1
             formatNenreiLabel(nenreiJoken.joken1Ijo, nenreiJoken.joken1Miman)?.let { labelText ->
                 val score = nenreiJoken.joken1Value?.toIntOrNull() ?: 0
                 add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
-            // joken2
             formatNenreiLabel(nenreiJoken.joken2Ijo, nenreiJoken.joken2Miman)?.let { labelText ->
                 val score = nenreiJoken.joken2Value?.toIntOrNull() ?: 0
                 add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
-            // joken3
             formatNenreiLabel(nenreiJoken.joken3Ijo, nenreiJoken.joken3Miman)?.let { labelText ->
                 val score = nenreiJoken.joken3Value?.toIntOrNull() ?: 0
                 add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
-            // joken4
             formatNenreiLabel(nenreiJoken.joken4Ijo, nenreiJoken.joken4Miman)?.let { labelText ->
                 val score = nenreiJoken.joken4Value?.toIntOrNull() ?: 0
                 add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
-            // joken5
             formatNenreiLabel(nenreiJoken.joken5Ijo, nenreiJoken.joken5Miman)?.let { labelText ->
                 val score = nenreiJoken.joken5Value?.toIntOrNull() ?: 0
                 add(LabelStringAndScore(labelText, score, nenreiJoken.jokenName))
             }
         }
     }
-
-    /**
-     * 【修正案2】分類リストの項目が選択されたときに呼び出されるメソッド
-     * @param item 選択された BunruiEntity
-     */
-    fun onBunruiItemSelected(item: BunruiEntity) {
-        // 選択された項目のmdcCodeとbunruiCodeを使って、共通のチェック処理を呼び出す
-        checkAndShowByotaiSelection(item.mdcCode, item.bunruiCode)
-    }
-
-    /**
-     * 病態名が選択されたときに呼び出される
-     * @param mdcCode 選択された項目のMDCコード
-     * @param bunruiCode 選択された項目の分類コード
-     * @param byotaiCode 選択された病態コード
-     */
-    fun onNenreiSelected(mdcCode: String?, bunruiCode: String?, byotaiCode: String?) {
-        viewModelScope.launch {
-            if (mdcCode == null || bunruiCode == null || byotaiCode == null) {
-                _showNenreiSelection.value = false // 必要な情報がなければ非表示
-                return@launch
-            }
-            // ★★★★★ ここからが修正箇所 ★★★★★
-            // 1. nenrei_master に bunruiCode が存在するかチェック
-            val nenreiDataExists = repository.checkBunruiExistsInNenrei(bunruiCode)
-
-            // 2. 存在する場合 (true) のみ、年齢条件のUIを表示するロジックを実行
-            if (nenreiDataExists) {
-                // --- ここでViewModelがロジックを実行 ---
-                // リポジトリやDAO経由で年齢条件を取得する (この関数はRepositoryに実装する必要がある)
-                val joken1Ijo = repository.getNenreiJoken1Ijo(mdcCode, bunruiCode)
-                val joken1Miman = repository.getNenreiJoken1Miman(mdcCode, bunruiCode)
-                val joken2Ijo = repository.getNenreiJoken2Ijo(mdcCode, bunruiCode)
-                val joken2Miman = repository.getNenreiJoken2Miman(mdcCode, bunruiCode)
-                val joken3Ijo = repository.getNenreiJoken3Ijo(mdcCode, bunruiCode)
-                val joken3Miman = repository.getNenreiJoken3Miman(mdcCode, bunruiCode)
-                val joken4Ijo = repository.getNenreiJoken4Ijo(mdcCode, bunruiCode)
-                val joken4Miman = repository.getNenreiJoken4Miman(mdcCode, bunruiCode)
-                val joken5Ijo = repository.getNenreiJoken5Ijo(mdcCode, bunruiCode)
-                val joken5Miman = repository.getNenreiJoken5Miman(mdcCode, bunruiCode)
-
-                val joken1Value = repository.getNenreiJoken1Value(mdcCode, bunruiCode)
-                val joken2Value = repository.getNenreiJoken2Value(mdcCode, bunruiCode)
-                val joken3Value = repository.getNenreiJoken3Value(mdcCode, bunruiCode)
-                val joken4Value = repository.getNenreiJoken4Value(mdcCode, bunruiCode)
-                val joken5Value = repository.getNenreiJoken5Value(mdcCode, bunruiCode)
-
-                // ... joken2, 3, 4, 5も同様に取得 ...
-                val joken1String =
-                    joken1Ijo.toInt().toString() + "歳以上" + joken1Miman.toInt()
-                        .toString() + "歳未満"
-                val joken2String: String? = if (joken2Ijo != null) {
-                    joken2Ijo.toInt().toString() + "歳以上" + joken2Miman.toInt()
-                        .toString() + "歳未満"
-                } else {
-                    null
-                }
-                val joken3String: String? = if (joken3Ijo != null) {
-                    joken3Ijo.toInt().toString() + "歳以上" + joken3Miman.toInt()
-                        .toString() + "歳未満"
-                } else {
-                    null
-                }
-                val joken4String: String? = if (joken4Ijo != null) {
-                    joken4Ijo.toInt().toString() + "歳以上" + joken4Miman.toInt()
-                        .toString() + "歳未満"
-                } else {
-                    null
-                }
-                val joken5String: String? = if (joken5Ijo != null) {
-                    joken5Ijo.toInt().toString() + "歳以上" + joken5Miman.toInt()
-                        .toString() + "歳未満"
-                } else {
-                    null
-                }
-
-                // 有効な選択肢だけをリストにする
-                val options: List<LabelStringAndScore> = buildList {
-                    add(LabelStringAndScore(joken1String, joken1Value.toInt()))
-                    add(LabelStringAndScore(joken2String, joken2Value.toInt()))
-                    add(LabelStringAndScore(joken3String, joken3Value.toInt()))
-                    add(LabelStringAndScore(joken4String, joken4Value.toInt()))
-                    add(LabelStringAndScore(joken5String, joken5Value.toInt()))
-                }
-                // 年齢条件UIを表示するためのロジック (以前の会話で作成したもの)
-                // (リポジトリからjoken1Ijoなどを取得し、_nenreiOptionsを更新する処理)
-                _showNenreiSelection.value = true // ★ true にする
-            } else {
-                // 存在しない場合は、UIを非表示にする
-                _showNenreiSelection.value = false
-            }
-        }
-    }
-
-    /**
-     * MDCコードと分類コードを元に、病態選択UIの表示を制御する共通メソッド
-     * @param mdcCode チェックするMDCコード
-     * @param bunruiCode チェックする分類コード
-     */
-    private fun checkAndShowByotaiSelection(mdcCode: String?, bunruiCode: String?) {
-        viewModelScope.launch {
-            // mdcCodeとbunruiCodeがnullでないことを確認
-            if (mdcCode != null && bunruiCode != null) {
-                // 1. Repositoryに問い合わせて、対応する病態が存在するかチェック
-                val byotaiExists = repository.checkMdcAndBunruiExist(mdcCode, bunruiCode)
-
-                // 2. 存在する場合 (true の場合) のみ、UIの表示とデータ取得を行う
-                if (byotaiExists) {
-                    _byotaiOptions.value = repository.getByotaiNames(mdcCode, bunruiCode)
-                    _showByotaiSelection.value = true // ★ 病態選択UIを表示させる
-                } else {
-                    // 存在しない場合は、UIを非表示にする
-                    _showByotaiSelection.value = false
-                    _byotaiOptions.value = emptyList()
-                }
-            } else {
-                // mdcCodeまたはbunruiCodeがnullの場合は、UIを非表示にする
-                _showByotaiSelection.value = false
-                _byotaiOptions.value = emptyList()
-            }
-        }
-    }
-
 
     // 検索クエリを保持するStateFlow
     private val _searchQuery = MutableStateFlow("")
@@ -570,6 +417,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+
     /**
      * 検索クエリを更新する
      */
@@ -603,34 +451,11 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             // (リポジトリ/DAO側もこれに合わせて3引数を受け取れるようにしておく必要があります)
             repository.searchIcdMulti(word1, word2, word3, word4)
         }
-//        .flatMapLatest { query ->
-//            repository.searchIcd(query)
-//        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000), // UIがアクティブな間だけ監視
             initialValue = emptyList() // 初期値は空のリスト
         )
-
-    /**
-     * ICDが選択されたときにUIから呼び出されるメソッド
-     * @param mdcCode 選択されたMDCコード
-     * @param bunruiCode 選択された分類コード
-     */
-    fun onMdcAndBunruiSelected(mdcCode: String, bunruiCode: String) {
-        viewModelScope.launch {
-            // byotaiマスターに該当データが存在するかチェック
-            val exists = repository.checkMdcAndBunruiExist(mdcCode, bunruiCode)
-            _showByotaiSelection.value = exists
-            if (exists) {
-                // 存在すれば、ドロップダウンの選択肢を取得する
-                _byotaiOptions.value = repository.getByotaiNames(mdcCode, bunruiCode)
-            } else {
-                // 存在しなければ選択肢をクリア
-                _byotaiOptions.value = emptyList()
-            }
-        }
-    }
 
     /**
      * ドロップダウンで病態名が選択されたときに呼び出されるメソッド
@@ -640,44 +465,9 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     suspend fun getByotaiCode(byotaiName: String): String? {
         return repository.getByotaiCodeByName(byotaiName)
     }
-
     suspend fun getShujutsu1Code(shujutsu1Name: String): String? {
         return shujutsuRepository.getShujutsu1CodeByName(shujutsu1Name)
     }
-
-    suspend fun getShochi1Code(shochi1Name: String): String? {
-        return shochi1Repository.getCodeByName(shochi1Name)
-    }
-
-    suspend fun getShochi2Code(name: String): String? {
-        return shochi2Repository.getCodeByName(name)
-    }
-
-    suspend fun getFukushobyoCode(name: String): String? {
-        return fukushobyoRepository.getCodeByName(name)
-    }
-
-    suspend fun getJushodoJcsJoken(mdcCode: String, bunruiCode: String): List<JushodoJcsJoken> {
-        return jushodoJcsRepository.getJushodoJoken(mdcCode, bunruiCode)
-    }
-
-    suspend fun getJushodoStrokeCode(name: String): String? {
-        return jushodoStrokeRepository.getCodeByName(name)
-    }
-
-    // --- ここからBunruiの検索結果を追加 ---
-    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-    val displayedItemsBunrui: StateFlow<List<BunruiEntity>> = _searchQuery
-        .filter { it.isNotBlank() } // クエリが空でない場合のみ
-        .debounce(300)              // 300ms待ってから検索
-        .flatMapLatest { query ->     // 最新のクエリで検索を実行
-            repository.searchBunrui(query)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000), // UIがアクティブな間だけ監視
-            initialValue = emptyList() // 初期値は空リスト
-        )
 
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -693,16 +483,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 return DpcScreenViewModel(application) as T
             }
         }
-    }
-
-
-    /**
-     * 【追加】病態選択UIの状態をリセットする。
-     * 新しい検索が始まったときなどにUIから呼び出す。
-     */
-    fun resetByotaiSelection() {
-        _showByotaiSelection.value = false
-        _byotaiOptions.value = emptyList()
     }
 
     private suspend fun createJushoJcsJokenOptionsList(
@@ -795,7 +575,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 add(
                     LabelStringAndScore(
                         jushoShujutsuJoken.first().joken1Name,
-                        jushoShujutsuJoken.first().joken1Code?.toInt() ?: 0,
+                        jushoShujutsuJoken.first().joken1Code.toInt(),
                         label = jushoShujutsuJoken.first().jokenName
                     ),
                 )
@@ -806,7 +586,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 add(
                     LabelStringAndScore(
                         jushoShujutsuJoken.first().joken2Name,
-                        jushoShujutsuJoken.first().joken2Code?.toInt() ?: 0,
+                        jushoShujutsuJoken.first().joken2Code.toInt(),
                         label = jushoShujutsuJoken.first().jokenName
                     ),
                 )
@@ -872,7 +652,6 @@ private fun formatNenreiLabel(ijo: String?, miman: String?): String? {
  *      * @param getOptions
  *  データを取得するためのsuspend関数
  *      */
-
 private fun <T> CoroutineScope.updateSelectionState(
     exists: Boolean,
     optionsFlow: MutableStateFlow<List<T>>,

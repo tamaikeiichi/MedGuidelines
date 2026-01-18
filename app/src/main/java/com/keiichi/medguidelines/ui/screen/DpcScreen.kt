@@ -176,7 +176,11 @@ fun DpcScreen(
                             nyuinKikanII = data.nyuinKikanII.toInt(),
                             nyuinKikanIII = data.nyuinKikanIII.toInt()
                         )
-                        append("\n包括金額合計:${(cost.intValue * 10 * coeff.doubleValue).toInt()}円")
+                        val totalAmount = (cost.intValue * 10 * coeff.doubleValue).toInt()
+                        append("\n包括金額合計: ${"%,d".format(totalAmount)}円")
+                        if (days.doubleValue.toInt() > data.nyuinbiIII.toInt()){
+                            append("\n（${data.nyuinbiIII.toInt()}日まで）")
+                        }
                     } else {
                         if (dpcCodeFirst == DpcCode())
                             append("\n(病名を選択してください)")
@@ -213,6 +217,8 @@ fun DpcScreen(
 
                 else -> {
                     Column() {
+                        val isLoading by dpcScreenViewModel.isLoading.collectAsState()
+
                         MyCustomSearchBar(
                             searchQuery = query,
                             onSearchQueryChange = {
@@ -232,7 +238,7 @@ fun DpcScreen(
                                 }
                             },
                             onSearch = { query = it },
-                            isLoading = false,
+                            isLoading = isLoading,
                             placeholderText = R.string.searchIcd
                         )
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -242,7 +248,10 @@ fun DpcScreen(
                                         Column() {
                                             Text(
                                                 text = "$bunruiIcdSelectedIcdItem",
-                                                modifier = Modifier.padding(Dimensions.textPadding)
+                                                fontSize = 22.sp,
+                                                modifier = Modifier
+                                                    .padding(Dimensions.textPadding)
+
                                             )
                                             FlowRow(
                                                 modifier = Modifier
