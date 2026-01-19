@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.ScrollState // 追加
 
 @Composable
 fun VerticalLazyScrollbar(
@@ -76,6 +77,9 @@ fun VerticalLazyScrollbar(
         )
     }
 }
+
+
+
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable

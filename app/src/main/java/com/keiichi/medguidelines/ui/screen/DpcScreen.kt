@@ -81,6 +81,7 @@ import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.VerticalLazyScrollbar
+import com.keiichi.medguidelines.ui.component.VerticalScrollbar
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectableLabelString
 import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
 import kotlinx.coroutines.launch
@@ -167,6 +168,7 @@ fun DpcScreen(
     val COPY_ICON_ID = "copy_icon"
 
     val lazyListState = rememberLazyListState()
+
     // 2. コードが確定したタイミング（例：ICD選択時や、特定のロジック後）でイベントを投げる
     LaunchedEffect(dpcCodeFirstJoined) {
         if (dpcCodeFirstJoined.isNotEmpty()) {
@@ -492,10 +494,11 @@ fun DpcScreen(
                                     .weight(1f)
                                     .fillMaxWidth()
                             ) {
+                                val scrollState = rememberScrollState()
                                 Column(
                                     modifier = Modifier
-                                        //.fillMaxSize()
-                                        .verticalScroll(rememberScrollState())
+                                        .fillMaxSize()
+                                        .verticalScroll(scrollState)
                                 ) {
                                     //item {
                                     //入院日数と医療係数
@@ -938,12 +941,12 @@ fun DpcScreen(
                                     }
                                     //}
                                 }
-                                VerticalLazyScrollbar(
-                                    listState = lazyListState,
+                                VerticalScrollbar(
+                                    scrollState = scrollState,
                                     modifier = Modifier
-                                        .align(Alignment.CenterEnd)
                                         .fillMaxHeight()
-                                )
+                                        .align(Alignment.CenterEnd)
+                                ) // 今回追加した方
                             }
                         }
 
@@ -953,8 +956,6 @@ fun DpcScreen(
         }
     }
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
