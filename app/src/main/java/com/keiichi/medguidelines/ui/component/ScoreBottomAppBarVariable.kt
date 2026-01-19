@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding // Ensure this is imported
+import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,7 +40,8 @@ fun ScoreBottomAppBarVariable(
     displayText: AnnotatedString,
     fontSize: TextUnit = 30.sp,
     modifier: Modifier = Modifier,
-    paddingValues: Dp = 16.dp // Default padding around the text
+    paddingValues: Dp = 16.dp, // Default padding around the text
+    inlineContent: Map<String, InlineTextContent> = emptyMap(),
 ) {
     val textMeasurer = rememberTextMeasurer()
     val density = LocalDensity.current
@@ -86,6 +88,7 @@ fun ScoreBottomAppBarVariable(
                     fontSize = fontSize,
                     style = textStyle, // Apply the same style
                     textAlign = TextAlign.Center,
+                    inlineContent = inlineContent,
                     modifier = Modifier
                         .padding(horizontal = paddingValues) // Horizontal padding for text
                         .fillMaxWidth()

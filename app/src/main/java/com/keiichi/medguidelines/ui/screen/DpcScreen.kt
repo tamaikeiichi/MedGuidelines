@@ -1,21 +1,40 @@
 package com.keiichi.medguidelines.ui.screen
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -31,11 +50,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.Clipboard
+import androidx.compose.ui.platform.LocalClipboardManager
+
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -50,6 +80,7 @@ import com.keiichi.medguidelines.ui.component.MyCustomSearchBar
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
+import com.keiichi.medguidelines.ui.component.VerticalLazyScrollbar
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectableLabelString
 import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
 import kotlinx.coroutines.launch
@@ -130,6 +161,12 @@ fun DpcScreen(
     val shindangunBunruiTensuhyo by dpcScreenViewModel.shindangunBunruiTensuhyoOptions.collectAsState()
     Log.d("tamaiDpcUI", "Current List Size in UI: ${shindangunBunruiTensuhyo.size}")
 
+    val clipboard = LocalClipboardManager.current
+    val context = LocalContext.current
+
+    val COPY_ICON_ID = "copy_icon"
+
+    val lazyListState = rememberLazyListState()
     // 2. コードが確定したタイミング（例：ICD選択時や、特定のロジック後）でイベントを投げる
     LaunchedEffect(dpcCodeFirstJoined) {
         if (dpcCodeFirstJoined.isNotEmpty()) {
@@ -150,7 +187,28 @@ fun DpcScreen(
         // ViewModelの検索メソッドを初期クエリで呼び出す
         dpcScreenViewModel.onQueryChanged(query)
     }
+// --- LazyColumnの外（Scaffoldの中など）で計算 ---
+    val currentShindangun = shindangunBunruiTensuhyo.firstOrNull()
 
+// データの変更に合わせて計算結果を保持
+//    val totalAmount = remember(currentShindangun, days.doubleValue, coeff.doubleValue) {
+//        Log.d("tamaiDpc", "currentShindangun: $currentShindangun")
+//        if (currentShindangun != null) {
+//            val calculatedCost = calculateNyuinCost(
+//                days = days.doubleValue.toInt(),
+//                nyuinbiI = currentShindangun.nyuinbiI.toInt(),
+//                nyuinbiII = currentShindangun.nyuinbiII.toInt(),
+//                nyuinbiIII = currentShindangun.nyuinbiIII.toInt(),
+//                nyuinKikanI = currentShindangun.nyuinKikanI.toInt(),
+//                nyuinKikanII = currentShindangun.nyuinKikanII.toInt(),
+//                nyuinKikanIII = currentShindangun.nyuinKikanIII.toInt()
+//            )
+//            Log.d("tamaiDpc", "calculatedCost: $calculatedCost")
+//            (calculatedCost * 10 * coeff.doubleValue).toInt()
+//        } else {
+//            0
+//        }
+//    }
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
@@ -162,6 +220,24 @@ fun DpcScreen(
         },
         bottomBar = {
             ScoreBottomAppBarVariable(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = {
+                            if (dpcCodeFirstJoined.isNotEmpty()) {
+                                //coroutineScope.launch {
+                                // 3. クリップボードにコピー
+                                clipboard.setText(AnnotatedString(dpcCodeFirstJoined))
+                                // コピーしたことをユーザーに知らせる
+                                Toast.makeText(
+                                    context,
+                                    "DPCコードをコピーしました: $dpcCodeFirstJoined",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                //}
+                            }
+                        }
+                    )
+                },
                 displayText = buildAnnotatedString {
                     withStyle(
                         style = ParagraphStyle(
@@ -175,18 +251,35 @@ fun DpcScreen(
                         ) {
                             append("DPCコード: ")
                             append(dpcCodeFirstJoined)
-
+                            append(" ") // 少し隙間をあける
+                            appendInlineContent(COPY_ICON_ID, "[copy]")
                             if (shindangunBunruiTensuhyo.isNotEmpty()) {
                                 val data = shindangunBunruiTensuhyo.first()
                                 append("\n")
-                                append("入院期間I: ${data.nyuinbiI} ")
-                                append("入院期間II: ${data.nyuinbiII} ")
-                                append("入院期間III: ${data.nyuinbiIII}")
+                                if (data.nyuinbiI != "") {
+                                    append("入院期間I: ${data.nyuinbiI} ")
+                                }
+                                if (data.nyuinbiII != "") {
+                                    append("入院期間II: ${data.nyuinbiII} ")
+                                }
+                                if (data.nyuinbiIII != "") {
+                                    append("入院期間III: ${data.nyuinbiIII} ")
+                                }
                             }
                         }
                     }
-
-                    if (shindangunBunruiTensuhyo.isNotEmpty()) {
+                    val isDataValid = remember(currentShindangun) {
+                        currentShindangun != null && (
+                                currentShindangun.nyuinbiI.isNotBlank() ||
+                                        currentShindangun.nyuinbiII.isNotBlank() ||
+                                        currentShindangun.nyuinbiIII.isNotBlank() ||
+                                        currentShindangun.nyuinKikanI.isNotBlank() ||
+                                        currentShindangun.nyuinKikanII.isNotBlank() ||
+                                        currentShindangun.nyuinKikanIII.isNotBlank()
+                                )
+                    }
+                    if (isDataValid && shindangunBunruiTensuhyo.isNotEmpty()) {
+                        Log.d("tamaiDpc", "shindangunBunruiTensuhyo: $shindangunBunruiTensuhyo")
                         val data = shindangunBunruiTensuhyo.first()
                         cost.intValue = calculateNyuinCost(
                             days = days.doubleValue.toInt(),
@@ -198,18 +291,43 @@ fun DpcScreen(
                             nyuinKikanIII = data.nyuinKikanIII.toInt()
                         )
                         val totalAmount = (cost.intValue * 10 * coeff.doubleValue).toInt()
-                        append("\n包括金額合計: ${"%,d".format(totalAmount)}円")
+                        append("包括金額合計: ${"%,d".format(totalAmount)}円")
                         if (days.doubleValue.toInt() > data.nyuinbiIII.toInt()) {
                             append("\n（${data.nyuinbiIII.toInt()}日まで）")
                         }
                     } else {
                         if (dpcCodeFirst == DpcCode())
-                            append("\n(病名を選択してください)")
+                            append("(病名を選択してください)")
                         else {
-                            append("\n出来高算定")
+                            append("出来高算定")
                         }
                     }
-                }
+                },
+                inlineContent = mapOf(
+                    COPY_ICON_ID to InlineTextContent(
+                        Placeholder(
+                            width = 18.sp,
+                            height = 18.sp,
+                            placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ContentCopy,
+                            contentDescription = "Copy Code",
+                            modifier = Modifier.clickable {
+                                if (dpcCodeFirstJoined.isNotEmpty()) {
+                                    clipboard.setText(AnnotatedString(dpcCodeFirstJoined))
+                                    Toast.makeText(
+                                        context,
+                                        "DPCコードをコピーしました",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                )
             )
         }
     ) { innerPadding ->
@@ -239,7 +357,6 @@ fun DpcScreen(
                 else -> {
                     Column() {
                         val isLoading by dpcScreenViewModel.isLoading.collectAsState()
-
                         MyCustomSearchBar(
                             searchQuery = query,
                             onSearchQueryChange = {
@@ -262,509 +379,582 @@ fun DpcScreen(
                             isLoading = isLoading,
                             placeholderText = R.string.searchIcd
                         )
-                        LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            item {
-                                if (bunruiIcdSelectedIcdItem != null) {
-                                    MedGuidelinesCard() {
-                                        Column() {
-                                            Text(
-                                                text = "$bunruiIcdSelectedIcdItem",
-                                                fontSize = 22.sp,
-                                                modifier = Modifier
-                                                    .padding(Dimensions.textPadding)
-
-                                            )
-                                            FlowRow(
-                                                modifier = Modifier
-                                                    .padding(4.dp)
-                                                    .wrapContentHeight(
-                                                        align = Alignment.Bottom
-                                                    ),
-                                                itemVerticalAlignment = Alignment.Bottom
+                        if (searchResultsVisible) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth()
+                            ) {
+                                LazyColumn(
+                                    state = lazyListState,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                    //.verticalScroll(rememberScrollState())
+                                ) {
+                                    val icdItemsList = displayedItemsIcd.toList()
+                                    // --- ICDコードの結果 ---
+                                    if (icdItemsList.isNotEmpty()) {
+                                        //icdItemsList.forEach { icdItem ->
+                                        items(
+                                            items = icdItemsList,
+                                            key = {
+                                                it.icdCode ?: it.hashCode().toString()
+                                            }
+                                        ) { icdItem ->
+                                            MedGuidelinesCard(
+                                                modifier = Modifier.padding(Dimensions.cardPadding)
                                             ) {
-                                                InputValue(
-                                                    label = R.string.daysOfInHospital,
-                                                    value = days,
-                                                    japaneseUnit = R.string.days,
-                                                )
-                                                InputValue(
-                                                    label = R.string.coeffOfHospital,
-                                                    value = coeff,
-                                                    japaneseUnit = R.string.space,
+
+                                                Text(
+                                                    text = icdItem.icdName
+                                                        ?: "No Name", // itemTextの代わりに直接参照
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .clickable {
+                                                            // 1. UIの状態を更新
+                                                            bunruiIcdSelectedIcdItem =
+                                                                icdItem.icdName
+                                                            // 2. Stateの更新は .copy() の結果を再代入する
+                                                            dpcCodeFirst = dpcCodeFirst.copy(
+                                                                icd = icdItem.icdCode,
+                                                                mdc = icdItem.mdcCode,
+                                                                bunrui = icdItem.bunruiCode
+                                                            )
+
+                                                            // 3. ViewModelのメソッドを呼び出してイベントを通知する
+                                                            dpcScreenViewModel.onIcdItemSelected(
+                                                                icdItem
+                                                            )
+
+                                                            Log.d(
+                                                                "tamaiDpc",
+                                                                " dpcScreenViewModel.onIcdItemSelected(icdItem) ran"
+                                                            )
+                                                            searchResultsVisible = false
+                                                        }
+                                                        .padding(16.dp)
                                                 )
                                             }
                                         }
                                     }
                                 }
+                                VerticalLazyScrollbar(
+                                    listState = lazyListState,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .fillMaxHeight()
+                                )
                             }
-                            if (searchResultsVisible) {
-                                val icdItemsList = displayedItemsIcd.toList()
-                                // --- ICDコードの結果 ---
-                                if (icdItemsList.isNotEmpty()) {
-                                    items(
-                                        items = icdItemsList,
-                                        key = {
-                                            it.icdCode ?: it.hashCode().toString()
-                                        }) { icdItem ->
-                                        MedGuidelinesCard {
-                                            Text(
-                                                text = icdItem.icdName
-                                                    ?: "No Name", // itemTextの代わりに直接参照
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .clickable {
-                                                        // 1. UIの状態を更新
-                                                        bunruiIcdSelectedIcdItem = icdItem.icdName
-                                                        // 2. Stateの更新は .copy() の結果を再代入する
-                                                        dpcCodeFirst = dpcCodeFirst.copy(
-                                                            icd = icdItem.icdCode,
-                                                            mdc = icdItem.mdcCode,
-                                                            bunrui = icdItem.bunruiCode
-                                                        )
+                        }
+                        if (bunruiIcdSelectedIcdItem != null) {
+                            Column(
+                                modifier = Modifier
+                                //.fillMaxSize()
+                                //.verticalScroll(rememberScrollState())
+                            ) {
+                                MedGuidelinesCard(
+                                    modifier = Modifier.padding(Dimensions.cardPadding)
+                                ) {
+                                    Column() {
+                                        Text(
+                                            text = "$bunruiIcdSelectedIcdItem",
+                                            fontSize = 22.sp,
+                                            modifier = Modifier
+                                                .padding(Dimensions.textPadding)
 
-                                                        // 3. ViewModelのメソッドを呼び出してイベントを通知する
-                                                        dpcScreenViewModel.onIcdItemSelected(icdItem)
-
-                                                        Log.d(
-                                                            "tamaiDpc",
-                                                            " dpcScreenViewModel.onIcdItemSelected(icdItem) ran"
-                                                        )
-                                                        searchResultsVisible = false
-                                                    }
-                                                    .padding(16.dp)
+                                        )
+                                        FlowRow(
+                                            modifier = Modifier
+                                                .padding(4.dp)
+                                                .wrapContentHeight(
+                                                    align = Alignment.Bottom
+                                                ),
+                                            itemVerticalAlignment = Alignment.Bottom
+                                        ) {
+                                            InputValue(
+                                                label = R.string.daysOfInHospital,
+                                                value = days,
+                                                japaneseUnit = R.string.days,
+                                            )
+                                            InputValue(
+                                                label = R.string.coeffOfHospital,
+                                                value = coeff,
+                                                japaneseUnit = R.string.space,
                                             )
                                         }
                                     }
                                 }
                             }
+                        }
+                        if (!searchResultsVisible) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth()
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        //.fillMaxSize()
+                                        .verticalScroll(rememberScrollState())
+                                ) {
+                                    //item {
+                                    //入院日数と医療係数
+                                    //}
+                                    // --- 病態選択UI ---
+                                    // ViewModelのshowByotaiSelectionの値に基づいて、UIの表示を切り替える
+                                    //item {
+                                    if (showByotaiSelection) {
+                                        Log.d("tamaiDpc", "after if (showByotaiSelection)")
 
-                            // --- 病態選択UI ---
-                            // ViewModelのshowByotaiSelectionの値に基づいて、UIの表示を切り替える
-                            item {
-                                if (showByotaiSelection) {
-                                    Log.d("tamaiDpc", "after if (showByotaiSelection)")
-
-                                    var expanded by remember { mutableStateOf(false) }
-                                    // byotaiOptionsが更新されたらselectedOptionもリセットする
-                                    var selectedOption by remember(byotaiOptions) {
-                                        mutableStateOf(
-                                            byotaiOptions.firstOrNull() ?: "選択してください"
-                                        )
-                                    }
-
-                                    MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                                        ExposedDropdownMenuBox(
-                                            expanded = expanded,
-                                            onExpandedChange = { expanded = !expanded }
-                                        ) {
-                                            TextField(
-                                                value = selectedOption,
-                                                onValueChange = {},
-                                                readOnly = true,
-                                                trailingIcon = {
-                                                    ExposedDropdownMenuDefaults.TrailingIcon(
-                                                        expanded = expanded
-                                                    )
-                                                },
-                                                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                                    unfocusedContainerColor = Color.Transparent,
-                                                    focusedContainerColor = Color.Transparent
-                                                ),
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .menuAnchor()
+                                        var expanded by remember { mutableStateOf(false) }
+                                        // byotaiOptionsが更新されたらselectedOptionもリセットする
+                                        var selectedOption by remember(byotaiOptions) {
+                                            mutableStateOf(
+                                                byotaiOptions.firstOrNull() ?: "選択してください"
                                             )
-                                            ExposedDropdownMenu(
+                                        }
+
+                                        MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                                            ExposedDropdownMenuBox(
                                                 expanded = expanded,
-                                                onDismissRequest = { expanded = false },
+                                                onExpandedChange = { expanded = !expanded }
                                             ) {
-                                                byotaiOptions.forEach { option ->
-                                                    if (option.isNotBlank()) {
-                                                        DropdownMenuItem(
-                                                            text = { Text(option) },
-                                                            onClick = {
-                                                                selectedOption = option
-                                                                expanded = false
-                                                                // --- イベント: 病態名が選択された ---
-                                                                coroutineScope.launch {
-                                                                    val byotaiCode =
-                                                                        dpcScreenViewModel.getByotaiCode(
-                                                                            option
-                                                                        )
-                                                                    if (byotaiCode != null) {
-                                                                        // 取得した病態コードでUIの状態を更新
-                                                                        val finalByotaiCode =
-                                                                            byotaiCode.toDoubleOrNull()
-                                                                                ?.toInt()
-                                                                                ?.toString()
-                                                                                ?: byotaiCode
-                                                                        dpcCodeFirst =
-                                                                            dpcCodeFirst.copy(byotai = finalByotaiCode)
+                                                TextField(
+                                                    value = selectedOption,
+                                                    onValueChange = {},
+                                                    readOnly = true,
+                                                    trailingIcon = {
+                                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                                            expanded = expanded
+                                                        )
+                                                    },
+                                                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                                        unfocusedContainerColor = Color.Transparent,
+                                                        focusedContainerColor = Color.Transparent
+                                                    ),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .menuAnchor()
+                                                )
+                                                ExposedDropdownMenu(
+                                                    expanded = expanded,
+                                                    onDismissRequest = { expanded = false },
+                                                ) {
+                                                    byotaiOptions.forEach { option ->
+                                                        if (option.isNotBlank()) {
+                                                            DropdownMenuItem(
+                                                                text = { Text(option) },
+                                                                onClick = {
+                                                                    selectedOption = option
+                                                                    expanded = false
+                                                                    // --- イベント: 病態名が選択された ---
+                                                                    coroutineScope.launch {
+                                                                        val byotaiCode =
+                                                                            dpcScreenViewModel.getByotaiCode(
+                                                                                option
+                                                                            )
+                                                                        if (byotaiCode != null) {
+                                                                            // 取得した病態コードでUIの状態を更新
+                                                                            val finalByotaiCode =
+                                                                                byotaiCode.toDoubleOrNull()
+                                                                                    ?.toInt()
+                                                                                    ?.toString()
+                                                                                    ?: byotaiCode
+                                                                            dpcCodeFirst =
+                                                                                dpcCodeFirst.copy(
+                                                                                    byotai = finalByotaiCode
+                                                                                )
+                                                                        }
                                                                     }
                                                                 }
-                                                            }
-                                                        )
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                }
-                            }
-                            // --- 年齢選択UI ---
-                            item {
-                                if (showNenreiSelection) {
-                                    Log.d("tamaiDpc", "after if (showNenreiSelection)")
+                                    //}
+                                    // --- 年齢選択UI ---
+                                    //item {
+                                    if (showNenreiSelection) {
+                                        Log.d("tamaiDpc", "after if (showNenreiSelection)")
 
-                                    // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
-                                    val nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                                        // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                                        val nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
 
-                                    // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
-                                    if (nenreiOptions.isNotEmpty()) {
+                                        // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
+                                        if (nenreiOptions.isNotEmpty()) {
 
-                                        var selectedlabelResId: String? by remember(nenreiOptions) {
-                                            mutableStateOf(nenreiOptions.first().labelResId.toString())
-                                        }
+                                            var selectedlabelResId: String? by remember(
+                                                nenreiOptions
+                                            ) {
+                                                mutableStateOf(nenreiOptions.first().labelResId.toString())
+                                            }
 
-                                        MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                                            val selectedValue =
-                                                buttonAndScoreWithScoreDisplayedSelectableLabelString(
-                                                    optionsWithScores = nenreiOptions,
-                                                    title = R.string.age,
-                                                    // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
-                                                    defaultSelectedOption = selectedlabelResId,
-                                                    onOptionSelected = { onSelected ->
-                                                        selectedlabelResId = onSelected
-                                                    },
-                                                    isNumberDisplayed = false
-                                                )
-                                            LaunchedEffect(selectedlabelResId) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(nenrei = selectedValue.toString())
+                                            MedGuidelinesCard(
+                                                modifier = Modifier
+                                                    .padding(Dimensions.cardPadding)
+                                            ) {
+                                                val selectedValue =
+                                                    buttonAndScoreWithScoreDisplayedSelectableLabelString(
+                                                        optionsWithScores = nenreiOptions,
+                                                        title = R.string.age,
+                                                        // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
+                                                        defaultSelectedOption = selectedlabelResId,
+                                                        onOptionSelected = { onSelected ->
+                                                            selectedlabelResId = onSelected
+                                                        },
+                                                        isNumberDisplayed = false
+                                                    )
+                                                LaunchedEffect(selectedlabelResId) {
+                                                    dpcCodeFirst =
+                                                        dpcCodeFirst.copy(nenrei = selectedValue.toString())
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            }
-                            //手術
-                            item {
-                                if (showShujutsuSelection) {
-                                    Log.d("tamaiDpc", "after if (showShujutsuSelection)")
+                                    //}
+                                    //手術
+                                    //item {
+                                    if (showShujutsuSelection) {
+                                        Log.d("tamaiDpc", "after if (showShujutsuSelection)")
 
-                                    var expanded by remember { mutableStateOf(false) }
-                                    // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
-                                    val options by dpcScreenViewModel.shujutsuOptions.collectAsState()
-                                    // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
-                                    Log.d("tamaiDpc", "here?")
+                                        var expanded by remember { mutableStateOf(false) }
+                                        // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                                        val options by dpcScreenViewModel.shujutsuOptions.collectAsState()
+                                        // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
+                                        Log.d("tamaiDpc", "here?")
 
-                                    LaunchedEffect(options) {
-                                        if (options.isNotEmpty()) {
-                                            val firstOptionName = options.first()
-                                            if (firstOptionName.isNotBlank()) {
-                                                val code = dpcScreenViewModel.getShujutsu1Code(
-                                                    firstOptionName
-                                                )
-                                                if (code != null) {
-                                                    val finalCode =
-                                                        code.toDoubleOrNull()?.toInt()?.toString()
-                                                            ?: code
+                                        LaunchedEffect(options) {
+                                            if (options.isNotEmpty()) {
+                                                val firstOptionName = options.first()
+                                                if (firstOptionName.isNotBlank()) {
+                                                    val code = dpcScreenViewModel.getShujutsu1Code(
+                                                        firstOptionName
+                                                    )
+                                                    if (code != null) {
+                                                        val finalCode =
+                                                            code.toDoubleOrNull()?.toInt()
+                                                                ?.toString()
+                                                                ?: code
+                                                        dpcCodeFirst =
+                                                            dpcCodeFirst.copy(shujutu = finalCode)
+                                                        Log.d(
+                                                            "tamaiDpc",
+                                                            "shujutsu initialized with: $finalCode"
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        DpcDropdownSelection(
+                                            title = "手術",
+                                            options = options,
+                                            onOptionSelected = { selectedName ->
+                                                coroutineScope.launch {
+                                                    val code =
+                                                        dpcScreenViewModel.getShujutsu1Code(
+                                                            selectedName
+                                                        )
+                                                    if (code != null) {
+                                                        val finalCode =
+                                                            code.toDoubleOrNull()?.toInt()
+                                                                ?.toString()
+                                                                ?: code
+                                                        // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
+                                                        dpcCodeFirst =
+                                                            dpcCodeFirst.copy(shujutu = finalCode) // shujutu -> shochi1 に
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                    //}
+                                    //処置１
+                                    //item {
+                                    if (showShochi1Selection) {
+                                        Log.d("tamaiDpc", "after if (showShochi1Selection)")
+                                        val options by dpcScreenViewModel.shochi1Options.collectAsState()
+                                        val labelIdList = options.map { it.shochi1Name }
+
+                                        LaunchedEffect(options) {
+                                            if (options.isNotEmpty()) {
+                                                val firstItem = options.first()
+                                                val initialCode =
+                                                    firstItem.code?.toDoubleOrNull()?.toInt()
+                                                        ?.toString() ?: firstItem.code
+                                                if (initialCode != null) {
                                                     dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shujutu = finalCode)
+                                                        dpcCodeFirst.copy(shochi1 = initialCode)
                                                     Log.d(
                                                         "tamaiDpc",
-                                                        "shujutsu initialized with: $finalCode"
+                                                        "shochi1 initialized with: $initialCode"
                                                     )
                                                 }
                                             }
                                         }
+
+                                        DpcDropdownSelection(
+                                            title = "手術・処置等１",
+                                            options = labelIdList,
+                                            onOptionSelected = { selectedName ->
+                                                coroutineScope.launch {
+                                                    // optionsリストの中から名称が一致する最初の項目を探し、そのcodeを取得する
+                                                    val code = options.find {
+                                                        it.shochi1Name == selectedName
+                                                    }?.code
+                                                    if (code != null) {
+                                                        val finalCode =
+                                                            code.toDoubleOrNull()?.toInt()
+                                                                ?.toString()
+                                                                ?: code
+                                                        dpcCodeFirst =
+                                                            dpcCodeFirst.copy(shochi1 = finalCode) // shujutu -> shochi1 に
+                                                    }
+                                                }
+                                            }
+                                        )
                                     }
-                                    DpcDropdownSelection(
-                                        title = "手術",
-                                        options = options,
-                                        onOptionSelected = { selectedName ->
-                                            coroutineScope.launch {
-                                                val code =
-                                                    dpcScreenViewModel.getShujutsu1Code(selectedName)
-                                                if (code != null) {
-                                                    val finalCode =
-                                                        code.toDoubleOrNull()?.toInt()?.toString()
-                                                            ?: code
-                                                    // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
+                                    //}
+                                    //item {
+                                    if (showShochi2Selection) {
+                                        Log.d("tamaiDpc", "after if (showShochi2Selection)")
+
+                                        val options by dpcScreenViewModel.shochi2Options.collectAsState()
+                                        val labelIdList = options.map { it.shochi1Name }
+
+                                        LaunchedEffect(options) {
+                                            if (options.isNotEmpty()) {
+                                                val firstItem = options.first()
+                                                val initialCode =
+                                                    firstItem.code?.toDoubleOrNull()?.toInt()
+                                                        ?.toString() ?: firstItem.code
+                                                if (initialCode != null) {
                                                     dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shujutu = finalCode) // shujutu -> shochi1 に
+                                                        dpcCodeFirst.copy(shochi2 = initialCode)
+                                                    Log.d(
+                                                        "tamaiDpc",
+                                                        "shochi1 initialized with: $initialCode"
+                                                    )
                                                 }
                                             }
                                         }
-                                    )
-                                }
-                            }
-                            //処置１
-                            item {
-                                if (showShochi1Selection) {
-                                    Log.d("tamaiDpc", "after if (showShochi1Selection)")
-                                    val options by dpcScreenViewModel.shochi1Options.collectAsState()
-                                    val labelIdList = options.map { it.shochi1Name }
+                                        DpcDropdownSelection(
+                                            title = "手術・処置等２",
+                                            options = labelIdList,
+                                            onOptionSelected = { selectedName ->
+                                                coroutineScope.launch {
+                                                    val code = options.find {
+                                                        it.shochi1Name == selectedName
+                                                    }?.code
+                                                    if (code != null) {
+                                                        val finalCode =
+                                                            code.toDoubleOrNull()?.toInt()
+                                                                ?.toString()
+                                                                ?: code
+                                                        // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
+                                                        dpcCodeFirst =
+                                                            dpcCodeFirst.copy(shochi2 = finalCode) // shujutu -> shochi1 に
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                    //}
+                                    //副傷病名
+                                    //item {
+                                    if (showFukushobyoSelection) {
+                                        Log.d("tamaiDpc", "after if (showFukushobyoSelection)")
+                                        val options by dpcScreenViewModel.fukushobyoOptions.collectAsState()
+                                        val labelIdList = options.map { it.name }
 
-                                    LaunchedEffect(options) {
+                                        LaunchedEffect(options) {
+                                            if (options.isNotEmpty()) {
+                                                val firstItem = options.first()
+                                                val initialCode =
+                                                    firstItem.code?.toDoubleOrNull()?.toInt()
+                                                        ?.toString() ?: firstItem.code
+                                                if (initialCode != null) {
+                                                    dpcCodeFirst =
+                                                        dpcCodeFirst.copy(fukushobyo = initialCode)
+                                                    Log.d(
+                                                        "tamaiDpc",
+                                                        "shochi1 initialized with: $initialCode"
+                                                    )
+                                                }
+                                            }
+                                        }
+
+                                        DpcDropdownSelection(
+                                            title = "定義副傷病名",
+                                            options = labelIdList,
+                                            onOptionSelected = { selectedOption ->
+                                                coroutineScope.launch {
+                                                    val code = options.find {
+                                                        it.name == selectedOption
+                                                    }?.code
+                                                    if (code != null) {
+                                                        val finalCode =
+                                                            code.toDoubleOrNull()?.toInt()
+                                                                ?.toString()
+                                                                ?: code
+                                                        // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
+                                                        dpcCodeFirst =
+                                                            dpcCodeFirst.copy(fukushobyo = finalCode) // shujutu -> shochi1 に
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                    //}
+                                    //重症度JCS
+                                    //item {
+                                    if (showJushodoJcsSelection) {
+                                        Log.d("tamaiDpc", "after if (showJushodoJcsSelection)")
+
+                                        // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                                        val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()
+
+                                        // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
                                         if (options.isNotEmpty()) {
-                                            val firstItem = options.first()
-                                            val initialCode =
-                                                firstItem.code?.toDoubleOrNull()?.toInt()
-                                                    ?.toString() ?: firstItem.code
-                                            if (initialCode != null) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(shochi1 = initialCode)
-                                                Log.d(
-                                                    "tamaiDpc",
-                                                    "shochi1 initialized with: $initialCode"
-                                                )
+                                            var selectedOption: String? by remember(options) {
+                                                mutableStateOf(options.first().labelResId)
                                             }
-                                        }
-                                    }
-
-                                    DpcDropdownSelection(
-                                        title = "手術・処置等１",
-                                        options = labelIdList,
-                                        onOptionSelected = { selectedName ->
-                                            coroutineScope.launch {
-                                                // optionsリストの中から名称が一致する最初の項目を探し、そのcodeを取得する
-                                                val code = options.find {
-                                                    it.shochi1Name == selectedName
-                                                }?.code
-                                                if (code != null) {
-                                                    val finalCode =
-                                                        code.toDoubleOrNull()?.toInt()?.toString()
-                                                            ?: code
+                                            MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                                                val title = if (options.first().label == "年齢") {
+                                                    R.string.age
+                                                } else {
+                                                    R.string.jcs
+                                                }
+                                                Log.d("tamaiDpc", "title: $title")
+                                                val value =
+                                                    buttonAndScoreWithScoreDisplayedSelectableLabelString(
+                                                        optionsWithScores = options,
+                                                        title = title,
+                                                        //R.string.jushodoJcs,
+                                                        // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
+                                                        defaultSelectedOption = selectedOption,
+                                                        onOptionSelected = { newSelection ->
+                                                            selectedOption = newSelection
+                                                        },
+                                                        isNumberDisplayed = false
+                                                    )
+                                                LaunchedEffect(selectedOption) {
                                                     dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shochi1 = finalCode) // shujutu -> shochi1 に
+                                                        dpcCodeFirst.copy(jushodo = value.toString())
                                                 }
                                             }
                                         }
-                                    )
-                                }
-                            }
-                            item {
-                                if (showShochi2Selection) {
-                                    Log.d("tamaiDpc", "after if (showShochi2Selection)")
-
-                                    val options by dpcScreenViewModel.shochi2Options.collectAsState()
-                                    val labelIdList = options.map { it.shochi1Name }
-
-                                    LaunchedEffect(options) {
-                                        if (options.isNotEmpty()) {
-                                            val firstItem = options.first()
-                                            val initialCode =
-                                                firstItem.code?.toDoubleOrNull()?.toInt()
-                                                    ?.toString() ?: firstItem.code
-                                            if (initialCode != null) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(shochi2 = initialCode)
-                                                Log.d(
-                                                    "tamaiDpc",
-                                                    "shochi1 initialized with: $initialCode"
-                                                )
-                                            }
-                                        }
                                     }
-                                    DpcDropdownSelection(
-                                        title = "手術・処置等２",
-                                        options = labelIdList,
-                                        onOptionSelected = { selectedName ->
-                                            coroutineScope.launch {
-                                                val code = options.find {
-                                                    it.shochi1Name == selectedName
-                                                }?.code
-                                                if (code != null) {
-                                                    val finalCode =
-                                                        code.toDoubleOrNull()?.toInt()?.toString()
-                                                            ?: code
-                                                    // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shochi2 = finalCode) // shujutu -> shochi1 に
-                                                }
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                            //副傷病名
-                            item {
-                                if (showFukushobyoSelection) {
-                                    Log.d("tamaiDpc", "after if (showFukushobyoSelection)")
-                                    val options by dpcScreenViewModel.fukushobyoOptions.collectAsState()
-                                    val labelIdList = options.map { it.name }
-
-                                    LaunchedEffect(options) {
-                                        if (options.isNotEmpty()) {
-                                            val firstItem = options.first()
-                                            val initialCode =
-                                                firstItem.code?.toDoubleOrNull()?.toInt()
-                                                    ?.toString() ?: firstItem.code
-                                            if (initialCode != null) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(fukushobyo = initialCode)
-                                                Log.d(
-                                                    "tamaiDpc",
-                                                    "shochi1 initialized with: $initialCode"
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    DpcDropdownSelection(
-                                        title = "定義副傷病名",
-                                        options = labelIdList,
-                                        onOptionSelected = { selectedOption ->
-                                            coroutineScope.launch {
-                                                val code = options.find {
-                                                    it.name == selectedOption
-                                                }?.code
-                                                if (code != null) {
-                                                    val finalCode =
-                                                        code.toDoubleOrNull()?.toInt()?.toString()
-                                                            ?: code
-                                                    // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(fukushobyo = finalCode) // shujutu -> shochi1 に
-                                                }
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                            //重症度JCS
-                            item {
-                                if (showJushodoJcsSelection) {
-                                    Log.d("tamaiDpc", "after if (showJushodoJcsSelection)")
-
-                                    // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
-                                    val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()
-
-                                    // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
-                                    if (options.isNotEmpty()) {
-                                        var selectedOption: String? by remember(options) {
-                                            mutableStateOf(options.first().labelResId)
-                                        }
-                                        MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                                            val title = if (options.first().label == "年齢") {
-                                                R.string.age
-                                            } else {
-                                                R.string.jcs
-                                            }
-                                            Log.d("tamaiDpc", "title: $title")
-                                            val value =
-                                                buttonAndScoreWithScoreDisplayedSelectableLabelString(
-                                                    optionsWithScores = options,
-                                                    title = title,
-                                                    //R.string.jushodoJcs,
-                                                    // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
-                                                    defaultSelectedOption = selectedOption,
-                                                    onOptionSelected = { newSelection ->
-                                                        selectedOption = newSelection
-                                                    },
-                                                    isNumberDisplayed = false
-                                                )
-                                            LaunchedEffect(selectedOption) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(jushodo = value.toString())
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            //重症度手術
-                            item {
-                                Log.d(
-                                    "tamaiDpc",
-                                    "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}"
-                                )
-
-                                if (showJushodoShujutsuSelection) {
+                                    //}
+                                    //重症度手術
+                                    //item {
                                     Log.d(
                                         "tamaiDpc",
                                         "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}"
                                     )
 
-                                    // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
-                                    val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()
+                                    if (showJushodoShujutsuSelection) {
+                                        Log.d(
+                                            "tamaiDpc",
+                                            "after if (showJushodoShujutsuSelection)　${showJushodoShujutsuSelection}"
+                                        )
 
-                                    // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
-                                    if (options.isNotEmpty()) {
-                                        var selectedOption: String? by remember(options) {
-                                            mutableStateOf(options.first().labelResId)
-                                        }
-                                        MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                                            Log.d("tamaiDpc", "title: $options.first().labelResId")
-                                            val value =
-                                                buttonAndScoreWithScoreDisplayedSelectableLabelString(
-                                                    optionsWithScores = options,
-                                                    title = options.first().label,
-                                                    //R.string.jushodoJcs,
-                                                    // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
-                                                    defaultSelectedOption = selectedOption,
-                                                    onOptionSelected = { newSelection ->
-                                                        selectedOption = newSelection
-                                                    },
-                                                    isNumberDisplayed = false
-                                                )
-                                            LaunchedEffect(selectedOption) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(jushodo = value.toString())
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            //重症度脳卒中
-                            item {
-                                if (showJushodoStrokeSelection) {
-                                    Log.d("tamaiDpc", "after if (showShochi1Selection)")
+                                        // 1. ViewModelから年齢条件のリストを購読するval nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
+                                        val options by dpcScreenViewModel.jushodoJcsOptions.collectAsState()
 
-                                    val options by dpcScreenViewModel.jushodoStrokeOptions.collectAsState()
-                                    // options から labelResId だけを抽出したリストを作成
-                                    val labelIdList = options.map { it.labelResId }
-
-                                    LaunchedEffect(options) {
+                                        // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
                                         if (options.isNotEmpty()) {
-                                            val firstItem = options.first()
-                                            val initialCode = firstItem.code.toString()
-                                                ?: firstItem.code.toString()
-                                            if (initialCode != null) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(jushodo = initialCode)
+                                            var selectedOption: String? by remember(options) {
+                                                mutableStateOf(options.first().labelResId)
+                                            }
+                                            MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
                                                 Log.d(
                                                     "tamaiDpc",
-                                                    "shochi1 initialized with: $initialCode"
+                                                    "title: $options.first().labelResId"
                                                 )
-                                            }
-                                        }
-                                    }
-                                    DpcDropdownSelection(
-                                        title = options.first().label,
-                                        options = labelIdList as List<String>,
-                                        onOptionSelected = { selectedName ->
-                                            coroutineScope.launch {
-                                                val code = options.find {
-                                                    it.labelResId == selectedName
-                                                }?.code
-                                                if (code != null) {
-                                                    val finalCode =
-                                                        code.toString()
+                                                val value =
+                                                    buttonAndScoreWithScoreDisplayedSelectableLabelString(
+                                                        optionsWithScores = options,
+                                                        title = options.first().label,
+                                                        //R.string.jushodoJcs,
+                                                        // ★ defaultSelectedOptionは安全にリストの最初の要素を指定
+                                                        defaultSelectedOption = selectedOption,
+                                                        onOptionSelected = { newSelection ->
+                                                            selectedOption = newSelection
+                                                        },
+                                                        isNumberDisplayed = false
+                                                    )
+                                                LaunchedEffect(selectedOption) {
                                                     dpcCodeFirst =
-                                                        dpcCodeFirst.copy(jushodo = finalCode) // shujutu -> shochi1 に
+                                                        dpcCodeFirst.copy(jushodo = value.toString())
                                                 }
                                             }
                                         }
-                                    )
+                                    }
+                                    //}
+                                    //重症度脳卒中
+                                    //item {
+                                    if (showJushodoStrokeSelection) {
+                                        Log.d("tamaiDpc", "after if (showShochi1Selection)")
+
+                                        val options by dpcScreenViewModel.jushodoStrokeOptions.collectAsState()
+                                        // options から labelResId だけを抽出したリストを作成
+                                        val labelIdList = options.map { it.labelResId }
+
+                                        LaunchedEffect(options) {
+                                            if (options.isNotEmpty()) {
+                                                val firstItem = options.first()
+                                                val initialCode = firstItem.code.toString()
+                                                    ?: firstItem.code.toString()
+                                                if (initialCode != null) {
+                                                    dpcCodeFirst =
+                                                        dpcCodeFirst.copy(jushodo = initialCode)
+                                                    Log.d(
+                                                        "tamaiDpc",
+                                                        "shochi1 initialized with: $initialCode"
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        DpcDropdownSelection(
+                                            title = options.first().label,
+                                            options = labelIdList as List<String>,
+                                            onOptionSelected = { selectedName ->
+                                                coroutineScope.launch {
+                                                    val code = options.find {
+                                                        it.labelResId == selectedName
+                                                    }?.code
+                                                    if (code != null) {
+                                                        val finalCode =
+                                                            code.toString()
+                                                        dpcCodeFirst =
+                                                            dpcCodeFirst.copy(jushodo = finalCode) // shujutu -> shochi1 に
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
+                                    //}
                                 }
+                                VerticalLazyScrollbar(
+                                    listState = lazyListState,
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .fillMaxHeight()
+                                )
                             }
                         }
+
                     }
                 }
             }
         }
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
