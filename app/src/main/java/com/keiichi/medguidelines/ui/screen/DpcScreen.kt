@@ -31,11 +31,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -148,6 +150,7 @@ fun DpcScreen(
         // ViewModelの検索メソッドを初期クエリで呼び出す
         dpcScreenViewModel.onQueryChanged(query)
     }
+
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
@@ -160,10 +163,29 @@ fun DpcScreen(
         bottomBar = {
             ScoreBottomAppBarVariable(
                 displayText = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontSize = 16.sp)) {
-                        append("DPCコード: ")
-                        append(dpcCodeFirstJoined)
+                    withStyle(
+                        style = ParagraphStyle(
+                            lineHeight = 1.1.em
+                        )
+                    ) {
+                        withStyle(
+                            style = SpanStyle(
+                                fontSize = 16.sp,
+                            )
+                        ) {
+                            append("DPCコード: ")
+                            append(dpcCodeFirstJoined)
+
+                            if (shindangunBunruiTensuhyo.isNotEmpty()) {
+                                val data = shindangunBunruiTensuhyo.first()
+                                append("\n")
+                                append("入院期間I: ${data.nyuinbiI} ")
+                                append("入院期間II: ${data.nyuinbiII} ")
+                                append("入院期間III: ${data.nyuinbiIII}")
+                            }
+                        }
                     }
+
                     if (shindangunBunruiTensuhyo.isNotEmpty()) {
                         val data = shindangunBunruiTensuhyo.first()
                         cost.intValue = calculateNyuinCost(
@@ -177,7 +199,7 @@ fun DpcScreen(
                         )
                         val totalAmount = (cost.intValue * 10 * coeff.doubleValue).toInt()
                         append("\n包括金額合計: ${"%,d".format(totalAmount)}円")
-                        if (days.doubleValue.toInt() > data.nyuinbiIII.toInt()){
+                        if (days.doubleValue.toInt() > data.nyuinbiIII.toInt()) {
                             append("\n（${data.nyuinbiIII.toInt()}日まで）")
                         }
                     } else {
