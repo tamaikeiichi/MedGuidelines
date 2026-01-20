@@ -12,7 +12,7 @@ interface ShujutsuDao {
     suspend fun getShujutsuCount(): Int
 
     @androidx.room.Query("SELECT shujutsu1_name FROM shujutsu_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
-    suspend fun getShujutsuNames(mdcCode: String, bunruiCode: String): List<String>
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String>
 
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAllShujutsu(shujutsuList: List<ShujutsuEntity>)

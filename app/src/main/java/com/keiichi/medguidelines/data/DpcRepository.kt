@@ -354,7 +354,8 @@ class DpcRepository(private val dpcDao: DpcDao) {
 class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
     suspend fun getShujutsuNames(mdcCode: String, bunruiCode: String): List<String> {
         return withContext(Dispatchers.IO) {
-            shujutsuDao.getShujutsuNames(mdcCode, bunruiCode)
+            shujutsuDao.getNames(mdcCode, bunruiCode)
+
         }
     }
 

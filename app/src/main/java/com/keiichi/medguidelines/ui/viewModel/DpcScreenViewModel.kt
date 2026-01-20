@@ -513,7 +513,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d("tamaiDpc", "val jushoJcsJoken done $jushoJcsJoken $mdcCode $bunruiCode")
 
         // 2. オブジェクトがnullなら、空のリストを返して処理を終了（クラッシュ回避）
-        if (jushoJcsJoken == null) {
+        if (jushoJcsJoken.isEmpty()) {
             return emptyList()
         }
         val data = jushoJcsJoken.first()
@@ -578,16 +578,16 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d("tamaiDpc", "val jushoShujutsuJoken done $jushoShujutsuJoken $mdcCode $bunruiCode")
 
         // 2. オブジェクトがnullなら、空のリストを返して処理を終了（クラッシュ回避）
-        if (jushoShujutsuJoken == null) {
+        if (jushoShujutsuJoken.isEmpty()) {
             return emptyList()
         }
-
+        val data = jushoShujutsuJoken.first()
         Log.d("tamaiDpc", "val jushoShujutsu string done ")
 
         // nullでない有効な選択肢だけをリストに追加する
         return buildList {
             // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (jushoShujutsuJoken.first().joken1Name != null && jushoShujutsuJoken.first().joken1Code?.isNotBlank() == true) {
+            if (data.joken1Name != null && data.joken1Code?.isNotBlank() == true) {
                 add(
                     LabelStringAndScore(
                         jushoShujutsuJoken.first().joken1Name,
