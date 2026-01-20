@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,13 +21,16 @@ import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -37,6 +41,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.ShindangunBunruiTensuhyoJoken
 import com.keiichi.medguidelines.ui.component.Dimensions
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
@@ -91,6 +97,13 @@ data class LabelStringAndScore(
     val labelResId: String?,
     val code: Int,
     val label: String = ""
+)
+
+// DpcCodeクラスの近くなどに配置
+data class SavedDpcItem(
+    val dpcCode: String,
+    val tensuData: ShindangunBunruiTensuhyoJoken, // 再計算のためにデータを保持
+    val label: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -152,8 +165,12 @@ fun DpcScreen(
     val context = LocalContext.current
 
     val COPY_ICON_ID = "copy_icon"
+    val SAVE_ICON_ID = "save_icon"
 
     val lazyListState = rememberLazyListState()
+
+    // DpcScreen内のrememberセクションに追加
+    val savedItems = remember { mutableStateListOf<SavedDpcItem>() }
 
     // 2. コードが確定したタイミング（例：ICD選択時や、特定のロジック後）でイベントを投げる
     LaunchedEffect(dpcCodeFirstJoined) {
@@ -178,25 +195,6 @@ fun DpcScreen(
 // --- LazyColumnの外（Scaffoldの中など）で計算 ---
     val currentShindangun = shindangunBunruiTensuhyo.firstOrNull()
 
-// データの変更に合わせて計算結果を保持
-//    val totalAmount = remember(currentShindangun, days.doubleValue, coeff.doubleValue) {
-//        Log.d("tamaiDpc", "currentShindangun: $currentShindangun")
-//        if (currentShindangun != null) {
-//            val calculatedCost = calculateNyuinCost(
-//                days = days.doubleValue.toInt(),
-//                nyuinbiI = currentShindangun.nyuinbiI.toInt(),
-//                nyuinbiII = currentShindangun.nyuinbiII.toInt(),
-//                nyuinbiIII = currentShindangun.nyuinbiIII.toInt(),
-//                nyuinKikanI = currentShindangun.nyuinKikanI.toInt(),
-//                nyuinKikanII = currentShindangun.nyuinKikanII.toInt(),
-//                nyuinKikanIII = currentShindangun.nyuinKikanIII.toInt()
-//            )
-//            Log.d("tamaiDpc", "calculatedCost: $calculatedCost")
-//            (calculatedCost * 10 * coeff.doubleValue).toInt()
-//        } else {
-//            0
-//        }
-//    }
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
@@ -268,6 +266,18 @@ fun DpcScreen(
                     }
                     if (isDataValid && shindangunBunruiTensuhyo.isNotEmpty()) {
                         Log.d("tamaiDpc", "shindangunBunruiTensuhyo: $shindangunBunruiTensuhyo")
+                        val savedTotalAmount = savedItems.sumOf { item ->
+                            val itemCost = calculateNyuinCost(
+                                days = days.doubleValue.toInt(),nyuinbiI = item.tensuData.nyuinbiI.toIntOrNull() ?: 0,
+                                nyuinbiII = item.tensuData.nyuinbiII.toIntOrNull() ?: 0,
+                                nyuinbiIII = item.tensuData.nyuinbiIII.toIntOrNull() ?: 0,
+                                nyuinKikanI = item.tensuData.nyuinKikanI.toIntOrNull() ?: 0,
+                                nyuinKikanII = item.tensuData.nyuinKikanII.toIntOrNull() ?: 0,
+                                nyuinKikanIII = item.tensuData.nyuinKikanIII.toIntOrNull() ?: 0
+                            )
+                            (itemCost * 10 * coeff.doubleValue).toInt()
+                        }
+
                         val data = shindangunBunruiTensuhyo.first()
                         cost.intValue = calculateNyuinCost(
                             days = days.doubleValue.toInt(),
@@ -278,8 +288,13 @@ fun DpcScreen(
                             nyuinKikanII = data.nyuinKikanII.toInt(),
                             nyuinKikanIII = data.nyuinKikanIII.toInt()
                         )
-                        val totalAmount = (cost.intValue * 10 * coeff.doubleValue).toInt()
-                        append("包括金額合計: ${"%,d".format(totalAmount)}円")
+                        val currentTotalAmount = (cost.intValue * 10 * coeff.doubleValue).toInt()
+                        append("包括金額合計: ${"%,d".format(currentTotalAmount)}円")
+                        append(" ")
+                        appendInlineContent(SAVE_ICON_ID, "[save]")
+                        if (savedTotalAmount != 0) {
+                            append("包括金額合計: ${"%,d".format(savedTotalAmount)}円")
+                        }
                         if (days.doubleValue.toInt() > data.nyuinbiIII.toInt()) {
                             append("\n（${data.nyuinbiIII.toInt()}日まで）")
                         }
@@ -313,6 +328,30 @@ fun DpcScreen(
                                 }
                             },
                             tint = MaterialTheme.colorScheme.primary
+                        )
+                    },
+                            SAVE_ICON_ID to androidx . compose . foundation . text . InlineTextContent(
+                            Placeholder(18.sp, 18.sp, PlaceholderVerticalAlign.Center)
+                            ) {
+                        Icon(
+                            imageVector = Icons.Default.AddCircle, // ＋アイコンなど
+                            contentDescription = "Save Item",
+                            modifier = Modifier.clickable {
+                                val currentData = shindangunBunruiTensuhyo.firstOrNull()
+                                if (currentData != null) {
+                                    savedItems.add(
+                                        SavedDpcItem(
+                                            dpcCode = dpcCodeFirstJoined,
+                                            tensuData = currentData,
+                                            label = "DPC: $dpcCodeFirstJoined"
+                                        )
+                                    )
+                                    // 次の病名を選べるようにリセット
+                                    dpcCodeFirst = DpcCode()
+                                    Toast.makeText(context, "リストに追加しました", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     }
                 )
@@ -379,6 +418,15 @@ fun DpcScreen(
                                         .fillMaxSize()
                                     //.verticalScroll(rememberScrollState())
                                 ) {
+                                    // innerPadding -> の後の LazyColumn 内などで
+                                    items(savedItems) { item ->
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text("保持中: ${item.dpcCode}", modifier = Modifier.weight(1f))
+                                            IconButton(onClick = { savedItems.remove(item) }) {
+                                                Icon(Icons.Default.Delete, contentDescription = "削除")
+                                            }
+                                        }
+                                    }
                                     val icdItemsList = displayedItemsIcd.toList()
                                     // --- ICDコードの結果 ---
                                     if (icdItemsList.isNotEmpty()) {
