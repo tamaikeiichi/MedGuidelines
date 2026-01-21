@@ -441,11 +441,34 @@ fun DpcScreen(
                         MyCustomSearchBar(
                             searchQuery = query,
                             onSearchQueryChange = {
-                                query = it
-                                dpcScreenViewModel.onQueryChanged(it)
+ input ->
+                        query = input
+                        if (input.length == 14) {
+                            // 14桁入力されたらDPC検索を実行
+                            dpcScreenViewModel.onDpcCodeInput(input)
+
+                            // UI側の dpcCodeFirst も分解して更新する
+                            dpcCodeFirst = DpcCode(
+                                 mdc = input.substring(0, 2),
+                             bunrui = input.substring(2, 6),
+                             byotai = input.substring(6, 7),
+                             nenrei = input.substring(7, 8),
+                             shujutu = input.substring(8, 10),
+                             shochi1 = input.substring(10, 11),
+                             shochi2 = input.substring(11, 12),
+                             fukushobyo = input.substring(12, 13),
+                             jushodo = input.substring(13, 14),
+                            )
+                            // 選択肢を表示させるためのフラグをセット
+                            bunruiIcdSelectedIcdItem = "DPC検索結果"
+                            searchResultsVisible = false
+                        } else {
+                            // query = it
+                            dpcScreenViewModel.onQueryChanged(input)
+                        }
 
                                 // クエリが空（クリア）になった場合
-                                if (it.isBlank()) {
+                                if (input.isBlank()) {
                                     // ★ すべての選択状態（フラグ）をViewModel側でリセット
                                     dpcScreenViewModel.resetAllSelections()
 

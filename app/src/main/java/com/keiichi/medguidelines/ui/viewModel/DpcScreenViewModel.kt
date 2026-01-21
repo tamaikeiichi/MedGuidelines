@@ -637,6 +637,43 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
+    // DpcScreenViewModel.kt 内
+
+    fun onDpcCodeInput(fullCode: String) {
+        if (fullCode.length != 14) return
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                // 1. DPCコードを各パーツに分解
+                // 01 2345 6 7 89 1011 12 13 (インデックス)
+                // 06 0010 x x 01 00   0  x (例)
+                val mdc = fullCode.substring(0, 2)
+                val bunrui = fullCode.substring(2, 6)
+                val byotai = fullCode.substring(6, 7)
+                val nenrei = fullCode.substring(7, 8)
+                val shujutsu = fullCode.substring(8, 10)
+                val shochi1 = fullCode.substring(10, 11)
+                val shochi2 = fullCode.substring(11, 12)
+                val fukushobyo = fullCode.substring(12, 13)
+                val jushodo = fullCode.substring(13, 14)
+
+                // 2. Repositoryから該当する点数情報を取得
+                val shindangun = shindangunBunruiTensuhyoRepository.getNames(fullCode)
+                if (shindangun != null) {
+                    _shindangunBunruiTensuhyoOptions.value = shindangun
+                }
+
+                // 3. UIの状態を更新するためのイベントを発火させるか、
+                // Stateを直接更新する（DpcCodeはScreen側で持っているので、UIに分解結果を返す必要がある）
+                // ※ DpcCodeをViewModelで管理するように変更するとよりスムーズです
+
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 }
 
 /**
