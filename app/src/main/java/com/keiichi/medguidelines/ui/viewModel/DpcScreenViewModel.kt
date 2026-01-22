@@ -489,7 +489,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     suspend fun searchIcdByMcdAndBunrui(mdcCode: String, bunruiCode: String): String{
         return repository.searchIcdByMcdAndBunrui(mdcCode, bunruiCode)
     }
-    suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String{
+    suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String? {
         return repository.getBunruiName(mdcCode, bunruiCode)
     }
     suspend fun getByotaiCode(byotaiName: String): String? {
@@ -527,23 +527,26 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         if (jushoJcsJoken.isEmpty()) {
             return emptyList()
         }
-        val data = jushoJcsJoken.first()
+        val data = jushoJcsJoken.firstOrNull()
         return buildList {
             // joken1 用の処理
-            processJoken(
-                data.jokenName,
-                data.joken1Ijo,
-                data.joken1Miman,
-                data.joken1Value
-            )?.let { add(it) }
+            data?.let { d ->
+                processJoken(
+                    data.jokenName,
+                    data.joken1Ijo,
+                    data.joken1Miman,
+                    data.joken1Value
+                )?.let { add(it) }
 
-            // joken2 用の処理
-            processJoken(
-                data.jokenName,
-                data.joken2Ijo,
-                data.joken2Miman,
-                data.joken2Value
-            )?.let { add(it) }
+
+                // joken2 用の処理
+                processJoken(
+                    data.jokenName,
+                    data.joken2Ijo,
+                    data.joken2Miman,
+                    data.joken2Value
+                )?.let { add(it) }
+            }
 
             // 必要に応じて joken3〜5 も同様に追加
         }
@@ -592,29 +595,29 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         if (jushoShujutsuJoken.isEmpty()) {
             return emptyList()
         }
-        val data = jushoShujutsuJoken.first()
+        val data = jushoShujutsuJoken.firstOrNull()
         Log.d("tamaiDpc", "val jushoShujutsu string done ")
 
         // nullでない有効な選択肢だけをリストに追加する
         return buildList {
             // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (data.joken1Name != null && data.joken1Code?.isNotBlank() == true) {
+            if (data?.joken1Name != null && data?.joken1Code?.isNotBlank() == true) {
                 add(
                     LabelStringAndScore(
-                        jushoShujutsuJoken.first().joken1Name,
-                        jushoShujutsuJoken.first().joken1Code.toInt(),
-                        label = jushoShujutsuJoken.first().jokenName
+                        data.joken1Name,
+                        data.joken1Code.toInt(),
+                        label = data.jokenName
                     ),
                 )
             }
             Log.d("tamaiDpc", "here?1")
             // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (jushoShujutsuJoken.first().joken2Name != null && jushoShujutsuJoken.first().joken2Code.isNotBlank() == true) {
+            if (data?.joken2Name != null && data.joken2Code.isNotBlank() == true) {
                 add(
                     LabelStringAndScore(
-                        jushoShujutsuJoken.first().joken2Name,
-                        jushoShujutsuJoken.first().joken2Code.toInt(),
-                        label = jushoShujutsuJoken.first().jokenName
+                        data.joken2Name,
+                        data.joken2Code.toInt(),
+                        label = data.jokenName
                     ),
                 )
             }

@@ -248,7 +248,7 @@ interface DpcDao {
     suspend fun existsMdcAndBunruiInNenreiMaster(mdcCode: String, bunruiCode: String): Boolean
 
     @Query("SELECT bunrui_name FROM bunrui_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
-    suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String
+    suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String?
 
 
 

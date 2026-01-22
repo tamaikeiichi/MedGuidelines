@@ -260,10 +260,10 @@ fun DpcScreen(
                                 append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円\n")
                             }
                             if (shindangunBunruiTensuhyo.isNotEmpty()) {
-                                val data = shindangunBunruiTensuhyo.first()
+                                val data = shindangunBunruiTensuhyo.firstOrNull()
                                 append("病名: ")
                                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(data.name)
+                                    append(data?.name ?: "")
                                 }
                             }
                             append(" DPCコード: ")
@@ -271,31 +271,31 @@ fun DpcScreen(
                             append(" ") // 少し隙間をあける
                             appendInlineContent(COPY_ICON_ID, "[copy]")
                             if (shindangunBunruiTensuhyo.isNotEmpty()) {
-                                val data = shindangunBunruiTensuhyo.first()
+                                val data = shindangunBunruiTensuhyo.firstOrNull()
                                 append("\n")
-                                if (data.nyuinbiI != "") {
-                                    append("入院期間I: ${data.nyuinbiI} ")
+                                if (data?.nyuinbiI != "") {
+                                    append("入院期間I: ${data?.nyuinbiI} ")
                                 }
-                                if (data.nyuinbiII != "") {
-                                    append("入院期間II: ${data.nyuinbiII} ")
+                                if (data?.nyuinbiII != "") {
+                                    append("入院期間II: ${data?.nyuinbiII} ")
                                 }
-                                if (data.nyuinbiIII != "") {
-                                    append("入院期間III: ${data.nyuinbiIII}\n")
+                                if (data?.nyuinbiIII != "") {
+                                    append("入院期間III: ${data?.nyuinbiIII}\n")
                                 }
                             }
                         }
                         if (isDataValid && shindangunBunruiTensuhyo.isNotEmpty()) {
                             Log.d("tamaiDpc", "shindangunBunruiTensuhyo: $shindangunBunruiTensuhyo")
 
-                            val data = shindangunBunruiTensuhyo.first()
+                            val data = shindangunBunruiTensuhyo.firstOrNull()
                             cost.intValue = calculateNyuinCost(
                                 days = days.doubleValue.toInt(),
-                                nyuinbiI = data.nyuinbiI.toIntOrNull() ?: 0,
-                                nyuinbiII = data.nyuinbiII.toIntOrNull() ?: 0,
-                                nyuinbiIII = data.nyuinbiIII.toIntOrNull() ?: 0,
-                                nyuinKikanI = data.nyuinKikanI.toIntOrNull() ?: 0,
-                                nyuinKikanII = data.nyuinKikanII.toIntOrNull() ?: 0,
-                                nyuinKikanIII = data.nyuinKikanIII.toIntOrNull() ?: 0,
+                                nyuinbiI = data?.nyuinbiI?.toIntOrNull() ?: 0,
+                                nyuinbiII = data?.nyuinbiII?.toIntOrNull() ?: 0,
+                                nyuinbiIII = data?.nyuinbiIII?.toIntOrNull() ?: 0,
+                                nyuinKikanI = data?.nyuinKikanI?.toIntOrNull() ?: 0,
+                                nyuinKikanII = data?.nyuinKikanII?.toIntOrNull() ?: 0,
+                                nyuinKikanIII = data?.nyuinKikanIII?.toIntOrNull() ?: 0,
                             )
                             val currentTotalAmount =
                                 (cost.intValue * 10 * coeff.doubleValue).toInt()
@@ -306,20 +306,23 @@ fun DpcScreen(
 //                        if (savedTotalAmount != 0) {
 //                            append("包括金額合計: ${"%,d".format(savedTotalAmount)}円")
 //                        }
-                            if (days.doubleValue.toInt() > data.nyuinbiIII.toInt()) {
+                            if (days.doubleValue.toInt() > (data?.nyuinbiIII?.toInt() ?: 0)) {
                                 withStyle(
                                     style = SpanStyle(
                                         fontSize = 16.sp,
                                     )
                                 ) {
-                                    append("（${data.nyuinbiIII.toInt()}日まで）")
+                                    append("（${data?.nyuinbiIII?.toInt()}日まで）")
                                 }
                             }
                         } else {
-                            if (dpcCodeFirst == DpcCode())
-                                append("\n(病名を選択してください)")
+                            if (dpcCodeFirst == DpcCode() || dpcCodeFirst.icd == "x"
+                                )
+                                append("")
+                                //append("\n(病名を選択してください)")
                             else {
                                 append("\n出来高算定")
+                                Log.d("tamaiDpc", "dpcCodeFirst: $dpcCodeFirst")
                             }
                         }
                     }
@@ -412,10 +415,10 @@ fun DpcScreen(
                             searchQuery = query,
                             onSearchQueryChange = { input ->
                                 query = input
-                                if (input.length == 14) {
+                                if (input.length == 14 && input.all { it.isDigit() || it == 'x' }) {
                                     // 14桁入力されたらDPC検索を実行
                                     dpcScreenViewModel.onDpcCodeInput(input)
-
+                                    Log.d("tamaiDpc", "dpcScreenViewModel.onDpcCodeInput(input) ran")
                                     // UI側の dpcCodeFirst も分解して更新する
                                     dpcCodeFirst = DpcCode(
                                         mdc = input.substring(0, 2),
@@ -434,11 +437,25 @@ fun DpcScreen(
 
                                     // 選択肢を表示させるためのフラグをセット
                                     if (mdc != null && bunrui != null) {
-                                        coroutineScope.launch {
-                                            icdName = dpcScreenViewModel.getBunruiNames(
-                                                mdc,
-                                                bunrui
-                                            )
+                                        if (mdc != "xx" && bunrui != "xxxx") {
+                                            coroutineScope.launch {
+                                                val name = dpcScreenViewModel.getBunruiNames(mdc, bunrui)
+
+                                                if (name != null) {
+                                                    icdName = name
+                                                    Log.d("tamaiDpc", "got Name: $icdName")
+                                                    dpcScreenViewModel.onDpcCodeInput(input)
+                                                    Log.d("tamaiDpc", "dpcScreenViewModel.onDpcCodeInput(input) ran")
+                                                    showSearchResults = false
+                                                    // ここで showIcdName = true にするフラグなどを制御
+                                                } else {
+                                                    // ★ 14桁あるがマスタに存在しない場合
+                                                    icdName = "該当する病名が見つかりません"
+                                                    dpcCodeFirst == DpcCode()
+                                                    showSearchResults = true // 検索結果リストに戻すかエラーを表示
+                                                    Toast.makeText(context, "無効なDPCコードです", Toast.LENGTH_SHORT).show()
+                                                }
+                                            }
                                         }
                                     }
                                     Log.d("tamaiDpc", "got Name, bunruiName: $icdName")
@@ -446,6 +463,7 @@ fun DpcScreen(
                                 } else {
                                     // query = it
                                     dpcScreenViewModel.onQueryChanged(input)
+                                    showSearchResults = true
                                 }
 
                                 // クエリが空（クリア）になった場合

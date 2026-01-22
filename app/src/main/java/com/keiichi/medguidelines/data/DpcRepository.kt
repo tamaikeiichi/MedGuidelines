@@ -61,7 +61,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
             dpcDao.getByotaiNames(mdcCode, bunruiCode)
         }
     }
-    suspend fun getBunruiName(mdcCode: String, bunruiCode: String): String {
+    suspend fun getBunruiName(mdcCode: String, bunruiCode: String): String? {
         return withContext(Dispatchers.IO) {
             dpcDao.getBunruiNames(mdcCode, bunruiCode)
         }
