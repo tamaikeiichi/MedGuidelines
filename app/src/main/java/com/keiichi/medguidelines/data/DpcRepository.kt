@@ -23,6 +23,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
     // DAOのメソッドがFlowを返すので、そのままViewModelに渡す
     fun searchIcd(query: String) = dpcDao.searchIcd("%$query%")
 
+    fun searchIcdByMcdAndBunrui(mdcCode: String, bunruiCode: String) =
+        dpcDao.searchIcdByMcdAndBunrui(mdcCode, bunruiCode)
+
     // 3つのワードによるAND検索をDAOに依頼する
     fun searchIcdMulti(word1: String, word2: String, word3: String, word4: String) =
         dpcDao.searchIcdMulti(word1, word2, word3, word4)
@@ -44,8 +47,8 @@ class DpcRepository(private val dpcDao: DpcDao) {
         }
     }
 
-    suspend fun checkBunruiExistsInNenrei(bunruiCode: String): Boolean {
-        return dpcDao.existsBunruiInNenreiMaster(bunruiCode)
+    suspend fun checkMdcAndBunruiExistsInNenrei(mdcCode: String, bunruiCode: String): Boolean {
+        return dpcDao.existsMdcAndBunruiInNenreiMaster(mdcCode, bunruiCode)
     }
     /**
      * MDCコードと分類コードに一致する病態名のリストを取得する。
@@ -56,6 +59,11 @@ class DpcRepository(private val dpcDao: DpcDao) {
     suspend fun getByotaiNames(mdcCode: String, bunruiCode: String): List<String> {
         return withContext(Dispatchers.IO) {
             dpcDao.getByotaiNames(mdcCode, bunruiCode)
+        }
+    }
+    suspend fun getBunruiName(mdcCode: String, bunruiCode: String): String {
+        return withContext(Dispatchers.IO) {
+            dpcDao.getBunruiNames(mdcCode, bunruiCode)
         }
     }
     suspend fun getNenreiJoken1Ijo(mdcCode: String, bunruiCode: String): String {
@@ -387,8 +395,8 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
         }
     }
 
-    suspend fun checkBunruiExistsInShujutsu(bunruiCode: String): Boolean {
-        return shujutsuDao.existsBunruiInShujutsuMaster(bunruiCode)
+    suspend fun checkMdcAndBunruiExistsInShujutsu(mdcCode: String, bunruiCode: String): Boolean {
+        return shujutsuDao.existsMdcAndBunruiInShujutsuMaster(mdcCode, bunruiCode)
     }
 
     suspend fun getShujutsu1CodeByName(shujutsu1Name: String): String? {
@@ -433,8 +441,8 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
             shochi1Dao.getCodeByName(name)
         }
     }
-    suspend fun checkBunruiExistsInShochi1(bunruiCode: String): Boolean {
-        return shochi1Dao.existsBunruiInMaster(bunruiCode)
+    suspend fun checkMdcAndBunruiExistsInShochi1(mdcCode: String, bunruiCode: String): Boolean {
+        return shochi1Dao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
     }
     suspend fun getNames(mdcCode: String, bunruiCode: String): List<Shochi1Joken> {
         return withContext(Dispatchers.IO) {
@@ -484,8 +492,8 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
             shochi2Dao.getCodeByName(name)
         }
     }
-    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
-        return shochi2Dao.existsBunruiInMaster(bunruiCode)
+    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean {
+        return shochi2Dao.existsBunruiInMaster(mdcCode, bunruiCode)
     }
     suspend fun getNames(mdcCode: String, bunruiCode: String): List<Shochi2Joken> {
         return withContext(Dispatchers.IO) {
@@ -532,8 +540,8 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
             fukushobyoDao.getCodeByName(name)
         }
     }
-    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
-        return fukushobyoDao.existsBunruiInMaster(bunruiCode)
+    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean {
+        return fukushobyoDao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
     }
     suspend fun getNames(mdcCode: String, bunruiCode: String): List<FukushobyoJoken> {
         return withContext(Dispatchers.IO) {
@@ -584,8 +592,8 @@ class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
             jushodoJcsDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
         }
     }
-    suspend fun checkBunruiExistsInMaster(bunruiCode: String): Boolean {
-        return jushodoJcsDao.existsBunruiInMaster(bunruiCode)
+    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean {
+        return jushodoJcsDao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
     }
     suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
         return withContext(Dispatchers.IO) {

@@ -27,8 +27,8 @@ interface Shochi2Dao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAlldata(list: List<Shochi2Entity>)
 
-    @Query("SELECT EXISTS(SELECT 1 FROM shochi2_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
-    suspend fun existsBunruiInMaster(bunruiCode: String): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM shochi2_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
+    suspend fun existsBunruiInMaster(mdcCode: String, bunruiCode: String): Boolean
 
     @androidx.room.Query("SELECT code FROM shochi1_master WHERE shochi2_name = :name LIMIT 1")
     suspend fun getCodeByName(name: String): String?

@@ -38,6 +38,10 @@ interface DpcDao {
             "OR  bunruiCode LIKE :query")
     fun searchIcd(query: String): Flow<List<IcdEntity>>
 
+    @Query("SELECT icdName FROM icd_master " +
+            "WHERE mdcCode = :mdc AND bunruiCode = :bunrui")
+    fun searchIcdByMcdAndBunrui(mdc: String, bunrui: String): String
+
     // C:/Users/tamai/StudioProjects/MedGuidelines/app/src/main/java/com/keiichi/medguidelines/data/DpcDao.kt
     /**
     * スペース区切りのAND検索に対応させるため、複数の検索ワードを受け取れるようにします。
@@ -240,9 +244,11 @@ interface DpcDao {
      * @param bunruiCode チェックする分類コード
      * @return 存在すれば true, しなければ false
      */
-    @Query("SELECT EXISTS(SELECT 1 FROM nenrei_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
-    suspend fun existsBunruiInNenreiMaster(bunruiCode: String): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM nenrei_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
+    suspend fun existsMdcAndBunruiInNenreiMaster(mdcCode: String, bunruiCode: String): Boolean
 
+    @Query("SELECT bunrui_name FROM bunrui_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String
 
 
 

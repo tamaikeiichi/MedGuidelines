@@ -91,6 +91,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _showJushodoStrokeSelection = MutableStateFlow(false)
     val showJushodoStrokeSelection: StateFlow<Boolean> = _showJushodoStrokeSelection.asStateFlow()
 
+    private val _showIcdName = MutableStateFlow(false)
+    val showIcdName: StateFlow<Boolean> = _showIcdName.asStateFlow()
 
     // 病態ドロップダウンの選択肢リスト
     private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
@@ -158,6 +160,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         _showJushodoJcsSelection.value = false
         _showJushodoShujutsuSelection.value = false
         _showJushodoStrokeSelection.value = false
+        _showIcdName.value = false
 
         // 必要に応じてオプションリストもクリア
         _byotaiOptions.value = emptyList()
@@ -175,6 +178,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
      */
     fun onIcdItemSelected(item: IcdEntity) {
         viewModelScope.launch {
+            _showIcdName.value = true
             // --- 1. 病態選択UIの表示判断 ---
             // 選択された項目のmdcCodeとbunruiCodeがnullでないことを確認
             if (item.mdcCode != null && item.bunruiCode != null) {
@@ -200,11 +204,11 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
             // --- 2. 年齢選択UIの表示判断 ---
             // 選択された項目のbunruiCodeがnullでないことを確認
-            if (item.bunruiCode != null) {
+            if (item.mdcCode != null && item.bunruiCode != null) {
                 // nenrei_masterテーブルにbunruiCodeが存在するかチェック
-                val nenreiDataExists = repository.checkBunruiExistsInNenrei(item.bunruiCode)
+                val nenreiDataExists = repository.checkMdcAndBunruiExistsInNenrei(item.mdcCode, item.bunruiCode)
                 val jushodoJcsDateExists =
-                    jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                    jushodoJcsRepository.checkMdcAndBunruiExistsInMaster(item.mdcCode, item.bunruiCode)
                 val jushodoShujutsuDataExists =
                     jushodoShujutsuRepository.checkBunruiExistsInMaster(
                         item.mdcCode,
@@ -267,13 +271,13 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 )
 
                 // 対応する病態が存在するかチェック
-                val shujutsuExists = shujutsuRepository.checkBunruiExistsInShujutsu(item.bunruiCode)
-                val shochi1Exists = shochi1Repository.checkBunruiExistsInShochi1(item.bunruiCode)
-                val shochi2Exists = shochi2Repository.checkBunruiExistsInMaster(item.bunruiCode)
+                val shujutsuExists = shujutsuRepository.checkMdcAndBunruiExistsInShujutsu(item.mdcCode, item.bunruiCode)
+                val shochi1Exists = shochi1Repository.checkMdcAndBunruiExistsInShochi1(item.mdcCode, item.bunruiCode)
+                val shochi2Exists = shochi2Repository.checkMdcAndBunruiExistsInMaster(item.mdcCode, item.bunruiCode)
                 val fukushobyoExists =
-                    fukushobyoRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                    fukushobyoRepository.checkMdcAndBunruiExistsInMaster(item.mdcCode, item.bunruiCode)
                 val jushodoJcsExists =
-                    jushodoJcsRepository.checkBunruiExistsInMaster(item.bunruiCode)
+                    jushodoJcsRepository.checkMdcAndBunruiExistsInMaster(item.mdcCode, item.bunruiCode)
                 val jushodoStrokeExists = jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(
                     item.mdcCode,
                     item.bunruiCode
@@ -481,6 +485,13 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
      * @param byotaiName 選択された病態名
      * @return 選択された病態名に対応する病態コード
      */
+
+    suspend fun searchIcdByMcdAndBunrui(mdcCode: String, bunruiCode: String): String{
+        return repository.searchIcdByMcdAndBunrui(mdcCode, bunruiCode)
+    }
+    suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String{
+        return repository.getBunruiName(mdcCode, bunruiCode)
+    }
     suspend fun getByotaiCode(byotaiName: String): String? {
         return repository.getByotaiCodeByName(byotaiName)
     }

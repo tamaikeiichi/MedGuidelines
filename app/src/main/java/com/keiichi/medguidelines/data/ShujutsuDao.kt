@@ -17,8 +17,8 @@ interface ShujutsuDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAllShujutsu(shujutsuList: List<ShujutsuEntity>)
 
-    @Query("SELECT EXISTS(SELECT 1 FROM shujutsu_master WHERE bunrui_code = :bunruiCode LIMIT 1)")
-    suspend fun existsBunruiInShujutsuMaster(bunruiCode: String): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM shujutsu_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
+    suspend fun existsMdcAndBunruiInShujutsuMaster(mdcCode: String, bunruiCode: String): Boolean
 
     @androidx.room.Query("SELECT taiou_code FROM shujutsu_master WHERE shujutsu1_name = :shujutsu1Name LIMIT 1")
     suspend fun getShujutsu1CodeByName(shujutsu1Name: String): String?
