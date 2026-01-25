@@ -3,13 +3,18 @@
 package com.keiichi.medguidelines.ui.viewModel
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
+import androidx.datastore.preferences.core.doublePreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.keiichi.medguidelines.data.AppDatabase
+import com.keiichi.medguidelines.data.DataStoreKeys
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.FukushobyoJoken
 import com.keiichi.medguidelines.data.FukushobyoRepository
@@ -25,11 +30,14 @@ import com.keiichi.medguidelines.data.Shochi1Repository
 import com.keiichi.medguidelines.data.Shochi2Joken
 import com.keiichi.medguidelines.data.Shochi2Repository
 import com.keiichi.medguidelines.data.ShujutsuRepository
+import com.keiichi.medguidelines.data.dataStore
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
+import com.keiichi.medguidelines.ui.screen.DpcCode
 import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -37,9 +45,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.collections.first
+
+
 
 // AndroidViewModelを継承して、Applicationコンテキストを使えるようにする
 class DpcScreenViewModel(application: Application) : AndroidViewModel(application) {
@@ -61,6 +72,20 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    private val dataStore = application.dataStore // DataStoreのインスタンス
+
+    // DataStoreから値を読み込むFlow（デフォルト 1.3071）
+    val hospitalCoeffFlow: Flow<Double> = dataStore.data
+        .map { preferences -> preferences[DataStoreKeys.COEFF_KEY] ?: 1.3071 }
+
+    // 値を永続化保存する関数
+    fun saveHospitalCoeff(value: Double) {
+        viewModelScope.launch {
+            dataStore.edit { preferences ->
+                preferences[DataStoreKeys.COEFF_KEY] = value
+            }
+        }
+    }
     // --- ここからByotai関連のStateFlowを追加 ---
 
     // 病態選択UIを表示するかどうか
@@ -165,6 +190,32 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         // 必要に応じてオプションリストもクリア
         _byotaiOptions.value = emptyList()
         // 他のオプション（shindangun等）もあればここでリセット
+    }
+
+    fun turnOnAllSelections(dpcCode: DpcCode){
+        if(dpcCode.byotai != "x") {
+            _showByotaiSelection.value = true
+        }
+        if (dpcCode.nenrei != "x") {
+            _showNenreiSelection.value = true
+        }
+        if (dpcCode.shujutu != "x") {
+            _showShujutsuSelection.value = true
+        }
+        if (dpcCode.shochi1 != "x") {
+            _showShochi1Selection.value = true
+        }
+        if (dpcCode.shochi2 != "x") {
+            _showShochi2Selection.value = true
+        }
+        if (dpcCode.fukushobyo != "x") {
+            _showFukushobyoSelection.value = true
+        }
+        if (dpcCode.jushodo != "x") {
+            _showJushodoJcsSelection.value = true
+            _showJushodoShujutsuSelection.value = true
+            _showJushodoStrokeSelection.value = true
+        }
     }
 
     suspend fun getDebugRows(): List<String> {

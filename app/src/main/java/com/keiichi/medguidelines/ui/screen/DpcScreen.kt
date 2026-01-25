@@ -113,19 +113,19 @@ fun DpcScreen(
     dpcScreenViewModel: DpcScreenViewModel = viewModel(factory = DpcScreenViewModel.Factory)
 ) {
     Log.d("tamai", "before launched effect")
-    var dpcCodeFirst by remember { mutableStateOf(DpcCode()) }
-    val dpcCodeFirstJoined by remember {
+    var currentDpcCode by remember { mutableStateOf(DpcCode()) }
+    val currentDpcCodeJoined by remember {
         derivedStateOf {
             listOfNotNull(
-                dpcCodeFirst.mdc,
-                dpcCodeFirst.bunrui,
-                dpcCodeFirst.byotai,
-                dpcCodeFirst.nenrei,
-                dpcCodeFirst.shujutu,
-                dpcCodeFirst.shochi1,
-                dpcCodeFirst.shochi2,
-                dpcCodeFirst.fukushobyo,
-                dpcCodeFirst.jushodo
+                currentDpcCode.mdc,
+                currentDpcCode.bunrui,
+                currentDpcCode.byotai,
+                currentDpcCode.nenrei,
+                currentDpcCode.shujutu,
+                currentDpcCode.shochi1,
+                currentDpcCode.shochi2,
+                currentDpcCode.fukushobyo,
+                currentDpcCode.jushodo
             ).joinToString("")
         }
     }
@@ -146,7 +146,37 @@ fun DpcScreen(
     var showSearchResults by remember { mutableStateOf(true) }
     val days = remember { mutableDoubleStateOf(1.0) }
     var cost = remember { mutableIntStateOf(0) }
-    var coeff = remember { mutableDoubleStateOf(1.0) } //JRは1.3071
+
+    // 1. ViewModelから永続化されている値を購読
+    val savedCoeff by dpcScreenViewModel.hospitalCoeffFlow.collectAsState(initial = 1.3071)
+
+// 2. UI表示・計算用のState。初期値に DataStore からの値を設定
+    val coeff = remember { mutableDoubleStateOf(savedCoeff) }
+
+// 3. 重要：DataStoreの値がロードされたらStateを更新する
+    LaunchedEffect(savedCoeff) {
+        if (coeff.doubleValue != savedCoeff) {
+            coeff.doubleValue = savedCoeff
+        }
+    }
+
+// 4. 重要：UI側で値が書き換えられたらDataStoreに保存する
+    LaunchedEffect(coeff.doubleValue) {
+        dpcScreenViewModel.saveHospitalCoeff(coeff.doubleValue)
+    }
+    //var coeff = remember { mutableDoubleStateOf(1.3071) } //JRは1.3071
+    // --- 修正前 ---
+// var coeff = remember { mutableDoubleStateOf(1.3071) }
+
+// ---修正後 ---
+// ViewModelから永続化された値を購読
+// val savedCoeff by dpcScreenViewModel.coeffFlow.collectAsState(initial = 1.3071)
+
+// UI上での一時的な入力状態を管理（TextFieldなどで使う場合）
+ //   var coeffText by remember(savedCoeff) { mutableStateOf(savedCoeff.toString()) }
+
+// 実際に計算で使う値
+    //val coeff = savedCoeff
     var icdName by androidx.compose.runtime.remember {
         mutableStateOf<String?>(
             null
@@ -190,9 +220,9 @@ fun DpcScreen(
     }
 
     // 2. コードが確定したタイミング（例：ICD選択時や、特定のロジック後）でイベントを投げる
-    LaunchedEffect(dpcCodeFirstJoined) {
-        if (dpcCodeFirstJoined.isNotEmpty()) {
-            Log.d("tamaiDpc", "dpcCodeFirst: $dpcCodeFirstJoined")
+    LaunchedEffect(currentDpcCodeJoined) {
+        if (currentDpcCodeJoined.isNotEmpty()) {
+            Log.d("tamaiDpc", "dpcCodeFirst: $currentDpcCodeJoined")
 
             // 引数 code を使わず、DBの最初の3行を取得する
             val debugResults = dpcScreenViewModel.getDebugRows()
@@ -200,7 +230,7 @@ fun DpcScreen(
                 Log.d("tamaiDpc", "DB stored pattern: $it, ")
             }
 
-            dpcScreenViewModel.onShindangunCodeChanged(dpcCodeFirstJoined)
+            dpcScreenViewModel.onShindangunCodeChanged(currentDpcCodeJoined)
             Log.d("tamaiDpc", "shindangunBunruiTensuhyo: $shindangunBunruiTensuhyo")
         }
     }
@@ -232,6 +262,9 @@ fun DpcScreen(
             )
         },
         bottomBar = {
+            val secondaryColor = MaterialTheme.colorScheme.tertiaryContainer
+            val primaryColor = MaterialTheme.colorScheme.onPrimary
+
             ScoreBottomAppBarVariable(
                 modifier = Modifier,
                 displayText = buildAnnotatedString {
@@ -246,7 +279,10 @@ fun DpcScreen(
                             )
                         ) {
                             if (savedTotalAmount != 0) {
-                                "${
+                                // 履歴（セカンダリカラー適用範囲）
+                                withStyle(style = SpanStyle(
+                                    color = secondaryColor
+                                )) {
                                     savedItems.lastOrNull()?.let { lastItem ->
                                         append("病名: ")
                                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -256,31 +292,44 @@ fun DpcScreen(
                                         appendInlineContent(COPY_ICON_ID, "[copy]")
                                         append("\n")
                                     }
-                                }"
-                                append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円\n")
+                                    append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円\n")
+                                }
                             }
+                            //withStyle(style = SpanStyle(color = primaryColor)) {
                             if (shindangunBunruiTensuhyo.isNotEmpty()) {
                                 val data = shindangunBunruiTensuhyo.firstOrNull()
-                                append("病名: ")
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+
+                                withStyle(style = SpanStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    color = primaryColor
+                                )) {
+                                    append("病名: ")
                                     append(data?.name ?: "")
                                 }
                             }
-                            append(" DPCコード: ")
-                            append(dpcCodeFirstJoined)
-                            append(" ") // 少し隙間をあける
+                            withStyle(style = SpanStyle(
+                                color = primaryColor
+                            )) {
+                                append(" DPCコード: ")
+                                append(currentDpcCodeJoined)
+                                append(" ") // 少し隙間をあける
+                            }
                             appendInlineContent(COPY_ICON_ID, "[copy]")
-                            if (shindangunBunruiTensuhyo.isNotEmpty()) {
-                                val data = shindangunBunruiTensuhyo.firstOrNull()
-                                append("\n")
-                                if (data?.nyuinbiI != "") {
-                                    append("入院期間I: ${data?.nyuinbiI} ")
-                                }
-                                if (data?.nyuinbiII != "") {
-                                    append("入院期間II: ${data?.nyuinbiII} ")
-                                }
-                                if (data?.nyuinbiIII != "") {
-                                    append("入院期間III: ${data?.nyuinbiIII}\n")
+                            withStyle(style = SpanStyle(
+                                color = primaryColor
+                            )) {
+                                if (shindangunBunruiTensuhyo.isNotEmpty()) {
+                                    val data = shindangunBunruiTensuhyo.firstOrNull()
+                                    append("\n")
+                                    if (data?.nyuinbiI != "") {
+                                        append("入院期間I: ${data?.nyuinbiI} ")
+                                    }
+                                    if (data?.nyuinbiII != "") {
+                                        append("入院期間II: ${data?.nyuinbiII} ")
+                                    }
+                                    if (data?.nyuinbiIII != "") {
+                                        append("入院期間III: ${data?.nyuinbiIII}\n")
+                                    }
                                 }
                             }
                         }
@@ -299,8 +348,12 @@ fun DpcScreen(
                             )
                             val currentTotalAmount =
                                 (cost.intValue * 10 * coeff.doubleValue).toInt()
-                            append("包括金額合計: ${"%,d".format(currentTotalAmount)}円")
-                            append(" ")
+                            withStyle(style = SpanStyle(
+                                color = primaryColor
+                            )) {
+                                append("包括金額合計: ${"%,d".format(currentTotalAmount)}円")
+                                append(" ")
+                            }
                             appendInlineContent(SAVE_ICON_ID, "[save]")
                             Log.d("tamaiDpc", "savedTotalAmount: $savedTotalAmount")
 //                        if (savedTotalAmount != 0) {
@@ -310,20 +363,26 @@ fun DpcScreen(
                                 withStyle(
                                     style = SpanStyle(
                                         fontSize = 16.sp,
+                                        color = primaryColor
                                     )
                                 ) {
                                     append("（${data?.nyuinbiIII?.toInt()}日まで）")
                                 }
                             }
                         } else {
-                            if (dpcCodeFirst == DpcCode() || dpcCodeFirst.icd == "x"
+                            withStyle(style = SpanStyle(
+                                color = primaryColor
+                            )) {
+                                if (currentDpcCode == DpcCode() || currentDpcCode.icd == "x"
                                 )
-                                append("")
+                                    append("")
                                 //append("\n(病名を選択してください)")
-                            else {
-                                append("\n出来高算定")
-                                Log.d("tamaiDpc", "dpcCodeFirst: $dpcCodeFirst")
+                                else {
+                                    append("\n出来高算定")
+                                    Log.d("tamaiDpc", "dpcCodeFirst: $currentDpcCode")
+                                }
                             }
+
                         }
                     }
                 },
@@ -339,8 +398,8 @@ fun DpcScreen(
                             imageVector = Icons.Default.ContentCopy,
                             contentDescription = "Copy Code",
                             modifier = Modifier.clickable {
-                                if (dpcCodeFirstJoined.isNotEmpty()) {
-                                    clipboard.setText(AnnotatedString(dpcCodeFirstJoined))
+                                if (currentDpcCodeJoined.isNotEmpty()) {
+                                    clipboard.setText(AnnotatedString(currentDpcCodeJoined))
                                     Toast.makeText(
                                         context,
                                         "DPCコードをコピーしました",
@@ -362,13 +421,13 @@ fun DpcScreen(
                                 if (currentData != null) {
                                     savedItems.add(
                                         SavedDpcItem(
-                                            dpcCode = dpcCodeFirstJoined,
+                                            dpcCode = currentDpcCodeJoined,
                                             tensuData = currentData,
-                                            label = "DPC: $dpcCodeFirstJoined"
+                                            label = "DPC: $currentDpcCodeJoined"
                                         )
                                     )
                                     // 次の病名を選べるようにリセット
-                                    dpcCodeFirst = DpcCode()
+                                    currentDpcCode = DpcCode()
                                     dpcScreenViewModel.resetAllSelections()
                                     icdName = null
                                     // 3. 【重要】検索結果とクエリをクリアする
@@ -420,7 +479,7 @@ fun DpcScreen(
                                     dpcScreenViewModel.onDpcCodeInput(input)
                                     Log.d("tamaiDpc", "dpcScreenViewModel.onDpcCodeInput(input) ran")
                                     // UI側の dpcCodeFirst も分解して更新する
-                                    dpcCodeFirst = DpcCode(
+                                    currentDpcCode = DpcCode(
                                         mdc = input.substring(0, 2),
                                         bunrui = input.substring(2, 6),
                                         byotai = input.substring(6, 7),
@@ -431,8 +490,9 @@ fun DpcScreen(
                                         fukushobyo = input.substring(12, 13),
                                         jushodo = input.substring(13, 14),
                                     )
-                                    val mdc = dpcCodeFirst.mdc
-                                    val bunrui = dpcCodeFirst.bunrui
+                                    dpcScreenViewModel.turnOnAllSelections(currentDpcCode)
+                                    val mdc = currentDpcCode.mdc
+                                    val bunrui = currentDpcCode.bunrui
                                     Log.d("tamaiDpc", "mdc and bunrui done. mdc: $mdc, bunrui: $bunrui")
 
                                     // 選択肢を表示させるためのフラグをセット
@@ -451,7 +511,7 @@ fun DpcScreen(
                                                 } else {
                                                     // ★ 14桁あるがマスタに存在しない場合
                                                     icdName = "該当する病名が見つかりません"
-                                                    dpcCodeFirst == DpcCode()
+                                                    currentDpcCode == DpcCode()
                                                     showSearchResults = true // 検索結果リストに戻すかエラーを表示
                                                     Toast.makeText(context, "無効なDPCコードです", Toast.LENGTH_SHORT).show()
                                                 }
@@ -471,7 +531,7 @@ fun DpcScreen(
                                     // ★ すべての選択状態（フラグ）をViewModel側でリセット
                                     dpcScreenViewModel.resetAllSelections()
 
-                                    dpcCodeFirst = DpcCode()
+                                    currentDpcCode = DpcCode()
                                     icdName = null
                                     showSearchResults = false
                                 }
@@ -497,20 +557,20 @@ fun DpcScreen(
                                     //.verticalScroll(rememberScrollState())
                                 ) {
                                     // innerPadding -> の後の LazyColumn 内などで
-                                    items(savedItems) { item ->
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                "保持中: ${item.dpcCode}",
-                                                modifier = Modifier.weight(1f)
-                                            )
-                                            IconButton(onClick = { savedItems.remove(item) }) {
-                                                Icon(
-                                                    Icons.Default.Delete,
-                                                    contentDescription = "削除"
-                                                )
-                                            }
-                                        }
-                                    }
+//                                    items(savedItems) { item ->
+//                                        Row(verticalAlignment = Alignment.CenterVertically) {
+//                                            Text(
+//                                                "保持中: ${item.dpcCode}",
+//                                                modifier = Modifier.weight(1f)
+//                                            )
+//                                            IconButton(onClick = { savedItems.remove(item) }) {
+//                                                Icon(
+//                                                    Icons.Default.Delete,
+//                                                    contentDescription = "削除"
+//                                                )
+//                                            }
+//                                        }
+//                                    }
                                     val icdItemsList = displayedItemsIcd.toList()
                                     // --- ICDコードの結果 ---
                                     if (icdItemsList.isNotEmpty()) {
@@ -534,7 +594,7 @@ fun DpcScreen(
                                                             icdName =
                                                                 icdItem.icdName
                                                             // 2. Stateの更新は .copy() の結果を再代入する
-                                                            dpcCodeFirst = dpcCodeFirst.copy(
+                                                            currentDpcCode = currentDpcCode.copy(
                                                                 icd = icdItem.icdCode,
                                                                 mdc = icdItem.mdcCode,
                                                                 bunrui = icdItem.bunruiCode
@@ -691,8 +751,8 @@ fun DpcScreen(
                                                                                 ?.toInt()
                                                                                 ?.toString()
                                                                                 ?: byotaiCode
-                                                                        dpcCodeFirst =
-                                                                            dpcCodeFirst.copy(
+                                                                        currentDpcCode =
+                                                                            currentDpcCode.copy(
                                                                                 byotai = finalByotaiCode
                                                                             )
                                                                     }
@@ -716,8 +776,8 @@ fun DpcScreen(
                                             nenreiOptions
                                         ) {
                                             mutableStateOf(
-                                                if (dpcCodeFirst.nenrei != "x") {
-                                                    nenreiOptions.find { it.code.toString() == dpcCodeFirst.nenrei }?.labelResId?.toString()
+                                                if (currentDpcCode.nenrei != "x") {
+                                                    nenreiOptions.find { it.code.toString() == currentDpcCode.nenrei }?.labelResId?.toString()
                                                         ?: nenreiOptions.firstOrNull()?.labelResId?.toString()
                                                 } else {
                                                     nenreiOptions.first().labelResId.toString()
@@ -740,8 +800,8 @@ fun DpcScreen(
                                                     isNumberDisplayed = false
                                                 )
                                             LaunchedEffect(selectedlabelResId) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(nenrei = selectedValue.toString())
+                                                currentDpcCode =
+                                                    currentDpcCode.copy(nenrei = selectedValue.toString())
                                             }
                                         }
                                     }
@@ -758,12 +818,12 @@ fun DpcScreen(
                                     // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
                                     Log.d("tamaiDpc", "here?")
 
-                                    val currentLabel by produceState<String?>(initialValue = null, options, dpcCodeFirst.shujutu) {
+                                    val currentLabel by produceState<String?>(initialValue = null, options, currentDpcCode.shujutu) {
                                         // 画面に表示されているoptionsの中から、その名称に対応するコードがdpcCodeFirst.shujutuと一致するものを探す
                                         value = options.find { optionName ->
                                             val code = dpcScreenViewModel.getShujutsu1Code(optionName)
                                             val finalCode = code?.toDoubleOrNull()?.toInt()?.toString() ?: code
-                                            finalCode == dpcCodeFirst.shujutu
+                                            finalCode == currentDpcCode.shujutu
                                         }
                                     }
 
@@ -779,8 +839,8 @@ fun DpcScreen(
                                                         code.toDoubleOrNull()?.toInt()
                                                             ?.toString()
                                                             ?: code
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shujutu = finalCode)
+                                                    currentDpcCode =
+                                                        currentDpcCode.copy(shujutu = finalCode)
                                                     Log.d(
                                                         "tamaiDpc",
                                                         "shujutsu initialized with: $finalCode"
@@ -805,8 +865,8 @@ fun DpcScreen(
                                                             ?.toString()
                                                             ?: code
                                                     // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shujutu = finalCode) // shujutu -> shochi1 に
+                                                    currentDpcCode =
+                                                        currentDpcCode.copy(shujutu = finalCode) // shujutu -> shochi1 に
                                                 }
                                             }
                                         }
@@ -821,7 +881,7 @@ fun DpcScreen(
                                     val labelIdList = options.map { it.shochi1Name }
                                     val currentLabel = options.find {
                                         val finalCode = it.code?.toDoubleOrNull()?.toInt()?.toString() ?: it.code
-                                        finalCode == dpcCodeFirst.shochi1
+                                        finalCode == currentDpcCode.shochi1
                                     }?.shochi1Name
 
                                     LaunchedEffect(options) {
@@ -831,8 +891,8 @@ fun DpcScreen(
                                                 firstItem.code?.toDoubleOrNull()?.toInt()
                                                     ?.toString() ?: firstItem.code
                                             if (initialCode != null) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(shochi1 = initialCode)
+                                                currentDpcCode =
+                                                    currentDpcCode.copy(shochi1 = initialCode)
                                                 Log.d(
                                                     "tamaiDpc",
                                                     "shochi1 initialized with: $initialCode"
@@ -856,8 +916,8 @@ fun DpcScreen(
                                                         code.toDoubleOrNull()?.toInt()
                                                             ?.toString()
                                                             ?: code
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shochi1 = finalCode) // shujutu -> shochi1 に
+                                                    currentDpcCode =
+                                                        currentDpcCode.copy(shochi1 = finalCode) // shujutu -> shochi1 に
                                                 }
                                             }
                                         }
@@ -873,7 +933,7 @@ fun DpcScreen(
 
                                     val currentLabel = options.find {
                                         val finalCode = it.code?.toDoubleOrNull()?.toInt()?.toString() ?: it.code
-                                        finalCode == dpcCodeFirst.shochi2
+                                        finalCode == currentDpcCode.shochi2
                                     }?.shochi1Name
 
                                     LaunchedEffect(options) {
@@ -883,8 +943,8 @@ fun DpcScreen(
                                                 firstItem.code?.toDoubleOrNull()?.toInt()
                                                     ?.toString() ?: firstItem.code
                                             if (initialCode != null) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(shochi2 = initialCode)
+                                                currentDpcCode =
+                                                    currentDpcCode.copy(shochi2 = initialCode)
                                                 Log.d(
                                                     "tamaiDpc",
                                                     "shochi1 initialized with: $initialCode"
@@ -907,8 +967,8 @@ fun DpcScreen(
                                                             ?.toString()
                                                             ?: code
                                                     // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(shochi2 = finalCode) // shujutu -> shochi1 に
+                                                    currentDpcCode =
+                                                        currentDpcCode.copy(shochi2 = finalCode) // shujutu -> shochi1 に
                                                 }
                                             }
                                         }
@@ -924,7 +984,7 @@ fun DpcScreen(
 
                                     val currentLabel = options.find {
                                         val finalCode = it.code?.toDoubleOrNull()?.toInt()?.toString() ?: it.code
-                                        finalCode == dpcCodeFirst.fukushobyo
+                                        finalCode == currentDpcCode.fukushobyo
                                     }?.name
 
                                     LaunchedEffect(options) {
@@ -934,8 +994,8 @@ fun DpcScreen(
                                                 firstItem.code?.toDoubleOrNull()?.toInt()
                                                     ?.toString() ?: firstItem.code
                                             if (initialCode != null) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(fukushobyo = initialCode)
+                                                currentDpcCode =
+                                                    currentDpcCode.copy(fukushobyo = initialCode)
                                                 Log.d(
                                                     "tamaiDpc",
                                                     "shochi1 initialized with: $initialCode"
@@ -959,8 +1019,8 @@ fun DpcScreen(
                                                             ?.toString()
                                                             ?: code
                                                     // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(fukushobyo = finalCode) // shujutu -> shochi1 に
+                                                    currentDpcCode =
+                                                        currentDpcCode.copy(fukushobyo = finalCode) // shujutu -> shochi1 に
                                                 }
                                             }
                                         }
@@ -979,7 +1039,7 @@ fun DpcScreen(
                                     if (options.isNotEmpty()) {
                                         // ★ 追加: 現在の dpcCodeFirst.jushodo (コード) に一致する labelResId を探す
                                         val currentLabel = options.find {
-                                            it.code.toString() == dpcCodeFirst.jushodo
+                                            it.code.toString() == currentDpcCode.jushodo
                                         }?.labelResId
 
                                         // rememberのキーに options と currentLabel を追加し、データ復元時にUIが更新されるようにする
@@ -1006,8 +1066,8 @@ fun DpcScreen(
                                                     isNumberDisplayed = false
                                                 )
                                             LaunchedEffect(selectedOption) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(jushodo = value.toString())
+                                                currentDpcCode =
+                                                    currentDpcCode.copy(jushodo = value.toString())
                                             }
                                         }
                                     }
@@ -1033,7 +1093,7 @@ fun DpcScreen(
                                     if (options.isNotEmpty()) {
                                         // ★ 追加: 現在のコードに対応する名称（labelResId）を探す
                                         val currentLabel = options.find {
-                                            it.code.toString() == dpcCodeFirst.jushodo
+                                            it.code.toString() == currentDpcCode.jushodo
                                         }?.labelResId
 
                                         // optionsやcurrentLabelが変わった時に再計算
@@ -1058,8 +1118,8 @@ fun DpcScreen(
                                                     isNumberDisplayed = false
                                                 )
                                             LaunchedEffect(selectedOption) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(jushodo = value.toString())
+                                                currentDpcCode =
+                                                    currentDpcCode.copy(jushodo = value.toString())
                                             }
                                         }
                                     }
@@ -1074,7 +1134,7 @@ fun DpcScreen(
                                     // options から labelResId だけを抽出したリストを作成
                                     val labelIdList = options.map { it.labelResId }
                                     val currentLabel = options.find {
-                                        it.code.toString() == dpcCodeFirst.jushodo
+                                        it.code.toString() == currentDpcCode.jushodo
                                     }?.labelResId
 
                                     LaunchedEffect(options) {
@@ -1083,8 +1143,8 @@ fun DpcScreen(
                                             val initialCode = firstItem.code.toString()
                                                 ?: firstItem.code.toString()
                                             if (initialCode != null) {
-                                                dpcCodeFirst =
-                                                    dpcCodeFirst.copy(jushodo = initialCode)
+                                                currentDpcCode =
+                                                    currentDpcCode.copy(jushodo = initialCode)
                                                 Log.d(
                                                     "tamaiDpc",
                                                     "shochi1 initialized with: $initialCode"
@@ -1104,8 +1164,8 @@ fun DpcScreen(
                                                 if (code != null) {
                                                     val finalCode =
                                                         code.toString()
-                                                    dpcCodeFirst =
-                                                        dpcCodeFirst.copy(jushodo = finalCode) // shujutu -> shochi1 に
+                                                    currentDpcCode =
+                                                        currentDpcCode.copy(jushodo = finalCode) // shujutu -> shochi1 に
                                                 }
                                             }
                                         }

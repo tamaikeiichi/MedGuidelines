@@ -13,13 +13,14 @@ import kotlinx.serialization.json.Json
 //import com.keiichi.medguidelines.ui.screen.localeAwareAppItems
 
 // Usage with DataStore:
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-val LIST_ITEM_DATA_KEY = stringPreferencesKey("list_item_data")
-
+//val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+//val LIST_ITEM_DATA_KEY = stringPreferencesKey("list_item_data")
+//
+//val COEFF_KEY = androidx.datastore.preferences.core.doublePreferencesKey("coeff_key")
 suspend fun saveListItemData(context: Context, item: MutableList<ListItemData>) {
     context.dataStore.edit { settings ->
         val jsonString = Json.encodeToString(item)
-        settings[LIST_ITEM_DATA_KEY] = jsonString
+        settings[DataStoreKeys.LIST_ITEM_DATA_KEY] = jsonString
     }
 }
 
@@ -29,7 +30,7 @@ fun loadListItemData(
     initialItemsLists: List<ListItemData> = itemsList
 ): Flow<List<ListItemData>> {
     return context.dataStore.data.map { preferences ->
-        val jsonString = preferences[LIST_ITEM_DATA_KEY]
+        val jsonString = preferences[DataStoreKeys.LIST_ITEM_DATA_KEY]
 
         if (jsonString != null) {
             try {
@@ -46,13 +47,13 @@ fun loadListItemData(
             } else {
                 context.dataStore.edit {
                     mutablePreferences ->
-                    mutablePreferences.remove(LIST_ITEM_DATA_KEY)
+                    mutablePreferences.remove(DataStoreKeys.LIST_ITEM_DATA_KEY)
                 }
                 initialItemsLists
             }
             } catch (e: kotlinx.serialization.SerializationException) {
                 context.dataStore.edit { mutablePreferences ->
-                    mutablePreferences.remove(LIST_ITEM_DATA_KEY)
+                    mutablePreferences.remove(DataStoreKeys.LIST_ITEM_DATA_KEY)
                 }
                 initialItemsLists
             }
