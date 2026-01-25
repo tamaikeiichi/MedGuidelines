@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableDoubleState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.keiichi.medguidelines.R
 import kotlin.math.roundToInt
@@ -35,11 +39,12 @@ fun InputValue(
     changedUnit: Int = R.string.space,
     appendixLabel: @Composable (() -> Unit)? = null,
     onFocusChanged: (Boolean) -> Unit = {},
-    isSetByOtherComponent: Boolean = false
+    isSetByOtherComponent: Boolean = false,
+    formatter: DecimalFormat = remember { DecimalFormat("#.##") },
     ) {
     val textMeasurer = rememberTextMeasurer()
     val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
-    val formatter = remember { DecimalFormat("#.##") }
+    val formatter = formatter
 
     var textWidth by remember { mutableStateOf(0f) } // State to hold the width
     Layout(
@@ -69,7 +74,7 @@ fun InputValue(
         ) {
             NumberInTextField(
                 label = label, value = value,
-                width = (textWidth * 0.3).roundToInt() + 90,//(labelWidth * 0.5).roundToInt()+50,
+                width = (textWidth * 0.3).roundToInt() + 100,//(labelWidth * 0.5).roundToInt()+50,
                 multiplier = if (isJapaneseUnit.value) 1.0 else changedValueRate,
                 formatter = formatter,
                 isJapaneseUnit = isJapaneseUnit,
@@ -100,5 +105,45 @@ fun InputValue(
             }
         }
         appendixLabel?.invoke()
+    }
+}
+
+
+@Preview(showBackground = true, name = "通常表示")
+@Composable
+fun PreviewInputValueNormal() {
+    // プレビュー用の状態を作成
+    val mockValue = remember { mutableDoubleStateOf(1.3071) }
+
+    MaterialTheme {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            InputValue(
+                label = R.string.coeffOfHospital, // 病院係数などの文字列リソース
+                value = mockValue,
+                japaneseUnit = R.string.space // 単位のリソース（例: "点" や "円"）
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "単位切り替えあり")
+@Composable
+fun PreviewInputValueWithUnitToggle() {
+    val mockValue = remember { mutableDoubleStateOf(1.2345) }
+    val mockIsJapaneseUnit = remember { mutableStateOf(false) }
+
+    MaterialTheme {
+        Surface(modifier = Modifier.padding(16.dp)) {
+            InputValue(
+                label = R.string.coeffOfHospital, // 適当なラベル
+                value = mockValue,
+                japaneseUnit = R.string.space, // 日本語単位のリソースID
+                isJapaneseUnit = mockIsJapaneseUnit,
+                changedValueRate = 1.0, // 単位を変えた時の倍率
+                changedUnit = R.string.space, // 切り替え後の単位リソースID
+                formatter = DecimalFormat("#.####") // フォーマッター
+
+            )
+        }
     }
 }

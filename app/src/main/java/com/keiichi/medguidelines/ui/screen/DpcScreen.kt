@@ -1,5 +1,6 @@
 package com.keiichi.medguidelines.ui.screen
 
+import android.icu.text.DecimalFormat
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -648,6 +649,7 @@ fun DpcScreen(
                                             label = R.string.coeffOfHospital,
                                             value = coeff,
                                             japaneseUnit = R.string.space,
+                                            formatter = remember { DecimalFormat("#.####") },
                                         )
                                     }
                                 }

@@ -376,11 +376,12 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
                     Log.d("tamaiDpc", "shujutsu reading")
                     // DataFrameを格納する変数を宣言
                     val list = df.rows().map { row ->
+                        val rawTaiouCode = row[5]?.toString() ?: ""
                         ShujutsuEntity(
                             // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
-                            taiouCode = row[5]?.toString() ?: "",
+                            taiouCode = if (rawTaiouCode.length == 1) "0$rawTaiouCode" else rawTaiouCode,
                             shujutsu1Name = row[6]?.toString() ?: "",
                             shujutsu2Name = row[7]?.toString() ?: "",
                         )
