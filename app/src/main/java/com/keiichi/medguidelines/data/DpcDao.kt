@@ -40,7 +40,7 @@ interface DpcDao {
 
     @Query("SELECT icdName FROM icd_master " +
             "WHERE mdcCode = :mdc AND bunruiCode = :bunrui")
-    fun searchIcdByMcdAndBunrui(mdc: String, bunrui: String): String
+    fun searchIcdByMcdAndBunrui(mdc: String?, bunrui: String?): List<String?>
 
     // C:/Users/tamai/StudioProjects/MedGuidelines/app/src/main/java/com/keiichi/medguidelines/data/DpcDao.kt
     /**

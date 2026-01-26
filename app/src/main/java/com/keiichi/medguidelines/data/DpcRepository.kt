@@ -23,12 +23,14 @@ class DpcRepository(private val dpcDao: DpcDao) {
     // DAOのメソッドがFlowを返すので、そのままViewModelに渡す
     fun searchIcd(query: String) = dpcDao.searchIcd("%$query%")
 
-    fun searchIcdByMcdAndBunrui(mdcCode: String, bunruiCode: String) =
+    fun searchIcdByMcdAndBunrui(mdcCode: String?, bunruiCode: String?) =
         dpcDao.searchIcdByMcdAndBunrui(mdcCode, bunruiCode)
 
     // 3つのワードによるAND検索をDAOに依頼する
     fun searchIcdMulti(word1: String, word2: String, word3: String, word4: String) =
         dpcDao.searchIcdMulti(word1, word2, word3, word4)
+
+
     /**
      * データベースにデータが存在しない場合、CSVから読み込んで挿入する
      */
@@ -255,7 +257,8 @@ class DpcRepository(private val dpcDao: DpcDao) {
                             // BunruiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
-                            bunruiName = row[2]?.toString() ?: ""
+                            bunruiName = row[2]?.toString() ?: "",
+                            normalizedBunruiName = normalizeTextForSearch(row[2]?.toString() ?: "")
                         )
                     }
                     dpcDao.insertAllBunrui(bunruiList)
@@ -359,6 +362,39 @@ class DpcRepository(private val dpcDao: DpcDao) {
 
 }
 
+class BunruiRepository(private val bunruiDao: BunruiDao) {
+    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
+        withContext(Dispatchers.IO) {
+            try {
+                Log.d("tamaiDpc", "bunrui check ${bunruiDao.getCount()}")
+                if (bunruiDao.getCount() == 0) {
+                    val df = readDpcCsv(context, R.raw.dpc001593946_2)
+                    Log.d("tamaiDpc", "bunrui reading")
+                    // DataFrameを格納する変数を宣言
+                    val list = df.rows().map { row ->
+                        val rawMdcCode = row[0]?.toString() ?: ""
+                        BunruiEntity(
+                            // nenreiEntityの定義に合わせて列を指定
+                            mdcCode = if (rawMdcCode.length == 1) "0$rawMdcCode" else rawMdcCode,
+                            bunruiCode = row[1]?.toString() ?: "",
+                            bunruiName = row[2]?.toString() ?: "",
+                            normalizedBunruiName = normalizeTextForSearch(row[2]?.toString() ?: "")
+                        )
+                    }
+                    bunruiDao.insertAll(list)
+                }
+
+            } catch (e: Exception) {
+                e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
+            }
+
+        }
+    }
+
+    fun searchBunruiMulti(word1: String, word2: String, word3: String, word4: String) =
+        bunruiDao.searchBunruiMulti(word1, word2, word3, word4)
+}
+
 class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
     suspend fun getShujutsuNames(mdcCode: String, bunruiCode: String): List<String> {
         return withContext(Dispatchers.IO) {
@@ -400,9 +436,9 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
         return shujutsuDao.existsMdcAndBunruiInShujutsuMaster(mdcCode, bunruiCode)
     }
 
-    suspend fun getShujutsu1CodeByName(shujutsu1Name: String): String? {
+    suspend fun getShujutsu1CodeByName(shujutsu1Name: String, mdcCode: String?, bunruiCode: String?): String? {
         return withContext(Dispatchers.IO) {
-            shujutsuDao.getShujutsu1CodeByName(shujutsu1Name)
+            shujutsuDao.getShujutsu1CodeByName(shujutsu1Name, mdcCode = mdcCode, bunruiCode = bunruiCode)
         }
     }
 

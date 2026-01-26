@@ -40,6 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
      * @return DpcDaoのインスタンス
      */
     abstract fun dpcDao(): DpcDao
+    abstract fun bunruiDao(): BunruiDao
     abstract fun shujutsuDao(): ShujutsuDao // <--- この行を追加
     abstract fun shochi1Dao(): Shochi1Dao // <--- この行を追加
     abstract fun shochi2Dao(): Shochi2Dao

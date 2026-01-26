@@ -3,17 +3,16 @@
 package com.keiichi.medguidelines.ui.viewModel
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
-import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.keiichi.medguidelines.data.AppDatabase
+import com.keiichi.medguidelines.data.BunruiEntity
+import com.keiichi.medguidelines.data.BunruiRepository
 import com.keiichi.medguidelines.data.DataStoreKeys
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.FukushobyoJoken
@@ -48,13 +47,11 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.collections.first
-
-
 
 // AndroidViewModelを継承して、Applicationコンテキストを使えるようにする
 class DpcScreenViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: DpcRepository
+    private val bunruiRepository: BunruiRepository
     private val shujutsuRepository: ShujutsuRepository
     private val shochi1Repository: Shochi1Repository
     private val shochi2Repository: Shochi2Repository
@@ -118,6 +115,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _showIcdName = MutableStateFlow(false)
     val showIcdName: StateFlow<Boolean> = _showIcdName.asStateFlow()
+
+    private val _showBunruiName = MutableStateFlow(false)
+    val showBunruiName: StateFlow<Boolean> = _showBunruiName.asStateFlow()
+
 
     // 病態ドロップダウンの選択肢リスト
     private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
@@ -199,7 +200,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         if (dpcCode.nenrei != "x") {
             _showNenreiSelection.value = true
         }
-        if (dpcCode.shujutu != "x") {
+        if (dpcCode.shujutu != "xx") {
             _showShujutsuSelection.value = true
         }
         if (dpcCode.shochi1 != "x") {
@@ -398,6 +399,24 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun onBunruiItemSelected(item: BunruiEntity) {
+        viewModelScope.launch {
+            _showBunruiName.value = true
+            // --- 1. 病態選択UIの表示判断 ---
+            // 選択された項目のmdcCodeとbunruiCodeがnullでないことを確認
+            if (item.mdcCode != null && item.bunruiCode != null) {
+                // 対応する病態が存在するかチェック
+                Log.d(
+                    "tamaiDpc",
+                    "after if (item.mdcCode != null && item.bunruiCode != null) mdcCode ${item.mdcCode} bunruiCode ${item.bunruiCode}"
+                )
+
+            } else {
+                _showByotaiSelection.value = false
+                _byotaiOptions.value = emptyList()
+            }
+        }
+    }
     /**
      * 【追加】年齢条件の選択肢リストを生成するヘルパー関数
      */
@@ -441,6 +460,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         // データベースとリポジトリを初期化
         val dpcDao = AppDatabase.getDatabase(application).dpcDao()
+        val bunruiDao = AppDatabase.getDatabase(application).bunruiDao()
         val shujutsuDao = AppDatabase.getDatabase(application).shujutsuDao()
         val shochi1Dao = AppDatabase.getDatabase(application).shochi1Dao()
         val shochi2Dao = AppDatabase.getDatabase(application).shochi2Dao()
@@ -453,6 +473,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             AppDatabase.getDatabase(application).shindangunBunruiTensuhyoDao()
 
         repository = DpcRepository(dpcDao)
+        bunruiRepository = BunruiRepository(bunruiDao)
         shujutsuRepository = ShujutsuRepository(shujutsuDao) // shujutsuRepositoryを初期化
         shochi1Repository = Shochi1Repository(shochi1Dao)
         shochi2Repository = Shochi2Repository(shochi2Dao)
@@ -476,6 +497,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             _isLoading.value = true
             try {
                 repository.populateDatabaseFromCsvIfEmpty(getApplication())
+                bunruiRepository.populateDatabaseFromCsvIfEmpty(getApplication())
                 shujutsuRepository.populateDatabaseFromCsvIfEmpty(getApplication())
                 shochi1Repository.populateDatabaseFromCsvIfEmpty(getApplication())
                 shochi2Repository.populateDatabaseFromCsvIfEmpty(getApplication())
@@ -491,14 +513,12 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-
     /**
      * 検索クエリを更新する
      */
     fun onQueryChanged(newQuery: String) {
         val normalizedQuery = normalizeTextForSearch(newQuery)
         _searchQuery.value = normalizedQuery // 正規化済みクエリをFlowに渡す
-
     }
 
     /**
@@ -531,13 +551,39 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             initialValue = emptyList() // 初期値は空のリスト
         )
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val displayedItemsBunrui: StateFlow<List<BunruiEntity>> = _searchQuery
+        .filter { it.isNotBlank() } // クエリが空でない場合のみ処理
+        .debounce(300) // 300ミリ秒待ってから検索を実行（入力中の負荷を軽減）
+        .flatMapLatest { query ->
+            // --- 修正箇所: スペースでクエリを分割する ---
+            val words = query.trim().split(Regex("\\s+"))
+
+            // DAOの設計（最大3単語など）に合わせて単語を抽出
+            val word1 = "%${words.getOrElse(0) { "" }}%"
+            val word2 = if (words.size > 1) "%${words[1]}%" else "%%"
+            val word3 = if (words.size > 2) "%${words[2]}%" else "%%"
+            val word4 = if (words.size > 3) "%${words[3]}%" else "%%"
+
+            Log.d("tamaiDpc", "word")
+
+            // リポジトリの検索メソッドを呼び出す
+            // (リポジトリ/DAO側もこれに合わせて3引数を受け取れるようにしておく必要があります)
+            bunruiRepository.searchBunruiMulti(word1, word2, word3, word4)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000), // UIがアクティブな間だけ監視
+            initialValue = emptyList() // 初期値は空のリスト
+        )
+
     /**
      * ドロップダウンで病態名が選択されたときに呼び出されるメソッド
      * @param byotaiName 選択された病態名
      * @return 選択された病態名に対応する病態コード
      */
 
-    suspend fun searchIcdByMcdAndBunrui(mdcCode: String, bunruiCode: String): String{
+    suspend fun searchIcdByMcdAndBunrui(mdcCode: String?, bunruiCode: String?): List<String?> {
         return repository.searchIcdByMcdAndBunrui(mdcCode, bunruiCode)
     }
     suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String? {
@@ -547,8 +593,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         return repository.getByotaiCodeByName(byotaiName)
     }
 
-    suspend fun getShujutsu1Code(shujutsu1Name: String): String? {
-        return shujutsuRepository.getShujutsu1CodeByName(shujutsu1Name)
+    suspend fun getShujutsu1Code(shujutsu1Name: String, mdcCode: String?, bunruiCode: String?): String? {
+        return shujutsuRepository.getShujutsu1CodeByName(shujutsu1Name, mdcCode, bunruiCode)
     }
 
     companion object {
@@ -629,7 +675,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 null
             }
         }
-
         return labelText?.let {
             LabelStringAndScore(it, score, jokenName)
         }
@@ -776,7 +821,6 @@ private fun formatJcsLabel(ijo: String?, miman: String?): String? {
     }
 }
 
-
 /*** 【共通化】選択UIの表示状態と選択肢リストを更新するヘルパー関数
  * @param T 選択肢の型 (String, JushodoJcsJoken など)
  *      * @param exists 該当データが存在するかどうかのBoolean
@@ -801,17 +845,3 @@ private fun <T> CoroutineScope.updateSelectionState(
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

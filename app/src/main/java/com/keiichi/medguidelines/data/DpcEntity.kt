@@ -41,7 +41,9 @@ data class BunruiEntity(
     val bunruiCode: String?,
 
     @ColumnInfo(name = "bunrui_name") // 3列目分類名称
-    val bunruiName: String?
+    val bunruiName: String?,
+    @ColumnInfo(name = "normalized_bunrui_name")
+    val normalizedBunruiName: String?
     // 他に必要な列があればここに追加
 )
 
@@ -124,8 +126,6 @@ data class ShujutsuEntity(
     val taiouCode: String?,
     @ColumnInfo(name = "shujutsu1_name")
     val shujutsu1Name: String?,
-
-
     @ColumnInfo(name = "shujutsu2_name")
     val shujutsu2Name: String?,
 
