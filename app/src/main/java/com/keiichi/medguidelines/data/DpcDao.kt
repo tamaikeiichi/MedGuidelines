@@ -40,7 +40,7 @@ interface DpcDao {
 
     @Query("SELECT icdName FROM icd_master " +
             "WHERE mdcCode = :mdc AND bunruiCode = :bunrui")
-    fun searchIcdByMcdAndBunrui(mdc: String?, bunrui: String?): List<String?>
+    suspend fun searchIcdByMcdAndBunrui(mdc: String?, bunrui: String?): List<String?>
 
     // C:/Users/tamai/StudioProjects/MedGuidelines/app/src/main/java/com/keiichi/medguidelines/data/DpcDao.kt
     /**
@@ -245,10 +245,11 @@ interface DpcDao {
      * @return 存在すれば true, しなければ false
      */
     @Query("SELECT EXISTS(SELECT 1 FROM nenrei_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
-    suspend fun existsMdcAndBunruiInNenreiMaster(mdcCode: String, bunruiCode: String): Boolean
+    suspend fun existsMdcAndBunruiInNenreiMaster(mdcCode: String?, bunruiCode: String?): Boolean
 
-    @Query("SELECT bunrui_name FROM bunrui_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
-    suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String?
+    @Query("SELECT bunrui_name FROM bunrui_master " +
+            "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getBunruiNames(mdcCode: String?, bunruiCode: String?): String?
 
 
 

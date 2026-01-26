@@ -23,7 +23,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
     // DAOのメソッドがFlowを返すので、そのままViewModelに渡す
     fun searchIcd(query: String) = dpcDao.searchIcd("%$query%")
 
-    fun searchIcdByMcdAndBunrui(mdcCode: String?, bunruiCode: String?) =
+    suspend fun searchIcdByMcdAndBunrui(mdcCode: String?, bunruiCode: String?) =
         dpcDao.searchIcdByMcdAndBunrui(mdcCode, bunruiCode)
 
     // 3つのワードによるAND検索をDAOに依頼する
@@ -63,7 +63,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
             dpcDao.getByotaiNames(mdcCode, bunruiCode)
         }
     }
-    suspend fun getBunruiName(mdcCode: String, bunruiCode: String): String? {
+    suspend fun getBunruiName(mdcCode: String?, bunruiCode: String?): String? {
         return withContext(Dispatchers.IO) {
             dpcDao.getBunruiNames(mdcCode, bunruiCode)
         }

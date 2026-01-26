@@ -586,7 +586,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     suspend fun searchIcdByMcdAndBunrui(mdcCode: String?, bunruiCode: String?): List<String?> {
         return repository.searchIcdByMcdAndBunrui(mdcCode, bunruiCode)
     }
-    suspend fun getBunruiNames(mdcCode: String, bunruiCode: String): String? {
+    suspend fun getBunruiNames(mdcCode: String?, bunruiCode: String?): String? {
         return repository.getBunruiName(mdcCode, bunruiCode)
     }
     suspend fun getByotaiCode(byotaiName: String): String? {

@@ -132,7 +132,7 @@ fun DpcScreen(
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var loadingMessage by remember { mutableStateOf("Starting to load data...") }
-    var showBunruiResults by remember { mutableStateOf(false) }
+    var showBunruiResults by remember { mutableStateOf(true) }
     val showByotaiSelection by dpcScreenViewModel.showByotaiSelection.collectAsState()
     val showNenreiSelection by dpcScreenViewModel.showNenreiSelection.collectAsState()
     val showShujutsuSelection by dpcScreenViewModel.showShujutsuSelection.collectAsState()
@@ -147,6 +147,8 @@ fun DpcScreen(
     var showSearchResults by remember { mutableStateOf(true) }
     val days = remember { mutableDoubleStateOf(1.0) }
     var cost = remember { mutableIntStateOf(0) }
+    // UI表示用の状態変数
+    val bunruiName = remember { mutableStateOf<String?>(null) }
 
     // 1. ViewModelから永続化されている値を購読
     val savedCoeff by dpcScreenViewModel.hospitalCoeffFlow.collectAsState(initial = 1.3071)
@@ -165,36 +167,23 @@ fun DpcScreen(
     LaunchedEffect(coeff.doubleValue) {
         dpcScreenViewModel.saveHospitalCoeff(coeff.doubleValue)
     }
-    //var coeff = remember { mutableDoubleStateOf(1.3071) } //JRは1.3071
-    // --- 修正前 ---
-// var coeff = remember { mutableDoubleStateOf(1.3071) }
-
-// ---修正後 ---
-// ViewModelから永続化された値を購読
-// val savedCoeff by dpcScreenViewModel.coeffFlow.collectAsState(initial = 1.3071)
-
-// UI上での一時的な入力状態を管理（TextFieldなどで使う場合）
- //   var coeffText by remember(savedCoeff) { mutableStateOf(savedCoeff.toString()) }
-
-// 実際に計算で使う値
-    //val coeff = savedCoeff
     var icdName by androidx.compose.runtime.remember {
         mutableStateOf<String?>(
             null
         )
     }
-    var bunruiName by androidx.compose.runtime.remember {
-        mutableStateOf<String?>(
-            null
-        )
-    }
+//    var bunruiName by androidx.compose.runtime.remember {
+//        mutableStateOf<String?>(
+//            null
+//        )
+//    }
     val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
 
     // データベースからの検索結果を購読
     val displayedItemsIcd by dpcScreenViewModel.displayedItemsIcd.collectAsState()
     val displayedItemsBunrui by dpcScreenViewModel.displayedItemsBunrui.collectAsState()
 
-    var query by remember { mutableStateOf("060") }
+    var query by remember { mutableStateOf("ポリープ") }
 
     val shindangunBunruiTensuhyo by dpcScreenViewModel.shindangunBunruiTensuhyoOptions.collectAsState()
     Log.d("tamaiDpcUI", "Current List Size in UI: ${shindangunBunruiTensuhyo.size}")
@@ -207,9 +196,13 @@ fun DpcScreen(
 
     val lazyListState = rememberLazyListState()
 
-    //var icdItemsList = remember { mutableStateListOf<IcdEntity>() }
-
     var icdNameList: List<String?> = remember { mutableListOf() }
+    val icdItemsList = remember { mutableStateListOf<IcdEntity>() }
+
+    LaunchedEffect(displayedItemsIcd) {
+        icdItemsList.clear()
+        icdItemsList.addAll(displayedItemsIcd)
+    }
 
     // DpcScreen内のrememberセクションに追加
     val savedItems = remember { mutableStateListOf<SavedDpcItem>() }
@@ -289,11 +282,13 @@ fun DpcScreen(
                         ) {
                             if (savedTotalAmount != 0) {
                                 // 履歴（セカンダリカラー適用範囲）
-                                withStyle(style = SpanStyle(
-                                    color = secondaryColor
-                                )) {
+                                withStyle(
+                                    style = SpanStyle(
+                                        color = secondaryColor
+                                    )
+                                ) {
                                     savedItems.lastOrNull()?.let { lastItem ->
-                                        append("病名: ")
+                                        append("DPC病名: ")
                                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                             append(lastItem.tensuData.name)
                                         }
@@ -304,29 +299,39 @@ fun DpcScreen(
                                     append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円\n")
                                 }
                             }
-                            //withStyle(style = SpanStyle(color = primaryColor)) {
-                            if (shindangunBunruiTensuhyo.isNotEmpty()) {
-                                val data = shindangunBunruiTensuhyo.firstOrNull()
-
-                                withStyle(style = SpanStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    color = primaryColor
-                                )) {
-                                    append("病名: ")
-                                    append(data?.name ?: "")
+                            if (bunruiName.value != null) {
+                                bunruiName?.let { name ->
+                                    withStyle(style = SpanStyle(
+                                        fontWeight = FontWeight.Normal,
+                                        color = primaryColor
+                                        //fontSize = 18.sp
+                                    )) {
+                                        append("DPC病名: ")
+                                    }
+                                    withStyle(style = SpanStyle(
+                                        fontWeight = FontWeight.Bold,
+                                        color = primaryColor
+                                        //fontSize = 18.sp
+                                    )) {
+                                        append("${name.value}\n")
+                                    }
                                 }
                             }
-                            withStyle(style = SpanStyle(
-                                color = primaryColor
-                            )) {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = primaryColor
+                                )
+                            ) {
                                 append(" DPCコード: ")
                                 append(currentDpcCodeJoined)
                                 append(" ") // 少し隙間をあける
                             }
                             appendInlineContent(COPY_ICON_ID, "[copy]")
-                            withStyle(style = SpanStyle(
-                                color = primaryColor
-                            )) {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = primaryColor
+                                )
+                            ) {
                                 if (shindangunBunruiTensuhyo.isNotEmpty()) {
                                     val data = shindangunBunruiTensuhyo.firstOrNull()
                                     append("\n")
@@ -357,9 +362,11 @@ fun DpcScreen(
                             )
                             val currentTotalAmount =
                                 (cost.intValue * 10 * coeff.doubleValue).toInt()
-                            withStyle(style = SpanStyle(
-                                color = primaryColor
-                            )) {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = primaryColor
+                                )
+                            ) {
                                 append("包括金額合計: ${"%,d".format(currentTotalAmount)}円")
                                 append(" ")
                             }
@@ -379,9 +386,11 @@ fun DpcScreen(
                                 }
                             }
                         } else {
-                            withStyle(style = SpanStyle(
-                                color = primaryColor
-                            )) {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = primaryColor
+                                )
+                            ) {
                                 if (currentDpcCode == DpcCode() || currentDpcCode.icd == "x"
                                 )
                                     append("")
@@ -438,12 +447,17 @@ fun DpcScreen(
                                     // 次の病名を選べるようにリセット
                                     currentDpcCode = DpcCode()
                                     dpcScreenViewModel.resetAllSelections()
+                                    bunruiName.value = null
                                     icdName = null
                                     // 3. 【重要】検索結果とクエリをクリアする
                                     query = "" // 検索窓の文字を消す
                                     showSearchResults = false // 検索結果リストを閉じる
                                     //searchResultsVisible = false
-                                    //Toast.makeText(context, "リストに追加しました", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "次の病名を選んでください",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             },
                             tint = MaterialTheme.colorScheme.secondary
@@ -483,10 +497,37 @@ fun DpcScreen(
                             searchQuery = query,
                             onSearchQueryChange = { input ->
                                 query = input
+                                val parts = input.split(" ")
+                                if (parts.size == 2 && parts[0].length == 2 && parts[1].length == 4) {
+                                    coroutineScope.launch {
+                                        // 分類に対応するICDリストをViewModelから取得して表示
+                                        //icdItemsList = dpcScreenViewModel.searchIcdByMcdAndBunrui(parts[0], parts[1])
+                                        val names = dpcScreenViewModel.searchIcdByMcdAndBunrui(parts[0], parts[1])
+
+                                        // 2. 取得した名称を IcdEntity に変換して代入
+
+                                        val newEntities = names.filterNotNull().map { name ->
+                                            IcdEntity(
+                                                mdcCode = parts[0],
+                                                bunruiCode = parts[1],
+                                                icdName = name,
+                                                icdCode = "",        // 必要に応じて初期値を設定
+                                                normalizedIcdName = ""
+                                            )
+                                        }
+                                        icdItemsList.clear()    // 今までの分を消す
+                                        icdItemsList.addAll(newEntities) // 新しい分を入れる
+                                        showSearchResults = true
+                                        showBunruiResults = false
+                                    }
+                                } else
                                 if (input.length == 14 && input.all { it.isDigit() || it == 'x' }) {
                                     // 14桁入力されたらDPC検索を実行
                                     dpcScreenViewModel.onDpcCodeInput(input)
-                                    Log.d("tamaiDpc", "dpcScreenViewModel.onDpcCodeInput(input) ran")
+                                    Log.d(
+                                        "tamaiDpc",
+                                        "dpcScreenViewModel.onDpcCodeInput(input) ran"
+                                    )
                                     // UI側の dpcCodeFirst も分解して更新する
                                     currentDpcCode = DpcCode(
                                         mdc = input.substring(0, 2),
@@ -502,19 +543,26 @@ fun DpcScreen(
                                     dpcScreenViewModel.turnOnAllSelections(currentDpcCode)
                                     val mdc = currentDpcCode.mdc
                                     val bunrui = currentDpcCode.bunrui
-                                    Log.d("tamaiDpc", "mdc and bunrui done. mdc: $mdc, bunrui: $bunrui")
+                                    Log.d(
+                                        "tamaiDpc",
+                                        "mdc and bunrui done. mdc: $mdc, bunrui: $bunrui"
+                                    )
 
                                     // 選択肢を表示させるためのフラグをセット
                                     if (mdc != null && bunrui != null) {
                                         if (mdc != "xx" && bunrui != "xxxx") {
                                             coroutineScope.launch {
-                                                val name = dpcScreenViewModel.getBunruiNames(mdc, bunrui)
+                                                val name =
+                                                    dpcScreenViewModel.getBunruiNames(mdc, bunrui)
 
                                                 if (name != null) {
                                                     icdName = name
                                                     Log.d("tamaiDpc", "got Name: $icdName")
                                                     dpcScreenViewModel.onDpcCodeInput(input)
-                                                    Log.d("tamaiDpc", "dpcScreenViewModel.onDpcCodeInput(input) ran")
+                                                    Log.d(
+                                                        "tamaiDpc",
+                                                        "dpcScreenViewModel.onDpcCodeInput(input) ran"
+                                                    )
                                                     showSearchResults = false
                                                     // ここで showIcdName = true にするフラグなどを制御
                                                 } else {
@@ -522,7 +570,11 @@ fun DpcScreen(
                                                     icdName = "該当する病名が見つかりません"
                                                     currentDpcCode == DpcCode()
                                                     showSearchResults = true // 検索結果リストに戻すかエラーを表示
-                                                    Toast.makeText(context, "無効なDPCコードです", Toast.LENGTH_SHORT).show()
+                                                    Toast.makeText(
+                                                        context,
+                                                        "無効なDPCコードです",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
                                                 }
                                             }
                                         }
@@ -551,7 +603,10 @@ fun DpcScreen(
                             isLoading = isLoading,
                             placeholderText = R.string.searchIcd
                         )
-                        Log.d("tamaiDpc", "after MyCustomSearchBar, showSearchResults: $showSearchResults")
+                        Log.d(
+                            "tamaiDpc",
+                            "after MyCustomSearchBar, showSearchResults: $showSearchResults"
+                        )
                         if (showSearchResults) {
                             Box(
                                 modifier = Modifier
@@ -563,19 +618,21 @@ fun DpcScreen(
                                     modifier = Modifier
                                         .fillMaxSize()
                                 ) {
-                                    var icdItemsList = displayedItemsIcd.toList()
+                                    //icdItemsList.clear()
+                                    //icdItemsList.addAll(displayedItemsIcd)
+                                    //icdItemsList = displayedItemsIcd.toList()
                                     val bunruiItemsList = displayedItemsBunrui.toList()
                                     // --- ICDコードの結果 ---
                                     if (icdItemsList.isNotEmpty()) {
                                         //icdItemsList.forEach { icdItem ->
                                         items(
                                             items = icdItemsList,
-                                            key = {
-                                                it.icdCode ?: it.hashCode().toString()
-                                            }
+                                            //key = { it.id }
                                         ) { icdItem ->
                                             MedGuidelinesCard(
-                                                modifier = Modifier.padding(Dimensions.cardPadding)
+                                                modifier = Modifier.padding(Dimensions.cardPadding),
+                                                containerColor = MaterialTheme.colorScheme.onPrimary,
+                                                contentColor = MaterialTheme.colorScheme.primary
                                             ) {
                                                 Text(
                                                     text = icdItem.icdName
@@ -595,6 +652,14 @@ fun DpcScreen(
                                                             dpcScreenViewModel.onIcdItemSelected(
                                                                 icdItem
                                                             )
+                                                            coroutineScope.launch {
+                                                                val name =
+                                                                    dpcScreenViewModel.getBunruiNames(
+                                                                        icdItem.mdcCode,
+                                                                        icdItem.bunruiCode
+                                                                    )
+                                                                bunruiName.value = name
+                                                            }
                                                             Log.d(
                                                                 "tamaiDpc",
                                                                 " dpcScreenViewModel.onIcdItemSelected(icdItem) ran"
@@ -611,10 +676,12 @@ fun DpcScreen(
                                             //icdItemsList.forEach { icdItem ->
                                             items(
                                                 items = bunruiItemsList,
-                                                key = { it.id }
+                                                //key = { it.id,item -> "${item.id}_$it.id" }
                                             ) { item ->
                                                 MedGuidelinesCard(
-                                                    modifier = Modifier.padding(Dimensions.cardPadding)
+                                                    modifier = Modifier.padding(Dimensions.cardPadding),
+                                                    containerColor = MaterialTheme.colorScheme.onTertiary,
+                                                    contentColor = MaterialTheme.colorScheme.tertiary
                                                 ) {
                                                     Text(
                                                         text = item.bunruiName
@@ -623,7 +690,7 @@ fun DpcScreen(
                                                             .fillMaxWidth()
                                                             .clickable {
                                                                 // 1. UIの状態を更新
-                                                                bunruiName =
+                                                                bunruiName.value =
                                                                     item.bunruiName
                                                                 // 2. Stateの更新は .copy() の結果を再代入する
                                                                 currentDpcCode =
@@ -633,6 +700,14 @@ fun DpcScreen(
                                                                         bunrui = item.bunruiCode
                                                                     )
                                                                 coroutineScope.launch {
+                                                                    // 分類に関連するICDリストをバックグラウンドで取得
+                                                                    val names =
+                                                                        dpcScreenViewModel.searchIcdByMcdAndBunrui(
+                                                                            item.mdcCode ?: "",
+                                                                            item.bunruiCode ?: ""
+                                                                        )
+                                                                }
+                                                                coroutineScope.launch {
                                                                     icdNameList =
                                                                         dpcScreenViewModel.searchIcdByMcdAndBunrui(
                                                                             item.mdcCode,
@@ -640,7 +715,7 @@ fun DpcScreen(
                                                                         )
 
                                                                 }
-                                                                val newEntities = icdNameList
+                                                                icdNameList
                                                                     .filterNotNull() // null を除外（必要に応じて）
                                                                     .map { name ->
                                                                         IcdEntity(
@@ -651,7 +726,21 @@ fun DpcScreen(
                                                                             normalizedIcdName = ""
                                                                         )
                                                                     }
-                                                                icdItemsList = newEntities
+                                                                val mdc = item.mdcCode ?: ""
+                                                                val bunrui = item.bunruiCode ?: ""
+                                                                query = "${item.mdcCode} ${item.bunruiCode}"
+                                                                coroutineScope.launch {
+                                                                    // ICDリストを取得して検索結果として表示
+                                                                    val names = dpcScreenViewModel.searchIcdByMcdAndBunrui(mdc, bunrui)
+                                                                    val newEntities = names.filterNotNull().map { name ->
+                                                                        IcdEntity(mdcCode = mdc, bunruiCode = bunrui, icdName = name,
+                                                                            icdCode = "",
+                                                                            normalizedIcdName = "")
+                                                                    }
+                                                                    icdItemsList.clear()
+                                                                    icdItemsList.addAll(newEntities)
+                                                                }
+
                                                                 Log.d(
                                                                     "tamaiDpc",
                                                                     " dpcScreenViewModel.onIcdItemSelected(icdItem) ran"
@@ -660,6 +749,7 @@ fun DpcScreen(
                                                                 //showSearchResults = false
                                                             }
                                                             .padding(16.dp)
+
                                                     )
                                                 }
                                             }
@@ -707,20 +797,15 @@ fun DpcScreen(
                                 MedGuidelinesCard(
                                     modifier = Modifier.padding(Dimensions.cardPadding)
                                 ) {
-                                    FlowRow(
+                                    Column(
                                         modifier = Modifier
-                                            .padding(4.dp)
-                                            .wrapContentHeight(
-                                                align = Alignment.Bottom
-                                            ),
-                                        itemVerticalAlignment = Alignment.CenterVertically
+                                            .padding(4.dp),
                                     ) {
                                         Text(
                                             text = "ICD名称",
                                             fontSize = 16.sp,
                                             modifier = Modifier
                                                 .padding(Dimensions.textPadding)
-
                                         )
                                         Text(
                                             text = "$icdName",
@@ -871,10 +956,18 @@ fun DpcScreen(
                                     // 2. 有効な選択肢が1つ以上ある場合のみUIを表示する
                                     Log.d("tamaiDpc", "here?")
 
-                                    val currentLabel by produceState<String?>(initialValue = null, options, currentDpcCode.shujutu) {
+                                    val currentLabel by produceState<String?>(
+                                        initialValue = null,
+                                        options,
+                                        currentDpcCode.shujutu
+                                    ) {
                                         // 画面に表示されているoptionsの中から、その名称に対応するコードがdpcCodeFirst.shujutuと一致するものを探す
                                         value = options.find { optionName ->
-                                            val code = dpcScreenViewModel.getShujutsu1Code(optionName, mdcCode = currentDpcCode.mdc, bunruiCode = currentDpcCode.bunrui)
+                                            val code = dpcScreenViewModel.getShujutsu1Code(
+                                                optionName,
+                                                mdcCode = currentDpcCode.mdc,
+                                                bunruiCode = currentDpcCode.bunrui
+                                            )
                                             code == currentDpcCode.shujutu
                                         }
                                     }
@@ -1076,8 +1169,13 @@ fun DpcScreen(
                                         }?.labelResId
 
                                         // rememberのキーに options と currentLabel を追加し、データ復元時にUIが更新されるようにする
-                                        var selectedOption: String? by remember(options, currentLabel) {
-                                            mutableStateOf(currentLabel ?: options.first().labelResId)
+                                        var selectedOption: String? by remember(
+                                            options,
+                                            currentLabel
+                                        ) {
+                                            mutableStateOf(
+                                                currentLabel ?: options.first().labelResId
+                                            )
                                         }
                                         MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
                                             val title = if (options.first().label == "年齢") {
@@ -1130,8 +1228,13 @@ fun DpcScreen(
                                         }?.labelResId
 
                                         // optionsやcurrentLabelが変わった時に再計算
-                                        var selectedOption: String? by remember(options, currentLabel) {
-                                            mutableStateOf(currentLabel ?: options.first().labelResId)
+                                        var selectedOption: String? by remember(
+                                            options,
+                                            currentLabel
+                                        ) {
+                                            mutableStateOf(
+                                                currentLabel ?: options.first().labelResId
+                                            )
                                         }
                                         MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
                                             Log.d(
