@@ -305,7 +305,18 @@ fun DpcScreen(
                                         //append("\n")
                                     }
                                     withStyle(style = SpanStyle(letterSpacing = 16.sp)) { append(" ") }
-                                    append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円\n")
+                                    append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円")
+                                    if (days.doubleValue.toInt() > (savedItems.lastOrNull()?.tensuData?.nyuinbiIII?.toInt() ?: 0)) {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                fontSize = 16.sp,
+                                                color = secondaryColor
+                                            )
+                                        ) {
+                                            append("（${savedItems.lastOrNull()?.tensuData?.nyuinbiIII?.toInt()}日まで）")
+                                            append("\n")
+                                        }
+                                    }
                                 }
                             }
                             if (bunruiName.value != null) {
