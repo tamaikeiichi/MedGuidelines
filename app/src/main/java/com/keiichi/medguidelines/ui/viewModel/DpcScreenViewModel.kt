@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.keiichi.medguidelines.data.AppDatabase
 import com.keiichi.medguidelines.data.BunruiEntity
 import com.keiichi.medguidelines.data.BunruiRepository
+import com.keiichi.medguidelines.data.ByotaiOptionEntity
 import com.keiichi.medguidelines.data.DataStoreKeys
 import com.keiichi.medguidelines.data.DpcRepository
 import com.keiichi.medguidelines.data.FukushobyoJoken
@@ -121,8 +122,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
 
     // 病態ドロップダウンの選択肢リスト
-    private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<String>>(emptyList())
-    val byotaiOptions: StateFlow<List<String>> = _byotaiOptions.asStateFlow()
+    private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<ByotaiOptionEntity>>(emptyList())
+    val byotaiOptions: StateFlow<List<ByotaiOptionEntity>> = _byotaiOptions.asStateFlow()
 
     // 年齢ラジオボタン
     private val _nenreiOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())

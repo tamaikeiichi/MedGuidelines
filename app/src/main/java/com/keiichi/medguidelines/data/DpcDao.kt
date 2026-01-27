@@ -1,10 +1,21 @@
 package com.keiichi.medguidelines.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+
+data class ByotaiOptionEntity(
+    // データベースの列名と一致するように@ColumnInfoを使うのが確実
+    @ColumnInfo(name = "mdc_code") val mdcCode: String,
+    @ColumnInfo(name = "bunrui_code") val bunruiCode: String,
+    @ColumnInfo(name = "byotai_code") val byotaiCode: String,
+    @ColumnInfo(name = "nenrei_ijo") val nenreiIjo: String,
+    @ColumnInfo(name = "nenrei_miman") val nenreiMiman: String,
+    @ColumnInfo(name = "byotai_kubun_meisho") val byotaiKubunMeisho: String
+)
 
 @Dao
 interface DpcDao {
@@ -92,10 +103,9 @@ interface DpcDao {
      * 指定されたMDCコードと分類コードに一致する病態名（8列目）のリストを取得します。
      * (ドロップダウンの選択肢用)
      */
-    @androidx.room.Query("SELECT byotai_name FROM byotai_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
-    suspend fun getByotaiNames(mdcCode: String, bunruiCode: String): List<String>
-
-
+    @androidx.room.Query("SELECT mdc_code, bunrui_code, byotai_code, nenrei_ijo, nenrei_miman, byotai_kubun_meisho " +
+            " FROM byotai_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode")
+    suspend fun getByotaiNames(mdcCode: String, bunruiCode: String): List<ByotaiOptionEntity>
 
     @androidx.room.Query("SELECT joken1_ijo " +
             "FROM nenrei_master " +
@@ -162,7 +172,7 @@ interface DpcDao {
     /**
      * 指定された病態名に一致する行の病態コード（3列目）を取得します。
      */
-    @androidx.room.Query("SELECT byotai_code FROM byotai_master WHERE byotai_name = :byotaiName LIMIT 1")
+    @androidx.room.Query("SELECT byotai_code FROM byotai_master WHERE byotai_kubun_meisho = :byotaiName LIMIT 1")
     suspend fun getByotaiCodeByName(byotaiName: String): String?
 
 // --- ここからBunruiEntity用のメソッドを追加 ---

@@ -58,7 +58,7 @@ class DpcRepository(private val dpcDao: DpcDao) {
      * @param bunruiCode 検索する分類コード
      * @return 病態名のリスト
      */
-    suspend fun getByotaiNames(mdcCode: String, bunruiCode: String): List<String> {
+    suspend fun getByotaiNames(mdcCode: String, bunruiCode: String): List<ByotaiOptionEntity> {
         return withContext(Dispatchers.IO) {
             dpcDao.getByotaiNames(mdcCode, bunruiCode)
         }
@@ -226,6 +226,8 @@ class DpcRepository(private val dpcDao: DpcDao) {
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             byotaiCode = row[2]?.toString() ?: "",
+                            nenreiIjo = row[4]?.toString() ?: "",
+                            nenreiMiman = row[5]?.toString() ?: "",
                             byotaiKubunMeisho = row[7]?.toString() ?: ""
                         )
                     }

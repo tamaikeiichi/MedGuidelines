@@ -27,7 +27,11 @@ data class ByotaiEntity(
     @ColumnInfo(name = "byotai_code") // 3列目
     val byotaiCode: String?,
     // 4〜7列目は使わないので省略
-    @ColumnInfo(name = "byotai_name") // 8列目
+    @ColumnInfo(name = "nenrei_ijo") // 5列目
+    val nenreiIjo: String?,
+    @ColumnInfo(name = "nenrei_miman") // 6列目
+    val nenreiMiman: String?,
+    @ColumnInfo(name = "byotai_kubun_meisho") // 8列目
     val byotaiKubunMeisho: String?
 )
 
