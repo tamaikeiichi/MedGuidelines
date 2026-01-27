@@ -29,6 +29,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -79,6 +80,7 @@ import com.keiichi.medguidelines.ui.component.VerticalScrollbar
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectableLabelString
 import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 data class DpcCode(
     var mdc: String? = "xx",
@@ -218,7 +220,7 @@ fun DpcScreen(
                     nyuinKikanII = item.tensuData.nyuinKikanII.toIntOrNull() ?: 0,
                     nyuinKikanIII = item.tensuData.nyuinKikanIII.toIntOrNull() ?: 0
                 )
-                (itemCost * 10 * coeff.doubleValue).toInt()
+                (itemCost * 10 * coeff.doubleValue).roundToInt()
             }
         }
     }
@@ -272,13 +274,13 @@ fun DpcScreen(
                 displayText = buildAnnotatedString {
                     withStyle(
                         style = ParagraphStyle(
-                            lineHeight = 1.1.em
+                            lineHeight = 1.2.em
                         )
                     ) {
                         withStyle(
                             style = SpanStyle(
                                 fontSize = 16.sp,
-                            )
+                            ),
                         ) {
                             if (savedTotalAmount != 0) {
                                 // 履歴（セカンダリカラー適用範囲）
@@ -303,15 +305,15 @@ fun DpcScreen(
                                 bunruiName?.let { name ->
                                     withStyle(style = SpanStyle(
                                         fontWeight = FontWeight.Normal,
-                                        color = primaryColor
-                                        //fontSize = 18.sp
+                                        color = primaryColor,
+                                        fontSize = 16.sp
                                     )) {
                                         append("DPC病名: ")
                                     }
                                     withStyle(style = SpanStyle(
                                         fontWeight = FontWeight.Bold,
-                                        color = primaryColor
-                                        //fontSize = 18.sp
+                                        color = primaryColor,
+                                        fontSize = 16.sp
                                     )) {
                                         append("${name.value}\n")
                                     }
@@ -319,7 +321,8 @@ fun DpcScreen(
                             }
                             withStyle(
                                 style = SpanStyle(
-                                    color = primaryColor
+                                    color = primaryColor,
+                                    fontSize = 16.sp
                                 )
                             ) {
                                 append(" DPCコード: ")
@@ -327,14 +330,16 @@ fun DpcScreen(
                                 append(" ") // 少し隙間をあける
                             }
                             appendInlineContent(COPY_ICON_ID, "[copy]")
+                            append("\n")
                             withStyle(
                                 style = SpanStyle(
-                                    color = primaryColor
+                                    color = primaryColor,
+                                    fontSize = 16.sp
                                 )
                             ) {
                                 if (shindangunBunruiTensuhyo.isNotEmpty()) {
                                     val data = shindangunBunruiTensuhyo.firstOrNull()
-                                    append("\n")
+                                    //append("\n")
                                     if (data?.nyuinbiI != "") {
                                         append("入院期間I: ${data?.nyuinbiI} ")
                                     }
@@ -342,7 +347,7 @@ fun DpcScreen(
                                         append("入院期間II: ${data?.nyuinbiII} ")
                                     }
                                     if (data?.nyuinbiIII != "") {
-                                        append("入院期間III: ${data?.nyuinbiIII}\n")
+                                        append("入院期間III: ${data?.nyuinbiIII}")
                                     }
                                 }
                             }
@@ -364,10 +369,11 @@ fun DpcScreen(
                                 (cost.intValue * 10 * coeff.doubleValue).toInt()
                             withStyle(
                                 style = SpanStyle(
-                                    color = primaryColor
+                                    color = primaryColor,
+                                    fontSize = 26.sp
                                 )
                             ) {
-                                append("包括金額合計: ${"%,d".format(currentTotalAmount)}円")
+                                append("\n包括金額合計: ${"%,d".format(currentTotalAmount)}円")
                                 append(" ")
                             }
                             appendInlineContent(SAVE_ICON_ID, "[save]")
@@ -429,7 +435,9 @@ fun DpcScreen(
                         )
                     },
                     SAVE_ICON_ID to androidx.compose.foundation.text.InlineTextContent(
-                        Placeholder(18.sp, 18.sp, PlaceholderVerticalAlign.Center)
+                        Placeholder(
+                            22.sp, 22.sp,
+                            PlaceholderVerticalAlign.Center)
                     ) {
                         Icon(
                             imageVector = Icons.Default.AddCircle, // ＋アイコンなど
@@ -1431,8 +1439,86 @@ private fun calculateNyuinCost(
     return cost
 }
 
-@Preview(showBackground = true) // 背景をtrueにすると見やすいです
+@Preview(showBackground = true)
 @Composable
-fun DpcScreenPreview() {
+fun ScoreBottomAppBarPreview() {
+    MaterialTheme {
+        // プレビュー用のダミーデータ
+        val primaryColor = MaterialTheme.colorScheme.primary
+        val secondaryColor = MaterialTheme.colorScheme.secondary
 
+        // モックデータ: 本来は remember や State で管理されているもの
+        val currentDpcCodeJoined = "010010xxxxxxxx"
+        val savedTotalAmount = 45000
+        val bunruiNameValue = "肺炎（等）"
+        val currentTotalAmount = 52300
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surfaceVariant
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                // ここが実際のコンポーネント呼び出しに相当します
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = ParagraphStyle(lineHeight = 1.2.em)) {
+                            // 1. 履歴セクション (savedTotalAmount != 0)
+                            withStyle(style = SpanStyle(color = secondaryColor, fontSize = 16.sp)) {
+                                append("DPC病名: ")
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("前回選択の病名")
+                                }
+                                append(" DPCコード: 010203xxxx ")
+                                appendInlineContent("COPY_ICON_ID", "[copy]")
+                                append("\n")
+                                append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円\n")
+                            }
+
+                            // 2. 現在のDPC病名
+                            withStyle(style = SpanStyle(color = primaryColor, fontSize = 16.sp)) {
+                                append("DPC病名: ")
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("$bunruiNameValue\n")
+                                }
+                            }
+
+                            // 3. DPCコードと入院期間
+                            withStyle(style = SpanStyle(color = primaryColor, fontSize = 16.sp)) {
+                                append(" DPCコード: $currentDpcCodeJoined ")
+                            }
+                            appendInlineContent("COPY_ICON_ID", "[copy]")
+                            append("\n")
+
+                            withStyle(style = SpanStyle(color = primaryColor, fontSize = 16.sp)) {
+                                append("入院期間I: 5 入院期間II: 12 入院期間III: 25")
+                            }
+                        }
+                        withStyle(style = ParagraphStyle(lineHeight = 1.2.em)) {
+                            // 4. 合計金額 (大きく表示)
+                            withStyle(style = SpanStyle(color = primaryColor, fontSize = 26.sp)) {
+                                append("\n包括金額合計: ${"%,d".format(currentTotalAmount)}円 ")
+                            }
+                            appendInlineContent("SAVE_ICON_ID", "[save]")
+
+                            withStyle(style = SpanStyle(fontSize = 16.sp, color = primaryColor)) {
+                                append("（25日まで）")
+                            }
+                        }
+                    },
+                    inlineContent = mapOf(
+                        "COPY_ICON_ID" to InlineTextContent(
+                            Placeholder(18.sp, 18.sp, PlaceholderVerticalAlign.Center)
+                        ) {
+                            Icon(Icons.Default.ContentCopy, contentDescription = null, tint = primaryColor)
+                        },
+                        "SAVE_ICON_ID" to InlineTextContent(
+                            Placeholder(16.sp, 16.sp, PlaceholderVerticalAlign.Center)
+                        ) {
+                            Icon(Icons.Default.AddCircle, contentDescription = null, tint = secondaryColor)
+                        }
+                    )
+                )
+            }
+        }
+    }
 }
