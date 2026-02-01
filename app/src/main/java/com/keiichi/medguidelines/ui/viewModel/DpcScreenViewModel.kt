@@ -197,6 +197,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     fun turnOnAllSelections(dpcCode: DpcCode){
         if(dpcCode.byotai != "x") {
             _showByotaiSelection.value = true
+            Log.d("tamaiDpc", "current Byotai turned ON")
         }
         if (dpcCode.nenrei != "x") {
             _showNenreiSelection.value = true
@@ -400,6 +401,103 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    /**
+     * DPCコード（14桁）が直接入力または検索されたときに呼び出されるメソッド
+     * コードを分解し、関連するマスターデータの存在を確認してUIを制御する
+     */
+    fun onDpcCodeSearched(fullCode: String) {
+        if (fullCode.length < 6) return // 最低限 MDC(2) + 分類(4) が必要
+
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                // 1. DPCコードからMDCと分類を抽出
+                val mdc = fullCode.substring(0, 2)
+                val bunrui = fullCode.substring(2, 6)
+
+                // 2. 表示フラグを一旦リセット（または必要に応じてクリア）
+                _showIcdName.value = true
+
+                // --- 3. 各マスターの存在チェックとデータロード (onIcdItemSelectedと同様) ---
+                // 対応する病態が存在するかチェック
+                val shujutsuExists = shujutsuRepository.checkMdcAndBunruiExistsInShujutsu(mdc, bunrui)
+                val shochi1Exists = shochi1Repository.checkMdcAndBunruiExistsInShochi1(mdc, bunrui)
+                val shochi2Exists = shochi2Repository.checkMdcAndBunruiExistsInMaster(mdc, bunrui)
+                val fukushobyoExists =
+                    fukushobyoRepository.checkMdcAndBunruiExistsInMaster(mdc, bunrui)
+                val jushodoJcsExists =
+                    jushodoJcsRepository.checkMdcAndBunruiExistsInMaster(mdc, bunrui)
+                val jushodoStrokeExists = jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(
+                    mdc,
+                    bunrui
+                )
+                // --- updateSelectionStateヘルパー関数を使って、各選択UIの状態を更新 ---
+                updateSelectionState(
+                    exists = shujutsuExists,
+                    optionsFlow = _shujutsuOptions,
+                    showSelectionFlow = _showShujutsuSelection,
+                    getOptions = {
+                        shujutsuRepository.getShujutsuNames(
+                            mdc,
+                            bunrui
+                        )
+                    }
+                )
+                updateSelectionState(
+                    exists = shochi1Exists,
+                    optionsFlow = _shochi1Options,
+                    showSelectionFlow = _showShochi1Selection,
+                    getOptions = { shochi1Repository.getNames(mdc, bunrui) }
+                )
+                updateSelectionState(
+                    exists = shochi2Exists,
+                    optionsFlow = _shochi2Options,
+                    showSelectionFlow = _showShochi2Selection,
+                    getOptions = { shochi2Repository.getNames(mdc, bunrui) }
+                )
+                updateSelectionState(
+                    exists = fukushobyoExists,
+                    optionsFlow = _fukushobyoOptions,
+                    showSelectionFlow = _showFukushobyoSelection,
+                    getOptions = { fukushobyoRepository.getNames(mdc, bunrui) }
+                )
+                // jushodoJcsOptionsはList<JushodoJcsJoken>型だが、ジェネリクス<T>のおかげで同じ関数を使える
+                updateSelectionState(
+                    exists = jushodoJcsExists,
+                    optionsFlow = _jushodoJcsOptions,
+                    showSelectionFlow = _showJushodoJcsSelection,
+                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
+                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
+                    getOptions = { createJushoJcsJokenOptionsList(mdc, bunrui) }
+                )
+                updateSelectionState(
+                    exists = jushodoStrokeExists,
+                    optionsFlow = _jushodoStrokeOptions,
+                    showSelectionFlow = _showJushodoStrokeSelection,
+                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
+                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
+                    getOptions = {
+                        createJushoStrokeJokenOptionsList(
+                            mdc,
+                            bunrui
+                        )
+                    }
+                )
+
+                // その他の項目 (Shochi2, Fukushobyo, Stroke 等) も同様に記述...
+                // ...
+
+                // 4. 点数データの検索（BottomBarの金額表示用）
+                val tensuResults = shindangunBunruiTensuhyoRepository.getNames(fullCode)
+                _shindangunBunruiTensuhyoOptions.value = tensuResults
+
+            } catch (e: Exception) {
+                Log.e("tamaiDpc", "Error in onDpcCodeSearched", e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
     fun onBunruiItemSelected(item: BunruiEntity) {
         viewModelScope.launch {
             _showBunruiName.value = true
@@ -544,7 +642,10 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
             // リポジトリの検索メソッドを呼び出す
             // (リポジトリ/DAO側もこれに合わせて3引数を受け取れるようにしておく必要があります)
+            Log.d("tamaiDpc", "run searchIcdMulti")
             repository.searchIcdMulti(word1, word2, word3, word4)
+
+
         }
         .stateIn(
             scope = viewModelScope,
