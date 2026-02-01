@@ -35,6 +35,7 @@ import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import com.keiichi.medguidelines.ui.screen.DpcCode
 import com.keiichi.medguidelines.ui.screen.LabelStringAndScore
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -152,6 +153,14 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     val jushodoStrokeOptions: StateFlow<List<LabelStringAndScore>> =
         _jushodoStrokeOptions.asStateFlow()
 
+    // DpcScreenViewModel.kt
+    private val _currentDpcCode = MutableStateFlow(DpcCode())
+    val currentDpcCode: StateFlow<DpcCode> = _currentDpcCode.asStateFlow()
+
+    // コードを外部から（UIから）更新するための関数も用意
+    fun updateDpcCode(newCode: DpcCode) {
+        _currentDpcCode.value = newCode
+    }
     private val _shindangunBunruiTensuhyoOptions =
         MutableStateFlow<List<ShindangunBunruiTensuhyoJoken>>(emptyList())
     val shindangunBunruiTensuhyoOptions: StateFlow<List<ShindangunBunruiTensuhyoJoken>> =
@@ -194,33 +203,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         // 他のオプション（shindangun等）もあればここでリセット
     }
 
-    fun turnOnAllSelections(dpcCode: DpcCode){
-        if(dpcCode.byotai != "x") {
-            _showByotaiSelection.value = true
-            Log.d("tamaiDpc", "current Byotai turned ON")
-        }
-        if (dpcCode.nenrei != "x") {
-            _showNenreiSelection.value = true
-        }
-        if (dpcCode.shujutu != "xx") {
-            _showShujutsuSelection.value = true
-        }
-        if (dpcCode.shochi1 != "x") {
-            _showShochi1Selection.value = true
-        }
-        if (dpcCode.shochi2 != "x") {
-            _showShochi2Selection.value = true
-        }
-        if (dpcCode.fukushobyo != "x") {
-            _showFukushobyoSelection.value = true
-        }
-        if (dpcCode.jushodo != "x") {
-            _showJushodoJcsSelection.value = true
-            _showJushodoShujutsuSelection.value = true
-            _showJushodoStrokeSelection.value = true
-        }
-    }
-
     suspend fun getDebugRows(): List<String> {
         // repository経由、あるいは直接daoから取得
         return shindangunBunruiTensuhyoRepository.getFirstThreeRows()
@@ -245,6 +227,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 if (byotaiExists) {
                     // 存在すれば、病態の選択肢を準備してUIを表示させる
                     _byotaiOptions.value = repository.getByotaiNames(item.mdcCode, item.bunruiCode)
+
                     _showByotaiSelection.value = true
                 } else {
                     // 存在しなければ、UIを非表示にする
@@ -352,52 +335,82 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                             item.mdcCode,
                             item.bunruiCode
                         )
+                    },
+                    onAutoSelect = { options ->
+                        // 最初の選択肢のコードを反映
+                        val firstName = options.firstOrNull()
+                        if (firstName != null) {
+                            val code = getShujutsu1Code(
+                                firstName, item.mdcCode, item.bunruiCode)
+                            // StateFlowを直接更新するか、変数で保持
+                            _currentDpcCode.value = _currentDpcCode.value.copy(
+                                shujutu = code ?: "xx")
+                        }
                     }
                 )
                 updateSelectionState(
                     exists = shochi1Exists,
                     optionsFlow = _shochi1Options,
                     showSelectionFlow = _showShochi1Selection,
-                    getOptions = { shochi1Repository.getNames(item.mdcCode, item.bunruiCode) }
+                    getOptions = { shochi1Repository.getNames(
+                        item.mdcCode, item.bunruiCode) }
                 )
                 updateSelectionState(
                     exists = shochi2Exists,
                     optionsFlow = _shochi2Options,
                     showSelectionFlow = _showShochi2Selection,
-                    getOptions = { shochi2Repository.getNames(item.mdcCode, item.bunruiCode) }
+                    getOptions = { shochi2Repository.getNames(
+                        item.mdcCode, item.bunruiCode) },
+                    onAutoSelect = { options ->
+                        val firstCode = options.firstOrNull()?.code?.toString() ?: "x"
+                        _currentDpcCode.value = _currentDpcCode.value.copy(shochi1 = firstCode)
+                    }
                 )
+                // 副傷病 (fukushobyo)
                 updateSelectionState(
                     exists = fukushobyoExists,
                     optionsFlow = _fukushobyoOptions,
                     showSelectionFlow = _showFukushobyoSelection,
-                    getOptions = { fukushobyoRepository.getNames(item.mdcCode, item.bunruiCode) }
+                    getOptions = { fukushobyoRepository.getNames(item.mdcCode!!, item.bunruiCode!!) },
+                    onAutoSelect = { options ->
+                        // 最初の項目のコードを反映
+                        val firstCode = options.firstOrNull()?.code?.toString() ?: "x"
+                        _currentDpcCode.value = _currentDpcCode.value.copy(fukushobyo = firstCode)
+                    }
                 )
-                // jushodoJcsOptionsはList<JushodoJcsJoken>型だが、ジェネリクス<T>のおかげで同じ関数を使える
+
+                // 重症度 JCS (jushodoJcs)
                 updateSelectionState(
                     exists = jushodoJcsExists,
                     optionsFlow = _jushodoJcsOptions,
                     showSelectionFlow = _showJushodoJcsSelection,
-                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
-                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-                    getOptions = { createJushoJcsJokenOptionsList(item.mdcCode, item.bunruiCode) }
+                    getOptions = { createJushoJcsJokenOptionsList(item.mdcCode!!, item.bunruiCode!!) },
+                    onAutoSelect = { options ->
+                        // LabelStringAndScore の最初の項目のスコアを反映
+                        // 重症度（下1桁）は共通のため、JCSの値を代表としてセット
+                        val firstScore = options.firstOrNull()?.code?.toString() ?: "x"
+                        _currentDpcCode.value = _currentDpcCode.value.copy(jushodo = firstScore)
+                    }
                 )
+
+                // 重症度 脳卒中/手術 (jushodoStroke)
                 updateSelectionState(
                     exists = jushodoStrokeExists,
                     optionsFlow = _jushodoStrokeOptions,
                     showSelectionFlow = _showJushodoStrokeSelection,
-                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
-                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-                    getOptions = {
-                        createJushoStrokeJokenOptionsList(
-                            item.mdcCode,
-                            item.bunruiCode
-                        )
+                    getOptions = { createJushoStrokeJokenOptionsList(item.mdcCode!!, item.bunruiCode!!) },
+                    onAutoSelect = { options ->
+                        // すでに JCS 側でセットしている場合は不要かもしれませんが、
+                        // 脳卒中マスタが優先される疾患の場合はここでセットします
+                        val firstCode = options.firstOrNull()?.code?.toString() ?: "x"
+                        _currentDpcCode.value = _currentDpcCode.value.copy(jushodo = firstCode)
                     }
                 )
             } else {
                 _showByotaiSelection.value = false
                 _byotaiOptions.value = emptyList()
             }
+            //_currentDpcCode.value = updatedCode
         }
     }
 
@@ -441,48 +454,126 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                             mdc,
                             bunrui
                         )
+                    },
+                    onAutoSelect = { options -> // ここが List<String> になります
+                        // 14桁のDPCコードから手術コード(8-10桁目)を切り出す
+                        val targetCode = fullCode.substring(8, 10)
+
+                        viewModelScope.launch {
+                            // リストの中からコードが一致する「名前」を探す
+                            val matchedName = options.find { name ->
+                                getShujutsu1Code(name, mdc, bunrui) == targetCode
+                            }
+
+                            // 見つかった場合、DPCコードの状態を更新する
+                            matchedName?.let {
+                                _currentDpcCode.value = _currentDpcCode.value.copy(shujutu = targetCode)
+                            }
+                        }
                     }
                 )
                 updateSelectionState(
                     exists = shochi1Exists,
                     optionsFlow = _shochi1Options,
                     showSelectionFlow = _showShochi1Selection,
-                    getOptions = { shochi1Repository.getNames(mdc, bunrui) }
+                    getOptions = { shochi1Repository.getNames(mdc, bunrui) },
+                    onAutoSelect = { options ->
+                        val targetCode = fullCode.substring(10, 11)
+                        // options を Iterable として確実に認識させ、型の不一致を解消
+                        options.find { it.code == (targetCode.toIntOrNull() ?: -1) }
+                    }
                 )
+
+// 処置2 (shochi2)
                 updateSelectionState(
                     exists = shochi2Exists,
                     optionsFlow = _shochi2Options,
                     showSelectionFlow = _showShochi2Selection,
-                    getOptions = { shochi2Repository.getNames(mdc, bunrui) }
+                    getOptions = { shochi2Repository.getNames(mdc, bunrui) },
+                    onAutoSelect = { options ->
+                        val targetCode = fullCode.substring(11, 12)
+                        options.find { it.code == targetCode }
+                    }
                 )
+
+// 副傷病 (fukushobyo)
                 updateSelectionState(
                     exists = fukushobyoExists,
                     optionsFlow = _fukushobyoOptions,
                     showSelectionFlow = _showFukushobyoSelection,
-                    getOptions = { fukushobyoRepository.getNames(mdc, bunrui) }
+                    getOptions = { fukushobyoRepository.getNames(mdc, bunrui) },
+                    onAutoSelect = { options ->
+                        val targetCode = fullCode.substring(12, 13)
+                        options.find { it.code == targetCode }
+                    }
                 )
-                // jushodoJcsOptionsはList<JushodoJcsJoken>型だが、ジェネリクス<T>のおかげで同じ関数を使える
+
+// 重症度 JCS (jushodo)
                 updateSelectionState(
                     exists = jushodoJcsExists,
                     optionsFlow = _jushodoJcsOptions,
                     showSelectionFlow = _showJushodoJcsSelection,
-                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
-                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-                    getOptions = { createJushoJcsJokenOptionsList(mdc, bunrui) }
+                    getOptions = { createJushoJcsJokenOptionsList(mdc, bunrui) },
+                    onAutoSelect = { options ->
+                        val targetCode = fullCode.substring(13, 14)
+                        // LabelStringAndScore のリストから、そのスコアが targetCode と一致するか判定
+                        options.find { it.code.toString() == targetCode }
+                    }
                 )
+
+// 重症度 脳卒中 (jushodoStroke)
                 updateSelectionState(
                     exists = jushodoStrokeExists,
                     optionsFlow = _jushodoStrokeOptions,
                     showSelectionFlow = _showJushodoStrokeSelection,
-                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
-                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-                    getOptions = {
-                        createJushoStrokeJokenOptionsList(
-                            mdc,
-                            bunrui
-                        )
+                    getOptions = { createJushoStrokeJokenOptionsList(mdc, bunrui) },
+                    onAutoSelect = { options ->
+                        val targetCode = fullCode.substring(13, 14)
+                        options.find { it.code.toString() == targetCode }
                     }
                 )
+//                updateSelectionState(
+//                    exists = shochi1Exists,
+//                    optionsFlow = _shochi1Options,
+//                    showSelectionFlow = _showShochi1Selection,
+//                    getOptions = { shochi1Repository.getNames(
+//                        mdc, bunrui) },
+//
+//                )
+//                updateSelectionState(
+//                    exists = shochi2Exists,
+//                    optionsFlow = _shochi2Options,
+//                    showSelectionFlow = _showShochi2Selection,
+//                    getOptions = { shochi2Repository.getNames(mdc, bunrui) }
+//                )
+//                updateSelectionState(
+//                    exists = fukushobyoExists,
+//                    optionsFlow = _fukushobyoOptions,
+//                    showSelectionFlow = _showFukushobyoSelection,
+//                    getOptions = { fukushobyoRepository.getNames(mdc, bunrui) }
+//                )
+//                // jushodoJcsOptionsはList<JushodoJcsJoken>型だが、ジェネリクス<T>のおかげで同じ関数を使える
+//                updateSelectionState(
+//                    exists = jushodoJcsExists,
+//                    optionsFlow = _jushodoJcsOptions,
+//                    showSelectionFlow = _showJushodoJcsSelection,
+//                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
+//                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
+//                    getOptions = { createJushoJcsJokenOptionsList(mdc, bunrui) }
+//                )
+//                updateSelectionState(
+//                    exists = jushodoStrokeExists,
+//                    optionsFlow = _jushodoStrokeOptions,
+//                    showSelectionFlow = _showJushodoStrokeSelection,
+//                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
+//                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
+//                    getOptions = {
+//                        createJushoStrokeJokenOptionsList(
+//                            mdc,
+//                            bunrui
+//                        )
+//                    }
+//                )
 
                 // その他の項目 (Shochi2, Fukushobyo, Stroke 等) も同様に記述...
                 // ...
@@ -931,19 +1022,56 @@ private fun formatJcsLabel(ijo: String?, miman: String?): String? {
  *      * @param getOptions
  *  データを取得するためのsuspend関数
  *      */
+
+/**
+ * 選択UIの状態、選択肢リスト、および選択された値を一括で更新する
+ */
 private fun <T> CoroutineScope.updateSelectionState(
     exists: Boolean,
     optionsFlow: MutableStateFlow<List<T>>,
     showSelectionFlow: MutableStateFlow<Boolean>,
-    getOptions: suspend () -> List<T>
+    getOptions: suspend () -> List<T>,
+    // 追加: 選択されたコードを自動更新するためのコールバック
+    onAutoSelect: (suspend (List<T>) -> Unit)? = null
 ) {
-    launch {
+    // データベース操作を含むため IO スレッドを指定
+    launch(Dispatchers.IO) {
         if (exists) {
-            optionsFlow.value = getOptions()
-            showSelectionFlow.value = true
+            val options = getOptions()
+            optionsFlow.value = options
+
+            if (options.isNotEmpty()) {
+                showSelectionFlow.value = true
+
+                // もし選択肢が1つしかない、かつ現在の選択が未設定なら、
+                // 自動的にその1つを選択状態にする（ユーザーの手間を省く）
+                if (options.size == 1 && onAutoSelect != null) {
+                    onAutoSelect(options.first() as List<T>)
+                }
+            } else {
+                // マスターに存在するはずだが、中身が空の場合
+                showSelectionFlow.value = false
+            }
         } else {
+            // マスターに存在しない疾患の場合
             optionsFlow.value = emptyList()
             showSelectionFlow.value = false
         }
     }
 }
+//private fun <T> CoroutineScope.updateSelectionState(
+//    exists: Boolean,
+//    optionsFlow: MutableStateFlow<List<T>>,
+//    showSelectionFlow: MutableStateFlow<Boolean>,
+//    getOptions: suspend () -> List<T>
+//) {
+//    launch {
+//        if (exists) {
+//            optionsFlow.value = getOptions()
+//            showSelectionFlow.value = true
+//        } else {
+//            optionsFlow.value = emptyList()
+//            showSelectionFlow.value = false
+//        }
+//    }
+//}
