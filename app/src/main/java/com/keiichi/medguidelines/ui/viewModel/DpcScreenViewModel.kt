@@ -433,6 +433,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
                 // --- 3. 各マスターの存在チェックとデータロード (onIcdItemSelectedと同様) ---
                 // 対応する病態が存在するかチェック
+                val nenreiDataExists = repository.checkMdcAndBunruiExistsInNenrei(mdc, bunrui)
                 val shujutsuExists = shujutsuRepository.checkMdcAndBunruiExistsInShujutsu(mdc, bunrui)
                 val shochi1Exists = shochi1Repository.checkMdcAndBunruiExistsInShochi1(mdc, bunrui)
                 val shochi2Exists = shochi2Repository.checkMdcAndBunruiExistsInMaster(mdc, bunrui)
@@ -444,7 +445,44 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     mdc,
                     bunrui
                 )
+//                if (nenreiDataExists) {
+//                    // ★ 存在すれば、年齢条件の選択肢リストを生成する
+//                    _nenreiOptions.value = createNenreiOptionsList(mdc, bunrui)
+//                    _showNenreiSelection.value = true
+//                } else {
+//                    // 存在しなければ、UIを非表示にする
+//                    _nenreiOptions.value = emptyList()
+//                    _showNenreiSelection.value = false
+//                }
+
                 // --- updateSelectionStateヘルパー関数を使って、各選択UIの状態を更新 ---
+                updateSelectionState(
+                    exists = nenreiDataExists,
+                    optionsFlow = _nenreiOptions,
+                    showSelectionFlow = _showNenreiSelection,
+                    getOptions = {
+                        createNenreiOptionsList(
+                            mdc, bunrui)
+                    },
+                    onAutoSelect = { options -> // ここが List<String> になります
+                        // 14桁のDPCコードから手術コード(8-10桁目)を切り出す
+                        val targetCode = fullCode.substring(7, 8)
+
+                        // 2. options は List<LabelStringAndScore> 型。
+                        // その要素の中から、今回の targetCode と一致するスコア（score）を持つものを探す。
+                        // ※ 年齢条件の場合、DPCコードの該当桁の数字がそのままマスタのスコア(1, 2, 3...)に対応します。
+                        val matchedOption = options.find {
+                            it.code.toString() == targetCode }
+
+                        if (matchedOption != null) {
+                            // 3. 一致する条件があれば、現在のDPCコードの年齢桁を更新する
+                            _currentDpcCode.value = _currentDpcCode.value.copy(
+                                nenrei = targetCode)
+                            Log.d("tamaiDpc", "Nenrei auto-selected: $targetCode")
+                        }
+                    }
+                )
+
                 updateSelectionState(
                     exists = shujutsuExists,
                     optionsFlow = _shujutsuOptions,
@@ -532,51 +570,6 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                         options.find { it.code.toString() == targetCode }
                     }
                 )
-//                updateSelectionState(
-//                    exists = shochi1Exists,
-//                    optionsFlow = _shochi1Options,
-//                    showSelectionFlow = _showShochi1Selection,
-//                    getOptions = { shochi1Repository.getNames(
-//                        mdc, bunrui) },
-//
-//                )
-//                updateSelectionState(
-//                    exists = shochi2Exists,
-//                    optionsFlow = _shochi2Options,
-//                    showSelectionFlow = _showShochi2Selection,
-//                    getOptions = { shochi2Repository.getNames(mdc, bunrui) }
-//                )
-//                updateSelectionState(
-//                    exists = fukushobyoExists,
-//                    optionsFlow = _fukushobyoOptions,
-//                    showSelectionFlow = _showFukushobyoSelection,
-//                    getOptions = { fukushobyoRepository.getNames(mdc, bunrui) }
-//                )
-//                // jushodoJcsOptionsはList<JushodoJcsJoken>型だが、ジェネリクス<T>のおかげで同じ関数を使える
-//                updateSelectionState(
-//                    exists = jushodoJcsExists,
-//                    optionsFlow = _jushodoJcsOptions,
-//                    showSelectionFlow = _showJushodoJcsSelection,
-//                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
-//                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-//                    getOptions = { createJushoJcsJokenOptionsList(mdc, bunrui) }
-//                )
-//                updateSelectionState(
-//                    exists = jushodoStrokeExists,
-//                    optionsFlow = _jushodoStrokeOptions,
-//                    showSelectionFlow = _showJushodoStrokeSelection,
-//                    // ★ getJushodoJokenはList<JushodoJcsJoken>を返すが、型推論で正しく動作する
-//                    // ★ ただし、getJushodoJokenはListを返すように修正が必要（現在は単一オブジェクト）
-//                    getOptions = {
-//                        createJushoStrokeJokenOptionsList(
-//                            mdc,
-//                            bunrui
-//                        )
-//                    }
-//                )
-
-                // その他の項目 (Shochi2, Fukushobyo, Stroke 等) も同様に記述...
-                // ...
 
                 // 4. 点数データの検索（BottomBarの金額表示用）
                 val tensuResults = shindangunBunruiTensuhyoRepository.getNames(fullCode)
@@ -1059,19 +1052,4 @@ private fun <T> CoroutineScope.updateSelectionState(
         }
     }
 }
-//private fun <T> CoroutineScope.updateSelectionState(
-//    exists: Boolean,
-//    optionsFlow: MutableStateFlow<List<T>>,
-//    showSelectionFlow: MutableStateFlow<Boolean>,
-//    getOptions: suspend () -> List<T>
-//) {
-//    launch {
-//        if (exists) {
-//            optionsFlow.value = getOptions()
-//            showSelectionFlow.value = true
-//        } else {
-//            optionsFlow.value = emptyList()
-//            showSelectionFlow.value = false
-//        }
-//    }
-//}
+
