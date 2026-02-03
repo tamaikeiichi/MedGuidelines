@@ -123,8 +123,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
 
     // 病態ドロップダウンの選択肢リスト
-    private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<ByotaiOptionEntity>>(emptyList())
-    val byotaiOptions: StateFlow<List<ByotaiOptionEntity>> = _byotaiOptions.asStateFlow()
+    private val _byotaiOptions = kotlinx.coroutines.flow.MutableStateFlow<List<LabelStringAndScore>>(emptyList())
+    val byotaiOptions: StateFlow<List<LabelStringAndScore>> = _byotaiOptions.asStateFlow()
 
     // 年齢ラジオボタン
     private val _nenreiOptions = MutableStateFlow<List<LabelStringAndScore>>(emptyList())
@@ -226,7 +226,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                 val byotaiExists = repository.checkMdcAndBunruiExist(item.mdcCode, item.bunruiCode)
                 if (byotaiExists) {
                     // 存在すれば、病態の選択肢を準備してUIを表示させる
-                    _byotaiOptions.value = repository.getByotaiNames(item.mdcCode, item.bunruiCode)
+                    _byotaiOptions.value = createByotaiOptionsList(item.mdcCode, item.bunruiCode)
 
                     _showByotaiSelection.value = true
                 } else {
@@ -433,7 +433,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
                 // --- 3. 各マスターの存在チェックとデータロード (onIcdItemSelectedと同様) ---
                 // 対応する病態が存在するかチェック
-                val nenreiDataExists = repository.checkMdcAndBunruiExistsInNenrei(mdc, bunrui)
+                val byotaiExists = repository.checkMdcAndBunruiExist(mdc, bunrui)
+                val nenreiExists = repository.checkMdcAndBunruiExistsInNenrei(mdc, bunrui)
                 val shujutsuExists = shujutsuRepository.checkMdcAndBunruiExistsInShujutsu(mdc, bunrui)
                 val shochi1Exists = shochi1Repository.checkMdcAndBunruiExistsInShochi1(mdc, bunrui)
                 val shochi2Exists = shochi2Repository.checkMdcAndBunruiExistsInMaster(mdc, bunrui)
@@ -457,7 +458,34 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
                 // --- updateSelectionStateヘルパー関数を使って、各選択UIの状態を更新 ---
                 updateSelectionState(
-                    exists = nenreiDataExists,
+                    exists = byotaiExists,
+                    optionsFlow = _byotaiOptions,
+                    showSelectionFlow = _showByotaiSelection,
+                    getOptions = {
+                        createByotaiOptionsList(
+                            mdc, bunrui)
+                    },
+                    onAutoSelect = { options -> // ここが List<String> になります
+                        // 14桁のDPCコードから手術コード(8-10桁目)を切り出す
+                        val targetCode = fullCode.substring(6, 7)
+
+                        // 2. options は List<LabelStringAndScore> 型。
+                        // その要素の中から、今回の targetCode と一致するスコア（score）を持つものを探す。
+                        // ※ 年齢条件の場合、DPCコードの該当桁の数字がそのままマスタのスコア(1, 2, 3...)に対応します。
+                        val matchedOption = options.find {
+                            it.code.toString() == targetCode }
+
+                        if (matchedOption != null) {
+                            // 3. 一致する条件があれば、現在のDPCコードの年齢桁を更新する
+                            _currentDpcCode.value = _currentDpcCode.value.copy(
+                                nenrei = targetCode)
+                            Log.d("tamaiDpc", "Nenrei auto-selected: $targetCode")
+                        }
+                    }
+                )
+
+                updateSelectionState(
+                    exists = nenreiExists,
                     optionsFlow = _nenreiOptions,
                     showSelectionFlow = _showNenreiSelection,
                     getOptions = {
@@ -970,6 +998,31 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+    private suspend fun createByotaiOptionsList(
+        mdcCode: String,
+        bunruiCode: String
+    ): List<LabelStringAndScore> {
+        // リポジトリから病態のリストを取得（実装に合わせて関数名は調整してください）
+        val byotaiEntities = repository.getByotaiNames(mdcCode, bunruiCode)
+
+        return byotaiEntities.map { entity ->
+            val ageLabel = formatByotaiNenreiLabel(entity.nenreiIjo, entity.nenreiMiman)
+
+            // 年齢ラベルがある場合は、病態名称の前に結合する
+            val fullLabel = if (ageLabel.isNotEmpty()) {
+                "$ageLabel ${entity.byotaiKubunMeisho}"
+            } else {
+                entity.byotaiKubunMeisho ?: ""
+            }
+
+            LabelStringAndScore(
+                labelResId = fullLabel,
+                // データベースのコードを数値として扱う
+                code = entity.byotaiCode?.toIntOrNull() ?: 0,
+                label = "病態"
+            )
+        }
+    }
 }
 
 /**
@@ -992,6 +1045,28 @@ private fun formatNenreiLabel(ijo: String?, miman: String?): String? {
     }
 }
 
+/**
+ * 年齢の以上・未満から表示用文字列を生成する（共通部品）
+ */
+fun formatByotaiNenreiLabel(ijo: String?, miman: String?): String {
+    return buildString {
+        val ijoVal = ijo?.toIntOrNull()
+        val mimanVal = miman?.toIntOrNull()
+
+        if (ijoVal != null && ijoVal != 0) {
+            append("${ijoVal}歳以上")
+        }
+
+        // 両方ある場合はスペースを入れる
+        if (ijoVal != null && ijoVal != 0 && mimanVal != null && mimanVal != 999) {
+            append(" ")
+        }
+
+        if (mimanVal != null && mimanVal != 999) {
+            append("${mimanVal}歳未満")
+        }
+    }
+}
 private fun formatJcsLabel(ijo: String?, miman: String?): String? {
     val ijoVal = ijo?.toIntOrNull()
     val mimanVal = miman?.toIntOrNull()

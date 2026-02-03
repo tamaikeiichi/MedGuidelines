@@ -81,6 +81,7 @@ import com.keiichi.medguidelines.ui.component.VerticalLazyScrollbar
 import com.keiichi.medguidelines.ui.component.VerticalScrollbar
 import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSelectableLabelString
 import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
+import com.keiichi.medguidelines.ui.viewModel.formatByotaiNenreiLabel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -886,96 +887,88 @@ fun DpcScreen(
                                     Log.d("tamaiDpc", "after if (showByotaiSelection)")
 
                                     var expanded by remember { mutableStateOf(false) }
-                                    // byotaiOptionsが更新されたらselectedOptionもリセットする
-                                    var selectedEntity by remember(byotaiOptions) {
-                                        mutableStateOf<ByotaiOptionEntity?>(byotaiOptions.firstOrNull())
+                                    var selectedLabel by remember(byotaiOptions) {
+                                        mutableStateOf(byotaiOptions.firstOrNull()?.labelResId ?: "")
                                     }
-                                    // 2. ★ 追加：selectedEntity が決まったら、自動的に code を反映させる
-                                    LaunchedEffect(selectedEntity) {
-                                        selectedEntity?.let { entity ->
-                                            val rawCode = entity.byotaiCode
-                                            if (rawCode.isNotBlank()) {
-                                                currentDpcCode = currentDpcCode.copy(
-                                                    byotai = rawCode
-                                                )
+                                    var selectedCode by remember(byotaiOptions) {
+                                        mutableIntStateOf(byotaiOptions.firstOrNull()?.code ?: 0)
+                                    }
+                                    var selectedLabelResId: String? by remember(
+                                        byotaiOptions
+                                    ) {
+                                        mutableStateOf(
+                                            if (currentDpcCode.nenrei != "x") {
+                                                byotaiOptions.find { it.code.toString() == currentDpcCode.nenrei }?.labelResId?.toString()
+                                                    ?: byotaiOptions.firstOrNull()?.labelResId?.toString()
+                                            } else {
+                                                byotaiOptions.first().labelResId.toString()
                                             }
-                                        }
+                                        )
                                     }
-                                    var selectedOption by remember(byotaiOptions) {
-                                        mutableStateOf<ByotaiOptionEntity?>(byotaiOptions.firstOrNull())
+//                                    // 最初の要素が自動選択されたことを currentDpcCode にも反映させるための処理
+//                                    LaunchedEffect(byotaiOptions) {
+//                                        byotaiOptions.firstOrNull()?.let { firstOption ->
+//                                            currentDpcCode = currentDpcCode.copy(
+//                                                byotai = firstOption.code.toString()
+//                                            )
+//                                        }
+//                                    }
+
+                                    LaunchedEffect(selectedCode) {
+                                        currentDpcCode = currentDpcCode.copy(
+                                            byotai = selectedCode.toString()
+                                        )
                                     }
-                                    MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
-                                        ExposedDropdownMenuBox(
-                                            expanded = expanded,
-                                            onExpandedChange = { expanded = !expanded }
-                                        ) {
-                                            TextField(
-                                                value = selectedEntity?.let {
-                                                    getByotaiDisplayLabel(
-                                                        it
-                                                    )
-                                                } ?: "選択してください",
-                                                onValueChange = {},
-                                                readOnly = true,
-                                                trailingIcon = {
-                                                    ExposedDropdownMenuDefaults.TrailingIcon(
-                                                        expanded = expanded
-                                                    )
-                                                },
-                                                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                                                    unfocusedContainerColor = Color.Transparent,
-                                                    focusedContainerColor = Color.Transparent
-                                                ),
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .menuAnchor()
-                                            )
-                                            ExposedDropdownMenu(
+                                    if (byotaiOptions.any { !it.labelResId.isNullOrBlank() }) {
+                                        MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
+                                            ExposedDropdownMenuBox(
                                                 expanded = expanded,
-                                                onDismissRequest = { expanded = false },
+                                                onExpandedChange = { expanded = !expanded }
                                             ) {
-                                                byotaiOptions.forEach { optionEntity ->
-                                                    // 1. 表示用のラベルを作成
-                                                    val displayLabel = buildString {
-                                                        if (optionEntity.nenreiIjo.isNotBlank() || optionEntity.nenreiMiman.isNotBlank()) {
+                                                TextField(
+                                                    value = selectedLabelResId ?: "", //?: "選択してください",
+                                                    onValueChange = {},
+                                                    readOnly = true,
+                                                    trailingIcon = {
+                                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                                            expanded = expanded
+                                                        )
+                                                    },
+                                                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                                                        unfocusedContainerColor = Color.Transparent,
+                                                        focusedContainerColor = Color.Transparent
+                                                    ),
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .menuAnchor()
+                                                )
+                                                ExposedDropdownMenu(
+                                                    expanded = expanded,
+                                                    onDismissRequest = { expanded = false },
+                                                ) {
+                                                    byotaiOptions.forEach { optionEntity ->
+                                                        // 1. 表示用のラベルを作成
+                                                        val displayLabel = optionEntity.labelResId
+                                                        DropdownMenuItem(
+                                                            text = { Text(displayLabel ?: "") },
+                                                            onClick = {
+                                                                selectedCode = optionEntity.code
+                                                                selectedLabel =
+                                                                    optionEntity.labelResId ?: "選択してください"
+                                                                expanded = false
+                                                                val rawCode = optionEntity.code
 
-                                                            if (optionEntity.nenreiIjo != "000") {
-                                                                if (optionEntity.nenreiIjo.isNotEmpty()) append(
-                                                                    "${
-                                                                        optionEntity.nenreiIjo.toInt()
-                                                                            .toString()
-                                                                    }歳以上"
-                                                                )
+                                                                // フォーマット（数値変換せず、空文字チェックのみで安全に）
+                                                                if (rawCode != null) {
+                                                                    currentDpcCode =
+                                                                        currentDpcCode.copy(
+                                                                            // 先頭の0を維持するため、そのままか、必要ならpadStartを使う
+                                                                            byotai = rawCode.toString()
+                                                                        )
+                                                                }
                                                             }
-                                                            if (optionEntity.nenreiIjo.isNotEmpty() && optionEntity.nenreiMiman.isNotEmpty()) append(
-                                                                " "
-                                                            )
-                                                            if (optionEntity.nenreiMiman != "999") {
-                                                                if (optionEntity.nenreiMiman.isNotEmpty()) append(
-                                                                    "${optionEntity.nenreiMiman.toInt()}歳未満"
-                                                                )
-                                                            }
-                                                        }
-                                                        append(optionEntity.byotaiKubunMeisho)
-
+                                                        )
                                                     }
-                                                    DropdownMenuItem(
-                                                        text = { Text(displayLabel) },
-                                                        onClick = {
-                                                            selectedEntity = optionEntity
-                                                            expanded = false
-                                                            val rawCode = optionEntity.byotaiCode
-
-                                                            // フォーマット（数値変換せず、空文字チェックのみで安全に）
-                                                            if (rawCode.isNotBlank()) {
-                                                                currentDpcCode =
-                                                                    currentDpcCode.copy(
-                                                                        // 先頭の0を維持するため、そのままか、必要ならpadStartを使う
-                                                                        byotai = rawCode
-                                                                    )
-                                                            }
-                                                        }
-                                                    )
                                                 }
                                             }
                                         }
@@ -1007,7 +1000,7 @@ fun DpcScreen(
                                         ) {
                                             // 1. byotaiの値に応じて表示する選択肢を絞り込む
                                             val filteredNenreiOptions =
-                                                remember(currentDpcCode.byotai, nenreiOptions) {
+                                                remember(currentDpcCode.byotai, nenreiOptions, showNenreiSelection) {
                                                     when (currentDpcCode.byotai) {
                                                         "1" -> {
                                                             // 例：byotaiが1の時は、特定の条件（例：labelResIdが子供向けのものなど）のみ
