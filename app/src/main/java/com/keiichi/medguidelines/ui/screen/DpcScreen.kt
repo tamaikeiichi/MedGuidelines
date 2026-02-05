@@ -905,19 +905,22 @@ fun DpcScreen(
                                             }
                                         )
                                     }
-//                                    // 最初の要素が自動選択されたことを currentDpcCode にも反映させるための処理
-//                                    LaunchedEffect(byotaiOptions) {
-//                                        byotaiOptions.firstOrNull()?.let { firstOption ->
-//                                            currentDpcCode = currentDpcCode.copy(
-//                                                byotai = firstOption.code.toString()
-//                                            )
-//                                        }
-//                                    }
 
-                                    LaunchedEffect(selectedCode) {
-                                        currentDpcCode = currentDpcCode.copy(
-                                            byotai = selectedCode.toString()
-                                        )
+                                    // --- 病態選択セクション（Dropdown部分） ---
+                                    LaunchedEffect(byotaiOptions, currentDpcCode.byotai) {
+                                        // DPCコードに既に入っている値(byotai)が options の中にあるか探す
+                                        val matched = byotaiOptions.find { it.code.toString() == currentDpcCode.byotai }
+                                        if (matched != null) {
+                                            selectedLabelResId = matched.labelResId ?: ""
+                                            selectedCode = matched.code
+                                        } else if (byotaiOptions.isNotEmpty() && (
+                                                    currentDpcCode.byotai == "x" )) {
+                                            // 値が未設定の場合のみ初期値をセット
+                                            val first = byotaiOptions.first()
+                                            selectedLabelResId = first.labelResId ?: ""
+                                            selectedCode = first.code
+                                            currentDpcCode = currentDpcCode.copy(byotai = first.code.toString())
+                                        }
                                     }
                                     if (byotaiOptions.any { !it.labelResId.isNullOrBlank() }) {
                                         MedGuidelinesCard(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -982,16 +985,11 @@ fun DpcScreen(
                                     Log.d("tamaiDpc", "after if (showNenreiSelection)")
                                     val nenreiOptions by dpcScreenViewModel.nenreiOptions.collectAsState()
                                     if (nenreiOptions.isNotEmpty()) {
-                                        var selectedlabelResId: String? by remember(
-                                            nenreiOptions
-                                        ) {
+                                        var selectedlabelResId: String? by remember(nenreiOptions, currentDpcCode.nenrei) {
                                             mutableStateOf(
-                                                if (currentDpcCode.nenrei != "x") {
-                                                    nenreiOptions.find { it.code.toString() == currentDpcCode.nenrei }?.labelResId?.toString()
-                                                        ?: nenreiOptions.firstOrNull()?.labelResId?.toString()
-                                                } else {
-                                                    nenreiOptions.first().labelResId.toString()
-                                                }
+                                                // DPC検索結果のコードがあればそれを優先、なければ1番目
+                                                nenreiOptions.find { it.code.toString() == currentDpcCode.nenrei }?.labelResId
+                                                    ?: nenreiOptions.firstOrNull()?.labelResId
                                             )
                                         }
                                         MedGuidelinesCard(
@@ -1023,6 +1021,20 @@ fun DpcScreen(
                                                 if (filteredNenreiOptions.none { it.labelResId == selectedlabelResId }) {
                                                     selectedlabelResId =
                                                         filteredNenreiOptions.firstOrNull()?.labelResId
+                                                }
+                                            }
+                                            LaunchedEffect(filteredNenreiOptions, currentDpcCode.nenrei) {
+                                                // 1. DPC検索等でコードが既に決まっている場合、そのコードに対応するラベルをセットする
+                                                val matchedOption = filteredNenreiOptions.find { it.code.toString() == currentDpcCode.nenrei }
+
+                                                if (matchedOption != null) {
+                                                    selectedlabelResId = matchedOption.labelResId
+                                                } else {
+                                                    // 2. 決まっていない、またはリストにない場合は、フィルタリングされた中から最初を選ぶ
+                                                    if (filteredNenreiOptions.isNotEmpty() &&
+                                                        filteredNenreiOptions.none { it.labelResId == selectedlabelResId }) {
+                                                        selectedlabelResId = filteredNenreiOptions.firstOrNull()?.labelResId
+                                                    }
                                                 }
                                             }
                                             val selectedValue =
@@ -1478,7 +1490,12 @@ private fun DpcDropdownSelection(
             initialSelection ?: options.firstOrNull() ?: "選択してください"
         )
     }
-
+    // ★ 追加ポイント: 外部から渡される初期値が変化した時に、内部状態を同期させる
+    LaunchedEffect(initialSelection) {
+        if (initialSelection != null) {
+            selectedOption = initialSelection
+        }
+    }
     if (options.isNotEmpty()) {
         MedGuidelinesCard(
             modifier = Modifier.padding(
