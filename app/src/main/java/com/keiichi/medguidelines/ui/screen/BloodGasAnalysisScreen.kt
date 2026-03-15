@@ -201,9 +201,9 @@ fun BloodGasAnalysisInput() {
                 correctedAaDifference = aaDifference / 2
             }
             if (correctedAaDifference <= 10) {
-                TextInCard(R.string.HypoventilationWithoutIntrinsicLungDisease)
+                TextInCard(R.string.HyperventilationWithoutIntrinsicLungDisease)
             } else if (correctedAaDifference > 10) {
-                TextInCard(R.string.HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
+                TextInCard(R.string.HyperventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
             }
         }
     } else if (ph.doubleValue > 7.42) {
@@ -248,9 +248,9 @@ fun BloodGasAnalysisInput() {
                 correctedAaDifference = aaDifference / 2
             }
             if (correctedAaDifference <= 10) {
-                TextInCard(R.string.HypoventilationWithoutIntrinsicLungDisease)
+                TextInCard(R.string.HyperventilationWithoutIntrinsicLungDisease)
             } else if (correctedAaDifference > 10) {
-                TextInCard(R.string.HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
+                TextInCard(R.string.HyperventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
             }
         }
     } else {

@@ -124,8 +124,8 @@
     <string name="chronicRespiratoryAcidosis">Chronic respiratory acidosis</string>
     <string name="additionalMetabolicAlkalosis">Additional metabolic alkalosis</string>
     <string name="age">Age</string>
-    <string name="HypoventilationWithoutIntrinsicLungDisease">Hypoventilation without intrinsic lung disease</string>
-    <string name="HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth">Hypoventilation with intrinsic lung disease, ventilation–perfusion mismatch, or both</string>
+    <string name="HyperventilationWithoutIntrinsicLungDisease">Hyperventilation without intrinsic lung disease (e.g. fever, pregnancy)</string>
+    <string name="HyperventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth">Hyperventilation with intrinsic lung disease, ventilation–perfusion mismatch, or both (e.g. pneumonia, pulmonary embolism)</string>
     <string name="acuteRespiratoryAlkalosis">Acute respiratory alkalosis</string>
     <string name="chronicRespiratoryAlkalosis">Chronic respiratory alkalosis</string>
     <string name="metabolicAlkalosis">Metabolic Alkalosis</string>

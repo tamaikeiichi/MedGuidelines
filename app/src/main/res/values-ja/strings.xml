@@ -80,8 +80,8 @@
     <string name="chronicRespiratoryAcidosis">慢性呼吸性アシドーシス</string>
     <string name="additionalMetabolicAlkalosis">代謝性アルカローシスの併存</string>
     <string name="age">年齢</string>
-    <string name="HypoventilationWithoutIntrinsicLungDisease">肺疾患を伴わない低換気</string>
-    <string name="HypoventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth">肺疾患・換気血流不均衡を伴う低換気</string>
+    <string name="HyperventilationWithoutIntrinsicLungDisease">肺疾患を伴わない過換気（発熱や妊娠など）</string>
+    <string name="HyperventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth">肺疾患・換気血流不均衡を伴う過換気（肺炎や肺塞栓など）</string>
     <string name="acuteRespiratoryAlkalosis">急性呼吸性アルカローシス</string>
     <string name="chronicRespiratoryAlkalosis">慢性呼吸性アルカローシス</string>
     <string name="metabolicAlkalosis">代謝性アルカローシス</string>
