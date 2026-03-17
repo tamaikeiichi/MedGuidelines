@@ -1206,7 +1206,7 @@ fun DpcScreen(
 
                                     LaunchedEffect(options) {
                                         if (options.isNotEmpty()) {
-                                            val isCurrentCodeValid = options.any { it.code == currentDpcCode.shochi1 }
+                                            val isCurrentCodeValid = options.any { it.code == currentDpcCode.shochi2 }
                                             if (!isCurrentCodeValid) {
                                                 val initialCode = options.first().code
                                                 if (initialCode != null) {
@@ -1214,11 +1214,29 @@ fun DpcScreen(
                                                         currentDpcCode.copy(shochi2 = initialCode)
                                                     Log.d(
                                                         "tamaiDpc",
-                                                        "shochi1 initialized with: $initialCode"
+                                                        "shochi2 initialized with: $initialCode"
                                                     )
                                                 }
                                             }
                                         }
+                                    }
+                                    // 手術同様、keyを追加すると表示がより安定します
+                                    key(currentLabel) {
+                                        DpcDropdownSelection(
+                                            title = "手術・処置等２",
+                                            options = labelIdList,
+                                            initialSelection = currentLabel,
+                                            onOptionSelected = { selectedName ->
+                                                coroutineScope.launch {
+                                                    val code = options.find {
+                                                        it.shochi1Name == selectedName
+                                                    }?.code
+                                                    if (code != null) {
+                                                        currentDpcCode = currentDpcCode.copy(shochi2 = code)
+                                                    }
+                                                }
+                                            }
+                                        )
                                     }
                                     DpcDropdownSelection(
                                         title = "手術・処置等２",
@@ -1253,7 +1271,7 @@ fun DpcScreen(
 
                                     LaunchedEffect(options) {
                                         if (options.isNotEmpty()) {
-                                            val isCurrentCodeValid = options.any { it.code == currentDpcCode.shochi1 }
+                                            val isCurrentCodeValid = options.any { it.code == currentDpcCode.fukushobyo }
                                             if (!isCurrentCodeValid) {
                                                 val initialCode = options.first().code
                                                 if (initialCode != null) {
@@ -1261,13 +1279,29 @@ fun DpcScreen(
                                                         currentDpcCode.copy(fukushobyo = initialCode)
                                                     Log.d(
                                                         "tamaiDpc",
-                                                        "shochi1 initialized with: $initialCode"
+                                                        "fukushobyo initialized with: $initialCode"
                                                     )
                                                 }
                                             }
                                         }
                                     }
-
+                                    key(currentLabel) {
+                                        DpcDropdownSelection(
+                                            title = "定義副傷病名",
+                                            options = labelIdList,
+                                            initialSelection = currentLabel,
+                                            onOptionSelected = { selectedOption ->
+                                                coroutineScope.launch {
+                                                    val code = options.find {
+                                                        it.name == selectedOption
+                                                    }?.code
+                                                    if (code != null) {
+                                                        currentDpcCode = currentDpcCode.copy(fukushobyo = code)
+                                                    }
+                                                }
+                                            }
+                                        )
+                                    }
                                     DpcDropdownSelection(
                                         title = "定義副傷病名",
                                         options = labelIdList,
