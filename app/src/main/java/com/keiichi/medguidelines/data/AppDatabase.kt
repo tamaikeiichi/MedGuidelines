@@ -29,7 +29,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         JushodoStrokeEntity::class,
         ShindangunBunruiTensuhyoEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

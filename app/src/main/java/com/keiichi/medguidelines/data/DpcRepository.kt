@@ -710,6 +710,7 @@ class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
                             bunruiCode = row[1]?.toString() ?: "",
                             code = row[2]?.toString() ?: "",
                             label = row[5]?.toString() ?:"",
+                            kubun = row[6]?.toString() ?:"",
                             joken1Name = row[7]?.toString() ?: "",
 
                         )

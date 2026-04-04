@@ -245,6 +245,8 @@ data class JushodoStrokeEntity(
     val bunruiCode: String?,
     @ColumnInfo(name = "code")
     val code: String?,
+    @ColumnInfo(name = "kubun")
+    val kubun: String?,
     @ColumnInfo(name = "label")
     val label: String?,
     @ColumnInfo(name = "joken1_name")

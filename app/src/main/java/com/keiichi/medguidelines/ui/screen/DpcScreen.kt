@@ -1436,7 +1436,7 @@ fun DpcScreen(
 
                                     val options by dpcScreenViewModel.jushodoStrokeOptions.collectAsState()
                                     // options から labelResId だけを抽出したリストを作成
-                                    val labelIdList = options.map { it.labelResId }
+                                    val labelIdList = options.map { it.labelResId }.distinct()
                                     val currentLabel = options.find {
                                         it.code.toString() == currentDpcCode.jushodo
                                     }?.labelResId
