@@ -165,26 +165,10 @@ class DpcRepository(private val dpcDao: DpcDao) {
             try {
                 // ICDテーブルのチェックと投入 (CSVからまとめて読み込む)
                 if (dpcDao.getIcdCount() == 0) {
-                    val headerNames = (1..4).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001593946_4)
                     Log.d("tamaiDpc", "icd reading from CSV...")
-                    // DataFrameを格納する変数を宣言
-                    val icdDf: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        icdDf = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
-                    // 読み込んだDataFrameをIcdEntityのリストに変換する
+                    // 共通関数を使って読み込み
+                    val icdDf = readDpcCsv(context, R.raw.dpc001593946_4)
+
                     val icdList = icdDf.rows().map { row ->
                         IcdEntity(
                             mdcCode = row[0]?.toString() ?: "",
@@ -194,32 +178,15 @@ class DpcRepository(private val dpcDao: DpcDao) {
                             normalizedIcdName = normalizeTextForSearch(row[2]?.toString() ?: "")
                         )
                     }
-                    // 変換したリストをデータベースに挿入する
                     dpcDao.insertAllIcd(icdList)
                     Log.d("tamaiDpc", "icd inserted from CSV.")
                 }
 
                 // Byotaiテーブルのチェックと投入
                 if (dpcDao.getByotaiCount() == 0) {
-                    val headerNames = (1..8).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001593946_3)
                     Log.d("tamaiDpc", "byotai reading")
-                    // DataFrameを格納する変数を宣言
-                    val byotaiDf: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        byotaiDf = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
+                    // 共通関数を使用してCSVを読み込む
+                    val byotaiDf = readDpcCsv(context, R.raw.dpc001593946_3)
 
                     val byotaiList = byotaiDf.rows().map { row ->
                         ByotaiEntity(
@@ -235,25 +202,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
                 }
                 // --- ここからBunruiテーブルのチェックと投入処理を追加 ---
                 if (dpcDao.getBunruiCount() == 0) {
-                    val headerNames = (1..4).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001593946_2)
                     Log.d("tamaiDpc", "bunrui reading")
-                    // DataFrameを格納する変数を宣言
-                    val bunruiDf: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        bunruiDf = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
+                    val bunruiDf = readDpcCsv(context, R.raw.dpc001593946_2)
+
                     val bunruiList = bunruiDf.rows().map { row ->
                         BunruiEntity(
                             // BunruiEntityの定義に合わせて列を指定
@@ -268,25 +219,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
                 }
 
                 if (dpcDao.getMdcCount() == 0) {
-                    val headerNames = (1..4).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001593946_1)
                     Log.d("tamaiDpc", "mdc reading")
-                    // DataFrameを格納する変数を宣言
-                    val mdcDf: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        mdcDf = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
+                    val mdcDf = readDpcCsv(context, R.raw.dpc001593946_1)
+
                     val mdcList = mdcDf.rows().map { row ->
                         MdcEntity(
                             // MdcEntityの定義に合わせて列を指定
@@ -298,25 +233,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
                 }
 
                 if (dpcDao.getNenreiCount() == 0) {
-                    val headerNames = (1..21).map { it.toString() }
-                    val columnTypes: Map<String, ColType> =
-                        headerNames.associateWith { ColType.String }
-                    val inputStream: InputStream =
-                        context.resources.openRawResource(R.raw.dpc001593946_5)
                     Log.d("tamaiDpc", "nenrei reading")
-                    // DataFrameを格納する変数を宣言
-                    val nenreiDf: DataFrame<*>
-                    inputStream.use { stream ->
-                        // CSVの全データをDataFrameとして一括で読み込む
-                        nenreiDf = DataFrame.readCSV(
-                            stream = stream,
-                            header = headerNames,
-                            charset = Charset.forName("Shift-JIS"),
-                            colTypes = columnTypes, // Specify that all columns should be read as String
-                            skipLines = 2,
-                            parserOptions = ParserOptions() // Keep default or adjust as needed
-                        )
-                    }
+                    val nenreiDf = readDpcCsv(context, R.raw.dpc001593946_5)
+
                     val nenreiList = nenreiDf.rows().map { row ->
                         NenreiEntity(
                             // nenreiEntityの定義に合わせて列を指定
@@ -815,12 +734,11 @@ private fun readDpcCsv(
     inputStream.use { stream ->
         return DataFrame.readCSV(
             stream = stream,
-            header = headerNames,            charset = Charset.forName("Shift-JIS"),
+            header = headerNames,
+            charset = Charset.forName("Shift-JIS"),
             colTypes = columnTypes,
             skipLines = skipLines,
             parserOptions = ParserOptions()
         )
     }
 }
-
-

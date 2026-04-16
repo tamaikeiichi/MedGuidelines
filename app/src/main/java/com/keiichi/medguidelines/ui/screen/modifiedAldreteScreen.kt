@@ -145,12 +145,13 @@ fun aldreteTotalScore(): Int {
 private fun bpPressure(
     systolicBp: MutableDoubleState
 ){
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         //horizontalArrangement = Arrangement.spacedBy(12.dp)
     ){
         InputValue(
-            label = R.string.systolicBloodPressure,
+            label = R.string.preAnestheticSystolicBloodPressure,
             value = systolicBp,
             japaneseUnit = R.string.mmhg,
         )
@@ -158,16 +159,10 @@ private fun bpPressure(
             modifier = Modifier.padding(start = 24.dp)
         )
         {
-            Text(
-                text = parseStyledString(R.string.plusTwentyTofortynine), // Using stringResource directly                text = parseStyledString(R.string.plusTwentyTofortynine), // Using stringResource directly
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 2.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
             val plusLower = systolicBp.value * 1.20
             val plusUpper = systolicBp.value * 1.50
 
-            val plusLowerResult = if (plusLower == floor(plusLower)) { // Check if it's a whole number
+            val plus20Result = if (hasDecimalUnderOnePercent(plusLower)) { // Check if it's a whole number
                 // Decimal place is zero
                 plusLower + 1.0
             } else {
@@ -175,7 +170,7 @@ private fun bpPressure(
                 ceil(plusLower)
             }
 
-            val plusUpperResult = if (plusUpper == floor(plusUpper)) { // Check if it's a whole number
+            val plus49Result = if (hasDecimalUnderOnePercent(plusUpper)) { // Check if it's a whole number
                 // Decimal place is zero
                 plusUpper - 1.0
             } else {
@@ -183,33 +178,10 @@ private fun bpPressure(
                 floor(plusUpper)
             }
 
-            val plusDisplayString =
-                buildAnnotatedString {
-                    append(plusLowerResult.toInt().toString())
-                    pushStyle(SpanStyle(fontSize = 18.sp))
-                    append(" – ")
-                    pop()
-                    append(plusUpperResult.toInt().toString())
-                }
-            val fontSize = calculateFontSize(plusDisplayString.toString())
-            Log.d("FontSizeDebug", "Calculated size: $fontSize, String: '${plusDisplayString.toString()}'")
-
-            Text(
-                text = plusDisplayString, // Using stringResource directly
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 2.dp),
-                fontSize = 22.sp //fontSize
-            )
-            Text(
-                text = parseStyledString(R.string.minusTwentyTofortynine), // Using stringResource directly                text = parseStyledString(R.string.minusTwentyTofortynine), // Using stringResource directly
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(top = 2.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
             val minusLower = systolicBp.value * 0.80
             val minusUpper = systolicBp.value * 0.50
 
-            val minusLowerResult = if (minusLower == floor(minusLower)) { // Check if it's a whole number
+            val minus20Result = if (hasDecimalUnderOnePercent(minusLower)) { // Check if it's a whole number
                 // Decimal place is zero
                 minusLower - 1.0
             } else {
@@ -217,7 +189,7 @@ private fun bpPressure(
                 ceil(minusLower)
             }
 
-            val minusUpperResult = if (minusUpper == floor(minusUpper)) { // Check if it's a whole number
+            val minus49Result = if (hasDecimalUnderOnePercent(minusUpper)) { // Check if it's a whole number
                 // Decimal place is zero
                 minusUpper + 1.0
             } else {
@@ -225,17 +197,50 @@ private fun bpPressure(
                 floor(minusUpper)
             }
 
-            val minusDisplayString =
+            Text(
+                text = parseStyledString(R.string.plusMinusTwenty), // Using stringResource directly                text = parseStyledString(R.string.plusTwentyTofortynine), // Using stringResource directly
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 2.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            val plusMinus20DisplayString =
                 buildAnnotatedString {
-                    append(minusLowerResult.toInt().toString())
+                    append(minus20Result.toInt().toString())
                     pushStyle(SpanStyle(fontSize = 18.sp))
                     append(" – ")
                     pop()
-                    append(minusUpperResult.toInt().toString())
+                    append(plus20Result.toInt().toString())
+                }
+            val fontSize = calculateFontSize(plusMinus20DisplayString.toString())
+            Log.d("FontSizeDebug", "Calculated size: $fontSize, String: '${plusMinus20DisplayString.toString()}'")
+
+            Text(
+                text = plusMinus20DisplayString, // Using stringResource directly
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 2.dp),
+                fontSize = 22.sp //fontSize
+            )
+
+            Text(
+                text = parseStyledString(R.string.plusMinusFifty), // Using stringResource directly                text = parseStyledString(R.string.minusTwentyTofortynine), // Using stringResource directly
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 2.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+
+            val minusDisplayString =
+                buildAnnotatedString {
+                    append(minus49Result.toInt().toString())
+                    pushStyle(SpanStyle(fontSize = 18.sp))
+                    append(" – ")
+                    pop()
+                    append(plus49Result.toInt().toString())
 
                 }
-            val minusFontSize = calculateFontSize(plusDisplayString.toString())
-            Log.d("FontSizeDebug", "Calculated size: $fontSize, String: '${plusDisplayString.toString()}'")
+            val minusFontSize = calculateFontSize(plusMinus20DisplayString.toString())
+            Log.d("FontSizeDebug", "Calculated size: $fontSize, String: '${plusMinus20DisplayString.toString()}'")
 
             Text(
                 text = minusDisplayString, // Using stringResource directly
@@ -276,6 +281,16 @@ private fun bpPressureValueText(
 //fun AldreteScorePreview() {
 //    AldreteScreen(navController = NavController(LocalContext.current))
 //}
+
+/**
+ * 100倍した際に小数点以下の端数（1%未満の細かな値）が存在するかどうかを判定する
+ */
+inline fun hasDecimalUnderOnePercent(value: Double): Boolean {
+    val scaled = value * 100
+    // 100倍してfloorをとったものと、floorをとってから100倍したものが
+    // 一致しない場合、もとの値に「1/100の位より下の端数」があったことになる
+    return floor(scaled) != floor(value) * 100
+}
 
 @Preview
 @Composable
