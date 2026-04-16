@@ -454,4 +454,6 @@
     <string name="daysOfInHospital">入院日数</string>
     <string name="preAnestheticSystolicBloodPressure">麻酔前の収縮期血圧</string>
     <string name="plusMinusTwenty">±20%</string>
+    <string name="bukkaTaiouRyo">物価対応料</string>
+    <string name="yen">円</string>
 </resources>

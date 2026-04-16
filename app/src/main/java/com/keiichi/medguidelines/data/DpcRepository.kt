@@ -17,30 +17,35 @@ import org.jetbrains.kotlinx.dataframe.io.readCSV
 import java.io.InputStream
 import java.nio.charset.Charset
 
+/**
+ * DPCマスターのリソースIDを一括管理するオブジェクト
+ * ファイル名（プレフィックス）が変わった場合はここを修正する
+ */
+object DpcResources {
+    val mdc = R.raw.dpc001691187_1
+    val bunrui = R.raw.dpc001691187_2
+    val byotai = R.raw.dpc001691187_3
+    val icd = R.raw.dpc001691187_4
+    val nenrei = R.raw.dpc001691187_5
+    val shujutsu = R.raw.dpc001691187_6
+    val shochi1 = R.raw.dpc001691187_7
+    val shochi2 = R.raw.dpc001691187_8
+    val fukushobyo = R.raw.dpc001691187_9
+    val jushodoJcs = R.raw.dpc001691187_10_1
+    val jushodoStroke = R.raw.dpc001691187_10_4
+    val tensuhyo = R.raw.dpc001691187_11
+}
+
 class DpcRepository(private val dpcDao: DpcDao) {
 
-    // 検索クエリに基づいてICDマスターを検索する
-    // DAOのメソッドがFlowを返すので、そのままViewModelに渡す
     fun searchIcd(query: String) = dpcDao.searchIcd("%$query%")
 
     suspend fun searchIcdByMcdAndBunrui(mdcCode: String?, bunruiCode: String?) =
         dpcDao.searchIcdByMcdAndBunrui(mdcCode, bunruiCode)
 
-    // 3つのワードによるAND検索をDAOに依頼する
     fun searchIcdMulti(word1: String, word2: String, word3: String, word4: String) =
         dpcDao.searchIcdMulti(word1, word2, word3, word4)
 
-
-    /**
-     * データベースにデータが存在しない場合、CSVから読み込んで挿入する
-     */
-
-    /**
-     * MDCコードと分類コードがbyotaiマスターに存在するかチェックする。
-     * @param mdcCode チェックするMDCコード
-     * @param bunruiCode チェックする分類コード
-     * @return 存在すればtrue
-     */
     suspend fun checkMdcAndBunruiExist(mdcCode: String, bunruiCode: String): Boolean {
         return withContext(Dispatchers.IO) {
             val mdcExists = dpcDao.getUniqueMdc(mdcCode).isNotEmpty()
@@ -52,123 +57,48 @@ class DpcRepository(private val dpcDao: DpcDao) {
     suspend fun checkMdcAndBunruiExistsInNenrei(mdcCode: String, bunruiCode: String): Boolean {
         return dpcDao.existsMdcAndBunruiInNenreiMaster(mdcCode, bunruiCode)
     }
-    /**
-     * MDCコードと分類コードに一致する病態名のリストを取得する。
-     * @param mdcCode 検索するMDCコード
-     * @param bunruiCode 検索する分類コード
-     * @return 病態名のリスト
-     */
+
     suspend fun getByotaiNames(mdcCode: String, bunruiCode: String): List<ByotaiOptionEntity> {
         return withContext(Dispatchers.IO) {
             dpcDao.getByotaiNames(mdcCode, bunruiCode)
         }
     }
+
     suspend fun getBunruiName(mdcCode: String?, bunruiCode: String?): String? {
         return withContext(Dispatchers.IO) {
             dpcDao.getBunruiNames(mdcCode, bunruiCode)
         }
     }
-    suspend fun getNenreiJoken1Ijo(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken1Ijo(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken1Miman(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken1Miman(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken1Value(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken1Value(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken2Ijo(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken2Ijo(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken2Miman(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken2Miman(mdcCode, bunruiCode)
-        }
-        }
-    suspend fun getNenreiJoken2Value(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken2Value(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken3Ijo(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken3Ijo(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken3Miman(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken3Miman(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken3Value(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken3Value(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken4Ijo(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken4Ijo(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken4Miman(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken4Miman(mdcCode, bunruiCode)
-        }
-        }
-    suspend fun getNenreiJoken4Value(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken4Value(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken5Ijo(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken5Ijo(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getNenreiJoken5Miman(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken5Miman(mdcCode, bunruiCode)
 
-        }
-    }
-    suspend fun getNenreiJoken5Value(mdcCode: String, bunruiCode: String): String {
-        return withContext(Dispatchers.IO) {
-            dpcDao.getNenreiJoken5Value(mdcCode, bunruiCode)
-        }
-    }
+    suspend fun getNenreiJoken1Ijo(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken1Ijo(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken1Miman(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken1Miman(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken1Value(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken1Value(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken2Ijo(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken2Ijo(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken2Miman(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken2Miman(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken2Value(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken2Value(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken3Ijo(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken3Ijo(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken3Miman(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken3Miman(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken3Value(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken3Value(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken4Ijo(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken4Ijo(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken4Miman(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken4Miman(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken4Value(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken4Value(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken5Ijo(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken5Ijo(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken5Miman(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken5Miman(mdcCode, bunruiCode) }
+    suspend fun getNenreiJoken5Value(mdcCode: String, bunruiCode: String): String = withContext(Dispatchers.IO) { dpcDao.getNenreiJoken5Value(mdcCode, bunruiCode) }
 
-    /**
-     * 病態名から対応する病態コードを取得する。
-     * @param byotaiName 検索する病態名
-     * @return 病態コード。見つからなければnull。
-     */
     suspend fun getByotaiCodeByName(byotaiName: String): String? {
         return withContext(Dispatchers.IO) {
             dpcDao.getByotaiCodeByName(byotaiName)
         }
     }
 
-    /**
-     * データベースにデータが存在しない場合、CSVから読み込んで挿入する。
-     * @param context アプリケーションコンテキスト
-     */
     suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                // ICDテーブルのチェックと投入 (CSVからまとめて読み込む)
+                // ICD
                 if (dpcDao.getIcdCount() == 0) {
-                    Log.d("tamaiDpc", "icd reading from CSV...")
-                    // 共通関数を使って読み込み
-                    val icdDf = readDpcCsv(context, R.raw.dpc001593946_4)
-
+                    Log.d("tamaiDpc", "icd reading")
+                    val icdDf = readDpcCsv(context, DpcResources.icd)
                     val icdList = icdDf.rows().map { row ->
                         IcdEntity(
                             mdcCode = row[0]?.toString() ?: "",
@@ -179,15 +109,12 @@ class DpcRepository(private val dpcDao: DpcDao) {
                         )
                     }
                     dpcDao.insertAllIcd(icdList)
-                    Log.d("tamaiDpc", "icd inserted from CSV.")
                 }
 
-                // Byotaiテーブルのチェックと投入
+                // Byotai
                 if (dpcDao.getByotaiCount() == 0) {
                     Log.d("tamaiDpc", "byotai reading")
-                    // 共通関数を使用してCSVを読み込む
-                    val byotaiDf = readDpcCsv(context, R.raw.dpc001593946_3)
-
+                    val byotaiDf = readDpcCsv(context, DpcResources.byotai)
                     val byotaiList = byotaiDf.rows().map { row ->
                         ByotaiEntity(
                             mdcCode = row[0]?.toString() ?: "",
@@ -200,14 +127,13 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     }
                     dpcDao.insertAllByotai(byotaiList)
                 }
-                // --- ここからBunruiテーブルのチェックと投入処理を追加 ---
+
+                // Bunrui
                 if (dpcDao.getBunruiCount() == 0) {
                     Log.d("tamaiDpc", "bunrui reading")
-                    val bunruiDf = readDpcCsv(context, R.raw.dpc001593946_2)
-
+                    val bunruiDf = readDpcCsv(context, DpcResources.bunrui)
                     val bunruiList = bunruiDf.rows().map { row ->
                         BunruiEntity(
-                            // BunruiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             bunruiName = row[2]?.toString() ?: "",
@@ -215,16 +141,14 @@ class DpcRepository(private val dpcDao: DpcDao) {
                         )
                     }
                     dpcDao.insertAllBunrui(bunruiList)
-                    Log.d("tamaiDpc", "bunrui read")
                 }
 
+                // Mdc
                 if (dpcDao.getMdcCount() == 0) {
                     Log.d("tamaiDpc", "mdc reading")
-                    val mdcDf = readDpcCsv(context, R.raw.dpc001593946_1)
-
+                    val mdcDf = readDpcCsv(context, DpcResources.mdc)
                     val mdcList = mdcDf.rows().map { row ->
                         MdcEntity(
-                            // MdcEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             mdcName = row[1]?.toString() ?: ""
                         )
@@ -232,13 +156,12 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     dpcDao.insertAllMdc(mdcList)
                 }
 
+                // Nenrei
                 if (dpcDao.getNenreiCount() == 0) {
                     Log.d("tamaiDpc", "nenrei reading")
-                    val nenreiDf = readDpcCsv(context, R.raw.dpc001593946_5)
-
+                    val nenreiDf = readDpcCsv(context, DpcResources.nenrei)
                     val nenreiList = nenreiDf.rows().map { row ->
                         NenreiEntity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             jokenKubun = row[2]?.toString() ?: "",
@@ -265,37 +188,24 @@ class DpcRepository(private val dpcDao: DpcDao) {
                     dpcDao.insertAllNenrei(nenreiList)
                 }
 
-
             } catch (e: Exception) {
                 Log.e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-            // TODO: 他のテーブルについても同様のチェックとデータ投入処理を追加
         }
     }
 
-    /**
-     * 分類マスターテーブルを検索する。
-     * DAOのメソッドがFlowを返すので、そのままViewModelに渡す。
-     * @param query 検索文字列
-     * @return 検索結果のFlow
-     */
     fun searchBunrui(query: String) = dpcDao.searchBunrui("%$query%")
-
 }
 
 class BunruiRepository(private val bunruiDao: BunruiDao) {
     suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "bunrui check ${bunruiDao.getCount()}")
                 if (bunruiDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_2)
-                    Log.d("tamaiDpc", "bunrui reading")
-                    // DataFrameを格納する変数を宣言
+                    val df = readDpcCsv(context, DpcResources.bunrui)
                     val list = df.rows().map { row ->
                         val rawMdcCode = row[0]?.toString() ?: ""
                         BunruiEntity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = if (rawMdcCode.length == 1) "0$rawMdcCode" else rawMdcCode,
                             bunruiCode = row[1]?.toString() ?: "",
                             bunruiName = row[2]?.toString() ?: "",
@@ -304,38 +214,28 @@ class BunruiRepository(private val bunruiDao: BunruiDao) {
                     }
                     bunruiDao.insertAll(list)
                 }
-
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
-
     fun searchBunruiMulti(word1: String, word2: String, word3: String, word4: String) =
         bunruiDao.searchBunruiMulti(word1, word2, word3, word4)
 }
 
 class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
     suspend fun getShujutsuNames(mdcCode: String, bunruiCode: String): List<String> {
-        return withContext(Dispatchers.IO) {
-            shujutsuDao.getNames(mdcCode, bunruiCode)
-
-        }
+        return withContext(Dispatchers.IO) { shujutsuDao.getNames(mdcCode, bunruiCode) }
     }
 
     suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "shujutsu check ${shujutsuDao.getShujutsuCount()}")
                 if (shujutsuDao.getShujutsuCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_6)
-                    Log.d("tamaiDpc", "shujutsu reading")
-                    // DataFrameを格納する変数を宣言
+                    val df = readDpcCsv(context, DpcResources.shujutsu)
                     val list = df.rows().map { row ->
                         val rawTaiouCode = row[5]?.toString() ?: ""
                         ShujutsuEntity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             taiouCode = if (rawTaiouCode.length == 1) "0$rawTaiouCode" else rawTaiouCode,
@@ -345,11 +245,9 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
                     }
                     shujutsuDao.insertAllShujutsu(list)
                 }
-
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
 
@@ -362,21 +260,16 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
             shujutsuDao.getShujutsu1CodeByName(shujutsu1Name, mdcCode = mdcCode, bunruiCode = bunruiCode)
         }
     }
-
 }
 
 class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
     suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "shuochi1 check ${shochi1Dao.getCount()}")
                 if (shochi1Dao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_7)
-                    Log.d("tamaiDpc", "shochi1 reading")
-                    // DataFrameを格納する変数を宣言
+                    val df = readDpcCsv(context, DpcResources.shochi1)
                     val list = df.rows().map { row ->
                         Shochi1Entity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             code = row[2]?.toString() ?: "",
@@ -391,43 +284,23 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
-    suspend fun getCodeByName(name: String): String? {
-        return withContext(Dispatchers.IO) {
-            shochi1Dao.getCodeByName(name)
-        }
+    suspend fun getCodeByName(name: String): String? = withContext(Dispatchers.IO) { shochi1Dao.getCodeByName(name) }
+    suspend fun checkMdcAndBunruiExistsInShochi1(mdcCode: String, bunruiCode: String): Boolean = shochi1Dao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<Shochi1Joken> = withContext(Dispatchers.IO) {
+        listOf(Shochi1Joken(code = "0", shochi1Name = "なし")) + shochi1Dao.getNames(mdcCode, bunruiCode)
     }
-    suspend fun checkMdcAndBunruiExistsInShochi1(mdcCode: String, bunruiCode: String): Boolean {
-        return shochi1Dao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
-    }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<Shochi1Joken> {
-        return withContext(Dispatchers.IO) {
-            val results = shochi1Dao.getNames(mdcCode, bunruiCode)
-            listOf(
-                Shochi1Joken(
-                    code = "0",
-                    shochi1Name = "なし"
-                )
-            ) + results
-        }
-    }
-
 }
 
 class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
     suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "shuochi1 check ${shochi2Dao.getCount()}")
                 if (shochi2Dao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_8)
-                    Log.d("tamaiDpc", "shochi2 reading")
-                    // DataFrameを格納する変数を宣言
+                    val df = readDpcCsv(context, DpcResources.shochi2)
                     val list = df.rows().map { row ->
                         Shochi2Entity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             code = row[2]?.toString() ?: "",
@@ -442,27 +315,12 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
-    suspend fun getCodeByName(name: String): String? {
-        return withContext(Dispatchers.IO) {
-            shochi2Dao.getCodeByName(name)
-        }
-    }
-    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean {
-        return shochi2Dao.existsBunruiInMaster(mdcCode, bunruiCode)
-    }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<Shochi2Joken> {
-        return withContext(Dispatchers.IO) {
-            val results = shochi2Dao.getNames(mdcCode, bunruiCode)
-            listOf(
-                Shochi2Joken(
-                    code = "0",
-                    shochi1Name = "なし"
-                )
-            ) + results
-        }
+    suspend fun getCodeByName(name: String): String? = withContext(Dispatchers.IO) { shochi2Dao.getCodeByName(name) }
+    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean = shochi2Dao.existsBunruiInMaster(mdcCode, bunruiCode)
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<Shochi2Joken> = withContext(Dispatchers.IO) {
+        listOf(Shochi2Joken(code = "0", shochi1Name = "なし")) + shochi2Dao.getNames(mdcCode, bunruiCode)
     }
 }
 
@@ -470,14 +328,10 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
     suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "fukushobyo check ${fukushobyoDao.getCount()}")
                 if (fukushobyoDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_9)
-                    Log.d("tamaiDpc", "fukushobyo reading")
-                    // DataFrameを格納する変数を宣言
+                    val df = readDpcCsv(context, DpcResources.fukushobyo)
                     val list = df.rows().map { row ->
                         FukushobyoEntity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             code = row[2]?.toString() ?: "",
@@ -490,27 +344,12 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
-    suspend fun getCodeByName(name: String): String? {
-        return withContext(Dispatchers.IO) {
-            fukushobyoDao.getCodeByName(name)
-        }
-    }
-    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean {
-        return fukushobyoDao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
-    }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<FukushobyoJoken> {
-        return withContext(Dispatchers.IO) {
-            val results = fukushobyoDao.getNames(mdcCode, bunruiCode)
-            listOf(
-                FukushobyoJoken(
-                    code = "0",
-                    name = "なし"
-                )
-            ) + results
-        }
+    suspend fun getCodeByName(name: String): String? = withContext(Dispatchers.IO) { fukushobyoDao.getCodeByName(name) }
+    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean = fukushobyoDao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<FukushobyoJoken> = withContext(Dispatchers.IO) {
+        listOf(FukushobyoJoken(code = "0", name = "なし")) + fukushobyoDao.getNames(mdcCode, bunruiCode)
     }
 }
 
@@ -518,13 +357,10 @@ class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
     suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "jushodo jcs check ${jushodoJcsDao.getCount()}")
                 if (jushodoJcsDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_10_1)
-                    Log.d("tamaiDpc", "jushodo jcs reading")
+                    val df = readDpcCsv(context, DpcResources.jushodoJcs)
                     val list = df.rows().map { row ->
                         JushodoJcsEntity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             jokenName = row[3]?.toString() ?:"",
@@ -534,7 +370,6 @@ class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
                             joken2Ijo = row[7]?.toString() ?: "",
                             joken2Miman = row[8]?.toString() ?: "",
                             joken2Value = row[9]?.toString() ?: "",
-
                         )
                     }
                     jushodoJcsDao.insertAlldata(list)
@@ -542,45 +377,25 @@ class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
-    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoJcsJoken> {
-        return withContext(Dispatchers.IO) {
-            jushodoJcsDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
-        }
-    }
-    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean {
-        return jushodoJcsDao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
-    }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
-        return withContext(Dispatchers.IO) {
-            jushodoJcsDao.getNames(mdcCode, bunruiCode)
-        }
-    }
+    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoJcsJoken> = withContext(Dispatchers.IO) { jushodoJcsDao.getJushodoJoken(mdcCode, bunruiCode) }
+    suspend fun checkMdcAndBunruiExistsInMaster(mdcCode: String, bunruiCode: String): Boolean = jushodoJcsDao.existsMdcAndBunruiInMaster(mdcCode, bunruiCode)
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> = withContext(Dispatchers.IO) { jushodoJcsDao.getNames(mdcCode, bunruiCode) }
 }
 
-
 class NenreiRepository(private val nenreiDao: NenreiDao) {
-    suspend fun getNenreiJoken(mdcCode: String, bunruiCode: String): NenreiJoken? {
-        return withContext(Dispatchers.IO) {
-            nenreiDao.getNenreiJoken(mdcCode, bunruiCode)
-        }
-    }
-
+    suspend fun getNenreiJoken(mdcCode: String, bunruiCode: String): NenreiJoken? = withContext(Dispatchers.IO) { nenreiDao.getNenreiJoken(mdcCode, bunruiCode) }
 }
 
 class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuDao) {
     suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "jushodo jcs check ${jushodoShujutsuDao.getCount()}")
                 if (jushodoShujutsuDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_10_1)
-                    Log.d("tamaiDpc", "jushodo jcs reading")
+                    val df = readDpcCsv(context, DpcResources.jushodoJcs) // 同じファイルを使用
                     val list = df.rows().map { row ->
                         JushodoShujutsuEntity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             jokenName = row[3]?.toString() ?:"",
@@ -588,50 +403,34 @@ class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuD
                             joken1Code = row[5]?.toString() ?: "",
                             joken2Name = row[6]?.toString() ?: "",
                             joken2Code = row[7]?.toString() ?: "",
-                            )
+                        )
                     }
                     jushodoShujutsuDao.insertAlldata(list)
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
-    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoShujutsuJoken> {
-        return withContext(Dispatchers.IO) {
-            jushodoShujutsuDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
-        }
-    }
-    suspend fun checkBunruiExistsInMaster(mdcCode: String?, bunruiCode: String): Boolean {
-        Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $mdcCode $bunruiCode")
-        return jushodoShujutsuDao.existsBunruiInMaster(mdcCode, bunruiCode)
-    }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
-        return withContext(Dispatchers.IO) {
-            jushodoShujutsuDao.getNames(mdcCode, bunruiCode)
-        }
-    }
-    }
+    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoShujutsuJoken> = withContext(Dispatchers.IO) { jushodoShujutsuDao.getJushodoJoken(mdcCode, bunruiCode) }
+    suspend fun checkBunruiExistsInMaster(mdcCode: String?, bunruiCode: String): Boolean = jushodoShujutsuDao.existsBunruiInMaster(mdcCode, bunruiCode)
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> = withContext(Dispatchers.IO) { jushodoShujutsuDao.getNames(mdcCode, bunruiCode) }
+}
 
 class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
     suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "jushodo Stroke check ${jushodoStrokeDao.getCount()}")
                 if (jushodoStrokeDao.getCount() == 0) {
-                    val df = readDpcCsv(context, R.raw.dpc001593946_10_4)
-                    Log.d("tamaiDpc", "jushodo stroke reading")
+                    val df = readDpcCsv(context, DpcResources.jushodoStroke)
                     val list = df.rows().map { row ->
                         JushodoStrokeEntity(
-                            // nenreiEntityの定義に合わせて列を指定
                             mdcCode = row[0]?.toString() ?: "",
                             bunruiCode = row[1]?.toString() ?: "",
                             code = row[2]?.toString() ?: "",
                             label = row[5]?.toString() ?:"",
                             kubun = row[6]?.toString() ?:"",
                             joken1Name = row[7]?.toString() ?: "",
-
                         )
                     }
                     jushodoStrokeDao.insertAlldata(list)
@@ -639,46 +438,22 @@ class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
-    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoStrokeJoken> {
-        return withContext(Dispatchers.IO) {
-            jushodoStrokeDao.getJushodoJoken(mdcCode = mdcCode, bunruiCode = bunruiCode)
-        }
-    }
-    suspend fun checkMdcAndBunruiExistInMaster(mdcCode: String?, bunruiCode: String): Boolean {
-        Log.d("dpcJushodoShujutsu", "jushodoShujutsuDataExists $mdcCode $bunruiCode")
-        return jushodoStrokeDao.existsBunruiInMaster(mdcCode, bunruiCode)
-    }
-    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> {
-        return withContext(Dispatchers.IO) {
-            jushodoStrokeDao.getNames(mdcCode, bunruiCode)
-        }
-    }
-    suspend fun getCodeByName(name: String): String? {
-        return withContext(Dispatchers.IO) {
-            jushodoStrokeDao.getCodeByName(name)
-        }
-    }
+    suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoStrokeJoken> = withContext(Dispatchers.IO) { jushodoStrokeDao.getJushodoJoken(mdcCode, bunruiCode) }
+    suspend fun checkMdcAndBunruiExistInMaster(mdcCode: String?, bunruiCode: String): Boolean = jushodoStrokeDao.existsBunruiInMaster(mdcCode, bunruiCode)
+    suspend fun getNames(mdcCode: String, bunruiCode: String): List<String> = withContext(Dispatchers.IO) { jushodoStrokeDao.getNames(mdcCode, bunruiCode) }
+    suspend fun getCodeByName(name: String): String? = withContext(Dispatchers.IO) { jushodoStrokeDao.getCodeByName(name) }
 }
 
 class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao: ShindangunBunruiTensuhyoDao){
     suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                Log.d("tamaiDpc", "shindangunBunruiTensuhyo check ${shindangunBunruiTensuhyoDao.getCount()}")
                 if (shindangunBunruiTensuhyoDao.getCount() == 0) {
-                    val df = readDpcCsv(
-                        context,
-                        R.raw.dpc001593946_11,
-                        skipLines = 4,
-                    )
-                    Log.d("tamaiDpc", "shindangunBunruiTensuhyo reading")
-                    // DataFrameを格納する変数を宣言
+                    val df = readDpcCsv(context, DpcResources.tensuhyo, skipLines = 4)
                     val list = df.rows().map { row ->
                         ShindangunBunruiTensuhyoEntity(
-                            // nenreiEntityの定義に合わせて列を指定
                             code = row[1]?.toString() ?: "",
                             name = row[2]?.toString() ?: "",
                             nyuinBiI = row[8]?.toString() ?: "",
@@ -694,39 +469,19 @@ class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
             }
-
         }
     }
-    suspend fun getCodeByName(name: String): String? {
-        return withContext(Dispatchers.IO) {
-            shindangunBunruiTensuhyoDao.getCodeByName(name)
-        }
-    }
-    suspend fun checkCodeExistsInMaster(code: String): Boolean {
-        return shindangunBunruiTensuhyoDao.existsCodeInMaster(code)
-    }
-    suspend fun getNames(code: String): List<ShindangunBunruiTensuhyoJoken> {
-        return withContext(Dispatchers.IO) {
-            Log.d("tamaiDpc", "run getNames($code)")
-            shindangunBunruiTensuhyoDao.getNames(code)
-        }
-    }
-    suspend fun getFirstThreeRows(): List<String> {
-        return shindangunBunruiTensuhyoDao.getFirstThreeRows()
-    }
+    suspend fun getCodeByName(name: String): String? = withContext(Dispatchers.IO) { shindangunBunruiTensuhyoDao.getCodeByName(name) }
+    suspend fun checkCodeExistsInMaster(code: String): Boolean = shindangunBunruiTensuhyoDao.existsCodeInMaster(code)
+    suspend fun getNames(code: String): List<ShindangunBunruiTensuhyoJoken> = withContext(Dispatchers.IO) { shindangunBunruiTensuhyoDao.getNames(code) }
+    suspend fun getFirstThreeRows(): List<String> = shindangunBunruiTensuhyoDao.getFirstThreeRows()
 }
-/**
- * 指定されたリソースIDのCSVファイルを読み込み、DataFrameとして返す共通関数
- * @param context
-コンテキスト
- * @param resourceId 読み込むCSVファイルのリソースID (例: R.raw.dpc001593946_6)
- * @return 読み込まれたDataFrame
- */
+
 private fun readDpcCsv(
     context: Context,
     resourceId: Int,
     skipLines: Int = 2,
-    ): DataFrame<*> {
+): DataFrame<*> {
     val headerNames = (1..21).map { it.toString() }
     val columnTypes: Map<String, ColType> = headerNames.associateWith { ColType.String }
     val inputStream: InputStream = context.resources.openRawResource(resourceId)

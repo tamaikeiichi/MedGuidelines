@@ -85,6 +85,18 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+    // DataStoreから値を読み込むFlow（デフォルト false）
+    val bukkaTaiouFlow: Flow<Double> = dataStore.data
+        .map { preferences -> preferences[DataStoreKeys.BUKKA_TAIOU_KEY] ?: 0.0 }
+
+    // 値を永続化保存する関数
+    fun saveBukkaTaiou(value: Double) {
+        viewModelScope.launch {
+            dataStore.edit { preferences ->
+                preferences[DataStoreKeys.BUKKA_TAIOU_KEY] = value
+            }
+        }
+    }
     // --- ここからByotai関連のStateFlowを追加 ---
 
     // 病態選択UIを表示するかどうか

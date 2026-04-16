@@ -154,6 +154,22 @@ fun DpcScreen(
     var cost = remember { mutableIntStateOf(0) }
     // UI表示用の状態変数
     val bunruiName = remember { mutableStateOf<String?>(null) }
+    var showBukkaDialog by remember { mutableStateOf(false) }
+    if (showBukkaDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showBukkaDialog = false },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { showBukkaDialog = false }) {
+                    Text("閉じる")
+                }
+            },
+            title = { Text("物価高騰対応分") },
+            text = {
+                Text("急性期A：660円\n急性期1：580円\n療養病棟1：180円\n精神病棟10対1：130円\n" +
+                        "特定機能病院7対1：840円\n地域包括医療病棟1：490円\n回復期リハビリ病棟1：190円\n地域包括ケア病棟1：270円")
+            }
+        )
+    }
 
     // currentDpcCode の mdc または bunrui が変わるたびに実行される
     LaunchedEffect(currentDpcCode.mdc, currentDpcCode.bunrui) {
@@ -193,6 +209,23 @@ fun DpcScreen(
         mutableStateOf<String?>(
             null
         )
+    }
+    // 1. ViewModelから永続化されている値を購読
+    val savedBukkaTaiou by dpcScreenViewModel.bukkaTaiouFlow.collectAsState(initial = 0.0)
+
+// 2. UI表示・計算用のState。初期値に DataStore からの値を設定
+    val bukkaTaiou = remember { mutableDoubleStateOf(savedBukkaTaiou) }
+
+// 3. DataStoreの値がロードされたらStateを更新
+    LaunchedEffect(savedBukkaTaiou) {
+        if (bukkaTaiou.value != savedBukkaTaiou) {
+            bukkaTaiou.value = savedBukkaTaiou
+        }
+    }
+
+// 4. UI側で値が書き換えられたらDataStoreに保存
+    LaunchedEffect(bukkaTaiou.value) {
+        dpcScreenViewModel.saveBukkaTaiou(bukkaTaiou.value)
     }
 //    var bunruiName by androidx.compose.runtime.remember {
 //        mutableStateOf<String?>(
@@ -409,7 +442,7 @@ fun DpcScreen(
                                 nyuinKikanIII = data?.nyuinKikanIII?.toIntOrNull() ?: 0,
                             )
                             val currentTotalAmount =
-                                (cost.intValue * 10 * coeff.doubleValue).roundToInt()
+                                (cost.intValue * 10 * coeff.doubleValue).toInt() + bukkaTaiou.doubleValue.toInt() * days.doubleValue.toInt()
                             withStyle(
                                 style = SpanStyle(
                                     color = primaryColor,
@@ -842,6 +875,12 @@ fun DpcScreen(
                                             value = coeff,
                                             japaneseUnit = R.string.space,
                                             formatter = remember { DecimalFormat("#.####") },
+                                        )
+                                        InputValue(
+                                            label = R.string.bukkaTaiouRyo,
+                                            value = bukkaTaiou,
+                                            japaneseUnit = R.string.yen,
+                                            onLabelClick = { showBukkaDialog = true } // ★ クリックイベントを追加
                                         )
                                     }
                                 }

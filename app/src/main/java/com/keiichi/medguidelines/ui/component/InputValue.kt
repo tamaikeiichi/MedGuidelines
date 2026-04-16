@@ -41,6 +41,7 @@ fun InputValue(
     onFocusChanged: (Boolean) -> Unit = {},
     isSetByOtherComponent: Boolean = false,
     formatter: DecimalFormat = remember { DecimalFormat("#.##") },
+    onLabelClick: (() -> Unit)? = null // 追加
     ) {
     val textMeasurer = rememberTextMeasurer()
     val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
@@ -80,7 +81,8 @@ fun InputValue(
                 isJapaneseUnit = isJapaneseUnit,
                 changeValueRate = changedValueRate,
                 onFocusChanged = onFocusChanged,
-                isSetByOtherComponent = isSetByOtherComponent
+                isSetByOtherComponent = isSetByOtherComponent,
+                onLabelClick = onLabelClick // 渡す
             )
             if (changedValueRate == 1.0) {
                 Column(

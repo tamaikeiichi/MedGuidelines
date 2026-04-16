@@ -761,4 +761,6 @@
     <string name="minusFortynineTofortynine" translatable="false">-49-49%</string>
     <string name="plusMinusFortynine" translatable="false">±49%</string>
     <string name="plusMinusFifty" translatable="false">±50%</string>
+    <string name="bukkaTaiouRyo">物価対応料</string>
+    <string name="yen">円</string>
 </resources>
