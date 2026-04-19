@@ -456,4 +456,6 @@
     <string name="plusMinusTwenty">±20%</string>
     <string name="bukkaTaiouRyo">物価対応料</string>
     <string name="yen">円</string>
+    <string name="shobyomeiTitle">傷病名マスタ</string>
+    <string name="ShobyomeiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
 </resources>

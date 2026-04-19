@@ -36,6 +36,7 @@ import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
 import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
 import com.keiichi.medguidelines.ui.screen.RaScreen
 import com.keiichi.medguidelines.ui.screen.ShikaShinryokoiMasterScreen
+import com.keiichi.medguidelines.ui.screen.ShobyomeiScreen
 import com.keiichi.medguidelines.ui.screen.SleScreen
 import com.keiichi.medguidelines.ui.screen.SodiumDifferentialDiagnosisScreen
 import com.keiichi.medguidelines.ui.screen.SofaScreen
@@ -80,6 +81,7 @@ enum class ActionType {
     NAVIGATE_TO_JGCALENDAR,
     NAVIGATE_TO_SOFA,
     NAVIGATE_TO_DPC,
+    NAVIGATE_TO_SHOBYOMEI,
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -198,7 +200,8 @@ val itemsList = listOf(
             R.string.sepsis,
             R.string.shock
         )),
-    ListItemData(R.string.dpcTitle, ActionType.NAVIGATE_TO_DPC,)
+    ListItemData(R.string.dpcTitle, ActionType.NAVIGATE_TO_DPC,),
+    ListItemData(R.string.shobyomeiTitle, ActionType.NAVIGATE_TO_SHOBYOMEI),
 )
 
 data class IndexScreenActions(
@@ -237,6 +240,7 @@ data class IndexScreenActions(
     val navigateToJgCalendar: () -> Unit,
     val navigateToSofa: () -> Unit,
     val navigateToDpc: () -> Unit,
+    val navigateToShobyomei: () -> Unit,
 )
 
 @Composable
@@ -282,7 +286,8 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToRa = {navController.navigate("RaScreen")},
         navigateToJgCalendar = {navController.navigate("JgCalendarScreen")},
         navigateToSofa = {navController.navigate("SofaScreen")},
-        navigateToDpc = {navController.navigate("DpcScreen")}
+        navigateToDpc = {navController.navigate("DpcScreen")},
+        navigateToShobyomei = {navController.navigate("ShobyomeiScreen")},
     )
 }
 
@@ -334,7 +339,8 @@ fun getAppScreens(sofaViewModel: SofaViewModel): List<ScreenRoute> {
         ScreenRoute("SofaScreen") { navController ->
             SofaScreen(navController, sofaViewModel) // Pass the viewModel here
         },
-        ScreenRoute("DpcScreen") { navController -> DpcScreen(navController) }
+        ScreenRoute("DpcScreen") { navController -> DpcScreen(navController) },
+        ScreenRoute("ShobyomeiScreen") { navController -> ShobyomeiScreen(navController) },
     )
 }
 
@@ -375,6 +381,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_JGCALENDAR -> this.navigateToJgCalendar()
         ActionType.NAVIGATE_TO_SOFA -> this.navigateToSofa()
         ActionType.NAVIGATE_TO_DPC -> this.navigateToDpc()
+        ActionType.NAVIGATE_TO_SHOBYOMEI -> this.navigateToShobyomei()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

@@ -6,8 +6,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
  * アプリケーションのRoomデータベース本体。
@@ -28,21 +26,17 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         JushodoShujutsuEntity::class,
         JushodoStrokeEntity::class,
         ShindangunBunruiTensuhyoEntity::class,
+        ShobyomeiEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    /**
-     * DPC関連のデータアクセスオブジェクト(DAO)を取得します。
-     * Roomがこのメソッドの実装を自動生成します。
-     * @return DpcDaoのインスタンス
-     */
     abstract fun dpcDao(): DpcDao
     abstract fun bunruiDao(): BunruiDao
-    abstract fun shujutsuDao(): ShujutsuDao // <--- この行を追加
-    abstract fun shochi1Dao(): Shochi1Dao // <--- この行を追加
+    abstract fun shujutsuDao(): ShujutsuDao
+    abstract fun shochi1Dao(): Shochi1Dao
     abstract fun shochi2Dao(): Shochi2Dao
     abstract fun fukushobyoDao(): FukushobyoDao
     abstract fun jushodoJcsDao(): JushodoJcsDao
@@ -50,32 +44,22 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun jushodoShujutsuDao(): JushodoShujutsuDao
     abstract fun jushodoStrokeDao(): JushodoStrokeDao
     abstract fun shindangunBunruiTensuhyoDao(): ShindangunBunruiTensuhyoDao
+    abstract fun shobyomeiDao(): ShobyomeiDao // ikaShiryokoiDao から shobyomeiDao に修正
 
     companion object {
-        // @Volatileアノテーションにより、INSTANCE変数が複数スレッドからアクセスされても
-        // 常に最新の値であることが保証されます。
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        /**
-         * データベースのシングルトンインスタンスを取得します。
-         * インスタンスがまだ存在しない場合は、スレッドセーフに新しいデータベースを生成します。
-         *
-         * @param context アプリケーションコンテキスト
-         * @return AppDatabaseのシングルトンインスタンス
-         */
         fun getDatabase(context: Context): AppDatabase {
-            // INSTANCEがnullでなければそれを返し、nullならデータベースを生成します
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "dpc_database" // データベースファイル名
+                    "dpc_database"
                 )
                     .fallbackToDestructiveMigration(true)
                     .build()
                 INSTANCE = instance
-                // 生成したインスタンスを返す
                 instance
             }
         }
