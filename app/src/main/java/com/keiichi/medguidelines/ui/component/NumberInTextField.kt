@@ -53,7 +53,7 @@ fun NumberInTextField(
     changeValueRate: Double = 1.0,
     onFocusChanged: (Boolean) -> Unit = {},
     isSetByOtherComponent: Boolean = false,
-    onLabelClick: (() -> Unit)? = null // ラベルクリック時のコールバック
+    onLabelClick: (() -> Unit)? = null // 追加
 ) {
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -109,7 +109,7 @@ fun NumberInTextField(
                         contentDescription = "help",
                         modifier = Modifier
                             .padding(start = 4.dp)
-                            .size(18.dp) // ラベル縮小対策で大きめに設定
+                            .size(18.dp)
                             .clickable { onLabelClick() },
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -156,34 +156,17 @@ fun NumberInTextField(
     )
 }
 
-@Preview(showBackground = true, name = "はてなあり (値あり)")
+@Preview(showBackground = true)
 @Composable
-fun PreviewNumberInTextFieldWithHelp() {
-    val mockValue = remember { mutableDoubleStateOf(1234.5) }
+fun NumberInTextFieldWithHelpPreview() {
+    val mockValue = remember { mutableDoubleStateOf(123.45) }
     MaterialTheme {
         Surface(modifier = Modifier.padding(16.dp)) {
             NumberInTextField(
                 label = R.string.bukkaTaiouRyo,
                 value = mockValue,
-                width = 250,
-                onLabelClick = {} // 非nullでアイコンを表示
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "はてなあり (空の状態)")
-@Composable
-fun PreviewNumberInTextFieldEmptyWithHelp() {
-    val mockValue = remember { mutableDoubleStateOf(0.0) }
-    MaterialTheme {
-        Surface(modifier = Modifier.padding(16.dp)) {
-            // 値が0かつフォーカスなしの状態。ラベルが中央に大きく表示されるはずです。
-            NumberInTextField(
-                label = R.string.bukkaTaiouRyo,
-                value = mockValue,
-                width = 250,
-                onLabelClick = {}
+                width = 130,
+                onLabelClick = { /* Preview Action */ }
             )
         }
     }
