@@ -64,7 +64,7 @@ fun ShobyomeiScreen(
                 onSearchQueryChange = { viewModel.onQueryChanged(it) },
                 onSearch = {},
                 isLoading = isLoading,
-                placeholderText = R.string.searchIcd
+                placeholderText = R.string.searchShobyomei
             )
 
             LazyColumn(
@@ -77,7 +77,7 @@ fun ShobyomeiScreen(
                         MedGuidelinesCard(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp),
+                                .padding(Dimensions.cardPadding),
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                         ) {
@@ -87,11 +87,11 @@ fun ShobyomeiScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(
-                                        text = if (searchQuery.isBlank()) "お気に入り" else "検索結果",
-                                        fontSize = 14.sp,
-                                        color = MaterialTheme.colorScheme.secondary
-                                    )
+//                                    Text(
+//                                        text = if (searchQuery.isBlank()) "お気に入り" else "検索結果",
+//                                        fontSize = 14.sp,
+//                                        color = MaterialTheme.colorScheme.secondary
+//                                    )
                                 }
                                 Text(text = "傷病名", fontSize = 18.sp, fontWeight = FontWeight.Bold)
 
@@ -106,8 +106,9 @@ fun ShobyomeiScreen(
                                     Column(
                                         horizontalAlignment = Alignment.End,
                                     ) {
-                                        Text(text = "ICD10 ", fontSize = 16.sp, fontWeight = FontWeight.Normal)
-                                        Text(text = "ICD10 (症状発現)", fontSize = 16.sp, fontWeight = FontWeight.Normal)
+                                        Text(text = "ICD10 (基礎疾患)", fontSize = 16.sp, fontWeight = FontWeight.Normal)
+                                        Text(text = "ICD10 (症状発現)", fontSize = 16.sp, fontWeight = FontWeight.Normal,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
                                     }
                                 }
                             }
@@ -152,9 +153,15 @@ fun ShobyomeiScreen(
                                 Column(horizontalAlignment = Alignment.End) {
                                     if (item.icd_10_1.isNotBlank()) {
                                         Text(text = item.icd_10_1, fontSize = 16.sp)
-                                    }
+                                    } else {
+                                    Text(text = "なし", fontSize = 16.sp)
+                                }
                                     if (item.icd_10_2.isNotBlank()) {
-                                        Text(text = item.icd_10_2, fontSize = 16.sp)
+                                        Text(text = item.icd_10_2, fontSize = 16.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+                                    } else {
+                                        Text(text = "なし", fontSize = 16.sp,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
                                     }
                                 }
                             }
