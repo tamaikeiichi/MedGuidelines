@@ -271,3 +271,7 @@ val dpcByotai = listOf(
     LabelAndScore(labelResId = R.string.fifteenOrMore, score = 1)
 )
 
+val aihSex = listOf(
+    LabelAndScore(labelResId = R.string.female, score= 2),
+    LabelAndScore(labelResId = R.string.male, score= 0)
+)

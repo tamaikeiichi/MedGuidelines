@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.LabelAndScore
 import com.keiichi.medguidelines.data.aihEntryCriterion
+import com.keiichi.medguidelines.data.jointInvolvement
 import com.keiichi.medguidelines.data.raEntryCriterion
 import com.keiichi.medguidelines.data.sleEntryCriterion
 import com.keiichi.medguidelines.ui.component.CheckboxesAndExpandWithScore
@@ -30,23 +31,20 @@ import com.keiichi.medguidelines.ui.component.parseStyledString
 fun AihScreen(navController: NavController){
     var entryCriterionScore by remember { mutableIntStateOf(0) }
     var displayScore by remember (entryCriterionScore, totalScore) { mutableStateOf(0) }
-    displayScore = if (entryCriterionScore > 0) totalScore else 0
+    //displayScore = if (entryCriterionScore > 0) totalScore else 0
     var diagnosis by remember { mutableStateOf("") }
     diagnosis =
         if (entryCriterionScore == -1){
             when (displayScore) {
-                in 10..100 -> parseStyledString(R.string.classifyAsSle).toString()
+                in 16..100 -> parseStyledString(R.string.definiteAih).toString()
                 //"established"
-                in 0..9 -> parseStyledString(R.string.doNotMeetTheCriteria).toString()// "possible"
-                else -> parseStyledString(R.string.na).toString()// "very unlikely"
-
+                else -> parseStyledString(R.string.probableAih).toString()// "possible"
+            }
         } else {
                 when (displayScore) {
-                    in 10..100 -> parseStyledString(R.string.classifyAsSle).toString()
+                    in 18..100 -> parseStyledString(R.string.definiteAih).toString()
                     //"established"
-                    in 0..9 -> parseStyledString(R.string.doNotMeetTheCriteria).toString()// "possible"
-                    else -> parseStyledString(R.string.na).toString()// "very unlikely"
-
+                    else -> parseStyledString(R.string.probableAih).toString()// "possible"
                 }
             }
     val displayText =
@@ -101,4 +99,14 @@ private fun entryCriterion(): Int {
         isNumberDisplayed = false
     )
     return score
+}
+
+@Composable
+fun aihTotalScore(): Int{
+    val sex = buttonAndScoreWithScoreDisplayed(
+        optionsWithScores = jointInvolvement,
+        title = R.string.jointInvolvementRa,
+        titleNote = R.string.jointInvolvementNote,
+        defaultSelectedOption = R.string.none
+    )
 }
