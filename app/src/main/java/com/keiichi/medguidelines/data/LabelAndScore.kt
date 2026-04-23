@@ -275,3 +275,10 @@ val aihSex = listOf(
     LabelAndScore(labelResId = R.string.female, score= 2),
     LabelAndScore(labelResId = R.string.male, score= 0)
 )
+
+val alpAstRatio = listOf(
+    LabelAndScore(labelResId = R.string.under15, score= 2),
+    LabelAndScore(labelResId = R.string.oneAndHalftothree, score= 0),
+    LabelAndScore(labelResId = R.string.overThree, score= -2)
+)
+val
