@@ -74,11 +74,11 @@ fun AihScreen(navController: NavController){
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBarVariable(
-                title = parseStyledString(R.string.sleTitle),
+                title = parseStyledString(R.string.aihScoringSystem),
                 navController = navController,
                 references = listOf(
-                    TextAndUrl(R.string.sleRefTitle, R.string.sleUrl),
-                    TextAndUrl(R.string.slesJapRefTitle, R.string.sleJapsUrl),
+                    TextAndUrl(R.string.aihRefTitle, R.string.aihUrl),
+                    TextAndUrl(R.string.aihRefTitle, R.string.sleJapsUrl),
                 )
             )
         },
@@ -138,7 +138,7 @@ fun aihTotalScore(): Int{
     )
     val ama = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = ama,
-        title= R.string.amaPositive
+        title= R.string.ama
     )
     val viralMarker = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = viralMarker,

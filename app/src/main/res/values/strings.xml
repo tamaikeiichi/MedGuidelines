@@ -809,4 +809,8 @@
     <string name="seropositivityForOther">Seropositivity for other defined autoantibodies</string>
     <string name="definiteAih">Definite AIH</string>
     <string name="probableAih">Probable AIH</string>
+    <string name="ama">AMA</string>
+    <string name="aihRefTitle">International Autoimmune Hepatitis Group Report: review of criteria for diagnosis of autoimmune hepatitis</string>
+    <string name="aihUrl">https://www.journal-of-hepatology.eu/article/S0168-8278(99)80297-9/fulltext</string>
+    <string name="aihScoringSystem">AIH scoring system</string>
 </resources>
