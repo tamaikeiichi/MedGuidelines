@@ -767,4 +767,7 @@
     <string name="ShobyomeiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="shobyomeiRefTitle">診療報酬情報提供サービス</string>
     <string name="searchShobyomei">病名／傷病名コード／ICDコード</string>
+    <string name="interpretationOfAggregateScores">Interpretation of aggregate scores</string>
+    <string name="preTreatment">Pre-treatment</string>
+    <string name="postTreatment">Post-treatment</string>
 </resources>

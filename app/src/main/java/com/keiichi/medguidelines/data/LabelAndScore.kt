@@ -160,6 +160,10 @@ val raEntryCriterion = listOf(
     LabelAndScore(labelResId = R.string.noBetterExplained, score = 1)
 )
 
+val aihEntryCriterion = listOf(
+    LabelAndScore(labelResId = R.string.preTreatment, score = -1),
+    LabelAndScore(labelResId = R.string.postTreatment, score = 1)
+)
 val jointInvolvement = listOf(
     LabelAndScore(labelResId = R.string.oneLargeJoint, score = 0),
     LabelAndScore(labelResId = R.string.twoToTenLargeJoints, score = 1),

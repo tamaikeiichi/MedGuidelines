@@ -120,7 +120,7 @@ fun SleScreen(navController: NavController) {
 }
 
 @Composable
-fun entryCriterion(): Int {
+private fun entryCriterion(): Int {
     val entryCriterion = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = sleEntryCriterion,
         title = R.string.slesEntryCriterion,
