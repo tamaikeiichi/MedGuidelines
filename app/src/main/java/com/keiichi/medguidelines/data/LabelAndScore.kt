@@ -281,4 +281,60 @@ val alpAstRatio = listOf(
     LabelAndScore(labelResId = R.string.oneAndHalftothree, score= 0),
     LabelAndScore(labelResId = R.string.overThree, score= -2)
 )
-val
+val igg = listOf(
+    LabelAndScore(labelResId = R.string.over2, score= 3),
+    LabelAndScore(labelResId = R.string.onetotwo, score= 2),
+    LabelAndScore(labelResId = R.string.onetwohalf, score= 1),
+    LabelAndScore(labelResId = R.string.under1, score= 2)
+)
+val ana = listOf(
+    LabelAndScore(labelResId = R.string.over80, score= 3),
+    LabelAndScore(labelResId = R.string.is80, score= 2),
+    LabelAndScore(labelResId = R.string.is40, score= 1),
+    LabelAndScore(labelResId = R.string.under40, score= 0)
+)
+
+val ama = listOf(
+    LabelAndScore(labelResId = R.string.positive, score= -4),
+    LabelAndScore(labelResId = R.string.negative, score= 0)
+)
+
+val viralMarker = listOf(
+    LabelAndScore(labelResId = R.string.positive, score= -3),
+    LabelAndScore(labelResId = R.string.negative, score= 3),
+)
+
+val drugHistory = listOf(
+    LabelAndScore(labelResId = R.string.positive, score= -4),
+    LabelAndScore(labelResId = R.string.negative, score= 1)
+)
+
+val averageAlcoholIntake = listOf(
+    LabelAndScore(labelResId = R.string.under25, score= 2),
+    LabelAndScore(labelResId = R.string.twentyfiveTosixty, score= 0),
+    LabelAndScore(labelResId = R.string.over60, score= -2)
+)
+
+val liverHistology = listOf(
+    LabelAndScore(labelResId = R.string.interfaceHepatitis, score= 3),
+    LabelAndScore(labelResId = R.string.predominantlyLymphoplasmacyticInfiltrate, score= 1),
+    LabelAndScore(labelResId = R.string.rosettingOfLiverCells, score= 1),
+    LabelAndScore(labelResId = R.string.noneOfTheAbove, score= -5),
+    LabelAndScore(labelResId = R.string.biliaryChanges, score= -3),
+    LabelAndScore(labelResId = R.string.otherChanges, score= -3)
+)
+
+val otherAutoimmuneDisease = listOf(
+    LabelAndScore(labelResId = R.string.absent, score= 0),
+    LabelAndScore(labelResId = R.string.present, score= 2)
+)
+
+val seropositivity = listOf(
+    LabelAndScore(labelResId = R.string.seropositivityForOtherDefinedAutoantibodies, score= 2),
+    LabelAndScore(labelResId = R.string.hladr3, score= 1),
+)
+
+val responseToTherapy = listOf(
+    LabelAndScore(labelResId = R.string.complete, score= 2),
+    LabelAndScore(labelResId = R.string.relapse, score= 3)
+)

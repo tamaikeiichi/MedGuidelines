@@ -459,4 +459,6 @@
     <string name="shobyomeiTitle">傷病名マスタ</string>
     <string name="ShobyomeiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="searchShobyomei">病名／傷病名コード／ICDコード</string>
+    <string name="under15"><![CDATA[<1.5]]></string>
+    <string name="oneAndHalftothree">1.5-3.0</string>
 </resources>
