@@ -716,14 +716,14 @@
     <string name="dopamine5"><![CDATA[Dopamine <5 or dobutamine (any dose)]]></string>
     <string name="dopamine5115">Dopamine 5.1-15 or epinephrine ≤0.1 or norepinephrine ≤0.1</string>
     <string name="dopamine15"><![CDATA[Dopamine >15 or epinephrine >0.1 or norepinephrine >0.1]]></string>
-    <string name="fifteen">15</string>
-    <string name="between1314">13-14</string>
-    <string name="between1012">10-12</string>
-    <string name="between69">6-9</string>
-    <string name="below6"><![CDATA[<6]]></string>
-    <string name="below12Sofa"><![CDATA[<1.2 (110)]]></string>
-    <string name="between1219Sofa">1.2-1.9 (110-170)</string>
-    <string name="between2034">2.0-3.4 (171-299)</string>
+    <string name="fifteen" translatable="false">15</string>
+    <string name="between1314" translatable="false">13-14</string>
+    <string name="between1012" translatable="false">10-12</string>
+    <string name="between69" translatable="false">6-9</string>
+    <string name="below6" translatable="false"><![CDATA[<6]]></string>
+    <string name="below12Sofa" translatable="false"><![CDATA[<1.2 (110)]]></string>
+    <string name="between1219Sofa" translatable="false">1.2-1.9 (110-170)</string>
+    <string name="between2034" translatable="false">2.0-3.4 (171-299)</string>
     <string name="between3549">3.5-4.9 (300-440) or urine output &lt;500 mL/d</string>
     <string name="above5Sofa"><![CDATA[>5.0 (440) or urine output <200 ml/d]]></string>
     <string name="sofaCoagulation">Coagulation: platelets, ×10&lt;sup>3&lt;/sup>/μL</string>
@@ -772,14 +772,14 @@
     <string name="postTreatment">Post-treatment</string>
     <string name="under15"><![CDATA[<1.5]]></string>
     <string name="oneAndHalftothree">1.5-3.0</string>
-    <string name="overThree"><![CDATA[> 3.0]]></string>
-    <string name="over2"><![CDATA[> 2.0]]></string>
-    <string name="onetotwo">1.5-2.0</string>
-    <string name="onetwohalf">1.0-1.5</string>
-    <string name="under1"><![CDATA[<1.0]]></string>
-    <string name="over80"><![CDATA[>1:80]]></string>
-    <string name="is80">1:80</string>
-    <string name="is40">1:40</string>
+    <string name="overThree" translatable="false"><![CDATA[> 3.0]]></string>
+    <string name="over2" translatable="false"><![CDATA[> 2.0]]></string>
+    <string name="onetotwo" translatable="false">1.5-2.0</string>
+    <string name="onetwohalf" translatable="false">1.0-1.5</string>
+    <string name="under1" translatable="false"><![CDATA[<1.0]]></string>
+    <string name="over80" translatable="false"><![CDATA[>1:80]]></string>
+    <string name="is80" translatable="false">1:80</string>
+    <string name="is40" translatable="false">1:40</string>
     <string name="under40"><![CDATA[<1:40]]></string>
     <string name="positive">Positive</string>
     <string name="negative">Negative</string>
@@ -809,8 +809,26 @@
     <string name="seropositivityForOther">Seropositivity for other defined autoantibodies</string>
     <string name="definiteAih">Definite AIH</string>
     <string name="probableAih">Probable AIH</string>
-    <string name="ama">AMA</string>
+    <string name="ama" translatable="false">AMA</string>
     <string name="aihRefTitle">International Autoimmune Hepatitis Group Report: review of criteria for diagnosis of autoimmune hepatitis</string>
     <string name="aihUrl">https://www.journal-of-hepatology.eu/article/S0168-8278(99)80297-9/fulltext</string>
     <string name="aihScoringSystem">AIH scoring system</string>
+    <string name="belowCriteria">Below criteria</string>
+    <string name="alpAstRatioNote">The ALP:AST (or ALT) ratio relates to the degree of elevation above upper normla limits (unl) 0f these enzymes, i.e. =(IU/L ALP ÷ unl ALP) ÷ (IU/L AST ÷ unl AST)</string>
+    <string name="anaSmaLkm1Note">Titres determined by indirect immunofluorescence on rodent tissues or, for ANA, on HEp-2 cells. Lower titres (especially of LKM-1) are significant in children and should be scored at least +1</string>
+    <string name="hepatitisViralMarkerNote">Score for markers of hepatitis A, B and C viruses (i.e. positive/negative for IgM anti-HAV, HBsAg, IgM anti-HBc, anti-HCV and HCV-RNA). If a viral aetiology is suspected despite seronegativity for these markers, tests for other potentially hepato-tropic viruses such as CMV and EBV may be relevant.</string>
+    <string name="drugHistoryNote">History of recent or current use of known or suspected hepato-toxic drugs.</string>
+    <string name="hla">HLA DR3 or DR4</string>
+    <string name="responseToTherapy">Response to therapy</string>
+    <string name="biliaryChangeNote">\"Biliary changes\" refers to bile duct changes typical of PBC or PSC (i.e. granulomatous cholangitis, or severe concentric peri-ductal fibrosis, with ductopenia, established in an adequate biopsy specimen) and/or a substantial periportal ductular reaction (so-called marginal bile duct proliferation with a cholangiolitis) with copper/copper-associated protern accumulation.</string>
+    <string name="otherChangesDescription">Any other prominent feature or combination of features suggestive of a different aetiology.</string>
+    <string name="note">Note</string>
+    <string name="otherAutoimmuneDiseaseNote">Score for history of any other autoimmune disorder(s) in patient or first-degree relatives.</string>
+    <string name="seropositivityForOtherNote">Other \"defined\" autoantibodies are those for which there are published data relating to methodology of detection and relevance to AIH. These include pANCA, anti-LCI, anti-SLA9 anti-ASGPR, anti-LP and anti-sulfatide (see text).</string>
+    <string name="hlaNote">HLA DR3 and DR4 are mainly of relevance to North European caucasoid and Japanese populations. One point may be allocated for other HLA Class II antigens for which there is published evidence of their association with AIH in other populations.</string>
+    <string name="responseToTherapyNote">Assessment of response to therapy may be made at any time. Points should be added to those accrued for features at initial presentation.</string>
+    <string name="completeNote">Either or both of the following: marked improvement of symptoms and return of serum AST or ALT, bilirubin and immunoglobulin values completely to normal within I year and sustained for at least a further 6 months on maintenance therapy, or a liver biopsy specimen at some time during this period showing at most minimal activity. or Either or both of the following: marked improvement of symptoms together with at least 50% improvement of all liver test results during the first month of treatment, with AST or ALT levels continuing to fall to less than twice the upper normal limit within 6 months during any reductions toward maintenance therapy, or a liver biopsy within 1 year showing only minimal activity</string>
+    <string name="relapseNote">Either or both of the following: an increase in serum AST or ALT levels of greater than twice the upper normal limit or a liver biopsy showing active disease, with or without reappearance of symptoms, after a \"complete\" response as defined above. or Reappearance of symptoms of sufficient severity to require increased (or reintroduction of) immunosuppression, accompanied by any increase in serum AST or ALT levels, after a \"complete\" response as defined above.</string>
+    <string name="aihTitle">AIH scoring system</string>
+    <string name="autoimmuneHepatitis">Autoimmune hepatitis</string>
 </resources>

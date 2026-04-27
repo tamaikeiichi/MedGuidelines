@@ -5,7 +5,8 @@ import com.keiichi.medguidelines.R
 
 data class LabelAndScore(
     @StringRes val labelResId: Int,
-    val score: Int
+    val score: Int,
+    @StringRes val descriptionResId: Int? = null
 )
 
 
@@ -285,7 +286,7 @@ val igg = listOf(
     LabelAndScore(labelResId = R.string.over2, score= 3),
     LabelAndScore(labelResId = R.string.onetotwo, score= 2),
     LabelAndScore(labelResId = R.string.onetwohalf, score= 1),
-    LabelAndScore(labelResId = R.string.under1, score= 2)
+    LabelAndScore(labelResId = R.string.under1, score= 0)
 )
 val ana = listOf(
     LabelAndScore(labelResId = R.string.over80, score= 3),
@@ -320,8 +321,8 @@ val liverHistology = listOf(
     LabelAndScore(labelResId = R.string.predominantlyLymphoplasmacyticInfiltrate, score= 1),
     LabelAndScore(labelResId = R.string.rosettingOfLiverCells, score= 1),
     LabelAndScore(labelResId = R.string.noneOfTheAbove, score= -5),
-    LabelAndScore(labelResId = R.string.biliaryChanges, score= -3),
-    LabelAndScore(labelResId = R.string.otherChanges, score= -3)
+    LabelAndScore(labelResId = R.string.biliaryChanges, score= -3, descriptionResId = R.string.biliaryChangeNote),
+    LabelAndScore(labelResId = R.string.otherChanges, score= -3, descriptionResId = R.string.otherChangesDescription)
 )
 
 val otherAutoimmuneDisease = listOf(
@@ -330,11 +331,16 @@ val otherAutoimmuneDisease = listOf(
 )
 
 val seropositivity = listOf(
-    LabelAndScore(labelResId = R.string.seropositivityForOtherDefinedAutoantibodies, score= 2),
-    LabelAndScore(labelResId = R.string.hladr3, score= 1),
+    LabelAndScore(labelResId = R.string.absent, score= 0),
+    LabelAndScore(labelResId = R.string.present, score= 2),
+)
+val hla = listOf(
+    LabelAndScore(labelResId = R.string.absent, score= 0),
+    LabelAndScore(labelResId = R.string.present, score= 1),
 )
 
 val responseToTherapy = listOf(
-    LabelAndScore(labelResId = R.string.complete, score= 2),
-    LabelAndScore(labelResId = R.string.relapse, score= 3)
+    LabelAndScore(labelResId = R.string.preTreatment, score= 0),
+    LabelAndScore(labelResId = R.string.complete, score= 2, descriptionResId = R.string.completeNote),
+    LabelAndScore(labelResId = R.string.relapse, score= 3, descriptionResId = R.string.relapseNote)
 )

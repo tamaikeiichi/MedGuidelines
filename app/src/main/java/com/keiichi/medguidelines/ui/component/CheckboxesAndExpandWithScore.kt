@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -23,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,6 +98,7 @@ fun CheckboxesAndExpandWithScore( // Renamed the function
     isNumberDisplayed: Boolean = false
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var showDescription by remember { mutableStateOf<Int?>(null) }
     val hasTitleNote = (titleNote != R.string.space)
     val cardModifier = Modifier
         .padding(Dimensions.cardPadding)
@@ -199,11 +203,47 @@ fun CheckboxesAndExpandWithScore( // Renamed the function
                             modifier = Modifier.padding(start = 8.dp),
                             softWrap = true,
                         )
+                        if (option.descriptionResId != null) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.HelpOutline,
+                                contentDescription = "Help",
+                                modifier = Modifier
+                                    .padding(start = 4.dp)
+                                    .size(16.dp)
+                                    .clickable {
+                                        showDescription = option.descriptionResId
+                                    },
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 }
             }
             appendixLabel?.invoke()
         }
+    }
+
+    if (showDescription != null) {
+        AlertDialog(
+            onDismissRequest = { showDescription = null },
+            confirmButton = {
+                TextButton(onClick = { showDescription = null }) {
+                    Text("OK")
+                }
+            },
+            title = {
+                Text(
+                    text = parseStyledString(R.string.note),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            },
+            text = {
+                Text(
+                    text = parseStyledString(showDescription!!),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        )
     }
 }
 

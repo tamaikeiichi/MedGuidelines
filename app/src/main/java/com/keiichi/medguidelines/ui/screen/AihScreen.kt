@@ -25,13 +25,12 @@ import com.keiichi.medguidelines.data.ama
 import com.keiichi.medguidelines.data.ana
 import com.keiichi.medguidelines.data.averageAlcoholIntake
 import com.keiichi.medguidelines.data.drugHistory
+import com.keiichi.medguidelines.data.hla
 import com.keiichi.medguidelines.data.igg
-import com.keiichi.medguidelines.data.jointInvolvement
 import com.keiichi.medguidelines.data.liverHistology
 import com.keiichi.medguidelines.data.otherAutoimmuneDisease
-import com.keiichi.medguidelines.data.raEntryCriterion
+import com.keiichi.medguidelines.data.responseToTherapy
 import com.keiichi.medguidelines.data.seropositivity
-import com.keiichi.medguidelines.data.sleEntryCriterion
 import com.keiichi.medguidelines.data.viralMarker
 import com.keiichi.medguidelines.ui.component.CheckboxesAndExpandWithScore
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
@@ -46,23 +45,21 @@ fun AihScreen(navController: NavController){
     var totalScore by remember { mutableIntStateOf(0) }
 
     var entryCriterionScore by remember { mutableIntStateOf(0) }
-    var displayScore by remember (entryCriterionScore, totalScore) { mutableStateOf(0) }
-    //displayScore = if (entryCriterionScore > 0) totalScore else 0
-    var diagnosis by remember { mutableStateOf("") }
-    diagnosis =
-        if (entryCriterionScore == -1){
+    val displayScore = totalScore
+    val diagnosis =
+        if (entryCriterionScore == -1) {
             when (displayScore) {
                 in 16..100 -> parseStyledString(R.string.definiteAih).toString()
-                //"established"
-                else -> parseStyledString(R.string.probableAih).toString()// "possible"
+                in 10..15 -> parseStyledString(R.string.probableAih)
+                else -> parseStyledString(R.string.belowCriteria).toString()
             }
         } else {
-                when (displayScore) {
-                    in 18..100 -> parseStyledString(R.string.definiteAih).toString()
-                    //"established"
-                    else -> parseStyledString(R.string.probableAih).toString()// "possible"
-                }
+            when (displayScore) {
+                in 18..100 -> parseStyledString(R.string.definiteAih).toString()
+                in 12..17 -> parseStyledString(R.string.probableAih).toString()
+                else -> parseStyledString(R.string.belowCriteria).toString()
             }
+        }
     val displayText =
         buildAnnotatedString {
             append("Score: ")
@@ -95,11 +92,8 @@ fun AihScreen(navController: NavController){
                 .padding(innerPadding)
         ) {
             entryCriterionScore = entryCriterion()
-            if (entryCriterionScore > 0) {
-                //totalScore = sleTotalScore() // Assuming childPughTotalScore() returns an Int
-                //Text(text = totalScore.toString())
-            }
             totalScore = aihTotalScore()
+
         }
     }
 }
@@ -123,10 +117,12 @@ fun aihTotalScore(): Int{
     val sex = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = aihSex,
         title = R.string.sex,
+
     )
     val alpAstRatio = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = alpAstRatio,
-        title = R.string.alpAstRatio
+        title = R.string.alpAstRatio,
+        titleNote = R.string.alpAstRatioNote
     )
     val igg = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = igg,
@@ -134,7 +130,9 @@ fun aihTotalScore(): Int{
     )
     val ana = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = ana,
-        title = R.string.anaSmaLkm1
+        title = R.string.anaSmaLkm1,
+        titleNote = R.string.anaSmaLkm1Note
+
     )
     val ama = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = ama,
@@ -142,31 +140,62 @@ fun aihTotalScore(): Int{
     )
     val viralMarker = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = viralMarker,
-        title = R.string.hepatitisViralMarker
+        title = R.string.hepatitisViralMarker,
+        titleNote =  R.string.hepatitisViralMarkerNote
     )
     val drug = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = drugHistory,
-        title = R.string.drugHistory
+        title = R.string.drugHistory,
+        titleNote = R.string.drugHistoryNote
     )
     val alcohol = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = averageAlcoholIntake,
         title = R.string.averageAlcoholIntake
     )
-    val histology = buttonAndScoreWithScoreDisplayed(
+    val optionsWithScores = liverHistology
+    var defaultSelectedOptions by remember {
+        mutableStateOf(listOf<LabelAndScore>())
+    }
+    val histology = defaultSelectedOptions.sumOf { it.score }
+    CheckboxesAndExpandWithScore(
+
         optionsWithScores = liverHistology,
-        title = R.string.liverHistology
+        defaultSelectedOption = defaultSelectedOptions,
+        onOptionSelected = { newSelection ->
+            defaultSelectedOptions = newSelection
+        },
+        title = R.string.liverHistology,
+        //titleNote = R.string.biliaryChangeNote,
+        isNumberDisplayed = true
     )
     val otherAutoimune = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = otherAutoimmuneDisease,
-        title = R.string.otherAutoimmuneDisease
+        title = R.string.otherAutoimmuneDisease,
+        titleNote = R.string.otherAutoimmuneDiseaseNote
     )
-    val seropositivity = buttonAndScoreWithScoreDisplayed(
-        optionsWithScores = seropositivity,
-        title = R.string.seropositivityForOther
+    var seropositivityScore: Int = 0
+    var hlaScore: Int = 0
+    if (ana == 0) {
+        seropositivityScore = buttonAndScoreWithScoreDisplayed(
+            optionsWithScores = seropositivity,
+            title = R.string.seropositivityForOther,
+            titleNote = R.string.seropositivityForOtherNote
+        )
+        hlaScore = buttonAndScoreWithScoreDisplayed(
+            optionsWithScores = hla,
+            title = R.string.hla,
+            titleNote = R.string.hlaNote
+        )
+    }
+    val response  = buttonAndScoreWithScoreDisplayed(
+        optionsWithScores = responseToTherapy,
+        title= R.string.responseToTherapy,
+        titleNote = R.string.responseToTherapyNote
     )
 
-    val totalScore =
-        0
+    val totalScore = sex + alpAstRatio + igg + ana + ama + viralMarker +
+            drug + alcohol + histology + otherAutoimune + seropositivityScore +
+            hlaScore + response
     return totalScore
 }
 

@@ -8,6 +8,7 @@ import com.keiichi.medguidelines.ScreenRoute
 import com.keiichi.medguidelines.ui.screen.AcutePancreatitisScreen
 import com.keiichi.medguidelines.ui.screen.AcuteTonsillitisAlgorithmScreen
 import com.keiichi.medguidelines.ui.screen.AdropScreen
+import com.keiichi.medguidelines.ui.screen.AihScreen
 import com.keiichi.medguidelines.ui.screen.AldreteScreen
 import com.keiichi.medguidelines.ui.screen.BloodGasAnalysisScreen
 import com.keiichi.medguidelines.ui.screen.Chads2Screen
@@ -82,6 +83,8 @@ enum class ActionType {
     NAVIGATE_TO_SOFA,
     NAVIGATE_TO_DPC,
     NAVIGATE_TO_SHOBYOMEI,
+    NAVIGATE_TO_AIH,
+
 }
 
 @Serializable // Only for kotlinx.serialization
@@ -202,6 +205,10 @@ val itemsList = listOf(
         )),
     ListItemData(R.string.dpcTitle, ActionType.NAVIGATE_TO_DPC,),
     ListItemData(R.string.shobyomeiTitle, ActionType.NAVIGATE_TO_SHOBYOMEI),
+    ListItemData(R.string.aihTitle, ActionType.NAVIGATE_TO_AIH,
+        keywords = listOf(
+            R.string.autoimmuneHepatitis
+        ))
 )
 
 data class IndexScreenActions(
@@ -241,6 +248,7 @@ data class IndexScreenActions(
     val navigateToSofa: () -> Unit,
     val navigateToDpc: () -> Unit,
     val navigateToShobyomei: () -> Unit,
+    val navigateToAih: () -> Unit,
 )
 
 @Composable
@@ -288,6 +296,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToSofa = {navController.navigate("SofaScreen")},
         navigateToDpc = {navController.navigate("DpcScreen")},
         navigateToShobyomei = {navController.navigate("ShobyomeiScreen")},
+        navigateToAih = {navController.navigate("AihScreen")},
     )
 }
 
@@ -341,6 +350,7 @@ fun getAppScreens(sofaViewModel: SofaViewModel): List<ScreenRoute> {
         },
         ScreenRoute("DpcScreen") { navController -> DpcScreen(navController) },
         ScreenRoute("ShobyomeiScreen") { navController -> ShobyomeiScreen(navController) },
+        ScreenRoute("AihScreen") { navController -> AihScreen(navController)}
     )
 }
 
@@ -382,6 +392,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_SOFA -> this.navigateToSofa()
         ActionType.NAVIGATE_TO_DPC -> this.navigateToDpc()
         ActionType.NAVIGATE_TO_SHOBYOMEI -> this.navigateToShobyomei()
+        ActionType.NAVIGATE_TO_AIH -> this.navigateToAih()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand
