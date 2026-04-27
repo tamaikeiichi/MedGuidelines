@@ -75,7 +75,6 @@ fun AihScreen(navController: NavController){
                 navController = navController,
                 references = listOf(
                     TextAndUrl(R.string.aihRefTitle, R.string.aihUrl),
-                    TextAndUrl(R.string.aihRefTitle, R.string.sleJapsUrl),
                 )
             )
         },
