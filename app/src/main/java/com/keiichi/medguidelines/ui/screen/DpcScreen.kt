@@ -357,7 +357,7 @@ fun DpcScreen(
                                         //append("\n")
                                     }
                                     withStyle(style = SpanStyle(letterSpacing = 16.sp)) { append(" ") }
-                                    append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円")
+                                    append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円\n")
                                     if (days.doubleValue.toInt() > (savedItems.lastOrNull()?.tensuData?.nyuinbiIII?.toInt()
                                             ?: 0)
                                     ) {
@@ -1713,12 +1713,12 @@ fun ScoreBottomAppBarPreview() {
                                 append(" DPCコード: 010203xxxx ")
                                 appendInlineContent("COPY_ICON_ID", "[copy]")
                                 append("\n")
-                                append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円\n")
+                                append(" 包括金額合計: ${"%,d".format(savedTotalAmount)}円")
                             }
 
                             // 2. 現在のDPC病名
                             withStyle(style = SpanStyle(color = primaryColor, fontSize = 16.sp)) {
-                                append("DPC病名: ")
+                                append("\nDPC病名: ")
                                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                     append("$bunruiNameValue\n")
                                 }
