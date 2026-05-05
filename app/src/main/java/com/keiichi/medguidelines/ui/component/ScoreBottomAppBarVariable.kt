@@ -76,7 +76,7 @@ fun ScoreBottomAppBarVariable(
                 }
 
             val textHeight = with(density) { textLayoutResult.size.height.toDp() }
-            val barHeight = textHeight * 1 + (paddingValues * 2) // Add padding above and below text
+            val barHeight = textHeight * 1 + (paddingValues * 3) // Add padding above and below text
 
             ResultBottomAppBar(
                 modifier = Modifier.height(barHeight), // Set the dynamic height
@@ -102,6 +102,6 @@ fun ScoreBottomAppBarVariable(
 @Composable
 fun ScoreBottomAppBarVariablePreview() {
     ScoreBottomAppBarVariable(
-        displayText = AnnotatedString("Mild aaaaaaaaaaaaaaaaaaaaaaaaa \n bbbbbbbbbbbbbb \n")
+        displayText = AnnotatedString("Mild aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \n bbbbbbbbbbbbbb \n")
     )
 }

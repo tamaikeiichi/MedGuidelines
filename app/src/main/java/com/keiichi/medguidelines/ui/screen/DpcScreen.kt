@@ -548,7 +548,8 @@ fun DpcScreen(
                             tint = MaterialTheme.colorScheme.secondary
                         )
                     }
-                )
+                ),
+                paddingValues = 16.dp
             )
         }
     ) { innerPadding ->
