@@ -204,7 +204,7 @@
     <string name="strokeRateWithoutAnticoagulant">抗凝固薬なしの場合の脳卒中発症率</string>
     <string name="per100PatientYears">/100人年</string>
     <string name="disorderOfSerumSodium">血中ナトリウム異常</string>
-    <string name="disorderOfSerumSodiumReference">低ナトリウム血症</string>
+    <string name="disorderOfSerumSodiumReference">Eur J Endocrinol. 2014</string>
     <string name="hyponatremia">低ナトリウム血症</string>
     <string name="normonatremia">正常ナトリウム濃度</string>
     <string name="hypernatremia">高ナトリウム血症</string>

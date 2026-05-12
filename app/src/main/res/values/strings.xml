@@ -340,7 +340,7 @@
     <string name="type4collagen7S">Type IV collagen 7S</string>
     <string name="fibrosisStage1">Fibrosis (stage ≥ 1)</string>
     <string name="disorderOfSerumSodium">Disorder of serum sodium</string>
-    <string name="disorderOfSerumSodiumReference">Hyponatremia</string>
+    <string name="disorderOfSerumSodiumReference">Eur J Endocrinol. 2014</string>
     <string name="disorderOfSerumSodiumReferenceUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/24569125/</string>
     <string name="sodium">Na&lt;sup>+&lt;/sup></string>
     <string name="hyponatremia">Hyponatremia</string>
