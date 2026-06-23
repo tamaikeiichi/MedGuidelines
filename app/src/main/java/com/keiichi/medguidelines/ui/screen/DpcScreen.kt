@@ -1278,23 +1278,6 @@ fun DpcScreen(
                                             }
                                         )
                                     }
-                                    DpcDropdownSelection(
-                                        title = "手術・処置等２",
-                                        options = labelIdList,
-                                        initialSelection = currentLabel,
-                                        onOptionSelected = { selectedName ->
-                                            coroutineScope.launch {
-                                                val code = options.find {
-                                                    it.shochi1Name == selectedName
-                                                }?.code
-                                                if (code != null) {
-                                                    // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
-                                                    currentDpcCode =
-                                                        currentDpcCode.copy(shochi2 = code) // shujutu -> shochi1 に
-                                                }
-                                            }
-                                        }
-                                    )
                                 }
                                 //}
                                 //副傷病名
@@ -1342,23 +1325,6 @@ fun DpcScreen(
                                             }
                                         )
                                     }
-                                    DpcDropdownSelection(
-                                        title = "定義副傷病名",
-                                        options = labelIdList,
-                                        initialSelection = currentLabel,
-                                        onOptionSelected = { selectedOption ->
-                                            coroutineScope.launch {
-                                                val code = options.find {
-                                                    it.name == selectedOption
-                                                }?.code
-                                                if (code != null) {
-                                                    // ★★★ dpcCodeFirstの更新先が shochi1 になっているか確認 ★★★
-                                                    currentDpcCode =
-                                                        currentDpcCode.copy(fukushobyo = code) // shujutu -> shochi1 に
-                                                }
-                                            }
-                                        }
-                                    )
                                 }
                                 //}
                                 //重症度JCS
