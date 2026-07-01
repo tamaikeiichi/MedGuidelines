@@ -76,12 +76,10 @@ fun ScoreBottomAppBarVariable(
                 }
 
             val textHeight = with(density) { textLayoutResult.size.height.toDp() }
-            val barHeight = textHeight * 1 + (paddingValues * 3) // Add padding above and below text
+            val barHeight = textHeight + (paddingValues * 2) // 上下1つずつのパディングに戻す
 
             ResultBottomAppBar(
-                modifier = Modifier.height(barHeight), // Set the dynamic height
-                // contentColor = ...,
-                // containerColor = ...
+                barHeight = barHeight, // 引数で高さを直接渡す
             ) {
                 Text(
                     text = displayText,

@@ -2,6 +2,7 @@ package com.keiichi.medguidelines.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BottomAppBar
@@ -27,9 +28,10 @@ fun ResultBottomAppBar(
         color = MaterialTheme.colorScheme.surface
     ) {
         BottomAppBar(
-            modifier = modifier.height(barHeight),
+            modifier = Modifier.height(barHeight),
             contentColor = MaterialTheme.colorScheme.primaryContainer,
-            containerColor = MaterialTheme.colorScheme.onPrimaryContainer
+            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            windowInsets = WindowInsets(0)
         ) {
             Row(
                 modifier = Modifier
