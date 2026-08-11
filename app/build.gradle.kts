@@ -21,14 +21,14 @@ plugins {
 
 android {
     namespace = "com.keiichi.medguidelines"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.keiichi.medguidelines"
         minSdk = 29
-        targetSdk = 35
-        versionCode = 72
-        versionName = "1.66"
+        targetSdk = 36
+        versionCode = 73
+        versionName = "1.67"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
