@@ -767,6 +767,10 @@
     <string name="ShobyomeiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="shobyomeiRefTitle">診療報酬情報提供サービス</string>
     <string name="searchShobyomei">病名／傷病名コード／ICDコード</string>
+    <string name="icdO3Title">ICD-O-3.2 search</string>
+    <string name="searchIcdO3">ICD-O-3.2 code / term</string>
+    <string name="icdO3Obsolete">Obsolete</string>
+    <string name="icdO3AlsoKnownAs">Also known as</string>
     <string name="interpretationOfAggregateScores">Interpretation of aggregate scores</string>
     <string name="preTreatment">Pre-treatment</string>
     <string name="postTreatment">Post-treatment</string>
@@ -831,4 +835,6 @@
     <string name="relapseNote">Either or both of the following: an increase in serum AST or ALT levels of greater than twice the upper normal limit or a liver biopsy showing active disease, with or without reappearance of symptoms, after a \"complete\" response as defined above. or Reappearance of symptoms of sufficient severity to require increased (or reintroduction of) immunosuppression, accompanied by any increase in serum AST or ALT levels, after a \"complete\" response as defined above.</string>
     <string name="aihTitle">AIH scoring system</string>
     <string name="autoimmuneHepatitis">Autoimmune hepatitis</string>
+    <string name="icdo3url">http://www.iacr.com.fr/index.php?Itemid=577</string>
+    <string name="icdo3">ICD-O-3.2</string>
 </resources>

@@ -459,6 +459,10 @@
     <string name="shobyomeiTitle">傷病名マスタ</string>
     <string name="ShobyomeiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="searchShobyomei">病名／傷病名コード／ICDコード</string>
+    <string name="icdO3Title">ICD-O-3.2検索</string>
+    <string name="searchIcdO3">ICD-O-3.2コード／病名（日本語・英語）</string>
+    <string name="icdO3Obsolete">廃止</string>
+    <string name="icdO3AlsoKnownAs">別名</string>
     <string name="postTreatment">治療後</string>
     <string name="under15"><![CDATA[<1.5]]></string>
     <string name="oneAndHalftothree">1.5-3.0</string>
@@ -502,4 +506,5 @@
     <string name="otherChanges">その他の変化</string>
     <string name="seropositivityForOtherDefinedAutoantibodies">他に同定された自己抗体</string>
     <string name="noneOfTheAbove">上記いずれもない</string>
+    <string name="icdo3">ICD-O-3.2</string>
 </resources>

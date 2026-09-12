@@ -26,6 +26,7 @@ import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
 import com.keiichi.medguidelines.ui.screen.HomaIRScreen
 import com.keiichi.medguidelines.ui.screen.Icd10EnglishScreen
 import com.keiichi.medguidelines.ui.screen.Icd10JapaneseScreen
+import com.keiichi.medguidelines.ui.screen.IcdO3Screen
 import com.keiichi.medguidelines.ui.screen.IkaShinryokoiMasterScreen
 import com.keiichi.medguidelines.ui.screen.IntrahepaticCholangiocarcinomaTNMScreen
 import com.keiichi.medguidelines.ui.screen.JgCalendarScreen
@@ -84,6 +85,7 @@ enum class ActionType {
     NAVIGATE_TO_DPC,
     NAVIGATE_TO_SHOBYOMEI,
     NAVIGATE_TO_AIH,
+    NAVIGATE_TO_ICDO3,
 
 }
 
@@ -208,7 +210,8 @@ val itemsList = listOf(
     ListItemData(R.string.aihTitle, ActionType.NAVIGATE_TO_AIH,
         keywords = listOf(
             R.string.autoimmuneHepatitis
-        ))
+        )),
+    ListItemData(R.string.icdO3Title, ActionType.NAVIGATE_TO_ICDO3)
 )
 
 data class IndexScreenActions(
@@ -249,6 +252,7 @@ data class IndexScreenActions(
     val navigateToDpc: () -> Unit,
     val navigateToShobyomei: () -> Unit,
     val navigateToAih: () -> Unit,
+    val navigateToIcdO3: () -> Unit,
 )
 
 @Composable
@@ -297,6 +301,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToDpc = {navController.navigate("DpcScreen")},
         navigateToShobyomei = {navController.navigate("ShobyomeiScreen")},
         navigateToAih = {navController.navigate("AihScreen")},
+        navigateToIcdO3 = {navController.navigate("IcdO3Screen")},
     )
 }
 
@@ -350,7 +355,8 @@ fun getAppScreens(sofaViewModel: SofaViewModel): List<ScreenRoute> {
         },
         ScreenRoute("DpcScreen") { navController -> DpcScreen(navController) },
         ScreenRoute("ShobyomeiScreen") { navController -> ShobyomeiScreen(navController) },
-        ScreenRoute("AihScreen") { navController -> AihScreen(navController)}
+        ScreenRoute("AihScreen") { navController -> AihScreen(navController)},
+        ScreenRoute("IcdO3Screen") { navController -> IcdO3Screen(navController) }
     )
 }
 
@@ -393,6 +399,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_DPC -> this.navigateToDpc()
         ActionType.NAVIGATE_TO_SHOBYOMEI -> this.navigateToShobyomei()
         ActionType.NAVIGATE_TO_AIH -> this.navigateToAih()
+        ActionType.NAVIGATE_TO_ICDO3 -> this.navigateToIcdO3()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand
