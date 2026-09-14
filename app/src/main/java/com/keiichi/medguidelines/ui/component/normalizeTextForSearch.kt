@@ -18,6 +18,8 @@ fun normalizeTextForSearch(text: String): String {
     } catch (e: Exception) {
         println("ICU Transliterator error: ${e.message}")
     }
+    // 「癌」と「がん」の表記ゆれを吸収し、どちらで検索してもヒットするようにする
+    normalized = normalized.replace("癌", "がん")
     // 4. Optional: Remove whitespace or specific punctuation if needed
     //    normalized = normalized.replace("\\s+".toRegex(), "") // Example: remove all whitespace
     return normalized

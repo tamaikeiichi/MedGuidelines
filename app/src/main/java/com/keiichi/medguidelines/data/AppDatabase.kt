@@ -29,7 +29,7 @@ import androidx.room.RoomDatabase
         ShobyomeiEntity::class,
         IcdO3Entity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

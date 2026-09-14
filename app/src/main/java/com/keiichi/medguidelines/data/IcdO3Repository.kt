@@ -19,6 +19,11 @@ private const val LEVEL_PREFERRED = "Preferred"
 private const val LEVEL_SYNONYM = "Synonym"
 private const val LEVEL_RELATED = "Related"
 
+// 日本語病名末尾などに付与される "※1"～"※6"、"★"、"☆" の注釈記号は表示・検索の対象から除く
+private val referenceMarkerRegex = Regex("\\s*(※[1-6]|[★☆])")
+
+private fun stripReferenceMarkers(text: String): String = text.replace(referenceMarkerRegex, "").trim()
+
 data class IcdO3AlternateTerm(
     val level: String,
     val termEn: String,
@@ -126,7 +131,7 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
                         if (code.isBlank()) return@mapNotNull null
                         val level = row[1]?.toString()?.trim() ?: ""
                         val termEn = row[2]?.toString()?.trim() ?: ""
-                        val termJa = row[3]?.toString()?.trim() ?: ""
+                        val termJa = stripReferenceMarkers(row[3]?.toString()?.trim() ?: "")
                         val obsolete = row[4]?.toString()?.trim() == "1"
 
                         IcdO3Entity(
