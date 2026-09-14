@@ -771,6 +771,8 @@
     <string name="searchIcdO3">ICD-O-3.2 code / term</string>
     <string name="icdO3Obsolete">Obsolete</string>
     <string name="icdO3AlsoKnownAs">Also known as</string>
+    <string name="icdO3GradeDigitLabel">6th digit (grade / differentiation / cell lineage)</string>
+    <string name="icdO3GradeDigitNone">(none)</string>
     <string name="interpretationOfAggregateScores">Interpretation of aggregate scores</string>
     <string name="preTreatment">Pre-treatment</string>
     <string name="postTreatment">Post-treatment</string>

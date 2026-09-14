@@ -25,6 +25,9 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _selectedGradeDigit = MutableStateFlow("")
+    val selectedGradeDigit: StateFlow<String> = _selectedGradeDigit.asStateFlow()
+
     init {
         val db = AppDatabase.getDatabase(application)
         repository = IcdO3Repository(db.icdO3Dao())
@@ -44,6 +47,10 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onQueryChanged(newQuery: String) {
         _searchQuery.value = newQuery
+    }
+
+    fun onGradeDigitChanged(digit: String) {
+        _selectedGradeDigit.value = digit
     }
 
     fun toggleFavorite(item: IcdO3SearchResult) {
