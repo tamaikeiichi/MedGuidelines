@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarBorder
@@ -127,12 +128,13 @@ fun ShobyomeiScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = item.name,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(1f)
-                                )
+                                SelectionContainer(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = item.name,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
                                 IconButton(onClick = { viewModel.toggleFavorite(item) }) {
                                     Icon(
                                         imageVector = if (item.isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
@@ -144,24 +146,26 @@ fun ShobyomeiScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Bottom
-                            ) {
-                                Text(text = item.code, fontSize = 18.sp)
-                                Column(horizontalAlignment = Alignment.End) {
-                                    if (item.icd_10_1.isNotBlank()) {
-                                        Text(text = item.icd_10_1, fontSize = 16.sp)
-                                    } else {
-                                    Text(text = "なし", fontSize = 16.sp)
-                                }
-                                    if (item.icd_10_2.isNotBlank()) {
-                                        Text(text = item.icd_10_2, fontSize = 16.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
-                                    } else {
-                                        Text(text = "なし", fontSize = 16.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+                            SelectionContainer {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.Bottom
+                                ) {
+                                    Text(text = item.code, fontSize = 18.sp)
+                                    Column(horizontalAlignment = Alignment.End) {
+                                        if (item.icd_10_1.isNotBlank()) {
+                                            Text(text = item.icd_10_1, fontSize = 16.sp)
+                                        } else {
+                                        Text(text = "なし", fontSize = 16.sp)
+                                    }
+                                        if (item.icd_10_2.isNotBlank()) {
+                                            Text(text = item.icd_10_2, fontSize = 16.sp,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+                                        } else {
+                                            Text(text = "なし", fontSize = 16.sp,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
+                                        }
                                     }
                                 }
                             }
