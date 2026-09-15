@@ -461,7 +461,7 @@
     <string name="searchShobyomei">病名／傷病名コード／ICDコード</string>
     <string name="icdO3Title">ICD-O-3.2検索</string>
     <string name="searchIcdO3">ICD-O-3.2コード／病名（日本語・英語）</string>
-    <string name="icdO3Obsolete">廃止</string>
+    <string name="icdO3Obsolete">obsolete</string>
     <string name="icdO3AlsoKnownAs">別名</string>
     <string name="icdO3GradeDigitLabel">6桁目（グレード／分化度／細胞系列）</string>
     <string name="icdO3GradeDigitNone">（追加しない）</string>
