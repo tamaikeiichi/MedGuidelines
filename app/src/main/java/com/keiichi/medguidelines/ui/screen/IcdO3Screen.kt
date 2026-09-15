@@ -19,6 +19,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -46,6 +47,8 @@ import androidx.navigation.compose.rememberNavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.IcdO3AlternateTerm
 import com.keiichi.medguidelines.data.IcdO3SearchResult
+import com.keiichi.medguidelines.data.IcdO3TopographyAlternateTerm
+import com.keiichi.medguidelines.data.IcdO3TopographySearchResult
 import com.keiichi.medguidelines.ui.component.Dimensions
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
@@ -91,6 +94,10 @@ fun IcdO3Screen(
     val isLoading by viewModel.isLoading.collectAsState()
     val selectedGradeDigit by viewModel.selectedGradeDigit.collectAsState()
 
+    val topographySearchQuery by viewModel.topographySearchQuery.collectAsState()
+    val topographySearchResults by viewModel.topographySearchResults.collectAsState()
+    val isTopographyLoading by viewModel.isTopographyLoading.collectAsState()
+
     val configuration = LocalConfiguration.current
     val currentDeviceLocale = configuration.locales[0] ?: Locale.getDefault()
     val showJapanese = currentDeviceLocale.language == Locale.JAPANESE.language
@@ -109,35 +116,87 @@ fun IcdO3Screen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            MyCustomSearchBar(
-                searchQuery = searchQuery,
-                onSearchQueryChange = { viewModel.onQueryChanged(it) },
-                onSearch = {},
-                isLoading = isLoading,
-                placeholderText = R.string.searchIcdO3
-            )
-
-            LazyColumn(
+            // 局在（Topography）- 画面上1/3
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                contentPadding = PaddingValues(8.dp)
+                    .weight(1f)
             ) {
-                items(searchResults, key = { it.id }) { item ->
-                    IcdO3ResultCard(
-                        item = item,
-                        showJapanese = showJapanese,
-                        gradeDigit = selectedGradeDigit,
-                        onFavoriteClick = { viewModel.toggleFavorite(item) }
-                    )
+//                Text(
+//                    text = stringResource(R.string.icdO3TopographyTitle),
+//                    fontSize = 14.sp,
+//                    fontWeight = FontWeight.SemiBold,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+//                )
+                MyCustomSearchBar(
+                    searchQuery = topographySearchQuery,
+                    onSearchQueryChange = { viewModel.onTopographyQueryChanged(it) },
+                    onSearch = {},
+                    isLoading = isTopographyLoading,
+                    placeholderText = R.string.searchIcdO3Topography
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentPadding = PaddingValues(8.dp)
+                ) {
+                    items(topographySearchResults, key = { it.id }) { item ->
+                        IcdO3TopographyResultCard(
+                            item = item,
+                            showJapanese = showJapanese,
+                            onFavoriteClick = { viewModel.toggleTopographyFavorite(item) }
+                        )
+                    }
                 }
             }
 
-            IcdO3GradeDigitSelector(
-                selectedDigit = selectedGradeDigit,
-                showJapanese = showJapanese,
-                onDigitSelected = { viewModel.onGradeDigitChanged(it) }
-            )
+            HorizontalDivider()
+
+            // 組織型（Morphology）- 画面下2/3
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(2f)
+            ) {
+//                Text(
+//                    text = stringResource(R.string.icdO3MorphologyTitle),
+//                    fontSize = 14.sp,
+//                    fontWeight = FontWeight.SemiBold,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+//                )
+                MyCustomSearchBar(
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = { viewModel.onQueryChanged(it) },
+                    onSearch = {},
+                    isLoading = isLoading,
+                    placeholderText = R.string.searchIcdO3
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentPadding = PaddingValues(8.dp)
+                ) {
+                    items(searchResults, key = { it.id }) { item ->
+                        IcdO3ResultCard(
+                            item = item,
+                            showJapanese = showJapanese,
+                            gradeDigit = selectedGradeDigit,
+                            onFavoriteClick = { viewModel.toggleFavorite(item) }
+                        )
+                    }
+                }
+
+                IcdO3GradeDigitSelector(
+                    selectedDigit = selectedGradeDigit,
+                    showJapanese = showJapanese,
+                    onDigitSelected = { viewModel.onGradeDigitChanged(it) }
+                )
+            }
         }
     }
 }
@@ -313,6 +372,102 @@ private fun IcdO3ResultCard(
 
 @Composable
 private fun AlternateTermRow(alt: IcdO3AlternateTerm, showJapanese: Boolean) {
+    SelectionContainer {
+        Column(modifier = Modifier.padding(top = 2.dp)) {
+            Text(
+                text = alt.termEn,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (showJapanese && alt.termJa.isNotBlank()) {
+                Text(
+                    text = alt.termJa,
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun IcdO3TopographyResultCard(
+    item: IcdO3TopographySearchResult,
+    showJapanese: Boolean,
+    onFavoriteClick: () -> Unit
+) {
+    MedGuidelinesCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(Dimensions.cardPadding)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SelectionContainer(modifier = Modifier.weight(1f)) {
+                    Column {
+                        Text(
+                            text = item.termEn,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        if (showJapanese && item.termJa.isNotBlank()) {
+                            Text(
+                                text = item.termJa,
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+                IconButton(onClick = onFavoriteClick) {
+                    Icon(
+                        imageVector = if (item.isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                        contentDescription = "Favorite",
+                        tint = if (item.isFavorite) Color(0xFFFFD700) else LocalContentColor.current
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SelectionContainer {
+                    Text(text = item.code, fontSize = 16.sp)
+                }
+                if (item.needsReview) {
+                    Text(
+                        text = stringResource(R.string.icdO3NeedsReview),
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            }
+
+            if (item.alternateTerms.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.icdO3AlsoKnownAs),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                item.alternateTerms.forEach { alt ->
+                    TopographyAlternateTermRow(alt = alt, showJapanese = showJapanese)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TopographyAlternateTermRow(alt: IcdO3TopographyAlternateTerm, showJapanese: Boolean) {
     SelectionContainer {
         Column(modifier = Modifier.padding(top = 2.dp)) {
             Text(

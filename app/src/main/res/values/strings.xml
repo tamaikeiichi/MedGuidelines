@@ -768,11 +768,15 @@
     <string name="shobyomeiRefTitle">診療報酬情報提供サービス</string>
     <string name="searchShobyomei">病名／傷病名コード／ICDコード</string>
     <string name="icdO3Title">ICD-O-3.2 search</string>
-    <string name="searchIcdO3">ICD-O-3.2 code / term</string>
+    <string name="searchIcdO3">Morphology code / term</string>
     <string name="icdO3Obsolete">Obsolete</string>
     <string name="icdO3AlsoKnownAs">Also known as</string>
     <string name="icdO3GradeDigitLabel">6th digit (grade / differentiation / cell lineage)</string>
     <string name="icdO3GradeDigitNone">(none)</string>
+    <string name="icdO3TopographyTitle">Topography</string>
+    <string name="icdO3MorphologyTitle">Morphology</string>
+    <string name="searchIcdO3Topography">Topography code / term</string>
+    <string name="icdO3NeedsReview">Needs review</string>
     <string name="interpretationOfAggregateScores">Interpretation of aggregate scores</string>
     <string name="preTreatment">Pre-treatment</string>
     <string name="postTreatment">Post-treatment</string>

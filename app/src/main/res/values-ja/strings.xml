@@ -460,11 +460,15 @@
     <string name="ShobyomeiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="searchShobyomei">病名／傷病名コード／ICDコード</string>
     <string name="icdO3Title">ICD-O-3.2検索</string>
-    <string name="searchIcdO3">ICD-O-3.2コード／病名（日本語・英語）</string>
+    <string name="searchIcdO3">形態・コード（日本語・英語）</string>
     <string name="icdO3Obsolete">obsolete</string>
     <string name="icdO3AlsoKnownAs">別名</string>
     <string name="icdO3GradeDigitLabel">6桁目（グレード／分化度／細胞系列）</string>
     <string name="icdO3GradeDigitNone">（追加しない）</string>
+    <string name="icdO3TopographyTitle">局在（Topography）</string>
+    <string name="icdO3MorphologyTitle">組織型（Morphology）</string>
+    <string name="searchIcdO3Topography">局在・コード（日本語・英語）</string>
+    <string name="icdO3NeedsReview">要確認</string>
     <string name="postTreatment">治療後</string>
     <string name="under15"><![CDATA[<1.5]]></string>
     <string name="oneAndHalftothree">1.5-3.0</string>

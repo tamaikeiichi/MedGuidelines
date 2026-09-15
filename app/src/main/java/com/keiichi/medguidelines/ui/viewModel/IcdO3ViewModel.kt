@@ -10,6 +10,8 @@ import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.AppDatabase
 import com.keiichi.medguidelines.data.IcdO3Repository
 import com.keiichi.medguidelines.data.IcdO3SearchResult
+import com.keiichi.medguidelines.data.IcdO3TopographyRepository
+import com.keiichi.medguidelines.data.IcdO3TopographySearchResult
 import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -18,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: IcdO3Repository
+    private val topographyRepository: IcdO3TopographyRepository
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -28,9 +31,16 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
     private val _selectedGradeDigit = MutableStateFlow("")
     val selectedGradeDigit: StateFlow<String> = _selectedGradeDigit.asStateFlow()
 
+    private val _topographySearchQuery = MutableStateFlow("")
+    val topographySearchQuery: StateFlow<String> = _topographySearchQuery.asStateFlow()
+
+    private val _isTopographyLoading = MutableStateFlow(false)
+    val isTopographyLoading: StateFlow<Boolean> = _isTopographyLoading.asStateFlow()
+
     init {
         val db = AppDatabase.getDatabase(application)
         repository = IcdO3Repository(db.icdO3Dao())
+        topographyRepository = IcdO3TopographyRepository(db.icdO3TopographyDao())
 
         viewModelScope.launch {
             _isLoading.value = true
@@ -41,6 +51,18 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
                 )
             } finally {
                 _isLoading.value = false
+            }
+        }
+
+        viewModelScope.launch {
+            _isTopographyLoading.value = true
+            try {
+                topographyRepository.populateDatabaseFromCsvIfEmpty(
+                    context = application,
+                    resourceId = R.raw.icd_o3_topography
+                )
+            } finally {
+                _isTopographyLoading.value = false
             }
         }
     }
@@ -59,6 +81,16 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun onTopographyQueryChanged(newQuery: String) {
+        _topographySearchQuery.value = newQuery
+    }
+
+    fun toggleTopographyFavorite(item: IcdO3TopographySearchResult) {
+        viewModelScope.launch {
+            topographyRepository.updateFavorite(item.id, !item.isFavorite)
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val searchResults: StateFlow<List<IcdO3SearchResult>> = _searchQuery
         .debounce(300)
@@ -72,6 +104,27 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
                 val normalizedInput = normalizeTextForSearch(query)
                 val words = normalizedInput.trim().split(Regex("\\s+"))
                 repository.searchMulti(words)
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val topographySearchResults: StateFlow<List<IcdO3TopographySearchResult>> = _topographySearchQuery
+        .debounce(300)
+        .distinctUntilChanged()
+        .flatMapLatest { query ->
+            if (query.isBlank()) {
+                // クエリが空の場合はお気に入りリストを表示
+                topographyRepository.getFavorites()
+            } else {
+                // クエリがある場合は通常検索（コード／英語名称／日本語名称）
+                val normalizedInput = normalizeTextForSearch(query)
+                val words = normalizedInput.trim().split(Regex("\\s+"))
+                topographyRepository.searchMulti(words)
             }
         }
         .stateIn(

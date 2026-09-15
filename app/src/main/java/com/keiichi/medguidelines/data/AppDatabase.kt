@@ -28,8 +28,9 @@ import androidx.room.RoomDatabase
         ShindangunBunruiTensuhyoEntity::class,
         ShobyomeiEntity::class,
         IcdO3Entity::class,
+        IcdO3TopographyEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -47,6 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun shindangunBunruiTensuhyoDao(): ShindangunBunruiTensuhyoDao
     abstract fun shobyomeiDao(): ShobyomeiDao // ikaShiryokoiDao から shobyomeiDao に修正
     abstract fun icdO3Dao(): IcdO3Dao
+    abstract fun icdO3TopographyDao(): IcdO3TopographyDao
 
     companion object {
         @Volatile
