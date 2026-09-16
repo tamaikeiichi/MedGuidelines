@@ -1,5 +1,7 @@
 package com.keiichi.medguidelines.ui.screen
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -59,6 +63,9 @@ import com.keiichi.medguidelines.ui.viewModel.IcdO3ViewModel
 import java.util.Locale
 
 private data class IcdO3GradeOption(val digit: String, val labelEn: String, val labelJa: String)
+
+// どちらの検索窓がタップされているか（タップされた方の表示領域を最大化する）
+private enum class IcdO3FocusedSection { TOPOGRAPHY, MORPHOLOGY }
 
 // ICD-O-3の6桁目（グレード／分化度／細胞系列コード）の選択肢
 // 「9」はグレード表と細胞系列表の両方に存在するため、"not applicable"の表記で1つに揃えている
@@ -102,6 +109,12 @@ fun IcdO3Screen(
     val currentDeviceLocale = configuration.locales[0] ?: Locale.getDefault()
     val showJapanese = currentDeviceLocale.language == Locale.JAPANESE.language
 
+    // タップされた検索窓の表示領域を最大化するための状態
+    var focusedSection by remember { mutableStateOf<IcdO3FocusedSection?>(null) }
+
+    val topographyCollapsed = focusedSection == IcdO3FocusedSection.MORPHOLOGY
+    val morphologyCollapsed = focusedSection == IcdO3FocusedSection.TOPOGRAPHY
+
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
@@ -116,81 +129,84 @@ fun IcdO3Screen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            // 局在（Topography）- 画面上1/3
+            // 局在（Topography）- タップされていれば最大化、そうでなければ1/2
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .then(if (topographyCollapsed) Modifier.wrapContentHeight() else Modifier.weight(1f))
+                    .animateContentSize(animationSpec = tween(durationMillis = 300))
             ) {
-//                Text(
-//                    text = stringResource(R.string.icdO3TopographyTitle),
-//                    fontSize = 14.sp,
-//                    fontWeight = FontWeight.SemiBold,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-//                )
                 MyCustomSearchBar(
                     searchQuery = topographySearchQuery,
                     onSearchQueryChange = { viewModel.onTopographyQueryChanged(it) },
                     onSearch = {},
                     isLoading = isTopographyLoading,
-                    placeholderText = R.string.searchIcdO3Topography
+                    placeholderText = R.string.searchIcdO3Topography,
+                    modifier = Modifier.onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            focusedSection = IcdO3FocusedSection.TOPOGRAPHY
+                        }
+                    }
                 )
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(8.dp)
-                ) {
-                    items(topographySearchResults, key = { it.id }) { item ->
-                        IcdO3TopographyResultCard(
-                            item = item,
-                            showJapanese = showJapanese,
-                            onFavoriteClick = { viewModel.toggleTopographyFavorite(item) }
-                        )
+                if (!topographyCollapsed) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentPadding = PaddingValues(8.dp)
+                    ) {
+                        items(topographySearchResults, key = { it.id }) { item ->
+                            IcdO3TopographyResultCard(
+                                item = item,
+                                showJapanese = showJapanese,
+                                onFavoriteClick = { viewModel.toggleTopographyFavorite(item) }
+                            )
+                        }
                     }
                 }
             }
 
             HorizontalDivider()
 
-            // 組織型（Morphology）- 画面下2/3
+            // 組織型（Morphology）- タップされていれば最大化、そうでなければ1/2
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(2f)
+                    .then(if (morphologyCollapsed) Modifier.wrapContentHeight() else Modifier.weight(1f))
+                    .animateContentSize(animationSpec = tween(durationMillis = 300))
             ) {
-//                Text(
-//                    text = stringResource(R.string.icdO3MorphologyTitle),
-//                    fontSize = 14.sp,
-//                    fontWeight = FontWeight.SemiBold,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-//                )
                 MyCustomSearchBar(
                     searchQuery = searchQuery,
                     onSearchQueryChange = { viewModel.onQueryChanged(it) },
                     onSearch = {},
                     isLoading = isLoading,
-                    placeholderText = R.string.searchIcdO3
+                    placeholderText = R.string.searchIcdO3,
+                    modifier = Modifier.onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            focusedSection = IcdO3FocusedSection.MORPHOLOGY
+                        }
+                    }
                 )
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(8.dp)
-                ) {
-                    items(searchResults, key = { it.id }) { item ->
-                        IcdO3ResultCard(
-                            item = item,
-                            showJapanese = showJapanese,
-                            gradeDigit = selectedGradeDigit,
-                            onFavoriteClick = { viewModel.toggleFavorite(item) }
-                        )
+                if (!morphologyCollapsed) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentPadding = PaddingValues(8.dp)
+                    ) {
+                        items(searchResults, key = { it.id }) { item ->
+                            IcdO3ResultCard(
+                                item = item,
+                                showJapanese = showJapanese,
+                                gradeDigit = selectedGradeDigit,
+                                onFavoriteClick = { viewModel.toggleFavorite(item) }
+                            )
+                        }
                     }
                 }
 
+                // 6桁目（グレード）セレクタは折りたたみ時も常に表示する
                 IcdO3GradeDigitSelector(
                     selectedDigit = selectedGradeDigit,
                     showJapanese = showJapanese,
