@@ -6,6 +6,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
  * アプリケーションのRoomデータベース本体。
@@ -29,8 +31,10 @@ import androidx.room.RoomDatabase
         ShobyomeiEntity::class,
         IcdO3Entity::class,
         IcdO3TopographyEntity::class,
+        IkaShinryokoiEntity::class,
+        ShikaShinryokoiEntity::class,
     ],
-    version = 6,
+    version = 8,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -49,8 +53,38 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun shobyomeiDao(): ShobyomeiDao // ikaShiryokoiDao から shobyomeiDao に修正
     abstract fun icdO3Dao(): IcdO3Dao
     abstract fun icdO3TopographyDao(): IcdO3TopographyDao
+    abstract fun ikaShinryokoiDao(): IkaShinryokoiDao
+    abstract fun shikaShinryokoiDao(): ShikaShinryokoiDao
 
     companion object {
+        // 医科診療行為マスタのテーブル追加のみ。既存テーブル（お気に入り等）は保持する
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `ika_shinryokoi_master` (" +
+                        "`id` INTEGER NOT NULL, `kanjiMeisho` TEXT, `kanaMeisho` TEXT, " +
+                        "`tensuShikibetsu` TEXT NOT NULL, `tensu` TEXT NOT NULL, " +
+                        "`normalizedKanji` TEXT NOT NULL, `normalizedKana` TEXT NOT NULL, " +
+                        "`isFavorite` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, " +
+                        "PRIMARY KEY(`id`))"
+                )
+            }
+        }
+
+        // 歯科診療行為マスタのテーブル追加のみ。既存テーブル（お気に入り等）は保持する
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `shika_shinryokoi_master` (" +
+                        "`id` INTEGER NOT NULL, `kanjiMeisho` TEXT, `kanaMeisho` TEXT, " +
+                        "`tensuShikibetsu` TEXT NOT NULL, `tensu` TEXT NOT NULL, " +
+                        "`normalizedKanji` TEXT NOT NULL, `normalizedKana` TEXT NOT NULL, " +
+                        "`isFavorite` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, " +
+                        "PRIMARY KEY(`id`))"
+                )
+            }
+        }
+
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -61,6 +95,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "dpc_database"
                 )
+                    .addMigrations(MIGRATION_6_7, MIGRATION_7_8)
                     .fallbackToDestructiveMigration(true)
                     .build()
                 INSTANCE = instance
