@@ -413,6 +413,7 @@
     <string name="Ps" translatable="false">PS</string>
     <string name="infusionCalculator">Infusion calculator</string>
     <string name="ugkgmin" translatable="false">μg/kg/min</string>
+    <string name="ugkghr" translatable="false">μg/kg/hr</string>
     <string name="mlhr" translatable="false">mL/hr</string>
     <string name="totalVolume">Total volume</string>
     <string name="flowRate">Flow rate</string>
@@ -420,6 +421,7 @@
     <string name="saline">saline</string>
     <string name="Drug">Drug</string>
     <string name="mg" translatable="false">mg</string>
+    <string name="ug" translatable="false">μg</string>
     <string name="targetDosageOfDrug">Target dosage of drug</string>
     <string name="totalDrugDose">Total drug dose</string>
     <string name="findDrugDosage">Find drug dosage</string>

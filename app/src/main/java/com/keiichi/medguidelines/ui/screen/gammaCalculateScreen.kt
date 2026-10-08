@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -61,6 +62,11 @@ fun GammaCalculateScreen(navController: NavController) {
     var totalDrugDoseRound2 = Math.round(totalDrugDose2.doubleValue * 100.0) / 100.0
     var flowRateRound2 = Math.round(flowRate2.doubleValue * 100.0) / 100.0
     var totalVolumeRound2 = totalVolume2.doubleValue.toInt()
+
+    // true: μg/kg/min, mg（内部値の単位）  false: μg/kg/hr, μg
+    val isGamma1PerMin = remember { mutableStateOf(true) }
+    val isGamma2PerMin = remember { mutableStateOf(true) }
+    val isTotalDrugDose2Mg = remember { mutableStateOf(true) }
 
     MedGuidelinesScaffold(
         topBar = {
@@ -112,7 +118,10 @@ fun GammaCalculateScreen(navController: NavController) {
                         InputValue(
                             label = R.string.targetDosageOfDrug,
                             value = gamma1,
-                            japaneseUnit = R.string.ugkgmin
+                            japaneseUnit = R.string.ugkgmin,
+                            isJapaneseUnit = isGamma1PerMin,
+                            changedValueRate = 60.0,
+                            changedUnit = R.string.ugkghr
                         )
                         InputValue(
                             label = R.string.flowRate,
@@ -193,12 +202,18 @@ fun GammaCalculateScreen(navController: NavController) {
                         InputValue(
                             label = R.string.targetDosageOfDrug,
                             value = gamma2,
-                            japaneseUnit = R.string.ugkgmin
+                            japaneseUnit = R.string.ugkgmin,
+                            isJapaneseUnit = isGamma2PerMin,
+                            changedValueRate = 60.0,
+                            changedUnit = R.string.ugkghr
                         )
                         InputValue(
                             label = R.string.totalDrugDose,
                             value = totalDrugDose2,
-                            japaneseUnit = R.string.mg
+                            japaneseUnit = R.string.mg,
+                            isJapaneseUnit = isTotalDrugDose2Mg,
+                            changedValueRate = 1000.0,
+                            changedUnit = R.string.ug
                         )
                         InputValue(
                             label = R.string.totalVolume,
@@ -208,9 +223,13 @@ fun GammaCalculateScreen(navController: NavController) {
                     }
                 }
             //}
-            flowRate2.doubleValue =
-                (gamma2.doubleValue * bodyWeight2.doubleValue * 60) / 1000 /
-                        (totalDrugDose2.doubleValue) * totalVolume2.doubleValue
+            if (totalDrugDose2.doubleValue != 0.0) {
+                flowRate2.doubleValue =
+                    (gamma2.doubleValue * bodyWeight2.doubleValue * 60) / 1000 /
+                            (totalDrugDose2.doubleValue) * totalVolume2.doubleValue
+            } else {
+                flowRate2.doubleValue = 0.0
+            }
             //MedGuidelinesCard {
                 Text(
                     buildAnnotatedString {

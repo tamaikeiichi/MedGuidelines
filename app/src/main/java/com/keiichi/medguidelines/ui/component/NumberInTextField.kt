@@ -59,30 +59,38 @@ fun NumberInTextField(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
+    // 最後にユーザーが入力した値．valueがこの値のままなら入力した文字列をそのまま表示する
+    var lastTypedValue by remember { mutableDoubleStateOf(Double.NaN) }
+
+    fun formattedText(): String =
+        if (isJapaneseUnit.value) {
+            formatter.format(value.doubleValue)
+        } else {
+            formatter.format(value.doubleValue * changeValueRate)
+        }
+
     LaunchedEffect(Unit) {
         snapshotFlow { isJapaneseUnit.value }
             .drop(1)
-            .collect { currentIsJapaneseUnitValue ->
-                if (currentIsJapaneseUnitValue) {
-                    text = formatter.format((value.doubleValue))
-                } else {
-                    text = formatter.format((value.doubleValue * changeValueRate))
-                }
+            .collect {
+                // 単位を変えたときは，表示中の数字を新しい単位に換算する
+                lastTypedValue = Double.NaN
+                text = formattedText()
             }
     }
 
     LaunchedEffect(value.doubleValue){
-        text = formatter.format(value.doubleValue)
+        // 入力中の文字列は書き換えない（他のコンポーネントから値が変わったときだけ更新）
+        if (value.doubleValue != lastTypedValue) {
+            text = formattedText()
+        }
     }
 
     LaunchedEffect(isFocused) {
         if (!isFocused) {
-            text =
-                if (isJapaneseUnit.value) {
-                    formatter.format((value.doubleValue))
-                } else {
-                    formatter.format((value.doubleValue) * changeValueRate)
-                }
+            if (text.isBlank() || value.doubleValue != lastTypedValue) {
+                text = formattedText()
+            }
         }
     }
     LaunchedEffect(isFocused) {
@@ -124,6 +132,7 @@ fun NumberInTextField(
             } else {
                 value.doubleValue = (newText.toDoubleOrNull() ?: 0.0) / changeValueRate
             }
+            lastTypedValue = value.doubleValue
         },
         modifier = Modifier
             .padding(5.dp)
