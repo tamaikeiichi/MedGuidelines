@@ -845,4 +845,15 @@
     <string name="autoimmuneHepatitis">Autoimmune hepatitis</string>
     <string name="icdo3url">http://www.iacr.com.fr/index.php?Itemid=577</string>
     <string name="icdo3">ICD-O-3.2</string>
+    <string name="moaasTitle">MOAA/S score</string>
+    <string name="moaasObserversAssessment" translatable="false">Modified Observer\'s Assessment of Alertness/Sedation</string>
+    <string name="sedation">Sedation</string>
+    <string name="moaasRef" translatable="false">DA Chernik, et al. J Clin Psychopharmacol. 1990; 10(4): 244-251</string>
+    <string name="moaasUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/2286697/</string>
+    <string name="moaas5">Responds readily to name spoken in normal tone</string>
+    <string name="moaas4">Lethargic response to name spoken in normal tone</string>
+    <string name="moaas3">Responds only after name is called loudly and/or repeatedly</string>
+    <string name="moaas2">Responds only after mild prodding or shaking</string>
+    <string name="moaas1">Responds only after painful trapezius squeeze</string>
+    <string name="moaas0">No response after painful trapezius squeeze</string>
 </resources>

@@ -344,3 +344,12 @@ val responseToTherapy = listOf(
     LabelAndScore(labelResId = R.string.complete, score= 2, descriptionResId = R.string.completeNote),
     LabelAndScore(labelResId = R.string.relapse, score= 3, descriptionResId = R.string.relapseNote)
 )
+
+val moaas = listOf(
+    LabelAndScore(labelResId = R.string.moaas5, score = 5),
+    LabelAndScore(labelResId = R.string.moaas4, score = 4),
+    LabelAndScore(labelResId = R.string.moaas3, score = 3),
+    LabelAndScore(labelResId = R.string.moaas2, score = 2),
+    LabelAndScore(labelResId = R.string.moaas1, score = 1),
+    LabelAndScore(labelResId = R.string.moaas0, score = 0),
+)

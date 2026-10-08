@@ -34,6 +34,7 @@ import com.keiichi.medguidelines.ui.screen.LilleModelScreen
 import com.keiichi.medguidelines.ui.screen.LiverFibrosisScoreSystemScreen
 import com.keiichi.medguidelines.ui.screen.LungTNMScreen
 import com.keiichi.medguidelines.ui.screen.MALBIScreen
+import com.keiichi.medguidelines.ui.screen.MoaasScreen
 import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
 import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
 import com.keiichi.medguidelines.ui.screen.RaScreen
@@ -86,6 +87,7 @@ enum class ActionType {
     NAVIGATE_TO_SHOBYOMEI,
     NAVIGATE_TO_AIH,
     NAVIGATE_TO_ICDO3,
+    NAVIGATE_TO_MOAAS,
 
 }
 
@@ -211,7 +213,12 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.autoimmuneHepatitis
         )),
-    ListItemData(R.string.icdO3Title, ActionType.NAVIGATE_TO_ICDO3)
+    ListItemData(R.string.icdO3Title, ActionType.NAVIGATE_TO_ICDO3),
+    ListItemData(R.string.moaasTitle, ActionType.NAVIGATE_TO_MOAAS,
+        keywords = listOf(
+            R.string.moaasObserversAssessment,
+            R.string.sedation
+        ))
 )
 
 data class IndexScreenActions(
@@ -253,6 +260,7 @@ data class IndexScreenActions(
     val navigateToShobyomei: () -> Unit,
     val navigateToAih: () -> Unit,
     val navigateToIcdO3: () -> Unit,
+    val navigateToMoaas: () -> Unit,
 )
 
 @Composable
@@ -302,6 +310,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToShobyomei = {navController.navigate("ShobyomeiScreen")},
         navigateToAih = {navController.navigate("AihScreen")},
         navigateToIcdO3 = {navController.navigate("IcdO3Screen")},
+        navigateToMoaas = {navController.navigate("MoaasScreen")},
     )
 }
 
@@ -356,7 +365,8 @@ fun getAppScreens(sofaViewModel: SofaViewModel): List<ScreenRoute> {
         ScreenRoute("DpcScreen") { navController -> DpcScreen(navController) },
         ScreenRoute("ShobyomeiScreen") { navController -> ShobyomeiScreen(navController) },
         ScreenRoute("AihScreen") { navController -> AihScreen(navController)},
-        ScreenRoute("IcdO3Screen") { navController -> IcdO3Screen(navController) }
+        ScreenRoute("IcdO3Screen") { navController -> IcdO3Screen(navController) },
+        ScreenRoute("MoaasScreen") { navController -> MoaasScreen(navController) }
     )
 }
 
@@ -400,6 +410,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_SHOBYOMEI -> this.navigateToShobyomei()
         ActionType.NAVIGATE_TO_AIH -> this.navigateToAih()
         ActionType.NAVIGATE_TO_ICDO3 -> this.navigateToIcdO3()
+        ActionType.NAVIGATE_TO_MOAAS -> this.navigateToMoaas()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

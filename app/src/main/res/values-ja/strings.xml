@@ -513,4 +513,12 @@
     <string name="seropositivityForOtherDefinedAutoantibodies">他に同定された自己抗体</string>
     <string name="noneOfTheAbove">上記いずれもない</string>
     <string name="icdo3">ICD-O-3.2</string>
+    <string name="moaasTitle">MOAA/S スコア</string>
+    <string name="sedation">鎮静</string>
+    <string name="moaas5">普通のトーンで呼ばれた名前に対して容易に反応する。</string>
+    <string name="moaas4">普通のトーンで呼ばれた名前に対して無気力に反応する。</string>
+    <string name="moaas3">名前を大声で呼び／又は繰り返し呼ばれた場合にのみ反応する。</string>
+    <string name="moaas2">軽くつつく又は揺すった場合にのみ反応する。</string>
+    <string name="moaas1">僧帽筋を痛いほど圧した場合にのみ反応する。</string>
+    <string name="moaas0">僧帽筋を痛いほど圧しても反応なし。</string>
 </resources>
