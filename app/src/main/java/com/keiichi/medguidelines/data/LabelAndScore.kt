@@ -353,3 +353,13 @@ val moaas = listOf(
     LabelAndScore(labelResId = R.string.moaas1, score = 1),
     LabelAndScore(labelResId = R.string.moaas0, score = 0),
 )
+
+val meldSex = listOf(
+    LabelAndScore(labelResId = R.string.male, score = 0),
+    LabelAndScore(labelResId = R.string.female, score = 1),
+)
+
+val meldDialysis = listOf(
+    LabelAndScore(labelResId = R.string.no, score = 0),
+    LabelAndScore(labelResId = R.string.yes, score = 1),
+)

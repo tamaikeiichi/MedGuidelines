@@ -513,7 +513,7 @@
     <string name="seropositivityForOtherDefinedAutoantibodies">他に同定された自己抗体</string>
     <string name="noneOfTheAbove">上記いずれもない</string>
     <string name="icdo3">ICD-O-3.2</string>
-    <string name="moaasTitle">MOAA/S スコア</string>
+    <string name="moaasTitle">MOAA/Sスコア</string>
     <string name="sedation">鎮静</string>
     <string name="moaas5">普通のトーンで呼ばれた名前に対して容易に反応する。</string>
     <string name="moaas4">普通のトーンで呼ばれた名前に対して無気力に反応する。</string>
@@ -521,4 +521,10 @@
     <string name="moaas2">軽くつつく又は揺すった場合にのみ反応する。</string>
     <string name="moaas1">僧帽筋を痛いほど圧した場合にのみ反応する。</string>
     <string name="moaas0">僧帽筋を痛いほど圧しても反応なし。</string>
+    <string name="meldTitle">MELDスコア</string>
+    <string name="dialysisTwiceInPastWeek">過去1週間に2回以上の透析</string>
+    <string name="meld3Prognosis">MELD 3.0による予測生存率</string>
+    <string name="meldSurvivalRow">%1$d日: 生存率 %2$.1f%%（死亡率 %3$.1f%%）</string>
+    <string name="meld90DayMortality">90日死亡率 %1$.1f%%</string>
+    <string name="meldNaNote">MELD-NaはMELD &gt; 11の場合のみ適用（OPTN）。</string>
 </resources>

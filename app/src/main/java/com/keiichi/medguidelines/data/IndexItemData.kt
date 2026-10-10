@@ -34,6 +34,7 @@ import com.keiichi.medguidelines.ui.screen.LilleModelScreen
 import com.keiichi.medguidelines.ui.screen.LiverFibrosisScoreSystemScreen
 import com.keiichi.medguidelines.ui.screen.LungTNMScreen
 import com.keiichi.medguidelines.ui.screen.MALBIScreen
+import com.keiichi.medguidelines.ui.screen.MeldScreen
 import com.keiichi.medguidelines.ui.screen.MoaasScreen
 import com.keiichi.medguidelines.ui.screen.NetakiridoScreen
 import com.keiichi.medguidelines.ui.screen.PancreaticTNMScreen
@@ -88,6 +89,7 @@ enum class ActionType {
     NAVIGATE_TO_AIH,
     NAVIGATE_TO_ICDO3,
     NAVIGATE_TO_MOAAS,
+    NAVIGATE_TO_MELD,
 
 }
 
@@ -218,6 +220,11 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.moaasObserversAssessment,
             R.string.sedation
+        )),
+    ListItemData(R.string.meldTitle, ActionType.NAVIGATE_TO_MELD,
+        keywords = listOf(
+            R.string.meldModelForEndStageLiverDisease,
+            R.string.liver
         ))
 )
 
@@ -261,6 +268,7 @@ data class IndexScreenActions(
     val navigateToAih: () -> Unit,
     val navigateToIcdO3: () -> Unit,
     val navigateToMoaas: () -> Unit,
+    val navigateToMeld: () -> Unit,
 )
 
 @Composable
@@ -311,6 +319,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToAih = {navController.navigate("AihScreen")},
         navigateToIcdO3 = {navController.navigate("IcdO3Screen")},
         navigateToMoaas = {navController.navigate("MoaasScreen")},
+        navigateToMeld = {navController.navigate("MeldScreen")},
     )
 }
 
@@ -366,7 +375,8 @@ fun getAppScreens(sofaViewModel: SofaViewModel): List<ScreenRoute> {
         ScreenRoute("ShobyomeiScreen") { navController -> ShobyomeiScreen(navController) },
         ScreenRoute("AihScreen") { navController -> AihScreen(navController)},
         ScreenRoute("IcdO3Screen") { navController -> IcdO3Screen(navController) },
-        ScreenRoute("MoaasScreen") { navController -> MoaasScreen(navController) }
+        ScreenRoute("MoaasScreen") { navController -> MoaasScreen(navController) },
+        ScreenRoute("MeldScreen") { navController -> MeldScreen(navController) }
     )
 }
 
@@ -411,6 +421,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_AIH -> this.navigateToAih()
         ActionType.NAVIGATE_TO_ICDO3 -> this.navigateToIcdO3()
         ActionType.NAVIGATE_TO_MOAAS -> this.navigateToMoaas()
+        ActionType.NAVIGATE_TO_MELD -> this.navigateToMeld()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

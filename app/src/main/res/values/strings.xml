@@ -856,4 +856,13 @@
     <string name="moaas2">Responds only after mild prodding or shaking</string>
     <string name="moaas1">Responds only after painful trapezius squeeze</string>
     <string name="moaas0">No response after painful trapezius squeeze</string>
+    <string name="meldTitle">MELD score</string>
+    <string name="meldModelForEndStageLiverDisease" translatable="false">Model for End-Stage Liver Disease</string>
+    <string name="meldRef" translatable="false">Kim WR, et al. MELD 3.0: The Model for End-Stage Liver Disease Updated for the Modern Era. Gastroenterology. 2021; 161(6): 1887-1895</string>
+    <string name="meldUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/34481845/</string>
+    <string name="dialysisTwiceInPastWeek">Dialysis at least twice in the past week</string>
+    <string name="meld3Prognosis">Predicted survival by MELD 3.0</string>
+    <string name="meldSurvivalRow">%1$d days: survival %2$.1f%% (mortality %3$.1f%%)</string>
+    <string name="meld90DayMortality">90-day mortality %1$.1f%%</string>
+    <string name="meldNaNote">MELD-Na is applied only when MELD &gt; 11 (OPTN).</string>
 </resources>
