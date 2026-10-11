@@ -5,9 +5,11 @@ import com.keiichi.medguidelines.data.adjustedBodyWeight
 import com.keiichi.medguidelines.data.bodyMassIndex
 import com.keiichi.medguidelines.data.calculateCockcroftGault
 import com.keiichi.medguidelines.data.ckdEpi2021Gfr
+import com.keiichi.medguidelines.data.ckdEpiCystatinGfr
 import com.keiichi.medguidelines.data.cockcroftGaultCrCl
 import com.keiichi.medguidelines.data.cystatinGfr
 import com.keiichi.medguidelines.data.idealBodyWeight
+import com.keiichi.medguidelines.data.jsnEgfr
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -61,7 +63,7 @@ class CockcroftGaultCalculatorTest {
 
     @Test
     fun actualBodyWeightOnlyWithoutHeight() {
-        val result = calculateCockcroftGault(70.0, 60.0, 0.0, 1.0, 0.8, false)
+        val result = calculateCockcroftGault(70.0, 60.0, 0.0, 1.0, 0.8, false, false)
         assertEquals(58.33, result.crClActual, 0.01)
         assertNull(result.bmi)
         assertNull(result.idealBodyWeight)
@@ -73,7 +75,7 @@ class CockcroftGaultCalculatorTest {
     @Test
     fun lowBmiUsesActualBodyWeight() {
         // 45 kg, 175 cm -> BMI 14.7
-        val result = calculateCockcroftGault(70.0, 45.0, 175.0, 1.0, 0.8, false)
+        val result = calculateCockcroftGault(70.0, 45.0, 175.0, 1.0, 0.8, false, false)
         assertEquals(WeightBasis.ACTUAL, result.recommendedBasis)
         assertEquals(45.0, result.recommendedWeight, 0.0)
         assertEquals(result.crClActual, result.recommendedCrCl, 0.0)
@@ -82,7 +84,7 @@ class CockcroftGaultCalculatorTest {
     @Test
     fun normalBmiUsesIdealBodyWeight() {
         // 60 kg, 165 cm -> BMI 22.0
-        val result = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false)
+        val result = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false, false)
         assertEquals(WeightBasis.IDEAL, result.recommendedBasis)
         assertEquals(61.41, result.recommendedWeight, 0.01)
         assertEquals(59.71, result.recommendedCrCl, 0.01)
@@ -91,7 +93,7 @@ class CockcroftGaultCalculatorTest {
     @Test
     fun highBmiUsesAdjustedBodyWeight() {
         // 100 kg, 165 cm -> BMI 36.7
-        val result = calculateCockcroftGault(70.0, 100.0, 165.0, 1.0, 0.8, false)
+        val result = calculateCockcroftGault(70.0, 100.0, 165.0, 1.0, 0.8, false, false)
         assertEquals(WeightBasis.ADJUSTED, result.recommendedBasis)
         assertEquals(76.85, result.recommendedWeight, 0.01)
         assertEquals(74.71, result.recommendedCrCl, 0.01)
@@ -135,5 +137,74 @@ class CockcroftGaultCalculatorTest {
     @Test
     fun cystatinGfrIsZeroWhenNotEntered() {
         assertEquals(0.0, cystatinGfr(70.0, 0.0, false), 0.0)
+    }
+
+    // Matsuo S, et al. Am J Kidney Dis. 2009;53(6):982-992 (JSN eGFRcr, 194の式)
+    @Test
+    fun jsnEgfrForMale() {
+        assertEquals(57.31, jsnEgfr(70.0, 1.0, false), 0.01)
+    }
+
+    @Test
+    fun jsnEgfrForFemaleIs739PercentOfMale() {
+        val male = jsnEgfr(70.0, 1.0, false)
+        val female = jsnEgfr(70.0, 1.0, true)
+        assertEquals(male * 0.739, female, 0.0001)
+    }
+
+    @Test
+    fun jsnEgfrIsZeroWhenCreatinineIsNotEntered() {
+        assertEquals(0.0, jsnEgfr(70.0, 0.0, false), 0.0)
+    }
+
+    @Test
+    fun calculateCockcroftGaultUsesJsnFormulaWhenJapaneseSelected() {
+        val result = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false, true)
+        assertEquals(jsnEgfr(70.0, 1.0, false), result.gfr, 0.0001)
+    }
+
+    @Test
+    fun calculateCockcroftGaultUsesCkdEpiFormulaWhenNotJapaneseSelected() {
+        val result = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false, false)
+        assertEquals(ckdEpi2021Gfr(70.0, 1.0, false), result.gfr, 0.0001)
+    }
+
+    // Inker LA, et al. N Engl J Med. 2012;367(1):20-29 (2012 CKD-EPIシスタチンC式)
+    @Test
+    fun ckdEpiCystatinGfrForMaleAtKappa() {
+        // CysC 0.8 = κ(0.8) → min/max項とも1
+        assertEquals(100.46, ckdEpiCystatinGfr(70.0, 0.8, false), 0.01)
+    }
+
+    @Test
+    fun ckdEpiCystatinGfrForFemaleAtKappa() {
+        assertEquals(93.63, ckdEpiCystatinGfr(70.0, 0.8, true), 0.01)
+    }
+
+    @Test
+    fun ckdEpiCystatinGfrAboveKappa() {
+        assertEquals(58.63, ckdEpiCystatinGfr(70.0, 1.2, false), 0.01)
+    }
+
+    @Test
+    fun ckdEpiCystatinGfrBelowKappa() {
+        assertEquals(127.02, ckdEpiCystatinGfr(70.0, 0.5, false), 0.01)
+    }
+
+    @Test
+    fun ckdEpiCystatinGfrIsZeroWhenNotEntered() {
+        assertEquals(0.0, ckdEpiCystatinGfr(70.0, 0.0, false), 0.0)
+    }
+
+    @Test
+    fun calculateCockcroftGaultUsesHorioCysFormulaWhenJapaneseSelected() {
+        val result = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false, true)
+        assertEquals(cystatinGfr(70.0, 0.8, false), result.gfrCys, 0.0001)
+    }
+
+    @Test
+    fun calculateCockcroftGaultUsesCkdEpiCysFormulaWhenNotJapaneseSelected() {
+        val result = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false, false)
+        assertEquals(ckdEpiCystatinGfr(70.0, 0.8, false), result.gfrCys, 0.0001)
     }
 }

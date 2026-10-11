@@ -368,3 +368,8 @@ val cockcroftGaultSex = listOf(
     LabelAndScore(labelResId = R.string.male, score = 0),
     LabelAndScore(labelResId = R.string.female, score = 1),
 )
+
+val cockcroftGaultEthnicity = listOf(
+    LabelAndScore(labelResId = R.string.japanese, score = 0),
+    LabelAndScore(labelResId = R.string.ethnicityOther, score = 1),
+)

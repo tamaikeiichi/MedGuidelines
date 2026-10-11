@@ -18,5 +18,6 @@ object DataStoreKeys {
     val LIST_ITEM_DATA_KEY = stringPreferencesKey("list_item_data")
     val COEFF_KEY = doublePreferencesKey("coeff_key")
     val BUKKA_TAIOU_KEY = doublePreferencesKey("bukka_taiou_key")
+    val COCKCROFT_GAULT_IS_JAPANESE_KEY = booleanPreferencesKey("cockcroft_gault_is_japanese")
     // 今後増える設定（ユーザー名、モードなど）もここに追加していく
 }

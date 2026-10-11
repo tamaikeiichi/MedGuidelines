@@ -82,6 +82,18 @@ fun ckdEpi2021Gfr(age: Double, creatinine: Double, isFemale: Boolean): Double {
 }
 
 /**
+ * JSN（日本腎臓学会）eGFRcr式 (mL/min/1.73m^2)
+ * GFR = 194 × Cr^-1.094 × age^-0.287 × (0.739 if female)
+ * Matsuo S, et al. Am J Kidney Dis. 2009;53(6):982-992
+ * creatinine: mg/dL（酵素法，小数点以下2桁表記）
+ */
+fun jsnEgfr(age: Double, creatinine: Double, isFemale: Boolean): Double {
+    if (creatinine <= 0.0 || age <= 0.0) return 0.0
+    val sexFactor = if (isFemale) 0.739 else 1.0
+    return 194.0 * creatinine.pow(-1.094) * age.pow(-0.287) * sexFactor
+}
+
+/**
  * シスタチンCによる推算GFR (mL/min/1.73m^2)
  * 男性: (104 × CysC^-1.019 × 0.996^age) − 8
  * 女性: (104 × CysC^-1.019 × 0.996^age × 0.929) − 8
@@ -95,6 +107,23 @@ fun cystatinGfr(age: Double, cystatinC: Double, isFemale: Boolean): Double {
 }
 
 /**
+ * 2012 CKD-EPIシスタチンC式による推算GFR (mL/min/1.73m^2)
+ * GFR = 133 × min(CysC/0.8, 1)^-0.499 × max(CysC/0.8, 1)^-1.328 × 0.996^age × (0.932 if female)
+ * Inker LA, et al. N Engl J Med. 2012;367(1):20-29
+ * cystatinC: mg/L
+ */
+fun ckdEpiCystatinGfr(age: Double, cystatinC: Double, isFemale: Boolean): Double {
+    if (cystatinC <= 0.0 || age <= 0.0) return 0.0
+    val ratio = cystatinC / 0.8
+    val sexFactor = if (isFemale) 0.932 else 1.0
+    return 133.0 *
+            min(ratio, 1.0).pow(-0.499) *
+            max(ratio, 1.0).pow(-1.328) *
+            0.996.pow(age) *
+            sexFactor
+}
+
+/**
  * height <= 0（未入力）のときは実体重のみで計算する。
  * 身長があればBMIで推奨体重を選ぶ: BMI < 18.5は実体重，18.5以上25未満は理想体重，
  * 25以上は補正体重（MDCalc）。
@@ -105,11 +134,20 @@ fun calculateCockcroftGault(
     height: Double,
     creatinine: Double,
     cystatinC: Double,
-    isFemale: Boolean
+    isFemale: Boolean,
+    isJapanese: Boolean
 ): CockcroftGaultResult {
     val crClActual = cockcroftGaultCrCl(age, weight, creatinine, isFemale)
-    val gfr = ckdEpi2021Gfr(age, creatinine, isFemale)
-    val gfrCys = cystatinGfr(age, cystatinC, isFemale)
+    val gfr = if (isJapanese) {
+        jsnEgfr(age, creatinine, isFemale)
+    } else {
+        ckdEpi2021Gfr(age, creatinine, isFemale)
+    }
+    val gfrCys = if (isJapanese) {
+        cystatinGfr(age, cystatinC, isFemale)
+    } else {
+        ckdEpiCystatinGfr(age, cystatinC, isFemale)
+    }
     val bmi = bodyMassIndex(height, weight)
 
     if (bmi == null) {
