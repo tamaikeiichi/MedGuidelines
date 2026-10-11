@@ -527,7 +527,7 @@
     <string name="meldSurvivalRow">%1$d日: 生存率 %2$.1f%%（死亡率 %3$.1f%%）</string>
     <string name="meld90DayMortality">90日死亡率 %1$.1f%%</string>
     <string name="meldNaNote">MELD-NaはMELD &gt; 11の場合のみ適用（OPTN）。</string>
-    <string name="cockcroftGaultTitle">クレアチニンクリアランス（Cockcroft-Gault）</string>
+    <string name="cockcroftGaultTitle">CCr (Cockcroft), GFR (CKD-EPI 2021)</string>
     <string name="creatinineClearance">クレアチニンクリアランス</string>
     <string name="cockcroftGaultBodyWeightCard">使用する体重別のクレアチニンクリアランス</string>
     <string name="cockcroftGaultBmiRow">BMI %1$.1f kg/m²</string>
@@ -543,4 +543,5 @@
     <string name="cockcroftGaultActualBW">実体重</string>
     <string name="cockcroftGaultIdealBW">理想体重</string>
     <string name="cockcroftGaultAdjustedBW">補正体重</string>
+    <string name="cystatinC">シスタチンC</string>
 </resources>

@@ -33,6 +33,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
@@ -45,6 +46,7 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesFlowRow
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.PopupClickable
+import com.keiichi.medguidelines.ui.component.parseStyledString
 import com.keiichi.medguidelines.ui.component.ScoreBottomAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 import com.keiichi.medguidelines.ui.component.TitleTopAppBar
@@ -59,6 +61,8 @@ fun CockcroftGaultScreen(navController: NavController) {
             CockcroftGaultResult(
                 actualBodyWeight = 0.0,
                 crClActual = 0.0,
+                gfr = 0.0,
+                gfrCys = 0.0,
                 bmi = null,
                 idealBodyWeight = null,
                 adjustedBodyWeight = null,
@@ -78,7 +82,9 @@ fun CockcroftGaultScreen(navController: NavController) {
                 navController = navController,
                 references = listOf(
                     TextAndUrl(R.string.cockcroftGaultRef, R.string.cockcroftGaultUrl),
-                    TextAndUrl(R.string.idealAndAdjustedBodyWeightRef, R.string.idealAndAdjustedBodyWeightUrl)
+                    TextAndUrl(R.string.idealAndAdjustedBodyWeightRef, R.string.idealAndAdjustedBodyWeightUrl),
+                    TextAndUrl(R.string.gfrRefTitle, R.string.gfrUrl),
+                    TextAndUrl(R.string.gfrCysTitle, R.string.gfrCysUrl)
                 )
             )
         },
@@ -137,6 +143,7 @@ private fun cockcroftGaultInput(): CockcroftGaultResult {
     val weight = remember { mutableDoubleStateOf(60.0) }
     val height = remember { mutableDoubleStateOf(165.0) }
     val creatinine = remember { mutableDoubleStateOf(1.0) }
+    val cystatinC = remember { mutableDoubleStateOf(0.8) }
 
     val sex = buttonAndScoreWithScoreDisplayed(
         optionsWithScores = cockcroftGaultSex,
@@ -168,6 +175,11 @@ private fun cockcroftGaultInput(): CockcroftGaultResult {
                 changedValueRate = 88.4,
                 changedUnit = R.string.umolL
             )
+            InputValue(
+                label = R.string.cystatinC,
+                value = cystatinC,
+                japaneseUnit = R.string.mgL
+            )
         }
     }
 
@@ -176,6 +188,7 @@ private fun cockcroftGaultInput(): CockcroftGaultResult {
         weight = weight.doubleValue,
         height = height.doubleValue,
         creatinine = creatinine.doubleValue,
+        cystatinC = cystatinC.doubleValue,
         isFemale = sex == 1
     )
 }
@@ -187,8 +200,41 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
 
     MedGuidelinesCard {
         Column {
+//            Text(
+//                text = stringResource(R.string.cockcroftGaultBodyWeightCard),
+//                fontWeight = FontWeight.Bold,
+//                modifier = Modifier.textModifier()
+//            )
+            val gfrUnit = parseStyledString(R.string.mlmin173m2)
             Text(
-                text = stringResource(R.string.cockcroftGaultBodyWeightCard),
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontSize = 0.8.em)) {
+                        append(stringResource(R.string.gfr))
+                    }
+                    append(" ")
+                    append(formatCrCl(result.gfr))
+                    append(" ")
+                    withStyle(style = SpanStyle(fontSize = 0.6.em)) {
+                        append(gfrUnit)
+                    }
+                },
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.textModifier()
+            )
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontSize = 0.8.em)) {
+                        append(stringResource(R.string.gfrCysTitle))
+                    }
+                    append(" ")
+                    append(formatCrCl(result.gfrCys))
+                    append(" ")
+                    withStyle(style = SpanStyle(fontSize = 0.6.em)) {
+                        append(gfrUnit)
+                    }
+                },
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.textModifier()
             )

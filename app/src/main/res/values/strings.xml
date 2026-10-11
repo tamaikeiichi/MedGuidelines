@@ -548,7 +548,7 @@
     <string name="mgmmol" translatable="false">mg/mmol</string>
     <string name="urineTotalProtein">Urine Total Protein</string>
     <string name="urineTotalProteinCreatinineRatio">Urine Total Protein Creatinine Ratio</string>
-    <string name="gfr">GFR</string>
+    <string name="gfr">GFR cre</string>
     <string name="mlmin173m2"><![CDATA[ml/min/1.73m<sup>2</sup>]]></string>
     <string name="moderatelyIncreasedRisk">Moderately increased risk</string>
     <string name="veryHighRisk">Very high risk</string>
@@ -865,7 +865,7 @@
     <string name="meldSurvivalRow">%1$d days: survival %2$.1f%% (mortality %3$.1f%%)</string>
     <string name="meld90DayMortality">90-day mortality %1$.1f%%</string>
     <string name="meldNaNote">MELD-Na is applied only when MELD &gt; 11 (OPTN).</string>
-    <string name="cockcroftGaultTitle">Creatinine Clearance (Cockcroft-Gault)</string>
+    <string name="cockcroftGaultTitle">CCr (Cockcroft), GFR (CKD-EPI 2021)</string>
     <string name="creatinineClearance">Creatinine clearance</string>
     <string name="cockcroftGaultRef" translatable="false">Cockcroft DW, Gault MH. Prediction of creatinine clearance from serum creatinine. Nephron. 1976; 16(1): 31-41</string>
     <string name="cockcroftGaultUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/1244564/</string>
@@ -886,4 +886,11 @@
     <string name="cockcroftGaultActualBW">Actual BW</string>
     <string name="cockcroftGaultIdealBW">Ideal BW</string>
     <string name="cockcroftGaultAdjustedBW">Adjusted BW</string>
+    <string name="cystatinC">Cystatin C</string>
+    <string name="mgL" translatable="false">mg/L</string>
+    <string name="gfrUrl" translatable="false">https://www.nejm.org/doi/full/10.1056/NEJMoa2102953</string>
+    <string name="gfrRefTitle" translatable="false">GFR</string>
+    <string name="gfrCysTitle" translatable="false">GFR cys</string>
+    <string name="gfrCysUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/22892396/</string>
+    <string name="cystatin">cystatin</string>
 </resources>

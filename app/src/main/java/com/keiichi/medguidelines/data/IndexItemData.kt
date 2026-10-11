@@ -232,7 +232,8 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.creatinineClearance,
             R.string.creatinine,
-            R.string.kidney
+            R.string.kidney,
+            R.string.cystatin
         ))
 )
 
