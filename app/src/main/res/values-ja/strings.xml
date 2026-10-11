@@ -527,4 +527,15 @@
     <string name="meldSurvivalRow">%1$d日: 生存率 %2$.1f%%（死亡率 %3$.1f%%）</string>
     <string name="meld90DayMortality">90日死亡率 %1$.1f%%</string>
     <string name="meldNaNote">MELD-NaはMELD &gt; 11の場合のみ適用（OPTN）。</string>
+    <string name="cockcroftGaultTitle">クレアチニンクリアランス（Cockcroft-Gault）</string>
+    <string name="creatinineClearance">クレアチニンクリアランス</string>
+    <string name="cockcroftGaultBodyWeightCard">使用する体重別のクレアチニンクリアランス</string>
+    <string name="cockcroftGaultBmiRow">BMI %1$.1f kg/m²</string>
+    <string name="cockcroftGaultCrClRow">%1$s: %2$.1f kg</string>
+    <string name="cockcroftGaultActualBodyWeight">実体重</string>
+    <string name="cockcroftGaultIdealBodyWeight">理想体重（Devine式）</string>
+    <string name="cockcroftGaultAdjustedBodyWeight">補正体重</string>
+    <string name="cockcroftGaultRecommendedRow">BMIによる推奨: %1$s</string>
+    <string name="cockcroftGaultHeightNote">身長は任意。入力すると理想体重・補正体重による推定値も表示される。</string>
+    <string name="cockcroftGaultNote">本式は実体重で作成された。BMI 18.5～24.9では理想体重，BMI 25以上では補正体重の使用が推奨される（MDCalc）。</string>
 </resources>

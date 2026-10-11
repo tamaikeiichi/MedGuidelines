@@ -865,4 +865,21 @@
     <string name="meldSurvivalRow">%1$d days: survival %2$.1f%% (mortality %3$.1f%%)</string>
     <string name="meld90DayMortality">90-day mortality %1$.1f%%</string>
     <string name="meldNaNote">MELD-Na is applied only when MELD &gt; 11 (OPTN).</string>
+    <string name="cockcroftGaultTitle">Creatinine Clearance (Cockcroft-Gault)</string>
+    <string name="creatinineClearance">Creatinine clearance</string>
+    <string name="cockcroftGaultRef" translatable="false">Cockcroft DW, Gault MH. Prediction of creatinine clearance from serum creatinine. Nephron. 1976; 16(1): 31-41</string>
+    <string name="cockcroftGaultUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/1244564/</string>
+    <string name="idealAndAdjustedBodyWeightRef" translatable="false">Ideal and adjusted body weight</string>
+    <string name="idealAndAdjustedBodyWeightUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/22576791/</string>
+    <string name="mlMin" translatable="false">mL/min</string>
+    <string name="cockcroftGaultBodyWeightCard">Creatinine clearance by body weight used</string>
+    <string name="cockcroftGaultBmiRow">BMI %1$.1f kg/m²</string>
+    <string name="cockcroftGaultCrClRow">%1$s: %2$.1f kg</string>
+    <string name="cockcroftGaultActualBodyWeight">Actual body weight</string>
+    <string name="cockcroftGaultIdealBodyWeight">Ideal body weight (Devine)</string>
+    <string name="cockcroftGaultAdjustedBodyWeight">Adjusted body weight</string>
+    <string name="cockcroftGaultRecommendedRow">Suggested by BMI: %1$s</string>
+    <string name="cockcroftGaultHeightNote">Body height is optional. Enter it to get ideal and adjusted body weight estimates.</string>
+    <string name="cockcroftGaultNote">The equation was derived with actual body weight. Ideal body weight is suggested for BMI 18.5-24.9 and adjusted body weight for BMI 25 or more (MDCalc).</string>
+    <string name="cockcroftGaultBodyWeightFormula" translatable="false">Ideal body weight (male): 50 + 2.3 kg (every in. over 5 ft)\nIdeal body weight (female): 45.5 + 2.3 kg (every in. over 5 ft)\nAdjusted body weight (ABW) = IBW + C × (TBW − IBW)\nIBW = ideal body weight, C = 0.3 or 0.4, TBW = total body weight</string>
 </resources>
