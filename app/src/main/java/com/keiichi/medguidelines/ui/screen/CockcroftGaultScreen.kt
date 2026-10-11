@@ -72,6 +72,8 @@ fun CockcroftGaultScreen(navController: NavController) {
                 crClActual = 0.0,
                 gfr = 0.0,
                 gfrCys = 0.0,
+                gfrCrCys = 0.0,
+                isJapanese = true,
                 bmi = null,
                 idealBodyWeight = null,
                 adjustedBodyWeight = null,
@@ -101,22 +103,33 @@ fun CockcroftGaultScreen(navController: NavController) {
         bottomBar = {
             val mlMin = stringResource(R.string.mlMin)
             val gfrUnit = parseStyledString(R.string.mlmin173m2)
+            // bottom barの実際の背景はResultBottomAppBar側でonPrimaryContainerになっている
+            // （ライトモードでは濃い色，ダークモードでは明るい色）。
+            // primaryContainer/tertiaryContainerはonPrimaryContainerと常に反対の明度になる
+            // ペアのロールなので，この背景色に対してコントラストが確保され，かつ色相も違うので見分けやすい
+            val gfrStyle = SpanStyle(color = MaterialTheme.colorScheme.primaryContainer)
+            val ccrStyle = SpanStyle(color = MaterialTheme.colorScheme.tertiaryContainer)
             ScoreBottomAppBarVariable(displayText = buildAnnotatedString {
-                appendGfrSummaryRow(
-                    unit = gfrUnit,
-                    cre = result.gfr,
-                    cys = result.gfrCys
-                )
+                withStyle(style = gfrStyle) {
+                    appendGfrSummaryRow(
+                        unit = gfrUnit,
+                        cre = result.gfr,
+                        cys = if (result.isJapanese) result.gfrCys else null,
+                        creCys = result.gfrCrCys
+                    )
+                }
                 append("\n")
-                appendCCrSummaryRow(
-                    mlMin = mlMin,
-                    actual = result.crClActual,
-                    actualLabel = stringResource(R.string.cockcroftGaultActualBW),
-                    ideal = result.crClIdeal,
-                    idealLabel = stringResource(R.string.cockcroftGaultIdealBW),
-                    adjusted = result.crClAdjusted,
-                    adjustedLabel = stringResource(R.string.cockcroftGaultAdjustedBW)
-                )
+                withStyle(style = ccrStyle) {
+                    appendCCrSummaryRow(
+                        mlMin = mlMin,
+                        actual = result.crClActual,
+                        actualLabel = stringResource(R.string.cockcroftGaultActualBW),
+                        ideal = result.crClIdeal,
+                        idealLabel = stringResource(R.string.cockcroftGaultIdealBW),
+                        adjusted = result.crClAdjusted,
+                        adjustedLabel = stringResource(R.string.cockcroftGaultAdjustedBW)
+                    )
+                }
             }
             )
         },
@@ -384,28 +397,32 @@ private fun cockcroftGaultFormulaCard(isJapanese: Boolean) {
                 text = stringResource(R.string.cockcroftGaultCCrFormula),
                 modifier = Modifier.textModifier()
             )
-
-            Text(
-                text = stringResource(
-                    if (isJapanese) R.string.cockcroftGaultGfrCysFormula else R.string.cockcroftGaultCkdEpiGfrCysFormula
-                ),
-                modifier = Modifier.textModifier()
-            )
             Text(
                 text = stringResource(
                     if (isJapanese) R.string.cockcroftGaultJsnGfrFormula else R.string.cockcroftGaultGfrFormula
                 ),
                 modifier = Modifier.textModifier()
             )
+            if (isJapanese) {
+                Text(
+                    text = stringResource(R.string.cockcroftGaultGfrCysFormula),
+                    modifier = Modifier.textModifier()
+                )
+            }
+            Text(
+                text = stringResource(R.string.cockcroftGaultCrCysFormula),
+                modifier = Modifier.textModifier()
+            )
         }
     }
 }
 
-/** "GFR (ml/min/1.73m2) cre <値>, cys <値>" の形式で表示する */
+/** "GFR (ml/min/1.73m2) cre <値>, cys <値>, cre-cys <値>" の形式で表示する。cysはnullなら省略する（日本人選択時のみ表示） */
 private fun androidx.compose.ui.text.AnnotatedString.Builder.appendGfrSummaryRow(
     unit: androidx.compose.ui.text.AnnotatedString,
     cre: Double,
-    cys: Double
+    cys: Double?,
+    creCys: Double
 ) {
     append("GFR")
     withStyle(style = SpanStyle(fontSize = 0.6.em)) {
@@ -418,9 +435,15 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendGfrSummaryRow
     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
         append(formatCrCl(cre))
     }
-    append(", cys ")
+    if (cys != null) {
+        append(", cys ")
+        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+            append(formatCrCl(cys))
+        }
+    }
+    append(", cre-cys ")
     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-        append(formatCrCl(cys))
+        append(formatCrCl(creCys))
     }
 }
 
@@ -459,9 +482,11 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendCCrValue(
     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
         append(formatCrCl(value))
     }
-    append(" (")
-    append(label)
-    append(")")
+    withStyle(style = SpanStyle(fontSize = 0.6.em)) {
+        append(" (")
+        append(label)
+        append(")")
+    }
 }
 
 private val crClFormatter = DecimalFormat("0.0")

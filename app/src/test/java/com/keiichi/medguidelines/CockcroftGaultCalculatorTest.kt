@@ -4,6 +4,7 @@ import com.keiichi.medguidelines.data.WeightBasis
 import com.keiichi.medguidelines.data.adjustedBodyWeight
 import com.keiichi.medguidelines.data.bodyMassIndex
 import com.keiichi.medguidelines.data.calculateCockcroftGault
+import com.keiichi.medguidelines.data.ckdEpi2021CrCysGfr
 import com.keiichi.medguidelines.data.ckdEpi2021Gfr
 import com.keiichi.medguidelines.data.ckdEpiCystatinGfr
 import com.keiichi.medguidelines.data.cockcroftGaultCrCl
@@ -206,5 +207,36 @@ class CockcroftGaultCalculatorTest {
     fun calculateCockcroftGaultUsesCkdEpiCysFormulaWhenNotJapaneseSelected() {
         val result = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false, false)
         assertEquals(ckdEpiCystatinGfr(70.0, 0.8, false), result.gfrCys, 0.0001)
+    }
+
+    // Inker LA, et al. N Engl J Med. 2021;385(19):1737-1749 (2021 CKD-EPI creatinine-cystatin C併用式)
+    @Test
+    fun ckdEpi2021CrCysGfrForMale() {
+        assertEquals(96.97, ckdEpi2021CrCysGfr(70.0, 1.0, 0.8, false), 0.01)
+    }
+
+    @Test
+    fun ckdEpi2021CrCysGfrForFemale() {
+        assertEquals(81.45, ckdEpi2021CrCysGfr(70.0, 1.0, 0.8, true), 0.01)
+    }
+
+    @Test
+    fun ckdEpi2021CrCysGfrBelowBothKappa() {
+        assertEquals(130.09, ckdEpi2021CrCysGfr(70.0, 0.5, 0.5, false), 0.01)
+    }
+
+    @Test
+    fun ckdEpi2021CrCysGfrIsZeroWhenNotEntered() {
+        assertEquals(0.0, ckdEpi2021CrCysGfr(70.0, 0.0, 0.8, false), 0.0)
+        assertEquals(0.0, ckdEpi2021CrCysGfr(70.0, 1.0, 0.0, false), 0.0)
+    }
+
+    @Test
+    fun calculateCockcroftGaultComputesCrCysRegardlessOfEthnicity() {
+        val japanese = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false, true)
+        val other = calculateCockcroftGault(70.0, 60.0, 165.0, 1.0, 0.8, false, false)
+        val expected = ckdEpi2021CrCysGfr(70.0, 1.0, 0.8, false)
+        assertEquals(expected, japanese.gfrCrCys, 0.0001)
+        assertEquals(expected, other.gfrCrCys, 0.0001)
     }
 }

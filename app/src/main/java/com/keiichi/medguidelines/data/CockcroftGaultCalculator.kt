@@ -18,6 +18,8 @@ data class CockcroftGaultResult(
     val crClActual: Double,
     val gfr: Double,
     val gfrCys: Double,
+    val gfrCrCys: Double,
+    val isJapanese: Boolean,
     val bmi: Double?,
     val idealBodyWeight: Double?,
     val adjustedBodyWeight: Double?,
@@ -124,6 +126,35 @@ fun ckdEpiCystatinGfr(age: Double, cystatinC: Double, isFemale: Boolean): Double
 }
 
 /**
+ * 2021 CKD-EPI race-free creatinine-cystatin C併用式による推算GFR (mL/min/1.73m^2)
+ * GFR = 135 × min(Cr/κ, 1)^α × max(Cr/κ, 1)^-0.544 × min(CysC/0.8, 1)^-0.323
+ *       × max(CysC/0.8, 1)^-0.778 × 0.9961^age × (0.963 if female)
+ * κ = 0.7 (female) or 0.9 (male), α = -0.219 (female) or -0.144 (male)
+ * Inker LA, et al. N Engl J Med. 2021;385(19):1737-1749
+ * creatinine, cystatinC: mg/dL, mg/L
+ */
+fun ckdEpi2021CrCysGfr(
+    age: Double,
+    creatinine: Double,
+    cystatinC: Double,
+    isFemale: Boolean
+): Double {
+    if (creatinine <= 0.0 || cystatinC <= 0.0 || age <= 0.0) return 0.0
+    val kappa = if (isFemale) 0.7 else 0.9
+    val alpha = if (isFemale) -0.219 else -0.144
+    val sexFactor = if (isFemale) 0.963 else 1.0
+    val crRatio = creatinine / kappa
+    val cysRatio = cystatinC / 0.8
+    return 135.0 *
+            min(crRatio, 1.0).pow(alpha) *
+            max(crRatio, 1.0).pow(-0.544) *
+            min(cysRatio, 1.0).pow(-0.323) *
+            max(cysRatio, 1.0).pow(-0.778) *
+            0.9961.pow(age) *
+            sexFactor
+}
+
+/**
  * height <= 0（未入力）のときは実体重のみで計算する。
  * 身長があればBMIで推奨体重を選ぶ: BMI < 18.5は実体重，18.5以上25未満は理想体重，
  * 25以上は補正体重（MDCalc）。
@@ -148,6 +179,7 @@ fun calculateCockcroftGault(
     } else {
         ckdEpiCystatinGfr(age, cystatinC, isFemale)
     }
+    val gfrCrCys = ckdEpi2021CrCysGfr(age, creatinine, cystatinC, isFemale)
     val bmi = bodyMassIndex(height, weight)
 
     if (bmi == null) {
@@ -156,6 +188,8 @@ fun calculateCockcroftGault(
             crClActual = crClActual,
             gfr = gfr,
             gfrCys = gfrCys,
+            gfrCrCys = gfrCrCys,
+            isJapanese = isJapanese,
             bmi = null,
             idealBodyWeight = null,
             adjustedBodyWeight = null,
@@ -193,6 +227,8 @@ fun calculateCockcroftGault(
         crClActual = crClActual,
         gfr = gfr,
         gfrCys = gfrCys,
+        gfrCrCys = gfrCrCys,
+        isJapanese = isJapanese,
         bmi = bmi,
         idealBodyWeight = ibw,
         adjustedBodyWeight = adjBw,

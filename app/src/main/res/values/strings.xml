@@ -898,6 +898,7 @@
     <string name="cockcroftGaultGfrFormula" translatable="false">GFR (mL/min/1.73m²) = 142 × min (Cr/κ, 1)^α × max(Cr/κ, 1)^-1.200 × 0.9938^Age × (1.012 if female)\nκ = 0.7 (female) / 0.9 (male), α = -0.241 (female) / -0.302 (male)</string>
     <string name="cockcroftGaultGfrCysFormula" translatable="false">GFR cys (mL/min/1.73m²), male = (104 × CysC^-1.019 × 0.996^Age) − 8\nGFR cys (mL/min/1.73m²), female = (104 × CysC^-1.019 × 0.996^Age × 0.929) − 8</string>
     <string name="cockcroftGaultCkdEpiGfrCysFormula" translatable="false">GFR cys (mL/min/1.73m²) = 133 × min(CysC/0.8, 1)^-0.499 × max(CysC/0.8, 1)^-1.328 × 0.996^Age × (0.932 if female)</string>
+    <string name="cockcroftGaultCrCysFormula" translatable="false">GFR cre-cys (mL/min/1.73m²) = 135 × min(Cr/κ, 1)^α × max(Cr/κ, 1)^-0.544 × min(CysC/0.8, 1)^-0.323 × max(CysC/0.8, 1)^-0.778 × 0.9961^Age × (0.963 if female)\nκ = 0.7 (female) / 0.9 (male), α = -0.219 (female) / -0.144 (male)</string>
     <string name="japanese">Japanese</string>
     <string name="ethnicityOther">Other</string>
     <string name="cockcroftGaultJsnGfrFormula" translatable="false">JSN eGFRcr (male) = 194 × Cr^-1.094 × Age^-0.287 (mL/min/1.73m²)\nJSN eGFRcr (female) = 194 × Cr^-1.094 × Age^-0.287 × 0.739 (mL/min/1.73m²)</string>
