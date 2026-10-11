@@ -533,9 +533,14 @@
     <string name="cockcroftGaultBmiRow">BMI %1$.1f kg/m²</string>
     <string name="cockcroftGaultCrClRow">%1$s: %2$.1f kg</string>
     <string name="cockcroftGaultActualBodyWeight">実体重</string>
-    <string name="cockcroftGaultIdealBodyWeight">理想体重（Devine式）</string>
+    <string name="cockcroftGaultIdealBodyWeight">理想体重</string>
     <string name="cockcroftGaultAdjustedBodyWeight">補正体重</string>
     <string name="cockcroftGaultRecommendedRow">BMIによる推奨: %1$s</string>
     <string name="cockcroftGaultHeightNote">身長は任意。入力すると理想体重・補正体重による推定値も表示される。</string>
     <string name="cockcroftGaultNote">本式は実体重で作成された。BMI 18.5～24.9では理想体重，BMI 25以上では補正体重の使用が推奨される（MDCalc）。</string>
+    <string name="cockcroftGaultIdealBodyWeightFormula">男性: 50 ＋ {2.3 × (身長[cm] － 152.4)} / 2.54 kg\n女性: 45.5 ＋ {2.3 × (身長[cm] － 152.4)} / 2.54 kg</string>
+    <string name="cockcroftGaultAdjustedBodyWeightFormula">補正体重 ＝ 理想体重 ＋ [0.4 × (実測体重 － 理想体重)]</string>
+    <string name="cockcroftGaultActualBW">実体重</string>
+    <string name="cockcroftGaultIdealBW">理想体重</string>
+    <string name="cockcroftGaultAdjustedBW">補正体重</string>
 </resources>

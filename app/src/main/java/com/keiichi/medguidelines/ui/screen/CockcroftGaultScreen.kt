@@ -83,27 +83,28 @@ fun CockcroftGaultScreen(navController: NavController) {
             )
         },
         bottomBar = {
+            val mlMin = stringResource(R.string.mlMin)
             ScoreBottomAppBarVariable(displayText = buildAnnotatedString {
-                append(stringResource(R.string.cockcroftGaultActualBodyWeight))
-                append(": ")
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(formatCrCl(result.crClActual))
-                }
-                append(" ")
-                withStyle(style = SpanStyle(fontSize = 0.8.em)) {
-                    append(stringResource(R.string.mlMin))
-                }
-                if (result.recommendedBasis != WeightBasis.ACTUAL) {
+                appendCrClRow(
+                    label = stringResource(R.string.cockcroftGaultActualBW),
+                    crCl = result.crClActual,
+                    mlMin = mlMin
+                )
+                result.crClIdeal?.let { crClIdeal ->
                     append("\n")
-                    append(weightBasisLabel(result.recommendedBasis))
-                    append(": ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(formatCrCl(result.recommendedCrCl))
-                    }
-                    append(" ")
-                    withStyle(style = SpanStyle(fontSize = 0.8.em)) {
-                        append(stringResource(R.string.mlMin))
-                    }
+                    appendCrClRow(
+                        label = stringResource(R.string.cockcroftGaultIdealBW),
+                        crCl = crClIdeal,
+                        mlMin = mlMin
+                    )
+                }
+                result.crClAdjusted?.let { crClAdjusted ->
+                    append("\n")
+                    appendCrClRow(
+                        label = stringResource(R.string.cockcroftGaultAdjustedBW),
+                        crCl = crClAdjusted,
+                        mlMin = mlMin
+                    )
                 }
             }
             )
@@ -181,37 +182,16 @@ private fun cockcroftGaultInput(): CockcroftGaultResult {
 
 @Composable
 private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
-    var showBodyWeightFormula by remember { mutableStateOf(false) }
+    var showIdealBodyWeightFormula by remember { mutableStateOf(false) }
+    var showAdjustedBodyWeightFormula by remember { mutableStateOf(false) }
 
     MedGuidelinesCard {
         Column {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            Text(
+                text = stringResource(R.string.cockcroftGaultBodyWeightCard),
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.textModifier()
-            ) {
-                Text(
-                    text = stringResource(R.string.cockcroftGaultBodyWeightCard),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable { showBodyWeightFormula = !showBodyWeightFormula }
-                )
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
-                    contentDescription = "help",
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(18.dp)
-                        .clickable { showBodyWeightFormula = !showBodyWeightFormula },
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-            if (showBodyWeightFormula) {
-                Popup {
-                    PopupClickable(
-                        text = stringResource(R.string.cockcroftGaultBodyWeightFormula),
-                        onClick = { showBodyWeightFormula = false }
-                    )
-                }
-            }
+            )
             val bmi = result.bmi
             if (bmi == null) {
                 Text(
@@ -237,39 +217,77 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
             val ibw = result.idealBodyWeight
             val crClIdeal = result.crClIdeal
             if (ibw != null && crClIdeal != null) {
-                Text(
-                    text = stringResource(
-                        R.string.cockcroftGaultCrClRow,
-                        stringResource(R.string.cockcroftGaultIdealBodyWeight),
-                        ibw,
-                        crClIdeal
-                    ),
-                    modifier = Modifier.textModifier()
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(
+                            R.string.cockcroftGaultCrClRow,
+                            stringResource(R.string.cockcroftGaultIdealBodyWeight),
+                            ibw,
+                            crClIdeal
+                        ),
+                        modifier = Modifier.textModifier()
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
+                        contentDescription = "help",
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(18.dp)
+                            .clickable { showIdealBodyWeightFormula = true },
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
             val adjustedBw = result.adjustedBodyWeight
             val crClAdjusted = result.crClAdjusted
             if (adjustedBw != null && crClAdjusted != null) {
-                Text(
-                    text = stringResource(
-                        R.string.cockcroftGaultCrClRow,
-                        stringResource(R.string.cockcroftGaultAdjustedBodyWeight),
-                        adjustedBw,
-                        crClAdjusted
-                    ),
-                    modifier = Modifier.textModifier()
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(
+                            R.string.cockcroftGaultCrClRow,
+                            stringResource(R.string.cockcroftGaultAdjustedBodyWeight),
+                            adjustedBw,
+                            crClAdjusted
+                        ),
+                        modifier = Modifier.textModifier()
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
+                        contentDescription = "help",
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(18.dp)
+                            .clickable { showAdjustedBodyWeightFormula = true },
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
-            if (bmi != null) {
-                Text(
-                    text = stringResource(
-                        R.string.cockcroftGaultRecommendedRow,
-                        weightBasisLabel(result.recommendedBasis)
-                    ),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.textModifier()
-                )
+            if (showIdealBodyWeightFormula) {
+                Popup(onDismissRequest = { showIdealBodyWeightFormula = false }) {
+                    PopupClickable(
+                        text = stringResource(R.string.cockcroftGaultIdealBodyWeightFormula),
+                        onClick = { showIdealBodyWeightFormula = false }
+                    )
+                }
             }
+            if (showAdjustedBodyWeightFormula) {
+                Popup(onDismissRequest = { showAdjustedBodyWeightFormula = false }) {
+                    PopupClickable(
+                        text = stringResource(R.string.cockcroftGaultAdjustedBodyWeightFormula),
+                        onClick = { showAdjustedBodyWeightFormula = false }
+                    )
+                }
+            }
+//            if (bmi != null) {
+//                Text(
+//                    text = stringResource(
+//                        R.string.cockcroftGaultRecommendedRow,
+//                        weightBasisLabel(result.recommendedBasis)
+//                    ),
+//                    fontWeight = FontWeight.Bold,
+//                    modifier = Modifier.textModifier()
+//                )
+//            }
 //            Text(
 //                text = stringResource(R.string.cockcroftGaultNote),
 //                style = MaterialTheme.typography.bodySmall,
@@ -279,14 +297,22 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
     }
 }
 
-@Composable
-private fun weightBasisLabel(basis: WeightBasis): String = stringResource(
-    when (basis) {
-        WeightBasis.ACTUAL -> R.string.cockcroftGaultActualBodyWeight
-        WeightBasis.IDEAL -> R.string.cockcroftGaultIdealBodyWeight
-        WeightBasis.ADJUSTED -> R.string.cockcroftGaultAdjustedBodyWeight
+private fun androidx.compose.ui.text.AnnotatedString.Builder.appendCrClRow(
+    label: String,
+    crCl: Double,
+    mlMin: String
+) {
+    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+        append(formatCrCl(crCl))
     }
-)
+    append(" ")
+    withStyle(style = SpanStyle(fontSize = 0.8.em)) {
+        append(mlMin)
+    }
+    append(" (")
+    append(label)
+    append(")")
+}
 
 private val crClFormatter = DecimalFormat("0.0")
 
