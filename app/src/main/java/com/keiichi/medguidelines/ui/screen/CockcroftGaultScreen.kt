@@ -84,34 +84,29 @@ fun CockcroftGaultScreen(navController: NavController) {
                     TextAndUrl(R.string.cockcroftGaultRef, R.string.cockcroftGaultUrl),
                     TextAndUrl(R.string.idealAndAdjustedBodyWeightRef, R.string.idealAndAdjustedBodyWeightUrl),
                     TextAndUrl(R.string.gfrRefTitle, R.string.gfrUrl),
-                    TextAndUrl(R.string.gfrCysTitle, R.string.gfrCysUrl)
+                    //TextAndUrl(R.string.gfrCysTitle, R.string.gfrCysUrl)
                 )
             )
         },
         bottomBar = {
             val mlMin = stringResource(R.string.mlMin)
+            val gfrUnit = parseStyledString(R.string.mlmin173m2)
             ScoreBottomAppBarVariable(displayText = buildAnnotatedString {
-                appendCrClRow(
-                    label = stringResource(R.string.cockcroftGaultActualBW),
-                    crCl = result.crClActual,
-                    mlMin = mlMin
+                appendGfrSummaryRow(
+                    unit = gfrUnit,
+                    cre = result.gfr,
+                    cys = result.gfrCys
                 )
-                result.crClIdeal?.let { crClIdeal ->
-                    append("\n")
-                    appendCrClRow(
-                        label = stringResource(R.string.cockcroftGaultIdealBW),
-                        crCl = crClIdeal,
-                        mlMin = mlMin
-                    )
-                }
-                result.crClAdjusted?.let { crClAdjusted ->
-                    append("\n")
-                    appendCrClRow(
-                        label = stringResource(R.string.cockcroftGaultAdjustedBW),
-                        crCl = crClAdjusted,
-                        mlMin = mlMin
-                    )
-                }
+                append("\n")
+                appendCCrSummaryRow(
+                    mlMin = mlMin,
+                    actual = result.crClActual,
+                    actualLabel = stringResource(R.string.cockcroftGaultActualBW),
+                    ideal = result.crClIdeal,
+                    idealLabel = stringResource(R.string.cockcroftGaultIdealBW),
+                    adjusted = result.crClAdjusted,
+                    adjustedLabel = stringResource(R.string.cockcroftGaultAdjustedBW)
+                )
             }
             )
         },
@@ -205,39 +200,6 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
 //                fontWeight = FontWeight.Bold,
 //                modifier = Modifier.textModifier()
 //            )
-            val gfrUnit = parseStyledString(R.string.mlmin173m2)
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontSize = 0.8.em)) {
-                        append(stringResource(R.string.gfr))
-                    }
-                    append(" ")
-                    append(formatCrCl(result.gfr))
-                    append(" ")
-                    withStyle(style = SpanStyle(fontSize = 0.6.em)) {
-                        append(gfrUnit)
-                    }
-                },
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.textModifier()
-            )
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontSize = 0.8.em)) {
-                        append(stringResource(R.string.gfrCysTitle))
-                    }
-                    append(" ")
-                    append(formatCrCl(result.gfrCys))
-                    append(" ")
-                    withStyle(style = SpanStyle(fontSize = 0.6.em)) {
-                        append(gfrUnit)
-                    }
-                },
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.textModifier()
-            )
             val bmi = result.bmi
             if (bmi == null) {
                 Text(
@@ -248,6 +210,7 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
             } else {
                 Text(
                     text = stringResource(R.string.cockcroftGaultBmiRow, bmi),
+                    fontSize = 18.sp,
                     modifier = Modifier.textModifier()
                 )
             }
@@ -258,6 +221,7 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
                     result.actualBodyWeight,
                     result.crClActual
                 ),
+                fontSize = 18.sp,
                 modifier = Modifier.textModifier()
             )
             val ibw = result.idealBodyWeight
@@ -271,6 +235,7 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
                             ibw,
                             crClIdeal
                         ),
+                        fontSize = 18.sp,
                         modifier = Modifier.textModifier()
                     )
                     Icon(
@@ -295,6 +260,7 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
                             adjustedBw,
                             crClAdjusted
                         ),
+                        fontSize = 18.sp,
                         modifier = Modifier.textModifier()
                     )
                     Icon(
@@ -343,17 +309,54 @@ private fun cockcroftGaultDetail(result: CockcroftGaultResult) {
     }
 }
 
-private fun androidx.compose.ui.text.AnnotatedString.Builder.appendCrClRow(
-    label: String,
-    crCl: Double,
-    mlMin: String
+/** "GFR (ml/min/1.73m2) cre <値>, cys <値>" の形式で表示する */
+private fun androidx.compose.ui.text.AnnotatedString.Builder.appendGfrSummaryRow(
+    unit: androidx.compose.ui.text.AnnotatedString,
+    cre: Double,
+    cys: Double
+) {
+    append("GFR (")
+    append(unit)
+    append(") cre ")
+    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+        append(formatCrCl(cre))
+    }
+    append(", cys ")
+    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+        append(formatCrCl(cys))
+    }
+}
+
+/** "CCr (mL/min) <実体重値> (実体重), <理想体重値>（理想体重）, <補正体重値>（補正体重）" の形式で表示する */
+private fun androidx.compose.ui.text.AnnotatedString.Builder.appendCCrSummaryRow(
+    mlMin: String,
+    actual: Double,
+    actualLabel: String,
+    ideal: Double?,
+    idealLabel: String,
+    adjusted: Double?,
+    adjustedLabel: String
+) {
+    append("CCr (")
+    append(mlMin)
+    append(") ")
+    appendCCrValue(actual, actualLabel)
+    if (ideal != null) {
+        append(", ")
+        appendCCrValue(ideal, idealLabel)
+    }
+    if (adjusted != null) {
+        append(", ")
+        appendCCrValue(adjusted, adjustedLabel)
+    }
+}
+
+private fun androidx.compose.ui.text.AnnotatedString.Builder.appendCCrValue(
+    value: Double,
+    label: String
 ) {
     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-        append(formatCrCl(crCl))
-    }
-    append(" ")
-    withStyle(style = SpanStyle(fontSize = 0.8.em)) {
-        append(mlMin)
+        append(formatCrCl(value))
     }
     append(" (")
     append(label)
