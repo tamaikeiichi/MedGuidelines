@@ -29,6 +29,9 @@ interface JushodoShujutsuDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAlldata(list: List<JushodoShujutsuEntity>)
 
+    @androidx.room.Query("DELETE FROM jushodo_shujutsu_master")
+    suspend fun deleteAll()
+
     /**
      * 指定された MDCコード と 分類コード の両方が一致する行が
      * マスターテーブルに存在するかどうかをチェックします。
@@ -38,15 +41,14 @@ interface JushodoShujutsuDao {
 
 
     /**
-     * 指定されたMDCコードと分類コードに一致する行から、
-     * joken1とjoken2に関連するすべての値を一度に取得します。
-     *      * @return JushodoJokenオブジェクト。見つからなければnull。
-     *      */
+     * 指定されたMDCコードと分類コードに一致する条件を全て取得します（CSVの記載順）。
+     * 1つの分類に複数の条件（例: 片眼／両眼 と 初回／再手術）がある場合は複数行を返します。
+     */
     @Query(
         "SELECT joken_name, mdc_code, bunrui_code, joken1_name, joken1_code, joken2_code, joken2_name " +
                 "FROM jushodo_shujutsu_master " +
                 "WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode " +
-                "LIMIT 1"
+                "ORDER BY id"
     )
     suspend fun getJushodoJoken(mdcCode: String, bunruiCode: String): List<JushodoShujutsuJoken>
 }

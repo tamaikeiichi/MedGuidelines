@@ -1,5 +1,6 @@
 package com.keiichi.medguidelines.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -13,5 +14,7 @@ data class IkaShinryokoiEntity(
     val normalizedKanji: String = "",      // 検索用（正規化済み漢字名称）
     val normalizedKana: String = "",       // 検索用（正規化済みカナ名称）
     val isFavorite: Boolean = false,
-    val sortOrder: Long = 0                // 表示順（小さいほど上。お気に入り操作で移動する）
+    val sortOrder: Long = 0,               // 表示順（小さいほど上。お気に入り操作で移動する）
+    @ColumnInfo(defaultValue = "")
+    val code: String = ""                  // 診療行為コード（マスタ更新時にお気に入りを引き継ぐキー）
 )

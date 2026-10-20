@@ -24,6 +24,19 @@ interface ShikaShinryokoiDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(list: List<ShikaShinryokoiEntity>)
 
+    @Query("SELECT * FROM shika_shinryokoi_master WHERE isFavorite = 1")
+    suspend fun getFavorites(): List<ShikaShinryokoiEntity>
+
+    @Query("DELETE FROM shika_shinryokoi_master")
+    suspend fun deleteAll()
+
+    /** マスタ更新時に旧データを破棄して入れ替える */
+    @Transaction
+    suspend fun replaceAll(list: List<ShikaShinryokoiEntity>) {
+        deleteAll()
+        insertAll(list)
+    }
+
     @Query("UPDATE shika_shinryokoi_master SET isFavorite = :isFavorite, sortOrder = :sortOrder WHERE id = :id")
     suspend fun updateFavoriteAndOrder(id: Int, isFavorite: Boolean, sortOrder: Long)
 

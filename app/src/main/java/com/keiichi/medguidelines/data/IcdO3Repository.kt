@@ -103,10 +103,14 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
         }
     }
 
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context, resourceId: Int) {
+    /**
+     * DBが空、または取り込み済みのCSVと[resourceId]が異なる（マスタが更新された）場合にCSVから取り込む。
+     * 更新時は旧データを全て破棄し、お気に入りのみコードと用語レベルで引き継ぐ。
+     */
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context, resourceId: Int) {
         withContext(Dispatchers.IO) {
             try {
-                if (icdO3Dao.getCount() == 0) {
+                if (needsMasterReload(context, "icd_o3_master", resourceId, icdO3Dao.getCount())) {
                     Log.d("IcdO3", "Loading ICD-O-3 master data from CSV...")
                     val inputStream: InputStream = context.resources.openRawResource(resourceId)
 
@@ -145,7 +149,9 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
                         )
                     }
 
-                    icdO3Dao.insertAll(entityList)
+                    val favoriteKeys = icdO3Dao.getFavoriteRows().map { it.code to it.level }.toSet()
+                    icdO3Dao.replaceAll(entityList.map { it.copy(isFavorite = (it.code to it.level) in favoriteKeys) })
+                    markMasterLoaded(context, "icd_o3_master", resourceId)
                     Log.d("IcdO3", "Successfully inserted ${entityList.size} items.")
                 }
             } catch (e: Exception) {

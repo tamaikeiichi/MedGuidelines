@@ -33,6 +33,9 @@ interface ShindangunBunruiTensuhyoDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAlldata(list: List<ShindangunBunruiTensuhyoEntity>)
 
+    @androidx.room.Query("DELETE FROM shindangunBunruiTensuhyo_master")
+    suspend fun deleteAll()
+
     @Query("SELECT EXISTS(SELECT code FROM shindangunBunruiTensuhyo_master WHERE code = :code LIMIT 1)")
     suspend fun existsCodeInMaster(code: String): Boolean
 

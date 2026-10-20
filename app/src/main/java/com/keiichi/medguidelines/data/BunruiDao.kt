@@ -14,6 +14,9 @@ interface BunruiDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAll(bunruiList: List<BunruiEntity>)
 
+    @androidx.room.Query("DELETE FROM bunrui_master")
+    suspend fun deleteAll()
+
     @Query("""
         SELECT * FROM bunrui_master 
         WHERE (normalized_bunrui_name LIKE :word1 OR mdc_Code LIKE :word1 OR bunrui_Code LIKE :word1 LIKE :word1)

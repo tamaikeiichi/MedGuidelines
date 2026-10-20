@@ -27,6 +27,9 @@ interface Shochi2Dao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAlldata(list: List<Shochi2Entity>)
 
+    @androidx.room.Query("DELETE FROM shochi2_master")
+    suspend fun deleteAll()
+
     @Query("SELECT EXISTS(SELECT 1 FROM shochi2_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
     suspend fun existsBunruiInMaster(mdcCode: String, bunruiCode: String): Boolean
 

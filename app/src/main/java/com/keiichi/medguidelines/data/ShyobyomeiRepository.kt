@@ -36,10 +36,14 @@ class ShyobyomeiRepository(private val shobyomeiDao: ShobyomeiDao) {
 
     fun getFavorites(): Flow<List<ShobyomeiEntity>> = shobyomeiDao.getFavorites()
 
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context, resourceId: Int) {
+    /**
+     * DBが空、または取り込み済みのCSVと[resourceId]が異なる（マスタが更新された）場合にCSVから取り込む。
+     * 更新時は旧データを全て破棄し、お気に入りのみ傷病名コードで引き継ぐ。
+     */
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context, resourceId: Int) {
         withContext(Dispatchers.IO) {
             try {
-                if (shobyomeiDao.getCount() == 0) {
+                if (needsMasterReload(context, "shobyomei_master", resourceId, shobyomeiDao.getCount())) {
                     Log.d("IkaShiryokoi", "Loading master data from CSV (quoted)...")
                     val inputStream: InputStream = context.resources.openRawResource(resourceId)
 
@@ -81,7 +85,9 @@ class ShyobyomeiRepository(private val shobyomeiDao: ShobyomeiDao) {
                         )
                     }.filter { it.code.isNotBlank() }
 
-                    shobyomeiDao.insertAll(entityList)
+                    val favoriteCodes = shobyomeiDao.getFavoriteCodes().toSet()
+                    shobyomeiDao.replaceAll(entityList.map { it.copy(isFavorite = it.code in favoriteCodes) })
+                    markMasterLoaded(context, "shobyomei_master", resourceId)
                     Log.d("IkaShiryokoi", "Successfully inserted ${entityList.size} items.")
                 }
             } catch (e: Exception) {

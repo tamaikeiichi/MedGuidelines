@@ -17,6 +17,9 @@ interface ShujutsuDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAllShujutsu(shujutsuList: List<ShujutsuEntity>)
 
+    @androidx.room.Query("DELETE FROM shujutsu_master")
+    suspend fun deleteAll()
+
     @Query("SELECT EXISTS(SELECT 1 FROM shujutsu_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
     suspend fun existsMdcAndBunruiInShujutsuMaster(mdcCode: String, bunruiCode: String): Boolean
 

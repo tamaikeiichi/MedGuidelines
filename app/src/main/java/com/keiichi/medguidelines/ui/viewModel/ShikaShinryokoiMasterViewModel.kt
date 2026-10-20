@@ -32,9 +32,9 @@ class ShikaShinryokoiMasterViewModel(application: Application) : AndroidViewMode
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.populateDatabaseFromCsvIfEmpty(
+                repository.populateDatabaseFromCsvIfNeeded(
                     context = application,
-                    resourceId = R.raw.h_20250808
+                    resourceId = R.raw.h_20260807
                 )
             } finally {
                 _isLoading.value = false

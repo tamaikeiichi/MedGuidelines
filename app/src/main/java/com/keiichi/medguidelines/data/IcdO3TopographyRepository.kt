@@ -97,10 +97,14 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
         }
     }
 
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context, resourceId: Int) {
+    /**
+     * DBが空、または取り込み済みのCSVと[resourceId]が異なる（マスタが更新された）場合にCSVから取り込む。
+     * 更新時は旧データを全て破棄し、お気に入りのみコードと用語種別で引き継ぐ。
+     */
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context, resourceId: Int) {
         withContext(Dispatchers.IO) {
             try {
-                if (icdO3TopographyDao.getCount() == 0) {
+                if (needsMasterReload(context, "icd_o3_topography", resourceId, icdO3TopographyDao.getCount())) {
                     Log.d("IcdO3Topography", "Loading ICD-O-3 topography master data from CSV...")
                     val inputStream: InputStream = context.resources.openRawResource(resourceId)
 
@@ -141,7 +145,11 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
                         )
                     }
 
-                    icdO3TopographyDao.insertAll(entityList)
+                    val favoriteKeys = icdO3TopographyDao.getFavoriteRows().map { it.code to it.termType }.toSet()
+                    icdO3TopographyDao.replaceAll(
+                        entityList.map { it.copy(isFavorite = (it.code to it.termType) in favoriteKeys) }
+                    )
+                    markMasterLoaded(context, "icd_o3_topography", resourceId)
                     Log.d("IcdO3Topography", "Successfully inserted ${entityList.size} items.")
                 }
             } catch (e: Exception) {

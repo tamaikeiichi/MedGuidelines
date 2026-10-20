@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -35,6 +36,19 @@ interface IcdO3Dao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(list: List<IcdO3Entity>)
+
+    @Query("SELECT * FROM icd_o3_master WHERE isFavorite = 1")
+    suspend fun getFavoriteRows(): List<IcdO3Entity>
+
+    @Query("DELETE FROM icd_o3_master")
+    suspend fun deleteAll()
+
+    /** マスタ更新時に旧データを破棄して入れ替える */
+    @Transaction
+    suspend fun replaceAll(list: List<IcdO3Entity>) {
+        deleteAll()
+        insertAll(list)
+    }
 
     @Query("UPDATE icd_o3_master SET isFavorite = :isFavorite WHERE id = :id")
     suspend fun updateFavorite(id: Long, isFavorite: Boolean)

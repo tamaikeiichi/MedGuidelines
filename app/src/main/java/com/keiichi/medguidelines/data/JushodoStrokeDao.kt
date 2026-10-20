@@ -28,6 +28,9 @@ interface JushodoStrokeDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAlldata(list: List<JushodoStrokeEntity>)
 
+    @androidx.room.Query("DELETE FROM jushodo_stroke_master")
+    suspend fun deleteAll()
+
     /**
      * 指定された MDCコード と 分類コード の両方が一致する行が
      * マスターテーブルに存在するかどうかをチェックします。

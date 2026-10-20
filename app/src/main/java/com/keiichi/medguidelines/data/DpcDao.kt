@@ -29,6 +29,9 @@ interface DpcDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllIcd(icdList: List<IcdEntity>)
 
+    @Query("DELETE FROM icd_master")
+    suspend fun deleteAllIcd()
+
     /**
      * ICDマスターテーブルの全件数を取得します。
      * データが投入済みかどうかのチェックに使用します。
@@ -52,6 +55,9 @@ interface DpcDao {
     @Query("SELECT icdName FROM icd_master " +
             "WHERE mdcCode = :mdc AND bunruiCode = :bunrui")
     suspend fun searchIcdByMcdAndBunrui(mdc: String?, bunrui: String?): List<String?>
+
+    @Query("SELECT * FROM icd_master WHERE mdcCode = :mdc AND bunruiCode = :bunrui")
+    fun searchIcdEntitiesByMdcAndBunrui(mdc: String, bunrui: String): Flow<List<IcdEntity>>
 
     // C:/Users/tamai/StudioProjects/MedGuidelines/app/src/main/java/com/keiichi/medguidelines/data/DpcDao.kt
     /**
@@ -78,6 +84,9 @@ interface DpcDao {
      */
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAllByotai(byotaiList: List<ByotaiEntity>)
+
+    @Query("DELETE FROM byotai_master")
+    suspend fun deleteAllByotai()
 
     /**
      * 病態マスターテーブルの件数を取得します。
@@ -204,6 +213,9 @@ interface DpcDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAllMdc(mdcList: List<MdcEntity>)
 
+    @Query("DELETE FROM mdc_master")
+    suspend fun deleteAllMdc()
+
     /**
      * MDCマスターテーブルの件数を取得します。
      */
@@ -222,6 +234,9 @@ interface DpcDao {
      */
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAllNenrei(nenreiList: List<NenreiEntity>)
+
+    @Query("DELETE FROM nenrei_master")
+    suspend fun deleteAllNenrei()
 
     /**
      * 指定されたMDCコードに一致する、ユニークなMDCコードのリストを取得します。

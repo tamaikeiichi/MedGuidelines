@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -29,6 +30,19 @@ interface ShobyomeiDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(list: List<ShobyomeiEntity>)
+
+    @Query("SELECT code FROM shobyomei_master WHERE isFavorite = 1")
+    suspend fun getFavoriteCodes(): List<String>
+
+    @Query("DELETE FROM shobyomei_master")
+    suspend fun deleteAll()
+
+    /** マスタ更新時に旧データを破棄して入れ替える */
+    @Transaction
+    suspend fun replaceAll(list: List<ShobyomeiEntity>) {
+        deleteAll()
+        insertAll(list)
+    }
 
     @Query("SELECT name FROM shobyomei_master LIMIT 20")
     suspend fun getDebugNames(): List<String>

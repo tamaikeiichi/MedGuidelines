@@ -45,7 +45,7 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.populateDatabaseFromCsvIfEmpty(
+                repository.populateDatabaseFromCsvIfNeeded(
                     context = application,
                     resourceId = R.raw.icd_o3_morphology
                 )
@@ -57,7 +57,7 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _isTopographyLoading.value = true
             try {
-                topographyRepository.populateDatabaseFromCsvIfEmpty(
+                topographyRepository.populateDatabaseFromCsvIfNeeded(
                     context = application,
                     resourceId = R.raw.icd_o3_topography
                 )

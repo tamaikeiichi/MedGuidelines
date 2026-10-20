@@ -25,6 +25,9 @@ interface FukushobyoDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAlldata(list: List<FukushobyoEntity>)
 
+    @androidx.room.Query("DELETE FROM fukushobyo_master")
+    suspend fun deleteAll()
+
     @Query("SELECT EXISTS(SELECT 1 FROM fukushobyo_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
     suspend fun existsMdcAndBunruiInMaster(mdcCode: String, bunruiCode: String): Boolean
 

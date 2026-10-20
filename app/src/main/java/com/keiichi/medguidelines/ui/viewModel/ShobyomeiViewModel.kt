@@ -32,7 +32,7 @@ class ShobyomeiViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.populateDatabaseFromCsvIfEmpty(
+                repository.populateDatabaseFromCsvIfNeeded(
                     context = application,
                     resourceId = R.raw.b_20260101 
                 )

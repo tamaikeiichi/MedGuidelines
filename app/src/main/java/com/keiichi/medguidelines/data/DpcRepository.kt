@@ -10,6 +10,7 @@ import com.keiichi.medguidelines.ui.component.normalizeTextForSearch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.DataRow
 import org.jetbrains.kotlinx.dataframe.api.ParserOptions
 import org.jetbrains.kotlinx.dataframe.api.rows
 import org.jetbrains.kotlinx.dataframe.io.ColType
@@ -32,6 +33,7 @@ object DpcResources {
     val shochi2 = R.raw.dpc001691187_8
     val fukushobyo = R.raw.dpc001691187_9
     val jushodoJcs = R.raw.dpc001691187_10_1
+    val jushodoShujutsu = R.raw.dpc001691187_10_2
     val jushodoStroke = R.raw.dpc001691187_10_4
     val tensuhyo = R.raw.dpc001691187_11
 }
@@ -45,6 +47,9 @@ class DpcRepository(private val dpcDao: DpcDao) {
 
     fun searchIcdMulti(word1: String, word2: String, word3: String, word4: String) =
         dpcDao.searchIcdMulti(word1, word2, word3, word4)
+
+    fun searchIcdByMdcAndBunrui(mdcCode: String, bunruiCode: String) =
+        dpcDao.searchIcdEntitiesByMdcAndBunrui(mdcCode, bunruiCode)
 
     suspend fun checkMdcAndBunruiExist(mdcCode: String, bunruiCode: String): Boolean {
         return withContext(Dispatchers.IO) {
@@ -92,100 +97,79 @@ class DpcRepository(private val dpcDao: DpcDao) {
         }
     }
 
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
                 // ICD
-                if (dpcDao.getIcdCount() == 0) {
-                    Log.d("tamaiDpc", "icd reading")
-                    val icdDf = readDpcCsv(context, DpcResources.icd)
-                    val icdList = icdDf.rows().map { row ->
-                        IcdEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            icdName = row[2]?.toString() ?: "",
-                            icdCode = row[3]?.toString() ?: "",
-                            normalizedIcdName = normalizeTextForSearch(row[2]?.toString() ?: "")
-                        )
-                    }
-                    dpcDao.insertAllIcd(icdList)
+                reloadDpcTableIfNeeded(
+                    context, "icd_master", DpcResources.icd,
+                    dpcDao::getIcdCount, dpcDao::deleteAllIcd, dpcDao::insertAllIcd
+                ) { row ->
+                    IcdEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        icdName = row[2]?.toString() ?: "",
+                        icdCode = row[3]?.toString() ?: "",
+                        normalizedIcdName = normalizeTextForSearch(row[2]?.toString() ?: "")
+                    )
                 }
 
                 // Byotai
-                if (dpcDao.getByotaiCount() == 0) {
-                    Log.d("tamaiDpc", "byotai reading")
-                    val byotaiDf = readDpcCsv(context, DpcResources.byotai)
-                    val byotaiList = byotaiDf.rows().map { row ->
-                        ByotaiEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            byotaiCode = row[2]?.toString() ?: "",
-                            nenreiIjo = row[4]?.toString() ?: "",
-                            nenreiMiman = row[5]?.toString() ?: "",
-                            byotaiKubunMeisho = row[7]?.toString() ?: ""
-                        )
-                    }
-                    dpcDao.insertAllByotai(byotaiList)
+                reloadDpcTableIfNeeded(
+                    context, "byotai_master", DpcResources.byotai,
+                    dpcDao::getByotaiCount, dpcDao::deleteAllByotai, dpcDao::insertAllByotai
+                ) { row ->
+                    ByotaiEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        byotaiCode = row[2]?.toString() ?: "",
+                        nenreiIjo = row[4]?.toString() ?: "",
+                        nenreiMiman = row[5]?.toString() ?: "",
+                        byotaiKubunMeisho = row[7]?.toString() ?: ""
+                    )
                 }
 
-                // Bunrui
-                if (dpcDao.getBunruiCount() == 0) {
-                    Log.d("tamaiDpc", "bunrui reading")
-                    val bunruiDf = readDpcCsv(context, DpcResources.bunrui)
-                    val bunruiList = bunruiDf.rows().map { row ->
-                        BunruiEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            bunruiName = row[2]?.toString() ?: "",
-                            normalizedBunruiName = normalizeTextForSearch(row[2]?.toString() ?: "")
-                        )
-                    }
-                    dpcDao.insertAllBunrui(bunruiList)
-                }
+                // Bunrui は BunruiRepository で取り込む（同じテーブルを二重に取り込まないため）
 
                 // Mdc
-                if (dpcDao.getMdcCount() == 0) {
-                    Log.d("tamaiDpc", "mdc reading")
-                    val mdcDf = readDpcCsv(context, DpcResources.mdc)
-                    val mdcList = mdcDf.rows().map { row ->
-                        MdcEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            mdcName = row[1]?.toString() ?: ""
-                        )
-                    }
-                    dpcDao.insertAllMdc(mdcList)
+                reloadDpcTableIfNeeded(
+                    context, "mdc_master", DpcResources.mdc,
+                    dpcDao::getMdcCount, dpcDao::deleteAllMdc, dpcDao::insertAllMdc
+                ) { row ->
+                    MdcEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        mdcName = row[1]?.toString() ?: ""
+                    )
                 }
 
                 // Nenrei
-                if (dpcDao.getNenreiCount() == 0) {
-                    Log.d("tamaiDpc", "nenrei reading")
-                    val nenreiDf = readDpcCsv(context, DpcResources.nenrei)
-                    val nenreiList = nenreiDf.rows().map { row ->
-                        NenreiEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            jokenKubun = row[2]?.toString() ?: "",
-                            jokenName = row[3]?.toString() ?: "",
-                            joken1Ijo = row[4]?.toString() ?: "",
-                            joken1Miman = row[5]?.toString() ?: "",
-                            joken1Value = row[6]?.toString() ?: "",
-                            joken2Ijo = row[7]?.toString() ?: "",
-                            joken2Miman = row[8]?.toString() ?: "",
-                            joken2Value = row[9]?.toString() ?: "",
-                            joken3Ijo = row[10]?.toString() ?: "",
-                            joken3Miman = row[11]?.toString() ?: "",
-                            joken3Value = row[12]?.toString() ?: "",
-                            joken4Ijo = row[13]?.toString() ?: "",
-                            joken4Miman = row[14]?.toString() ?: "",
-                            joken4Value = row[15]?.toString() ?: "",
-                            joken5Ijo = row[16]?.toString() ?: "",
-                            joken5Miman = row[17]?.toString() ?: "",
-                            joken5Value = row[18]?.toString() ?: "",
-                            strokeKubun = row[19]?.toString() ?: "",
-                            strokeName = row[20]?.toString() ?: "",
-                        )
-                    }
-                    dpcDao.insertAllNenrei(nenreiList)
+                reloadDpcTableIfNeeded(
+                    context, "nenrei_master", DpcResources.nenrei,
+                    dpcDao::getNenreiCount, dpcDao::deleteAllNenrei, dpcDao::insertAllNenrei
+                ) { row ->
+                    NenreiEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        jokenKubun = row[2]?.toString() ?: "",
+                        jokenName = row[3]?.toString() ?: "",
+                        joken1Ijo = row[4]?.toString() ?: "",
+                        joken1Miman = row[5]?.toString() ?: "",
+                        joken1Value = row[6]?.toString() ?: "",
+                        joken2Ijo = row[7]?.toString() ?: "",
+                        joken2Miman = row[8]?.toString() ?: "",
+                        joken2Value = row[9]?.toString() ?: "",
+                        joken3Ijo = row[10]?.toString() ?: "",
+                        joken3Miman = row[11]?.toString() ?: "",
+                        joken3Value = row[12]?.toString() ?: "",
+                        joken4Ijo = row[13]?.toString() ?: "",
+                        joken4Miman = row[14]?.toString() ?: "",
+                        joken4Value = row[15]?.toString() ?: "",
+                        joken5Ijo = row[16]?.toString() ?: "",
+                        joken5Miman = row[17]?.toString() ?: "",
+                        joken5Value = row[18]?.toString() ?: "",
+                        strokeKubun = row[19]?.toString() ?: "",
+                        strokeName = row[20]?.toString() ?: "",
+                    )
                 }
 
             } catch (e: Exception) {
@@ -198,21 +182,20 @@ class DpcRepository(private val dpcDao: DpcDao) {
 }
 
 class BunruiRepository(private val bunruiDao: BunruiDao) {
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (bunruiDao.getCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.bunrui)
-                    val list = df.rows().map { row ->
-                        val rawMdcCode = row[0]?.toString() ?: ""
-                        BunruiEntity(
-                            mdcCode = if (rawMdcCode.length == 1) "0$rawMdcCode" else rawMdcCode,
-                            bunruiCode = row[1]?.toString() ?: "",
-                            bunruiName = row[2]?.toString() ?: "",
-                            normalizedBunruiName = normalizeTextForSearch(row[2]?.toString() ?: "")
-                        )
-                    }
-                    bunruiDao.insertAll(list)
+                reloadDpcTableIfNeeded(
+                    context, "bunrui_master", DpcResources.bunrui,
+                    bunruiDao::getCount, bunruiDao::deleteAll, bunruiDao::insertAll
+                ) { row ->
+                    val rawMdcCode = row[0]?.toString() ?: ""
+                    BunruiEntity(
+                        mdcCode = if (rawMdcCode.length == 1) "0$rawMdcCode" else rawMdcCode,
+                        bunruiCode = row[1]?.toString() ?: "",
+                        bunruiName = row[2]?.toString() ?: "",
+                        normalizedBunruiName = normalizeTextForSearch(row[2]?.toString() ?: "")
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -228,22 +211,21 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
         return withContext(Dispatchers.IO) { shujutsuDao.getNames(mdcCode, bunruiCode) }
     }
 
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (shujutsuDao.getShujutsuCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.shujutsu)
-                    val list = df.rows().map { row ->
-                        val rawTaiouCode = row[5]?.toString() ?: ""
-                        ShujutsuEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            taiouCode = if (rawTaiouCode.length == 1) "0$rawTaiouCode" else rawTaiouCode,
-                            shujutsu1Name = row[6]?.toString() ?: "",
-                            shujutsu2Name = row[7]?.toString() ?: "",
-                        )
-                    }
-                    shujutsuDao.insertAllShujutsu(list)
+                reloadDpcTableIfNeeded(
+                    context, "shujutsu_master", DpcResources.shujutsu,
+                    shujutsuDao::getShujutsuCount, shujutsuDao::deleteAll, shujutsuDao::insertAllShujutsu
+                ) { row ->
+                    val rawTaiouCode = row[5]?.toString() ?: ""
+                    ShujutsuEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        taiouCode = if (rawTaiouCode.length == 1) "0$rawTaiouCode" else rawTaiouCode,
+                        shujutsu1Name = row[6]?.toString() ?: "",
+                        shujutsu2Name = row[7]?.toString() ?: "",
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -263,23 +245,22 @@ class ShujutsuRepository(private val shujutsuDao: ShujutsuDao) {
 }
 
 class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (shochi1Dao.getCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.shochi1)
-                    val list = df.rows().map { row ->
-                        Shochi1Entity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            code = row[2]?.toString() ?: "",
-                            shochi1Name = row[5]?.toString() ?: "",
-                            shochi1Code = row[6]?.toString() ?: "",
-                            shochi2Name = row[7]?.toString() ?: "",
-                            shochi2Code = row[8]?.toString() ?: "",
-                        )
-                    }
-                    shochi1Dao.insertAlldata(list)
+                reloadDpcTableIfNeeded(
+                    context, "shochi1_master", DpcResources.shochi1,
+                    shochi1Dao::getCount, shochi1Dao::deleteAll, shochi1Dao::insertAlldata
+                ) { row ->
+                    Shochi1Entity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        code = row[2]?.toString() ?: "",
+                        shochi1Name = row[5]?.toString() ?: "",
+                        shochi1Code = row[6]?.toString() ?: "",
+                        shochi2Name = row[7]?.toString() ?: "",
+                        shochi2Code = row[8]?.toString() ?: "",
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -294,23 +275,22 @@ class Shochi1Repository(private val shochi1Dao: Shochi1Dao) {
 }
 
 class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (shochi2Dao.getCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.shochi2)
-                    val list = df.rows().map { row ->
-                        Shochi2Entity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            code = row[2]?.toString() ?: "",
-                            shochi1Name = row[4]?.toString() ?: "",
-                            shochi1Code = row[5]?.toString() ?: "",
-                            shochi2Name = row[6]?.toString() ?: "",
-                            shochi2Code = row[7]?.toString() ?: "",
-                        )
-                    }
-                    shochi2Dao.insertAlldata(list)
+                reloadDpcTableIfNeeded(
+                    context, "shochi2_master", DpcResources.shochi2,
+                    shochi2Dao::getCount, shochi2Dao::deleteAll, shochi2Dao::insertAlldata
+                ) { row ->
+                    Shochi2Entity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        code = row[2]?.toString() ?: "",
+                        shochi1Name = row[4]?.toString() ?: "",
+                        shochi1Code = row[5]?.toString() ?: "",
+                        shochi2Name = row[6]?.toString() ?: "",
+                        shochi2Code = row[7]?.toString() ?: "",
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -325,21 +305,20 @@ class Shochi2Repository(private val shochi2Dao: Shochi2Dao){
 }
 
 class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (fukushobyoDao.getCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.fukushobyo)
-                    val list = df.rows().map { row ->
-                        FukushobyoEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            code = row[2]?.toString() ?: "",
-                            name = row[4]?.toString() ?: "",
-                            IcdCode = row[5]?.toString() ?: "",
-                        )
-                    }
-                    fukushobyoDao.insertAlldata(list)
+                reloadDpcTableIfNeeded(
+                    context, "fukushobyo_master", DpcResources.fukushobyo,
+                    fukushobyoDao::getCount, fukushobyoDao::deleteAll, fukushobyoDao::insertAlldata
+                ) { row ->
+                    FukushobyoEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        code = row[2]?.toString() ?: "",
+                        name = row[4]?.toString() ?: "",
+                        IcdCode = row[5]?.toString() ?: "",
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -354,25 +333,24 @@ class FukushobyoRepository(private val fukushobyoDao: FukushobyoDao){
 }
 
 class JushodoJcsRepository(private val jushodoJcsDao: JushodoJcsDao){
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (jushodoJcsDao.getCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.jushodoJcs)
-                    val list = df.rows().map { row ->
-                        JushodoJcsEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            jokenName = row[3]?.toString() ?:"",
-                            joken1Ijo = row[4]?.toString() ?: "",
-                            joken1Miman = row[5]?.toString() ?: "",
-                            joken1Value = row[6]?.toString() ?: "",
-                            joken2Ijo = row[7]?.toString() ?: "",
-                            joken2Miman = row[8]?.toString() ?: "",
-                            joken2Value = row[9]?.toString() ?: "",
-                        )
-                    }
-                    jushodoJcsDao.insertAlldata(list)
+                reloadDpcTableIfNeeded(
+                    context, "jushodo_jcs_master", DpcResources.jushodoJcs,
+                    jushodoJcsDao::getCount, jushodoJcsDao::deleteAll, jushodoJcsDao::insertAlldata
+                ) { row ->
+                    JushodoJcsEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        jokenName = row[3]?.toString() ?:"",
+                        joken1Ijo = row[4]?.toString() ?: "",
+                        joken1Miman = row[5]?.toString() ?: "",
+                        joken1Value = row[6]?.toString() ?: "",
+                        joken2Ijo = row[7]?.toString() ?: "",
+                        joken2Miman = row[8]?.toString() ?: "",
+                        joken2Value = row[9]?.toString() ?: "",
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -389,23 +367,24 @@ class NenreiRepository(private val nenreiDao: NenreiDao) {
 }
 
 class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuDao) {
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (jushodoShujutsuDao.getCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.jushodoJcs) // 同じファイルを使用
-                    val list = df.rows().map { row ->
-                        JushodoShujutsuEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            jokenName = row[3]?.toString() ?:"",
-                            joken1Name = row[4]?.toString() ?: "",
-                            joken1Code = row[5]?.toString() ?: "",
-                            joken2Name = row[6]?.toString() ?: "",
-                            joken2Code = row[7]?.toString() ?: "",
-                        )
-                    }
-                    jushodoShujutsuDao.insertAlldata(list)
+                // 手術条件のCSVは見出しが3行（3行目は「片眼,0,両眼,1」の記入例）
+                reloadDpcTableIfNeeded(
+                    context, "jushodo_shujutsu_master", DpcResources.jushodoShujutsu,
+                    jushodoShujutsuDao::getCount, jushodoShujutsuDao::deleteAll, jushodoShujutsuDao::insertAlldata,
+                    skipLines = 3
+                ) { row ->
+                    JushodoShujutsuEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        jokenName = row[3]?.toString() ?:"",
+                        joken1Name = row[4]?.toString() ?: "",
+                        joken1Code = row[5]?.toString() ?: "",
+                        joken2Name = row[6]?.toString() ?: "",
+                        joken2Code = row[7]?.toString() ?: "",
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -418,22 +397,21 @@ class JushodoShujutsuRepository(private val jushodoShujutsuDao: JushodoShujutsuD
 }
 
 class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
-    suspend fun populateDatabaseFromExcelIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (jushodoStrokeDao.getCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.jushodoStroke)
-                    val list = df.rows().map { row ->
-                        JushodoStrokeEntity(
-                            mdcCode = row[0]?.toString() ?: "",
-                            bunruiCode = row[1]?.toString() ?: "",
-                            code = row[2]?.toString() ?: "",
-                            label = row[5]?.toString() ?:"",
-                            kubun = row[6]?.toString() ?:"",
-                            joken1Name = row[7]?.toString() ?: "",
-                        )
-                    }
-                    jushodoStrokeDao.insertAlldata(list)
+                reloadDpcTableIfNeeded(
+                    context, "jushodo_stroke_master", DpcResources.jushodoStroke,
+                    jushodoStrokeDao::getCount, jushodoStrokeDao::deleteAll, jushodoStrokeDao::insertAlldata
+                ) { row ->
+                    JushodoStrokeEntity(
+                        mdcCode = row[0]?.toString() ?: "",
+                        bunruiCode = row[1]?.toString() ?: "",
+                        code = row[2]?.toString() ?: "",
+                        label = row[5]?.toString() ?:"",
+                        kubun = row[6]?.toString() ?:"",
+                        joken1Name = row[7]?.toString() ?: "",
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -447,24 +425,26 @@ class JushodoStrokeRepository(private val jushodoStrokeDao: JushodoStrokeDao) {
 }
 
 class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao: ShindangunBunruiTensuhyoDao){
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context) {
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context) {
         withContext(Dispatchers.IO) {
             try {
-                if (shindangunBunruiTensuhyoDao.getCount() == 0) {
-                    val df = readDpcCsv(context, DpcResources.tensuhyo, skipLines = 4)
-                    val list = df.rows().map { row ->
-                        ShindangunBunruiTensuhyoEntity(
-                            code = row[1]?.toString() ?: "",
-                            name = row[2]?.toString() ?: "",
-                            nyuinBiI = row[8]?.toString() ?: "",
-                            nyuinBiII = row[9]?.toString() ?: "",
-                            nyuinBiIII = row[10]?.toString() ?: "",
-                            nyuinKikanI = row[11]?.toString() ?: "",
-                            nyuinKikanII = row[12]?.toString() ?: "",
-                            nyuinKikanIII = row[13]?.toString() ?: "",
-                        )
-                    }
-                    shindangunBunruiTensuhyoDao.insertAlldata(list)
+                reloadDpcTableIfNeeded(
+                    context, "shindangunBunruiTensuhyo_master", DpcResources.tensuhyo,
+                    shindangunBunruiTensuhyoDao::getCount,
+                    shindangunBunruiTensuhyoDao::deleteAll,
+                    shindangunBunruiTensuhyoDao::insertAlldata,
+                    skipLines = 4
+                ) { row ->
+                    ShindangunBunruiTensuhyoEntity(
+                        code = row[1]?.toString() ?: "",
+                        name = row[2]?.toString() ?: "",
+                        nyuinBiI = row[8]?.toString() ?: "",
+                        nyuinBiII = row[9]?.toString() ?: "",
+                        nyuinBiIII = row[10]?.toString() ?: "",
+                        nyuinKikanI = row[11]?.toString() ?: "",
+                        nyuinKikanII = row[12]?.toString() ?: "",
+                        nyuinKikanIII = row[13]?.toString() ?: "",
+                    )
                 }
             } catch (e: Exception) {
                 e("DpcRepository", "CSVからのデータベース構築に失敗しました。", e)
@@ -475,6 +455,29 @@ class ShindangunBunruiTensuhyoRepository(private val shindangunBunruiTensuhyoDao
     suspend fun checkCodeExistsInMaster(code: String): Boolean = shindangunBunruiTensuhyoDao.existsCodeInMaster(code)
     suspend fun getNames(code: String): List<ShindangunBunruiTensuhyoJoken> = withContext(Dispatchers.IO) { shindangunBunruiTensuhyoDao.getNames(code) }
     suspend fun getFirstThreeRows(): List<String> = shindangunBunruiTensuhyoDao.getFirstThreeRows()
+}
+
+/**
+ * DPCマスタの1テーブル分を、テーブルが空、またはCSVが差し替えられた場合のみ入れ直す。
+ * 旧データは全て破棄する（DPCマスタはお気に入り等のユーザーデータを持たない）。
+ */
+private suspend fun <T> reloadDpcTableIfNeeded(
+    context: Context,
+    table: String,
+    resourceId: Int,
+    count: suspend () -> Int,
+    deleteAll: suspend () -> Unit,
+    insertAll: suspend (List<T>) -> Unit,
+    skipLines: Int = 2,
+    toEntity: (DataRow<*>) -> T,
+) {
+    val currentCount = count()
+    if (!needsMasterReload(context, table, resourceId, currentCount)) return
+    Log.d("tamaiDpc", "$table reading")
+    val list = readDpcCsv(context, resourceId, skipLines).rows().map(toEntity)
+    if (currentCount > 0) deleteAll()
+    insertAll(list)
+    markMasterLoaded(context, table, resourceId)
 }
 
 private fun readDpcCsv(

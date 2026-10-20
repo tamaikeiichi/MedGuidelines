@@ -23,7 +23,10 @@ import java.nio.charset.Charset
 // 旧実装でお気に入り・並び順をDataStoreに保存していたキー（DBへの移行時のみ使用）
 private val LIST_PAIRED_DATA_KEY_IKA = stringPreferencesKey("list_paired_data")
 
+private const val TABLE_NAME = "ika_shinryokoi_master"
+
 private const val NUMBER_OF_COLUMNS = 50
+private const val CODE_INDEX = 2
 private const val KANJI_MEISHO_INDEX = 4
 private const val KANA_MEISHO_INDEX = 6
 private const val TENSU_SHIKIBETSU_INDEX = 10
@@ -58,10 +61,15 @@ class IkaShinryokoiRepository(private val ikaShinryokoiDao: IkaShinryokoiDao) {
         withContext(Dispatchers.IO) { ikaShinryokoiDao.setFavorite(id, isFavorite) }
     }
 
-    suspend fun populateDatabaseFromCsvIfEmpty(context: Context, resourceId: Int) {
+    /**
+     * DBが空、または取り込み済みのCSVと[resourceId]が異なる（マスタが更新された）場合にCSVから取り込む。
+     * 更新時は旧データを全て破棄し、お気に入りのみ診療行為コードで引き継ぐ。
+     */
+    suspend fun populateDatabaseFromCsvIfNeeded(context: Context, resourceId: Int) {
         withContext(Dispatchers.IO) {
             try {
-                if (ikaShinryokoiDao.getCount() == 0) {
+                val count = ikaShinryokoiDao.getCount()
+                if (needsMasterReload(context, TABLE_NAME, resourceId, count)) {
                     Log.d("IkaShinryokoi", "Loading ika shinryokoi master data from CSV...")
                     val inputStream: InputStream = context.resources.openRawResource(resourceId)
                     val headerNames = (1..NUMBER_OF_COLUMNS).map { it.toString() }
@@ -88,11 +96,17 @@ class IkaShinryokoiRepository(private val ikaShinryokoiDao: IkaShinryokoiDao) {
                             tensu = row[TENSU_INDEX]?.toString() ?: "",
                             normalizedKanji = normalizeTextForSearch(kanjiMeisho ?: ""),
                             normalizedKana = normalizeTextForSearch(kanaMeisho ?: ""),
-                            sortOrder = index.toLong()
+                            sortOrder = index.toLong(),
+                            code = row[CODE_INDEX]?.toString() ?: ""
                         )
                     }
 
-                    ikaShinryokoiDao.insertAll(applySavedOrderFromDataStore(context, entityList))
+                    if (count == 0) {
+                        ikaShinryokoiDao.insertAll(applySavedOrderFromDataStore(context, entityList))
+                    } else {
+                        ikaShinryokoiDao.replaceAll(carryOverFavorites(ikaShinryokoiDao.getFavorites(), entityList))
+                    }
+                    markMasterLoaded(context, TABLE_NAME, resourceId)
                     Log.d("IkaShinryokoi", "Successfully inserted ${entityList.size} items.")
                 }
             } catch (e: Exception) {
@@ -125,6 +139,24 @@ class IkaShinryokoiRepository(private val ikaShinryokoiDao: IkaShinryokoiDao) {
         }
         context.dataStore.edit { it.remove(LIST_PAIRED_DATA_KEY_IKA) }
         return result
+    }
+
+    /**
+     * 旧マスタのお気に入りを新マスタに引き継ぐ（並び順も維持）。
+     * 診療行為コード列追加前に取り込んだデータはコードが空のため、漢字名称で照合する。
+     */
+    private fun carryOverFavorites(
+        oldFavorites: List<IkaShinryokoiEntity>,
+        entityList: List<IkaShinryokoiEntity>
+    ): List<IkaShinryokoiEntity> {
+        if (oldFavorites.isEmpty()) return entityList
+        val orderByCode = oldFavorites.filter { it.code.isNotEmpty() }.associate { it.code to it.sortOrder }
+        val orderByKanji = oldFavorites.filter { it.code.isEmpty() && it.kanjiMeisho != null }
+            .associate { it.kanjiMeisho to it.sortOrder }
+        return entityList.map { entity ->
+            val savedOrder = orderByCode[entity.code] ?: orderByKanji[entity.kanjiMeisho]
+            if (savedOrder != null) entity.copy(isFavorite = true, sortOrder = savedOrder) else entity
+        }
     }
 
     private fun escapeLike(text: String): String =

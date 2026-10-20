@@ -44,7 +44,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -454,6 +453,8 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     fukushobyoRepository.checkMdcAndBunruiExistsInMaster(mdc, bunrui)
                 val jushodoJcsExists =
                     jushodoJcsRepository.checkMdcAndBunruiExistsInMaster(mdc, bunrui)
+                val jushodoShujutsuExists =
+                    jushodoShujutsuRepository.checkBunruiExistsInMaster(mdc, bunrui)
                 val jushodoStrokeExists = jushodoStrokeRepository.checkMdcAndBunruiExistInMaster(
                     mdc,
                     bunrui
@@ -599,6 +600,18 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 )
 
+// 重症度 手術 (jushodoShujutsu)
+                updateSelectionState(
+                    exists = jushodoShujutsuExists,
+                    optionsFlow = _jushodoShujutsuOptions,
+                    showSelectionFlow = _showJushodoShujutsuSelection,
+                    getOptions = { createJushoShujutsuJokenOptionsList(mdc, bunrui) },
+                    onAutoSelect = { options ->
+                        val targetCode = fullCode.substring(13, 14)
+                        options.find { it.code.toString() == targetCode }
+                    }
+                )
+
 // 重症度 脳卒中 (jushodoStroke)
                 updateSelectionState(
                     exists = jushodoStrokeExists,
@@ -719,15 +732,16 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.populateDatabaseFromCsvIfEmpty(getApplication())
-                bunruiRepository.populateDatabaseFromCsvIfEmpty(getApplication())
-                shujutsuRepository.populateDatabaseFromCsvIfEmpty(getApplication())
-                shochi1Repository.populateDatabaseFromCsvIfEmpty(getApplication())
-                shochi2Repository.populateDatabaseFromCsvIfEmpty(getApplication())
-                fukushobyoRepository.populateDatabaseFromExcelIfEmpty(getApplication())
-                jushodoJcsRepository.populateDatabaseFromExcelIfEmpty(getApplication())
-                jushodoStrokeRepository.populateDatabaseFromExcelIfEmpty(getApplication())
-                shindangunBunruiTensuhyoRepository.populateDatabaseFromCsvIfEmpty(getApplication())
+                repository.populateDatabaseFromCsvIfNeeded(getApplication())
+                bunruiRepository.populateDatabaseFromCsvIfNeeded(getApplication())
+                shujutsuRepository.populateDatabaseFromCsvIfNeeded(getApplication())
+                shochi1Repository.populateDatabaseFromCsvIfNeeded(getApplication())
+                shochi2Repository.populateDatabaseFromCsvIfNeeded(getApplication())
+                fukushobyoRepository.populateDatabaseFromCsvIfNeeded(getApplication())
+                jushodoJcsRepository.populateDatabaseFromCsvIfNeeded(getApplication())
+                jushodoShujutsuRepository.populateDatabaseFromCsvIfNeeded(getApplication())
+                jushodoStrokeRepository.populateDatabaseFromCsvIfNeeded(getApplication())
+                shindangunBunruiTensuhyoRepository.populateDatabaseFromCsvIfNeeded(getApplication())
             } catch (e: Exception) {
                 _errorMessage.value = "データベースの初期化に失敗しました: ${e.message}"
             } finally {
@@ -739,6 +753,23 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
     /**
      * 検索クエリを更新する
      */
+    /**
+     * 正規化済みクエリがMDC＋分類コード（「02 0150」または「020150」）ならペアを返す
+     */
+    private fun parseMdcAndBunrui(query: String): Pair<String, String>? {
+        val code = query.replace('　', ' ').trim()
+        if (code.length == 6 && code.all { it.isDigit() }) {
+            return code.substring(0, 2) to code.substring(2, 6)
+        }
+        val parts = code.split(Regex("\\s+"))
+        if (parts.size == 2 && parts[0].length == 2 && parts[1].length == 4 &&
+            parts.all { part -> part.all { it.isDigit() } }
+        ) {
+            return parts[0] to parts[1]
+        }
+        return null
+    }
+
     fun onQueryChanged(newQuery: String) {
         val normalizedQuery = normalizeTextForSearch(newQuery)
         _searchQuery.value = normalizedQuery // 正規化済みクエリをFlowに渡す
@@ -750,9 +781,14 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
      */
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val displayedItemsIcd: StateFlow<List<IcdEntity>> = _searchQuery
-        .filter { it.isNotBlank() } // クエリが空でない場合のみ処理
+        // クエリが空の場合は "%%" で全件を表示する
         .debounce(300) // 300ミリ秒待ってから検索を実行（入力中の負荷を軽減）
         .flatMapLatest { query ->
+            // MDC＋分類コード（「02 0150」または上6桁「020150」）の場合は、その分類のICDを全て表示する
+            parseMdcAndBunrui(query)?.let { (mdc, bunrui) ->
+                return@flatMapLatest repository.searchIcdByMdcAndBunrui(mdc, bunrui)
+            }
+
             // --- 修正箇所: スペースでクエリを分割する ---
             val words = query.trim().split(Regex("\\s+"))
 
@@ -779,7 +815,7 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val displayedItemsBunrui: StateFlow<List<BunruiEntity>> = _searchQuery
-        .filter { it.isNotBlank() } // クエリが空でない場合のみ処理
+        // クエリが空の場合は "%%" で全件を表示する
         .debounce(300) // 300ミリ秒待ってから検索を実行（入力中の負荷を軽減）
         .flatMapLatest { query ->
             // --- 修正箇所: スペースでクエリを分割する ---
@@ -913,35 +949,17 @@ class DpcScreenViewModel(application: Application) : AndroidViewModel(applicatio
         val jushoShujutsuJoken = jushodoShujutsuRepository.getJushodoJoken(mdcCode, bunruiCode)
         Log.d("tamaiDpc", "val jushoShujutsuJoken done $jushoShujutsuJoken $mdcCode $bunruiCode")
 
-        // 2. オブジェクトがnullなら、空のリストを返して処理を終了（クラッシュ回避）
-        if (jushoShujutsuJoken.isEmpty()) {
-            return emptyList()
-        }
-        val data = jushoShujutsuJoken.firstOrNull()
-        Log.d("tamaiDpc", "val jushoShujutsu string done ")
-
-        // nullでない有効な選択肢だけをリストに追加する
+        // 条件が複数ある分類（例: 片眼／両眼 と 初回／再手術）は全ての条件の選択肢を返す。
+        // 各選択肢の label に条件名が入るので、画面側で条件ごとにカードを分けて表示する。
         return buildList {
-            // joken1: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (data?.joken1Name != null && data?.joken1Code?.isNotBlank() == true) {
-                add(
-                    LabelStringAndScore(
-                        data.joken1Name,
-                        data.joken1Code.toInt(),
-                        label = data.jokenName
-                    ),
-                )
-            }
-            Log.d("tamaiDpc", "here?1")
-            // joken2: 文字列がnullでなく、かつValueがnullまたは空でないことを確認
-            if (data?.joken2Name != null && data.joken2Code.isNotBlank() == true) {
-                add(
-                    LabelStringAndScore(
-                        data.joken2Name,
-                        data.joken2Code.toInt(),
-                        label = data.jokenName
-                    ),
-                )
+            for (data in jushoShujutsuJoken) {
+                // nullでない有効な選択肢だけをリストに追加する
+                data.joken1Code.toIntOrNull()?.let { code ->
+                    add(LabelStringAndScore(data.joken1Name, code, label = data.jokenName))
+                }
+                data.joken2Code.toIntOrNull()?.let { code ->
+                    add(LabelStringAndScore(data.joken2Name, code, label = data.jokenName))
+                }
             }
         }
     }

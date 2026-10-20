@@ -32,9 +32,9 @@ class IkaShinryokoiMasterViewModel(application: Application) : AndroidViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.populateDatabaseFromCsvIfEmpty(
+                repository.populateDatabaseFromCsvIfNeeded(
                     context = application,
-                    resourceId = R.raw.s_20250602
+                    resourceId = R.raw.s_20261013
                 )
             } finally {
                 _isLoading.value = false

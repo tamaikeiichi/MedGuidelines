@@ -29,6 +29,9 @@ interface JushodoJcsDao {
     @androidx.room.Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
     suspend fun insertAlldata(list: List<JushodoJcsEntity>)
 
+    @androidx.room.Query("DELETE FROM jushodo_jcs_master")
+    suspend fun deleteAll()
+
     @Query("SELECT EXISTS(SELECT 1 FROM jushodo_jcs_master WHERE mdc_code = :mdcCode AND bunrui_code = :bunruiCode LIMIT 1)")
     suspend fun existsMdcAndBunruiInMaster(mdcCode: String, bunruiCode: String): Boolean
 
