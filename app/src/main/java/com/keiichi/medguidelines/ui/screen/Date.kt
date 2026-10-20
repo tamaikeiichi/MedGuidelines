@@ -35,8 +35,9 @@ import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.TitleTopAppBarVariable
 import com.keiichi.medguidelines.ui.component.TextAndUrl
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.Calendar
-import java.util.concurrent.TimeUnit
 
 data class TextAndUrl(val textId: Int, val urlId: Int)
 
@@ -59,11 +60,9 @@ fun DateScreen(
     val monthEnd = remember { mutableStateOf(endCalendar.get(Calendar.MONTH)) }
     val dayEnd = remember { mutableStateOf(endCalendar.get(Calendar.DAY_OF_MONTH)) }
 
-    fun computeDiff(yS: Int, mS: Int, dS: Int, yE: Int, mE: Int, dE: Int): Long {
-        val start = Calendar.getInstance().apply { set(yS, mS, dS) }
-        val end = Calendar.getInstance().apply { set(yE, mE, dE) }
-        return TimeUnit.MILLISECONDS.toDays(end.timeInMillis - start.timeInMillis)
-    }
+    // 月は Calendar / DatePicker と同じ0始まり。日付だけで差を求める（時刻による端数を出さない）
+    fun computeDiff(yS: Int, mS: Int, dS: Int, yE: Int, mE: Int, dE: Int): Long =
+        ChronoUnit.DAYS.between(LocalDate.of(yS, mS + 1, dS), LocalDate.of(yE, mE + 1, dE))
 
     val diffDaysValue = remember {
         val initialDiff = computeDiff(
@@ -73,8 +72,8 @@ fun DateScreen(
         mutableDoubleStateOf(initialDiff.toDouble())
     }
 
-    LaunchedEffect(diffDaysValue.doubleValue) {
-        val days = diffDaysValue.doubleValue.toLong()
+    // 終了日を「開始日 + days日」にする
+    fun setEndFromStart(days: Long) {
         val newEnd = Calendar.getInstance().apply {
             set(yearToday.value, monthToday.value, dayToday.value)
             add(Calendar.DAY_OF_MONTH, days.toInt())
@@ -84,28 +83,36 @@ fun DateScreen(
         dayEnd.value = newEnd.get(Calendar.DAY_OF_MONTH)
     }
 
+    // 終了日は常に開始日より後にする（日数は1日以上）
+    fun setDiffAtLeastOneDay(days: Long) {
+        val validDays = days.coerceAtLeast(1)
+        diffDaysValue.doubleValue = validDays.toDouble()
+        setEndFromStart(validDays)
+    }
+
+    LaunchedEffect(diffDaysValue.doubleValue) {
+        setDiffAtLeastOneDay(diffDaysValue.doubleValue.toLong())
+    }
+
     val datePickerDialog = DatePickerDialog(
         LocalContext.current,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
             yearToday.value = year
             monthToday.value = month
             dayToday.value = dayOfMonth
-            diffDaysValue.doubleValue = computeDiff(
-                year, month, dayOfMonth,
-                yearEnd.value, monthEnd.value, dayEnd.value
-            ).toDouble()
+            // 開始日が終了日以降になった場合は，終了日を開始日の1日後にする
+            setDiffAtLeastOneDay(
+                computeDiff(year, month, dayOfMonth, yearEnd.value, monthEnd.value, dayEnd.value)
+            )
         }, yearToday.value, monthToday.value, dayToday.value
     )
     val datePickerDialogEnd = DatePickerDialog(
         LocalContext.current,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-            yearEnd.value = year
-            monthEnd.value = month
-            dayEnd.value = dayOfMonth
-            diffDaysValue.doubleValue = computeDiff(
-                yearToday.value, monthToday.value, dayToday.value,
-                year, month, dayOfMonth
-            ).toDouble()
+            // 終了日に開始日以前を選んだ場合も，開始日の1日後にする
+            setDiffAtLeastOneDay(
+                computeDiff(yearToday.value, monthToday.value, dayToday.value, year, month, dayOfMonth)
+            )
         }, yearEnd.value, monthEnd.value, dayEnd.value
     )
 

@@ -191,8 +191,10 @@ fun acuteTonsillitisMclsaacScore(): Int {
                 R.string.mclsaacAgeTitle,
                 R.string.space
             )
+            // McIsaac: 咳は「なし」で+1点（scoreB: なし=0，あり=1）
+            // 年齢は 3-14歳 +1，15-44歳 0，45歳以上 −1
             totalScore =
-                scoreA + scoreB + scoreC + scoreD + (scoreE * (-1) + 1)
+                scoreA + (1 - scoreB) + scoreC + scoreD + (scoreE * (-1) + 1)
 
         }
     }

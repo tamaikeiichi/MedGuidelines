@@ -357,6 +357,7 @@
     <string name="days">日</string>
     <string name="classifyAsSle">分類基準を満たす</string>
     <string name="doNotMeetTheCriteria">分類基準を満たさない</string>
+    <string name="sleClinicalCriterionRequired">分類基準を満たさない：臨床項目が1つ以上必要</string>
     <string name="slesEntryCriterion">抗核抗体</string>
     <string name="slesEntryCriterionNote">HEp-2細胞を用いるか、同等の検査</string>
     <string name="constitutional">全身症状</string>

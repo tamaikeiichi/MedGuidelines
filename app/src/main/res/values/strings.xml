@@ -584,6 +584,7 @@
     <string name="sleUrl" translatable="false">https://pubmed.ncbi.nlm.nih.gov/31385462/</string>
     <string name="classifyAsSle">Classify as Systemic Lupus Erythematosus</string>
     <string name="doNotMeetTheCriteria">Do not meet the criteria</string>
+    <string name="sleClinicalCriterionRequired">Do not meet the criteria: at least one clinical criterion is required</string>
     <string name="eightyOrMore" translatable="false">≧ 1: 80</string>
     <string name="lessThanEighty"><![CDATA[< 1: 80]]></string>
     <string name="slesEntryCriterion">Antinuclear antibodies (ANA) at a titer</string>

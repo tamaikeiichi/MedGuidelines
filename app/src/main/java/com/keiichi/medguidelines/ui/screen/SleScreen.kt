@@ -59,20 +59,26 @@ import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayed
 import com.keiichi.medguidelines.ui.component.parseStyledString
 import org.apache.commons.math3.stat.interval.WilsonScoreInterval
 
+/** 2019 EULAR/ACR: 合計点と，臨床項目（全身・血液・神経精神・皮膚粘膜・漿膜・筋骨格・腎）を満たすか */
+data class SleScore(val total: Int, val hasClinicalCriterion: Boolean)
+
 @Composable
 fun SleScreen(navController: NavController) {
-    var totalScore by remember { mutableIntStateOf(0) }
+    var sleScore by remember { mutableStateOf(SleScore(0, false)) }
     var entryCriterionScore by remember { mutableIntStateOf(0) }
 
     // This is now a simple derived state. No need for its own `remember`.
-    var displayScore by remember (entryCriterionScore, totalScore) { mutableStateOf(0) }
-    displayScore = if (entryCriterionScore > 0) totalScore else 0
+    var displayScore by remember (entryCriterionScore, sleScore) { mutableStateOf(0) }
+    displayScore = if (entryCriterionScore > 0) sleScore.total else 0
     var diagnosis by remember { mutableStateOf("") }
-    diagnosis = when (displayScore) {
-        in 10..100 -> parseStyledString(R.string.classifyAsSle).toString()
-        //"established"
-        in 0..9 -> parseStyledString(R.string.doNotMeetTheCriteria).toString()// "possible"
-        else -> parseStyledString(R.string.na).toString()// "very unlikely"
+    // SLEと分類するには ≥10点 かつ 臨床項目を1つ以上満たすことが必要
+    diagnosis = when {
+        displayScore >= 10 && sleScore.hasClinicalCriterion ->
+            parseStyledString(R.string.classifyAsSle).toString()
+        displayScore >= 10 ->
+            parseStyledString(R.string.sleClinicalCriterionRequired).toString()
+        displayScore >= 0 -> parseStyledString(R.string.doNotMeetTheCriteria).toString()
+        else -> parseStyledString(R.string.na).toString()
     }
     //var displayText by remember { mutableStateOf(AnnotatedString("")) }
     val displayText =
@@ -109,7 +115,7 @@ fun SleScreen(navController: NavController) {
         ) {
             entryCriterionScore = entryCriterion()
             if (entryCriterionScore > 0) {
-                totalScore = sleTotalScore() // Assuming childPughTotalScore() returns an Int
+                sleScore = sleTotalScore()
                 //Text(text = totalScore.toString())
             }
 //        ScoreBottomAppBarVariable(
@@ -133,7 +139,7 @@ private fun entryCriterion(): Int {
 
 
 @Composable
-fun sleTotalScore(): Int {
+fun sleTotalScore(): SleScore {
     TextAndExpand2Levels(
         firstTitle = R.string.additiveCriteria,
         secondTitle = R.string.secondCommentSle,
@@ -198,19 +204,23 @@ fun sleTotalScore(): Int {
         defaultSelectedOption = R.string.none
     )
 
-    val totalScore =
+    val clinicalScore =
         constitutionalScore +
                 hematologicScore +
                 neuropsychiatricScore +
                 mucocutaneousScore +
                 serosalScore +
                 musculoskeletalScore +
-                renalScore +
-                antiphospholipidScore +
+                renalScore
+    val immunologicScore =
+        antiphospholipidScore +
                 complementScore +
                 sleSpecificAntibodiesScore
 
-    return totalScore
+    return SleScore(
+        total = clinicalScore + immunologicScore,
+        hasClinicalCriterion = clinicalScore > 0
+    )
 }
 
 @Preview

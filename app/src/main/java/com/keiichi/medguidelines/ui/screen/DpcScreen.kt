@@ -85,7 +85,7 @@ import com.keiichi.medguidelines.ui.component.buttonAndScoreWithScoreDisplayedSe
 import com.keiichi.medguidelines.ui.viewModel.DpcScreenViewModel
 import com.keiichi.medguidelines.ui.viewModel.formatByotaiNenreiLabel
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 data class DpcCode(
     var mdc: String? = "xx",
@@ -153,7 +153,6 @@ fun DpcScreen(
     val byotaiOptions by dpcScreenViewModel.byotaiOptions.collectAsState()
     var showSearchResults by remember { mutableStateOf(true) }
     val days = remember { mutableDoubleStateOf(1.0) }
-    var cost = remember { mutableIntStateOf(0) }
     // UI表示用の状態変数
     val bunruiName = remember { mutableStateOf<String?>(null) }
     var showBukkaDialog by remember { mutableStateOf(false) }
@@ -266,16 +265,12 @@ fun DpcScreen(
     val savedTotalAmount by remember(savedItems) {
         derivedStateOf {
             savedItems.sumOf { item ->
-                val itemCost = calculateNyuinCost(
+                calculateDpcYen(
                     days = days.doubleValue.toInt(),
-                    nyuinbiI = item.tensuData.nyuinbiI.toIntOrNull() ?: 0,
-                    nyuinbiII = item.tensuData.nyuinbiII.toIntOrNull() ?: 0,
-                    nyuinbiIII = item.tensuData.nyuinbiIII.toIntOrNull() ?: 0,
-                    nyuinKikanI = item.tensuData.nyuinKikanI.toIntOrNull() ?: 0,
-                    nyuinKikanII = item.tensuData.nyuinKikanII.toIntOrNull() ?: 0,
-                    nyuinKikanIII = item.tensuData.nyuinKikanIII.toIntOrNull() ?: 0
+                    tensuData = item.tensuData,
+                    coeff = coeff.doubleValue,
+                    bukkaTaiou = bukkaTaiou.doubleValue,
                 )
-                (itemCost * 10 * coeff.doubleValue).roundToInt()
             }
         }
     }
@@ -433,18 +428,13 @@ fun DpcScreen(
                         if (isDataValid && shindangunBunruiTensuhyo.isNotEmpty()) {
                             Log.d("tamaiDpc", "shindangunBunruiTensuhyo: $shindangunBunruiTensuhyo")
 
-                            val data = shindangunBunruiTensuhyo.firstOrNull()
-                            cost.intValue = calculateNyuinCost(
+                            val data = shindangunBunruiTensuhyo.first()
+                            val currentTotalAmount = calculateDpcYen(
                                 days = days.doubleValue.toInt(),
-                                nyuinbiI = data?.nyuinbiI?.toIntOrNull() ?: 0,
-                                nyuinbiII = data?.nyuinbiII?.toIntOrNull() ?: 0,
-                                nyuinbiIII = data?.nyuinbiIII?.toIntOrNull() ?: 0,
-                                nyuinKikanI = data?.nyuinKikanI?.toIntOrNull() ?: 0,
-                                nyuinKikanII = data?.nyuinKikanII?.toIntOrNull() ?: 0,
-                                nyuinKikanIII = data?.nyuinKikanIII?.toIntOrNull() ?: 0,
+                                tensuData = data,
+                                coeff = coeff.doubleValue,
+                                bukkaTaiou = bukkaTaiou.doubleValue,
                             )
-                            val currentTotalAmount =
-                                (cost.intValue * 10 * coeff.doubleValue).toInt() + bukkaTaiou.doubleValue.toInt() * days.doubleValue.toInt()
                             withStyle(
                                 style = SpanStyle(
                                     color = primaryColor,
@@ -459,14 +449,15 @@ fun DpcScreen(
 //                        if (savedTotalAmount != 0) {
 //                            append("包括金額合計: ${"%,d".format(savedTotalAmount)}円")
 //                        }
-                            if (days.doubleValue.toInt() > (data?.nyuinbiIII?.toInt() ?: 0)) {
+                            val nyuinbiIII = data.nyuinbiIII.toIntOrNull() ?: 0
+                            if (days.doubleValue.toInt() > nyuinbiIII) {
                                 withStyle(
                                     style = SpanStyle(
                                         fontSize = 16.sp,
                                         color = primaryColor
                                     )
                                 ) {
-                                    append("（${data?.nyuinbiIII?.toInt()}日まで）")
+                                    append("（${nyuinbiIII}日まで）")
                                 }
                             }
                         } else {
@@ -1587,33 +1578,34 @@ private fun DpcDropdownSelection(
     }
 }
 
-private fun calculateNyuinCost(
+/**
+ * 包括金額（円）。入院期間I・II・IIIごとに
+ * 四捨五入((点数 × 10円 × 医療機関別係数 + 物価対応料[円/日]) × その期間の日数) を合計する。
+ * 入院期間IIIを超えた日（出来高）は点数・物価対応料とも含めない。
+ * 計算方法は「今日の診療報酬」DPC電子点数表（girasol.org/fukuro2026）と同じ。
+ */
+private fun calculateDpcYen(
     days: Int,
-    nyuinbiI: Int,
-    nyuinbiII: Int,
-    nyuinbiIII: Int,
-    nyuinKikanI: Int,
-    nyuinKikanII: Int,
-    nyuinKikanIII: Int
+    tensuData: ShindangunBunruiTensuhyoJoken,
+    coeff: Double,
+    bukkaTaiou: Double,
 ): Int {
-    val cost: Int
-    if (days <= nyuinbiI) {
-        cost = days.times(nyuinKikanI)
-    } else if (days <= nyuinbiII) {
-        cost = nyuinbiI.times(nyuinKikanI) +
-                (days - nyuinbiI).times(nyuinKikanII)
-    } else if (days <= nyuinbiIII) {
-        cost =
-            nyuinbiI.times(nyuinKikanI) +
-                    (nyuinbiII - nyuinbiI).times(nyuinKikanII) +
-                    (days - nyuinbiII).times(nyuinKikanIII)
-    } else {
-        cost =
-            nyuinbiI.times(nyuinKikanI) +
-                    (nyuinbiII - nyuinbiI).times(nyuinKikanII) +
-                    (nyuinbiIII - nyuinbiII).times(nyuinKikanIII)
+    val periodEnds = listOf(tensuData.nyuinbiI, tensuData.nyuinbiII, tensuData.nyuinbiIII)
+        .map { it.toIntOrNull() }
+    // 点数が「-」の期間は0点（その期間の日数も0日になる）
+    val periodPoints = listOf(tensuData.nyuinKikanI, tensuData.nyuinKikanII, tensuData.nyuinKikanIII)
+        .map { it.toIntOrNull() ?: 0 }
+    var totalYen = 0L
+    var previousEnd = 0
+    for (i in periodEnds.indices) {
+        // 入院日が「-」の期間は前の期間と同じ日数とする
+        val periodEnd = periodEnds[i] ?: previousEnd
+        if (periodEnd <= 0 || days <= previousEnd) break
+        val periodDays = minOf(days, periodEnd) - previousEnd
+        totalYen += ((10 * periodPoints[i] * coeff + bukkaTaiou) * periodDays).roundToLong()
+        previousEnd = periodEnd
     }
-    return cost
+    return totalYen.toInt()
 }
 
 // 1. 表示用のラベルを生成する関数（Entityを渡すと文字列を返す）
