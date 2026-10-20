@@ -170,7 +170,10 @@ val itemsList = listOf(
         )),
     ListItemData(
         R.string.sodiumDifferentialDiagnosisTitle,
-        ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS
+        ActionType.NAVIGATE_TO_SODIUM_DIFFERENTIAL_DIAGNOSIS,
+        keywords = listOf(
+            R.string.disorderOfSerumSodium,
+        )
     ),
     ListItemData(R.string.infusionCalculator, ActionType.NAVIGATE_TO_INFUSION_CALCULATOR),
     ListItemData(R.string.netakiridoTitle, ActionType.NAVIGATE_TO_NETAKIRIDO),

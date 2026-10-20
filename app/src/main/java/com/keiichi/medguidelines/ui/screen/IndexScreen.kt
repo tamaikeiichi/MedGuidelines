@@ -160,8 +160,6 @@ fun IndexScreen(
         }
     }
 
-    val expectedItemCount = localeAwareAppItems.size
-
     val displayedItems = remember(searchQuery, originalItems, context) {
         if (searchQuery.isBlank()) {
             originalItems
@@ -223,7 +221,6 @@ fun IndexScreen(
     LaunchedEffect(Unit) {
         loadListItemData(
             context,
-            expectedItemCount,
             initialItemsLists = localeAwareAppItems
             ).collect { loadedItems ->
             originalItems.clear()

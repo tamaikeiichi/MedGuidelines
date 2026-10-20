@@ -274,9 +274,16 @@ private fun totalScore(): TotalScore {
             )
         }
     )
+    // HELT-E2S2の年齢: 75〜84歳（Elderly）は1点，85歳以上（Extreme elderly）は2点で，どちらか一方のみ。
+    // 75歳以上でない場合は85歳以上の選択（画面上は非表示）を無視する
+    val helte2s2AgeScore = when {
+        scoreAge75 == 0 -> 0
+        scoreAge85 == 1 -> 2
+        else -> 1
+    }
     val totalScore: TotalScore = TotalScore(
         chads2Score = scoreCongestiveHeartFailure + scoreHypertension + scoreAge75 + scoreDiabetes + (scoreStroke * 2),
-        helte2s2Score = scoreHypertension + scoreLowBmi + scoreAf + scoreAge75 + (scoreAge85 * 2) + (scoreStroke * 2)
+        helte2s2Score = scoreHypertension + scoreLowBmi + scoreAf + helte2s2AgeScore + (scoreStroke * 2)
     )
     return totalScore
 }

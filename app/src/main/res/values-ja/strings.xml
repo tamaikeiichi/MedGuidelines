@@ -210,12 +210,15 @@
     <string name="hypernatremia">高ナトリウム血症</string>
     <string name="serumOsmolality">血漿浸透圧</string>
     <string name="lowOsmolality">低浸透圧</string>
-    <string name="IsotonicHyponatraemia">等張性低ナトリウム血症</string>
     <string name="highOsmolality">高浸透圧</string>
     <string name="serumGlucose">血糖</string>
-    <string name="hypertonicHyponatremia">高浸透圧性低ナトリウム血症</string>
-    <string name="HyperglycemiaMayBePresent">高血糖の存在を考慮</string>
     <string name="hypotonicHyponatremia">低張性低ナトリウム血症</string>
+    <string name="excludeNonHypotonicHyponatremia">血漿浸透圧 ≥275 mOsm/kg：非低張性低ナトリウム血症の原因を除外</string>
+    <string name="nonHypotonicEffectiveOsmoles"><![CDATA[<b>有効浸透圧物質</b>（等張性あるいは高張性）：グルコース，マンニトール，グリシン，HTK液，高浸透圧造影剤，マルトース]]></string>
+    <string name="pseudohyponatremia"><![CDATA[<b>偽性低ナトリウム血症</b>（等張性，測定上のアーチファクト）：中性脂肪，コレステロール，蛋白，免疫グロブリン静注，単クローン性ガンマグロブリン血症]]></string>
+    <string name="nonHypotonicCausePresent">有効浸透圧物質あるいは偽性低ナトリウム血症がある</string>
+    <string name="nonHypotonicHyponatremia">非低張性低ナトリウム血症</string>
+    <string name="acceptAsHypotonicHyponatremia">非低張性の原因がなければ，低張性低ナトリウム血症として扱う</string>
     <string name="acuteOrSevereSymptoms">急性あるいは重度の症状</string>
     <string name="considerImmediateTreatmentWithHypertonicSaline">即座に高張食塩水による治療を 考慮</string>
     <string name="urineOsmolality">尿浸透圧</string>
@@ -230,7 +233,7 @@
     <string name="ifEcfReducedConsider">細胞外液量減少がある場合</string>
     <string name="diarrheaAndVomiting">下痢や嘔吐</string>
     <string name="thirdSpacing">サードスペースへの移行</string>
-    <string name="remoteDiuretics">隠れた利尿薬の使用</string>
+    <string name="remoteDiuretics">以前の利尿薬使用</string>
     <string name="diureticsOrKidneyDisease">利尿薬 腎疾患</string>
     <string name="consider">以下を考慮</string>
     <string name="diuretics">利尿薬</string>
