@@ -128,7 +128,7 @@ private fun score(): Double {
                 value = creatinine,
                 japaneseUnit = R.string.mgdl,
                 changedValueRate = 88.4,
-                changedUnit = R.string.mmoll
+                changedUnit = R.string.umolL
             )
             InputValue(
                 label = R.string.ptInr,

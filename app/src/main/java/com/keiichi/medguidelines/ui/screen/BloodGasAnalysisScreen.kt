@@ -33,6 +33,13 @@ import com.keiichi.medguidelines.ui.component.TitleTopAppBar
 import com.keiichi.medguidelines.ui.component.parseStyledString
 import com.keiichi.medguidelines.ui.component.TextAndUrl
 
+// 判定は Berend K, et al. N Engl J Med. 2014;371(15):1434-1445 の Table 1, Figure 1, Figure 2 に準拠
+// 基準値: PaCO2 40 mmHg, HCO3 24 mmol/L
+private const val NORMAL_HCO3 = 24.0
+private const val NORMAL_PACO2 = 40.0
+// 予測PaCO2（Winters式など）の許容幅 ±2 mmHg
+private const val EXPECTED_PACO2_TOLERANCE = 2.0
+
 @Composable
 fun BloodGasAnalysisScreen(navController: NavController) {
     val focusManager = LocalFocusManager.current
@@ -81,10 +88,6 @@ fun BloodGasAnalysisInput() {
     val cl = remember { mutableDoubleStateOf(98.0) }
     val albumin = remember { mutableDoubleStateOf(3.9) }
 
-    val normalHco3: Double = 23.0
-    val normalPaCo2: Double = 40.0
-    val normalPaO2: Double = 100.0
-
     BloodGasAnalysisCard(
         bloodGasAnalysisContent = {
             MedGuidelinesCard {
@@ -115,7 +118,7 @@ fun BloodGasAnalysisInput() {
                         label = R.string.cl, value = cl, japaneseUnit = R.string.meql
                     )
                     InputValue(
-                        label = R.string.albumin, value = albumin, japaneseUnit = R.string.mgdl
+                        label = R.string.albumin, value = albumin, japaneseUnit = R.string.gdL
                     )
                 }
             }
@@ -123,12 +126,14 @@ fun BloodGasAnalysisInput() {
     )
     if (ph.doubleValue < 7.38) {
         TextInCard(R.string.acidemia)
-        if (hco3.doubleValue < 22 && paCo2.doubleValue < 42) {
+        // 代謝性アシドーシスは HCO3 <22 のみで判定する（PaCO2 >42 の合併は予測PaCO2で判定）
+        if (hco3.doubleValue < 22) {
             TextInCard(R.string.metabolicAcidosis)
-            val calculateExpectedPaco2 = 1.5 * hco3.doubleValue + 8
-            if (paO2.doubleValue > calculateExpectedPaco2) {
+            // Winters式: 予測PaCO2 = 1.5 × HCO3 + 8 ± 2
+            val expectedPaco2 = 1.5 * hco3.doubleValue + 8
+            if (paCo2.doubleValue > expectedPaco2 + EXPECTED_PACO2_TOLERANCE) {
                 TextInCard(R.string.additionalRespiratoryAcidosis)
-            } else if (paO2.doubleValue < calculateExpectedPaco2) {
+            } else if (paCo2.doubleValue < expectedPaco2 - EXPECTED_PACO2_TOLERANCE) {
                 TextInCard(R.string.additionalRespiratoryAlkalosis)
             }
             val anionGap = na.doubleValue - cl.doubleValue - hco3.doubleValue
@@ -165,7 +170,7 @@ fun BloodGasAnalysisInput() {
                 } else {
                     TextInCard(R.string.urinaryAnionGapNegativeDDx)
                 }
-            } else if (correctedAnionGap >= 12) {
+            } else if (correctedAnionGap > 12) {
                 BloodGasAnalysisCard(
                     bloodGasAnalysisContent = {
                         Column() {
@@ -175,90 +180,84 @@ fun BloodGasAnalysisInput() {
                     }
                 )
             }
-        } else if (paCo2.doubleValue > 42 && hco3.doubleValue > 22) {
+        } else if (paCo2.doubleValue > 42) {
             TextInCard(R.string.respiratoryAcidosis)
-            val hco3change = (hco3.doubleValue - 23) / ((paCo2.doubleValue - 40) / 10)
-            if (0.0 < hco3change && hco3change < 1.0) {
+            // PaCO2が40から10 mmHg上昇するごとのHCO3の増加量
+            val hco3Change =
+                (hco3.doubleValue - NORMAL_HCO3) / ((paCo2.doubleValue - NORMAL_PACO2) / 10)
+            if (hco3Change < 1.0) {
                 TextInCard(R.string.additionalMetabolicAcidosis)
-            } else if (1.0 <= hco3change && hco3change < 4.0) {
+            } else if (hco3Change < 4.0) {
                 TextInCard(R.string.acuteRespiratoryAcidosis)
-            } else if (hco3change in 4.0..5.0) {
+            } else if (hco3Change <= 5.0) {
                 TextInCard(R.string.chronicRespiratoryAcidosis)
-            } else if (hco3change > 5.0) {
+            } else {
                 TextInCard(R.string.additionalMetabolicAlkalosis)
             }
-            val age = remember { mutableDoubleStateOf(65.0) }
-            BloodGasAnalysisCard(
-                bloodGasAnalysisContent = {
-                    NumberInTextField(
-                        label = R.string.age, value = age, width = 120,
-                    )
-                }
-            )
-            val aaDifference = 150 - paO2.doubleValue - 1.25 * paCo2.doubleValue
-            var correctedAaDifference = aaDifference
-            if (age.doubleValue >= 65) {
-                correctedAaDifference = aaDifference / 2
-            }
-            if (correctedAaDifference <= 10) {
-                TextInCard(R.string.HyperventilationWithoutIntrinsicLungDisease)
-            } else if (correctedAaDifference > 10) {
-                TextInCard(R.string.HyperventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
-            }
+            AaDifferenceJudgement(paO2.doubleValue, paCo2.doubleValue)
         }
     } else if (ph.doubleValue > 7.42) {
         TextInCard(R.string.alkalemia)
-        if (hco3.doubleValue > 26 && paCo2.doubleValue >= 38) {
+        // 代謝性アルカローシスは HCO3 >26 のみで判定する（PaCO2 <38 の合併は予測PaCO2で判定）
+        if (hco3.doubleValue > 26) {
             TextInCard(R.string.metabolicAlkalosis)
-            val calculateExpectedPaco2 = 0.7 * (hco3.doubleValue - 24) + 40
-            if (paCo2.doubleValue < calculateExpectedPaco2) {
+            // 予測PaCO2 = 0.7 × (HCO3 − 24) + 40 ± 2
+            val expectedPaco2 = 0.7 * (hco3.doubleValue - NORMAL_HCO3) + NORMAL_PACO2
+            if (paCo2.doubleValue < expectedPaco2 - EXPECTED_PACO2_TOLERANCE) {
                 TextInCard(R.string.additionalRespiratoryAlkalosis)
-            } else if (paCo2.doubleValue > calculateExpectedPaco2) {
+            } else if (paCo2.doubleValue > expectedPaco2 + EXPECTED_PACO2_TOLERANCE) {
                 TextInCard(R.string.additionalRespiratoryAcidosis)
             }
-        } else if (hco3.doubleValue < 26 && paCo2.doubleValue < 38) {
+        } else if (paCo2.doubleValue < 38) {
             TextInCard(R.string.respiratoryAlkalosis)
+            // PaCO2が40から10 mmHg低下するごとのHCO3の減少量
             val hco3Change =
-                (hco3.doubleValue - normalHco3) / (paCo2.doubleValue - normalPaCo2) / 10
-            if (0.0 < hco3Change && hco3Change < 2.0) {
+                (NORMAL_HCO3 - hco3.doubleValue) / ((NORMAL_PACO2 - paCo2.doubleValue) / 10)
+            if (hco3Change < 2.0) {
                 TextInCard(R.string.additionalMetabolicAlkalosis)
-            } else if (2.0 <= hco3Change && hco3Change < 4.0) {
+            } else if (hco3Change < 4.0) {
                 TextInCard(R.string.acuteRespiratoryAlkalosis)
-            } else if (hco3Change in 4.0..5.0) {
+            } else if (hco3Change <= 5.0) {
                 TextInCard(R.string.chronicRespiratoryAlkalosis)
-            } else if (hco3Change > 5.0) {
+            } else {
                 TextInCard(R.string.additionalMetabolicAcidosis)
             }
-            val age = remember { mutableDoubleStateOf(65.0) }
-            BloodGasAnalysisCard(
-                bloodGasAnalysisContent = {
-                    FlowRow(
-                        modifier = Modifier
-                            .padding(4.dp)
-                    ) {
-                        NumberInTextField(
-                            label = R.string.age, value = age, width = 120,
-                        )
-                    }
-                }
-            )
-            val aaDifference = 150 - paO2.doubleValue - 1.25 * paCo2.doubleValue
-            var correctedAaDifference = aaDifference
-            if (age.doubleValue >= 65) {
-                correctedAaDifference = aaDifference / 2
-            }
-            if (correctedAaDifference <= 10) {
-                TextInCard(R.string.HyperventilationWithoutIntrinsicLungDisease)
-            } else if (correctedAaDifference > 10) {
-                TextInCard(R.string.HyperventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
-            }
+            AaDifferenceJudgement(paO2.doubleValue, paCo2.doubleValue)
         }
     } else {
-        if (hco3.doubleValue > (normalHco3 + 3) && paCo2.doubleValue > (normalPaCo2 + 5)) {
+        if (hco3.doubleValue > (NORMAL_HCO3 + 3) && paCo2.doubleValue > (NORMAL_PACO2 + 5)) {
             TextInCard(R.string.metabolicAlkalosisAndRespiratoryAcidosis)
-        } else if (hco3.doubleValue < (normalHco3 - 3) && paCo2.doubleValue < (normalPaCo2 - 5)) {
+        } else if (hco3.doubleValue < (NORMAL_HCO3 - 3) && paCo2.doubleValue < (NORMAL_PACO2 - 5)) {
             TextInCard(R.string.metabolicAcidosisAndRespiratoryAlkalosis)
         }
+    }
+}
+
+/**
+ * A-aDO2 = 150 − PaO2 − 1.25 × PaCO2（海抜0 m，室内気）
+ * 正常は ≤10 mmHg（高齢者は ≤20 mmHg）
+ */
+@Composable
+private fun AaDifferenceJudgement(paO2: Double, paCo2: Double) {
+    val age = remember { mutableDoubleStateOf(65.0) }
+    BloodGasAnalysisCard(
+        bloodGasAnalysisContent = {
+            FlowRow(
+                modifier = Modifier
+                    .padding(4.dp)
+            ) {
+                NumberInTextField(
+                    label = R.string.age, value = age, width = 120,
+                )
+            }
+        }
+    )
+    val aaDifference = 150 - paO2 - 1.25 * paCo2
+    val upperLimit = if (age.doubleValue >= 65) 20.0 else 10.0
+    if (aaDifference <= upperLimit) {
+        TextInCard(R.string.HyperventilationWithoutIntrinsicLungDisease)
+    } else {
+        TextInCard(R.string.HyperventilationWithIntrinsicLungDiseaseVentilationPerfusionMismatchOrBoth)
     }
 }
 

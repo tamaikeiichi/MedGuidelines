@@ -177,7 +177,7 @@ val jointInvolvement = listOf(
 val serology = listOf(
     LabelAndScore(labelResId = R.string.negativeRfAndNegativeAcpa, score = 0),
     LabelAndScore(labelResId = R.string.lowPositiveRfOrLowPositiveAcpa, score = 2),
-    LabelAndScore(labelResId = R.string.highPositiveRfOrHighPositiveAcpa, score = 4)
+    LabelAndScore(labelResId = R.string.highPositiveRfOrHighPositiveAcpa, score = 3)
 )
 
 val acutePhaseReactants = listOf(

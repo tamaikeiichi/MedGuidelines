@@ -422,8 +422,9 @@ fun calculateElfScore(
     piiinp: Double,
     timp1: Double
 ): Double {
+    // ELF = 2.278 + 0.851 ln(HA) + 0.751 ln(PIIINP) + 0.394 ln(TIMP-1)
     val score = 2.278 +
-            0.815 * ln(hyaluronicAcid) +
+            0.851 * ln(hyaluronicAcid) +
             0.751 * ln(piiinp) +
             0.394 * ln(timp1)
     return score

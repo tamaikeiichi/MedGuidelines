@@ -323,11 +323,12 @@ fun adropTotalScore(): TotalScoreCurbAdrop {
         }
     }
 
-    if (systolicBp.doubleValue <= 90.0) {
-        systolicBpCurb = 0
-        systolicBpAdrop = 1
-    } else if (systolicBp.doubleValue < 90.0) {
+    // CURB-65: 収縮期血圧 <90，A-DROP: 収縮期血圧 ≤90
+    if (systolicBp.doubleValue < 90.0) {
         systolicBpCurb = 1
+        systolicBpAdrop = 1
+    } else if (systolicBp.doubleValue <= 90.0) {
+        systolicBpCurb = 0
         systolicBpAdrop = 1
     } else {
         systolicBpCurb = 0
