@@ -49,6 +49,10 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
         return flow.map { resolveRepresentatives(it) }
     }
 
+    /** コード完全一致検索（カードタップ時にそのカード1枚だけを表示する） */
+    fun searchByCode(code: String): Flow<List<IcdO3TopographySearchResult>> =
+        icdO3TopographyDao.searchByCode(code).map { resolveRepresentatives(it) }
+
     fun getFavorites(): Flow<List<IcdO3TopographySearchResult>> =
         icdO3TopographyDao.getFavorites().map { attachAlternateTerms(it) }
 

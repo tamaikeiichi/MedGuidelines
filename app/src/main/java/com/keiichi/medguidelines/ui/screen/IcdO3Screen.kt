@@ -2,6 +2,7 @@ package com.keiichi.medguidelines.ui.screen
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -109,6 +111,8 @@ fun IcdO3Screen(
     val currentDeviceLocale = configuration.locales[0] ?: Locale.getDefault()
     val showJapanese = currentDeviceLocale.language == Locale.JAPANESE.language
 
+    val focusManager = LocalFocusManager.current
+
     // タップされた検索窓の表示領域を最大化するための状態
     var focusedSection by remember { mutableStateOf<IcdO3FocusedSection?>(null) }
 
@@ -159,9 +163,28 @@ fun IcdO3Screen(
                             IcdO3TopographyResultCard(
                                 item = item,
                                 showJapanese = showJapanese,
+                                onClick = {
+                                    focusManager.clearFocus()
+                                    viewModel.onTopographyCardSelected(item.code)
+                                },
                                 onFavoriteClick = { viewModel.toggleTopographyFavorite(item) }
                             )
                         }
+                    }
+                } else {
+                    // 折りたたみ時も一番上のカードだけは（別名を省いて）常に表示する
+                    topographySearchResults.firstOrNull()?.let { item ->
+                        IcdO3TopographyResultCard(
+                            item = item,
+                            showJapanese = showJapanese,
+                            showAlternateTerms = false,
+                            onClick = {
+                                focusManager.clearFocus()
+                                viewModel.onTopographyCardSelected(item.code)
+                            },
+                            onFavoriteClick = { viewModel.toggleTopographyFavorite(item) },
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
                     }
                 }
             }
@@ -200,9 +223,29 @@ fun IcdO3Screen(
                                 item = item,
                                 showJapanese = showJapanese,
                                 gradeDigit = selectedGradeDigit,
+                                onClick = {
+                                    focusManager.clearFocus()
+                                    viewModel.onCardSelected(item.code)
+                                },
                                 onFavoriteClick = { viewModel.toggleFavorite(item) }
                             )
                         }
+                    }
+                } else {
+                    // 折りたたみ時も一番上のカードだけは（別名を省いて）常に表示する
+                    searchResults.firstOrNull()?.let { item ->
+                        IcdO3ResultCard(
+                            item = item,
+                            showJapanese = showJapanese,
+                            gradeDigit = selectedGradeDigit,
+                            showAlternateTerms = false,
+                            onClick = {
+                                focusManager.clearFocus()
+                                viewModel.onCardSelected(item.code)
+                            },
+                            onFavoriteClick = { viewModel.toggleFavorite(item) },
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
                     }
                 }
 
@@ -314,12 +357,16 @@ private fun IcdO3ResultCard(
     item: IcdO3SearchResult,
     showJapanese: Boolean,
     gradeDigit: String,
-    onFavoriteClick: () -> Unit
+    onClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    showAlternateTerms: Boolean = true
 ) {
     MedGuidelinesCard(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
+            .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.padding(Dimensions.cardPadding)) {
             Row(
@@ -330,8 +377,7 @@ private fun IcdO3ResultCard(
                     Column {
                         Text(
                             text = item.termEn,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 18.sp
                         )
                         if (showJapanese && item.termJa.isNotBlank()) {
                             Text(
@@ -358,7 +404,12 @@ private fun IcdO3ResultCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SelectionContainer {
-                    Text(text = applyGradeDigit(item.code, gradeDigit), fontSize = 16.sp)
+                    // 知りたいのはコードなので、病名ではなくコードを太字にする
+                    Text(
+                        text = applyGradeDigit(item.code, gradeDigit),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 if (item.isObsolete) {
                     Text(
@@ -370,7 +421,7 @@ private fun IcdO3ResultCard(
                 }
             }
 
-            if (item.alternateTerms.isNotEmpty()) {
+            if (showAlternateTerms && item.alternateTerms.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(R.string.icdO3AlsoKnownAs),
@@ -410,12 +461,16 @@ private fun AlternateTermRow(alt: IcdO3AlternateTerm, showJapanese: Boolean) {
 private fun IcdO3TopographyResultCard(
     item: IcdO3TopographySearchResult,
     showJapanese: Boolean,
-    onFavoriteClick: () -> Unit
+    onClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    showAlternateTerms: Boolean = true
 ) {
     MedGuidelinesCard(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
+            .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.padding(Dimensions.cardPadding)) {
             Row(
@@ -426,8 +481,7 @@ private fun IcdO3TopographyResultCard(
                     Column {
                         Text(
                             text = item.termEn,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 18.sp
                         )
                         if (showJapanese && item.termJa.isNotBlank()) {
                             Text(
@@ -454,7 +508,12 @@ private fun IcdO3TopographyResultCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SelectionContainer {
-                    Text(text = item.code, fontSize = 16.sp)
+                    // 知りたいのはコードなので、病名ではなくコードを太字にする
+                    Text(
+                        text = item.code,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 if (item.needsReview) {
                     Text(
@@ -466,7 +525,7 @@ private fun IcdO3TopographyResultCard(
                 }
             }
 
-            if (item.alternateTerms.isNotEmpty()) {
+            if (showAlternateTerms && item.alternateTerms.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(R.string.icdO3AlsoKnownAs),

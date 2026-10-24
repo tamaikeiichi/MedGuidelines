@@ -25,6 +25,10 @@ interface IcdO3TopographyDao {
     """)
     fun searchMulti(w1: String, w2: String, w3: String): Flow<List<IcdO3TopographyEntity>>
 
+    // カードタップ時に、そのコードのカード1枚だけを表示するための完全一致検索
+    @Query("SELECT * FROM icd_o3_topography WHERE code = :code")
+    fun searchByCode(code: String): Flow<List<IcdO3TopographyEntity>>
+
     @Query("SELECT * FROM icd_o3_topography WHERE code IN (:codes) AND termType = '優先用語'")
     suspend fun getPreferredByCodes(codes: List<String>): List<IcdO3TopographyEntity>
 

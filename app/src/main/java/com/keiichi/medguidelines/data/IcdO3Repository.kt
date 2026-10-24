@@ -56,6 +56,10 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
         return flow.map { resolveRepresentatives(it) }
     }
 
+    /** コード完全一致検索（カードタップ時にそのカード1枚だけを表示する） */
+    fun searchByCode(code: String): Flow<List<IcdO3SearchResult>> =
+        icdO3Dao.searchByCode(code).map { resolveRepresentatives(it) }
+
     fun getFavorites(): Flow<List<IcdO3SearchResult>> =
         icdO3Dao.getFavorites().map { attachAlternateTerms(it) }
 

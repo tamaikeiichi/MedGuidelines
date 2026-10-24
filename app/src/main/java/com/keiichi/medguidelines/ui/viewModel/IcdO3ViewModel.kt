@@ -34,6 +34,10 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
     private val _topographySearchQuery = MutableStateFlow("")
     val topographySearchQuery: StateFlow<String> = _topographySearchQuery.asStateFlow()
 
+    // カードタップで選択されたコード（検索バーがこのコードと一致する間は完全一致検索にする）
+    private val _selectedCode = MutableStateFlow<String?>(null)
+    private val _selectedTopographyCode = MutableStateFlow<String?>(null)
+
     private val _isTopographyLoading = MutableStateFlow(false)
     val isTopographyLoading: StateFlow<Boolean> = _isTopographyLoading.asStateFlow()
 
@@ -68,7 +72,14 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onQueryChanged(newQuery: String) {
+        _selectedCode.value = null
         _searchQuery.value = newQuery
+    }
+
+    // カードがタップされたら、検索バーをそのコードに置き換えてカード1枚だけを表示する
+    fun onCardSelected(code: String) {
+        _selectedCode.value = code
+        _searchQuery.value = code
     }
 
     fun onGradeDigitChanged(digit: String) {
@@ -82,7 +93,13 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun onTopographyQueryChanged(newQuery: String) {
+        _selectedTopographyCode.value = null
         _topographySearchQuery.value = newQuery
+    }
+
+    fun onTopographyCardSelected(code: String) {
+        _selectedTopographyCode.value = code
+        _topographySearchQuery.value = code
     }
 
     fun toggleTopographyFavorite(item: IcdO3TopographySearchResult) {
@@ -93,12 +110,15 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val searchResults: StateFlow<List<IcdO3SearchResult>> = _searchQuery
+        .combine(_selectedCode) { query, selected -> query to (query == selected) }
         .debounce(300)
         .distinctUntilChanged()
-        .flatMapLatest { query ->
+        .flatMapLatest { (query, isExactCode) ->
             if (query.isBlank()) {
                 // クエリが空の場合はお気に入りリストを表示
                 repository.getFavorites()
+            } else if (isExactCode) {
+                repository.searchByCode(query)
             } else {
                 // クエリがある場合は通常検索（コード／英語名称／日本語名称）
                 val normalizedInput = normalizeTextForSearch(query)
@@ -114,12 +134,15 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val topographySearchResults: StateFlow<List<IcdO3TopographySearchResult>> = _topographySearchQuery
+        .combine(_selectedTopographyCode) { query, selected -> query to (query == selected) }
         .debounce(300)
         .distinctUntilChanged()
-        .flatMapLatest { query ->
+        .flatMapLatest { (query, isExactCode) ->
             if (query.isBlank()) {
                 // クエリが空の場合はお気に入りリストを表示
                 topographyRepository.getFavorites()
+            } else if (isExactCode) {
+                topographyRepository.searchByCode(query)
             } else {
                 // クエリがある場合は通常検索（コード／英語名称／日本語名称）
                 val normalizedInput = normalizeTextForSearch(query)

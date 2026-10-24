@@ -25,6 +25,10 @@ interface IcdO3Dao {
     """)
     fun searchMulti(w1: String, w2: String, w3: String): Flow<List<IcdO3Entity>>
 
+    // カードタップ時に、そのコードのカード1枚だけを表示するための完全一致検索
+    @Query("SELECT * FROM icd_o3_master WHERE code = :code")
+    fun searchByCode(code: String): Flow<List<IcdO3Entity>>
+
     @Query("SELECT * FROM icd_o3_master WHERE code IN (:codes) AND level = 'Preferred'")
     suspend fun getPreferredByCodes(codes: List<String>): List<IcdO3Entity>
 
