@@ -74,16 +74,14 @@ fun TextFieldOneDigit(
     )
 ) {
         BasicTextField(
-            modifier = Modifier
+            // タップしやすいように少し大きめの枠にする
+            modifier = modifier
                 .width(
-                    20.dp
+                    28.dp
                 )
                 .height(
-                    35.dp
-                )
-
-                .padding(2.dp)
-                .fillMaxHeight(),
+                    46.dp
+                ),
             textStyle = textStyle
 //                (
 //                color = color,
@@ -133,7 +131,8 @@ fun TextFieldOneDigit(
                         isError = isError,
                         interactionSource = interactionSource,
                         colors = colors,
-                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 0.dp)
+                        // 通常のTextFieldと同じく、数字の下に8dpの余白を空けて下線との位置を揃える
+                        contentPadding = PaddingValues(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 8.dp)
                     )
                 }
             }

@@ -7,7 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -37,6 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.keiichi.medguidelines.R
@@ -50,6 +54,8 @@ fun NumberInTextFieldEachDigitNPNN(
     width: Int,
     multiplier: Double = 1.0,
     formatter: DecimalFormat = remember { DecimalFormat("#.##") },
+    // 指定した場合はこの大きさで固定する（他の入力欄と大きさを揃えるため）
+    fontSize: TextUnit? = null,
     //onClick: () -> Unit
 ) {
     val interactionSource1 = remember { MutableInteractionSource() }
@@ -115,35 +121,24 @@ fun NumberInTextFieldEachDigitNPNN(
         }
     }
 
-    val fontSize = calculateFontSize(text1) * 1
-    val color = MaterialTheme.colorScheme.secondary
+    val fontSize = fontSize ?: calculateFontSize(text1)
+    // 他の入力欄（NumberInTextField）と同じ文字色にする
+    val color = MaterialTheme.colorScheme.onBackground
 
     //val focusRequester = remember { FocusRequester() }
 
-    Column(
+    // 他の入力欄（NumberInTextField）と同じ外側の余白・高さにして、ラベルと数字の位置を揃える
+    Box(
         modifier = Modifier
-//            .clickable(){
-//            onClick()
-//            focusRequester1.requestFocus()
-//        }
-
+            .padding(5.dp)
+            .height(56.dp)
     ) {
-        Text(
-            modifier = Modifier.padding(5.dp),
-            text = parseStyledString(label),
-            style = TextStyle(
-                fontSize = 13.sp,
-                color = if (isFocused1 || isFocused2 || isFocused3) {
-                    MaterialTheme.colorScheme.error
-                } else {
-                    MaterialTheme.colorScheme.primary
-                }
-            )
-        )
-
         Row(
-            modifier = modifier.padding(5.dp),
-            verticalAlignment = Alignment.Bottom
+            modifier = modifier
+                .align(Alignment.BottomStart)
+                .padding(end = 4.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             TextFieldOneDigit(
                 value = text1,
@@ -183,11 +178,11 @@ fun NumberInTextFieldEachDigitNPNN(
             Text(
                 text = ".",
                 style = TextStyle(
-                    color = MaterialTheme.colorScheme.primary,
+                    color = color,
                     background = MaterialTheme.colorScheme.onPrimary,
                     fontSize = fontSize,
                 ),
-                modifier = Modifier.padding(vertical = 1.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
             )
             TextFieldOneDigit(
                 value = text2,
@@ -198,9 +193,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 fontSize = fontSize,
                 color = color,
                 modifier = Modifier
-                    .focusRequester(focusRequester2)
-                    //.padding(5.dp)
-                    .width(width.dp),
+                    .focusRequester(focusRequester2),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
@@ -234,9 +227,7 @@ fun NumberInTextFieldEachDigitNPNN(
                 fontSize = fontSize,
                 color = color,
                 modifier = Modifier
-                    .focusRequester(focusRequester3)
-                    //.padding(5.dp)
-                    .width(width.dp),
+                    .focusRequester(focusRequester3),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
@@ -261,6 +252,21 @@ fun NumberInTextFieldEachDigitNPNN(
                 )
             )
         }
+
+        // 数字の枠に隠れないように、ラベルは枠の後（上）に描く
+        Text(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 16.dp),
+            text = parseStyledString(label),
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = if (isFocused1 || isFocused2 || isFocused3) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.primary
+                }
+            )
+        )
     }
 }
 

@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.ui.component.InputValue
 import com.keiichi.medguidelines.ui.component.InputValueEachDigitNPNN
+import com.keiichi.medguidelines.ui.component.calculateFontSize
 import com.keiichi.medguidelines.ui.component.MedGuidelinesCard
 import com.keiichi.medguidelines.ui.component.MedGuidelinesScaffold
 import com.keiichi.medguidelines.ui.component.NumberInTextField
@@ -87,6 +88,8 @@ fun BloodGasAnalysisInput() {
     val k = remember { mutableDoubleStateOf(4.5) }
     val cl = remember { mutableDoubleStateOf(98.0) }
     val albumin = remember { mutableDoubleStateOf(3.9) }
+    // すべての入力欄で数字の大きさを揃える
+    val inputFontSize = calculateFontSize("")
 
     BloodGasAnalysisCard(
         bloodGasAnalysisContent = {
@@ -97,28 +100,36 @@ fun BloodGasAnalysisInput() {
                     itemVerticalAlignment = Alignment.Bottom
                 ) {
                     InputValueEachDigitNPNN(
-                        label = R.string.ph, value = ph, unit = R.string.space
+                        label = R.string.ph, value = ph, unit = R.string.space,
+                        fontSize = inputFontSize
                     )
                     InputValue(
-                        label = R.string.po2, value = paO2, japaneseUnit = R.string.mmhg
+                        label = R.string.po2, value = paO2, japaneseUnit = R.string.mmhg,
+                        fontSize = inputFontSize
                     )
                     InputValue(
-                        label = R.string.pco2, value = paCo2, japaneseUnit = R.string.mmhg
+                        label = R.string.pco2, value = paCo2, japaneseUnit = R.string.mmhg,
+                        fontSize = inputFontSize
                     )
                     InputValue(
-                        label = R.string.hco3, value = hco3, japaneseUnit = R.string.meql
+                        label = R.string.hco3, value = hco3, japaneseUnit = R.string.meql,
+                        fontSize = inputFontSize
                     )
                     InputValue(
-                        label = R.string.na, value = na, japaneseUnit = R.string.meql
+                        label = R.string.na, value = na, japaneseUnit = R.string.meql,
+                        fontSize = inputFontSize
                     )
                     InputValue(
-                        label = R.string.k, value = k, japaneseUnit = R.string.meql
+                        label = R.string.k, value = k, japaneseUnit = R.string.meql,
+                        fontSize = inputFontSize
                     )
                     InputValue(
-                        label = R.string.cl, value = cl, japaneseUnit = R.string.meql
+                        label = R.string.cl, value = cl, japaneseUnit = R.string.meql,
+                        fontSize = inputFontSize
                     )
                     InputValue(
-                        label = R.string.albumin, value = albumin, japaneseUnit = R.string.gdL
+                        label = R.string.albumin, value = albumin, japaneseUnit = R.string.gdL,
+                        fontSize = inputFontSize
                     )
                 }
             }

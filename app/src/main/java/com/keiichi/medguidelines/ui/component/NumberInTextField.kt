@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.keiichi.medguidelines.R
 import kotlinx.coroutines.flow.drop
@@ -53,7 +54,9 @@ fun NumberInTextField(
     changeValueRate: Double = 1.0,
     onFocusChanged: (Boolean) -> Unit = {},
     isSetByOtherComponent: Boolean = false,
-    onLabelClick: (() -> Unit)? = null // 追加
+    onLabelClick: (() -> Unit)? = null, // 追加
+    // 指定した場合は文字数で縮めずにこの大きさで固定する（画面内で大きさを揃えるため）
+    fontSize: TextUnit? = null
 ) {
     var text by remember { mutableStateOf(formatter.format(value.doubleValue * multiplier)) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -99,7 +102,7 @@ fun NumberInTextField(
         }
     }
 
-    val fontSize = calculateFontSize(text)
+    val fontSize = fontSize ?: calculateFontSize(text)
     TextField(
         label = {
             Row(verticalAlignment = Alignment.CenterVertically) {

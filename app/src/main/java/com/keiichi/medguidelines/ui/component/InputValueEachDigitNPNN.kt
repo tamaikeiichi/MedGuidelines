@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.keiichi.medguidelines.R
 import kotlin.math.roundToInt
@@ -33,6 +34,7 @@ fun InputValueEachDigitNPNN(
     changeUnit: MutableState<Boolean> = remember { mutableStateOf(true) },
     changedValueRate: Double = 1.0,
     changedUnit: Int = R.string.space,
+    fontSize: TextUnit? = null,
 ) {
     //val textMeasurer = rememberTextMeasurer()
     //val labelWidth = textMeasurer.measure(text = stringResource(label)).size.width
@@ -67,6 +69,7 @@ fun InputValueEachDigitNPNN(
             width = (textWidth * 0.3).roundToInt() + 90,//(labelWidth * 0.5).roundToInt()+50,
             multiplier = if (changeUnit.value) 1.0 else changedValueRate,
             formatter = formatter,
+            fontSize = fontSize,
             //onClick = () -> Unit
         )
 

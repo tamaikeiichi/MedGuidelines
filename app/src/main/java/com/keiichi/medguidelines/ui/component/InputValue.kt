@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.keiichi.medguidelines.R
 import kotlin.math.roundToInt
@@ -42,7 +43,8 @@ fun InputValue(
     onFocusChanged: (Boolean) -> Unit = {},
     isSetByOtherComponent: Boolean = false,
     formatter: DecimalFormat = remember { DecimalFormat("#.##") },
-    onLabelClick: (() -> Unit)? = null // 追加
+    onLabelClick: (() -> Unit)? = null, // 追加
+    fontSize: TextUnit? = null
     ) {
     val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
@@ -87,7 +89,8 @@ fun InputValue(
                 changeValueRate = changedValueRate,
                 onFocusChanged = onFocusChanged,
                 isSetByOtherComponent = isSetByOtherComponent,
-                onLabelClick = onLabelClick // 渡す
+                onLabelClick = onLabelClick, // 渡す
+                fontSize = fontSize
             )
             if (changedValueRate == 1.0) {
                 Column(
