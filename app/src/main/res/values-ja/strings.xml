@@ -333,10 +333,11 @@
     <string name="o2saturation">SpO&lt;sub>2&lt;/sub></string>
     <string name="aldreteTitle">Modified Aldreteスコア</string>
     <string name="pacu">鎮静後の覚醒評価スコア</string>
-    <string name="TfactorTitleNoteGastricCancer">&lt;b>Tis&lt;/b> Carcinoma in situ: 粘膜内腫瘍であり粘膜固有層に浸潤しない; 高度異形成\n&lt;b>T1a&lt;/b> 粘膜固有層あるいは粘膜筋板\n&lt;b>T1b&lt;/b> 粘膜下層\n&lt;b>T2&lt;/b> 固有筋層\n&lt;b>T3&lt;/b> 腫瘍は漿膜下層に達するが臓側腹膜や周囲構造物には浸潤しない\n&lt;b>T4a&lt;/b> 漿膜を貫通し臓側腹膜に達する\n&lt;b>T4b&lt;/b> 漿膜を貫通し周囲構造物・臓器に達する</string>
+    <string name="TfactorTitleNoteGastricCancer">&lt;b>Tis&lt;/b> Carcinoma in situ: 粘膜内腫瘍であり粘膜固有層に浸潤しない; 高度異形成\n&lt;b>T1&lt;/b> 粘膜固有層、粘膜筋板あるいは粘膜下層\n&lt;b>T1a&lt;/b> 粘膜固有層あるいは粘膜筋板\n&lt;b>T1b&lt;/b> 粘膜下層\n&lt;b>T2&lt;/b> 固有筋層\n&lt;b>T3&lt;/b> 腫瘍は漿膜下層に達するが臓側腹膜や周囲構造物には浸潤しない\n&lt;b>T4&lt;/b> 漿膜を貫通し臓側腹膜に達する、あるいは周囲構造物に浸潤する\n&lt;b>T4a&lt;/b> 漿膜を貫通し臓側腹膜に達する\n&lt;b>T4b&lt;/b> 漿膜を貫通し周囲構造物・臓器に達する</string>
     <string name="NfactorTitleNoteGastricCancer">&lt;b>N1&lt;/b> 1-2個の領域リンパ節転移\n&lt;b>N2&lt;/b> 3-6個の領域リンパ節転移\n&lt;b>N3a&lt;/b> 7-15個の領域リンパ節転移\n&lt;b>N3b&lt;/b> 16個以上の領域リンパ節転移</string>
     <string name="MfactorTitleNoteGastricCancer">&lt;b>M0&lt;/b> 遠隔転移なし\n&lt;b>M1&lt;/b> 遠隔転移あり</string>
-    <string name="gastrangercancerTNMTitle">胃癌TNM分類(第8版)</string>
+    <string name="gastrangercancerTNMTitle">胃癌TNM分類 (第9版)</string>
+    <string name="gastricTNMTitle">胃癌TNM分類 (第9版)</string>
     <string name="kidney">腎</string>
     <string name="chronic">慢性</string>
     <string name="urineTotalProtein">尿蛋白</string>
@@ -557,4 +558,8 @@
     <string name="japanese">日本人</string>
     <string name="ethnicityOther">それ以外</string>
     <string name="cockcroftGaultJsnGfrFormula" translatable="false">JSN eGFRcr（男性） = 194 × 血清Cr(mg/dL)^-1.094 × 年齢(歳)^-0.287 （mL/分/1.73m²）\nJSN eGFRcr（女性） = 194 × 血清Cr(mg/dL)^-1.094 × 年齢(歳)^-0.287 × 0.739 （mL/分/1.73m²）</string>
+    <string name="nasopharyngealTNMTitle">上咽頭癌TNM分類 (第9版)</string>
+    <string name="TfactorTitleNoteNasopharyngealCancer">&lt;b>Tis&lt;/b> 上皮内癌\n&lt;b>T0&lt;/b> 原発腫瘍を認めないが、EBV陽性（EBV関連）の頸部リンパ節転移を認める\n&lt;b>T1&lt;/b> 上咽頭に限局する腫瘍、または中咽頭および/または鼻腔に進展するが傍咽頭間隙への浸潤を伴わない腫瘍\n&lt;b>T2&lt;/b> 傍咽頭間隙に進展する腫瘍、または内側翼突筋、外側翼突筋および/または椎前筋に浸潤する腫瘍\n&lt;b>T3&lt;/b> 頭蓋底骨構造、頸椎、翼状突起構造および/または副鼻腔に浸潤する腫瘍\n&lt;b>T4&lt;/b> 以下のいずれかを伴う腫瘍：頭蓋内進展、臨床的および/または画像的に明らかな脳神経浸潤、下咽頭浸潤、眼窩浸潤（下眼窩裂を含む）、耳下腺浸潤、外側翼突筋の前外側表面を超える浸潤</string>
+    <string name="NfactorTitleNoteNasopharyngealCancer">&lt;b>N0&lt;/b> 領域リンパ節転移なし\n&lt;b>N1&lt;/b> 片側の頸部リンパ節転移、および/または片側もしくは両側の咽頭後リンパ節転移で、最大径6cm以下、輪状軟骨尾側縁より上方、臨床的/画像的なadvanced ENE*なし、のすべてを満たす\n&lt;b>N2&lt;/b> 両側の頸部リンパ節転移で、最大径6cm以下、輪状軟骨尾側縁より上方、臨床的/画像的なadvanced ENE*なし、のすべてを満たす\n&lt;b>N3&lt;/b> 最大径6cmを超える頸部リンパ節転移、または輪状軟骨尾側縁より下方への進展、または臨床的/画像的なadvanced ENE*\n* advanced ENE（臨床的/画像的な高度節外進展）：適切な形態画像検査または臨床診察で確認される、隣接構造（皮膚、筋、唾液腺および/または神経血管束）への明らかな腫瘍浸潤\n正中のリンパ節は同側リンパ節とみなす。</string>
+    <string name="MfactorTitleNoteNasopharyngealCancer">&lt;b>M0&lt;/b> 遠隔転移なし\n&lt;b>M1a&lt;/b> 遠隔転移あり：1臓器以上に3個以下の病変\n&lt;b>M1b&lt;/b> 遠隔転移あり：1臓器以上に3個を超える病変</string>
 </resources>

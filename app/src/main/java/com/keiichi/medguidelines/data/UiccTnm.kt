@@ -65,3 +65,13 @@ val gastricCancerTNM = listOf(
     listOf("N/A", "IIIB", "IIIB", "IIIC", "IIIC", "IIIC"),//N3b
     listOf("N/A", "IV", "IV", "IV", "IV", "IV"),//M1
 )
+
+val nasopharyngealCancerTNM = listOf(
+    //      Tis,   T0,    T1,    T2,    T3,    T4
+    listOf("0", "N/A", "IA", "IA", "II", "III"), //N0
+    listOf("N/A", "IB", "IB", "IB", "II", "III"),//N1
+    listOf("N/A", "II", "II", "II", "II", "III"),//N2
+    listOf("N/A", "III", "III", "III", "III", "III"),//N3
+    listOf("N/A", "IVA", "IVA", "IVA", "IVA", "IVA"),//M1a
+    listOf("N/A", "IVB", "IVB", "IVB", "IVB", "IVB"),//M1b
+)
