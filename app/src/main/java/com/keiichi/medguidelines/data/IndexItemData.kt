@@ -23,6 +23,7 @@ import com.keiichi.medguidelines.ui.screen.EsophagealTNMScreen
 import com.keiichi.medguidelines.ui.screen.GammaCalculateScreen
 import com.keiichi.medguidelines.ui.screen.GastricTNMScreen
 import com.keiichi.medguidelines.ui.screen.NasopharyngealTNMScreen
+import com.keiichi.medguidelines.ui.screen.HypopharyngealTNMScreen
 import com.keiichi.medguidelines.ui.screen.GlasgowComaScaleScreen
 import com.keiichi.medguidelines.ui.screen.HCCTNMScreen
 import com.keiichi.medguidelines.ui.screen.HomaIRScreen
@@ -94,6 +95,7 @@ enum class ActionType {
     NAVIGATE_TO_MELD,
     NAVIGATE_TO_COCKCROFT_GAULT,
     NAVIGATE_TO_NASOPHARYNGEAL_TNM,
+    NAVIGATE_TO_HYPOPHARYNGEAL_TNM,
 
 }
 
@@ -160,6 +162,7 @@ val itemsList = listOf(
     ListItemData(R.string.colorectalTNMTitle, ActionType.NAVIGATE_TO_COLORECTAL_TNM),
     ListItemData(R.string.gastrangercancerTNMTitle, ActionType.NAVIGATE_TO_GASTRICCANCER_TNM),
     ListItemData(R.string.nasopharyngealTNMTitle, ActionType.NAVIGATE_TO_NASOPHARYNGEAL_TNM),
+    ListItemData(R.string.hypopharyngealTNMTitle, ActionType.NAVIGATE_TO_HYPOPHARYNGEAL_TNM),
     ListItemData(R.string.chads2AndHelte2s2Title, ActionType.NAVIGATE_TO_CHADS2,
         keywords = listOf(
             R.string.af,
@@ -286,6 +289,7 @@ data class IndexScreenActions(
     val navigateToMeld: () -> Unit,
     val navigateToCockcroftGault: () -> Unit,
     val navigateToNasopharyngealTNM: () -> Unit,
+    val navigateToHypopharyngealTNM: () -> Unit,
 )
 
 @Composable
@@ -339,6 +343,7 @@ fun rememberIndexScreenActions(navController: NavHostController): IndexScreenAct
         navigateToMeld = {navController.navigate("MeldScreen")},
         navigateToCockcroftGault = {navController.navigate("CockcroftGaultScreen")},
         navigateToNasopharyngealTNM = {navController.navigate("NasopharyngealTNMScreen")},
+        navigateToHypopharyngealTNM = {navController.navigate("HypopharyngealTNMScreen")},
     )
 }
 
@@ -397,7 +402,8 @@ fun getAppScreens(sofaViewModel: SofaViewModel): List<ScreenRoute> {
         ScreenRoute("MoaasScreen") { navController -> MoaasScreen(navController) },
         ScreenRoute("MeldScreen") { navController -> MeldScreen(navController) },
         ScreenRoute("CockcroftGaultScreen") { navController -> CockcroftGaultScreen(navController) },
-        ScreenRoute("NasopharyngealTNMScreen") { navController -> NasopharyngealTNMScreen(navController) }
+        ScreenRoute("NasopharyngealTNMScreen") { navController -> NasopharyngealTNMScreen(navController) },
+        ScreenRoute("HypopharyngealTNMScreen") { navController -> HypopharyngealTNMScreen(navController) }
     )
 }
 
@@ -445,6 +451,7 @@ fun IndexScreenActions.executeNavigation(actionType: ActionType) {
         ActionType.NAVIGATE_TO_MELD -> this.navigateToMeld()
         ActionType.NAVIGATE_TO_COCKCROFT_GAULT -> this.navigateToCockcroftGault()
         ActionType.NAVIGATE_TO_NASOPHARYNGEAL_TNM -> this.navigateToNasopharyngealTNM()
+        ActionType.NAVIGATE_TO_HYPOPHARYNGEAL_TNM -> this.navigateToHypopharyngealTNM()
         // Add more cases for other ActionType if needed
 
         // Consider adding an else branch for robustness, especially if ActionType might expand

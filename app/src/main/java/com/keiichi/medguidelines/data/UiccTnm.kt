@@ -75,3 +75,16 @@ val nasopharyngealCancerTNM = listOf(
     listOf("N/A", "IVA", "IVA", "IVA", "IVA", "IVA"),//M1a
     listOf("N/A", "IVB", "IVB", "IVB", "IVB", "IVB"),//M1b
 )
+
+
+val hypopharyngealCancerTNM = listOf(
+    //      Tis,   T1,    T2,    T3,    T4a,   T4b
+    listOf("0", "I", "II", "III", "IVA", "IVB"), //N0
+    listOf("N/A", "III", "III", "III", "IVA", "IVB"),//N1
+    listOf("N/A", "IVA", "IVA", "IVA", "IVA", "IVB"),//N2a
+    listOf("N/A", "IVA", "IVA", "IVA", "IVA", "IVB"),//N2b
+    listOf("N/A", "IVA", "IVA", "IVA", "IVA", "IVB"),//N2c
+    listOf("N/A", "IVB", "IVB", "IVB", "IVB", "IVB"),//N3a
+    listOf("N/A", "IVB", "IVB", "IVB", "IVB", "IVB"),//N3b
+    listOf("N/A", "IVC", "IVC", "IVC", "IVC", "IVC"),//M1
+)

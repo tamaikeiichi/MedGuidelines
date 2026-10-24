@@ -200,6 +200,27 @@ val MfactorNasopharyngealCancer = listOf(
     R.string.M1a,
     R.string.M1b,
 )
+val TfactorHypopharyngealCancer = listOf(
+    R.string.Tis,
+    R.string.T1,
+    R.string.T2,
+    R.string.T3,
+    R.string.T4a,
+    R.string.T4b,
+)
+val NfactorHypopharyngealCancer = listOf(
+    R.string.N0,
+    R.string.N1,
+    R.string.N2a,
+    R.string.N2b,
+    R.string.N2c,
+    R.string.N3a,
+    R.string.N3b,
+)
+val MfactorHypopharyngealCancer = listOf(
+    R.string.M0,
+    R.string.M1,
+)
 val absencePresence = listOf(
     R.string.absence,
     R.string.presence,
