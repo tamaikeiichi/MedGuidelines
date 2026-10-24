@@ -221,6 +221,31 @@ val MfactorHypopharyngealCancer = listOf(
     R.string.M0,
     R.string.M1,
 )
+val TfactorOropharyngealHpvAssociated = listOf(
+    R.string.T0,
+    R.string.T1,
+    R.string.T2,
+    R.string.T3,
+    R.string.T4,
+)
+val NfactorOropharyngealHpvAssociated = listOf(
+    R.string.N0,
+    R.string.N1,
+    R.string.N2,
+    R.string.N3,
+)
+val TfactorOropharyngealHpvIndependent = listOf(
+    R.string.Tis,
+    R.string.T1,
+    R.string.T2,
+    R.string.T3,
+    R.string.T4a,
+    R.string.T4b,
+)
+val MfactorOropharyngealCancer = listOf(
+    R.string.M0,
+    R.string.M1,
+)
 val absencePresence = listOf(
     R.string.absence,
     R.string.presence,

@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
@@ -27,10 +28,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -47,12 +50,35 @@ fun TitleTopAppBar(
     @StringRes helpTitleResId: Int = R.string.about, // Default help title
     @StringRes helpMessageResId: Int? = null, // New: Optional help message string resource
     @StringRes refTitleResId: Int = R.string.reference, // Default reference title
+    @StringRes titleOptions: List<Int> = emptyList(), // 指定するとタイトルの後ろにプルダウンが付く
+    selectedTitleOption: Int = 0,
+    onTitleOptionSelected: (Int) -> Unit = {},
 ) {
     var showRefDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
 
     CenterAlignedTopAppBar(
-        title = { Text(text = parseStyledString(title)) },
+        title = {
+            if (titleOptions.isEmpty()) {
+                Text(text = parseStyledString(title))
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = parseStyledString(title),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(1f, fill = false)
+                            .padding(end = 8.dp)
+                    )
+                    TitleOptionDropdown(
+                        options = titleOptions,
+                        selectedIndex = selectedTitleOption,
+                        onOptionSelected = onTitleOptionSelected
+                    )
+                }
+            }
+        },
         navigationIcon = {
             var navigateBackEvent by remember { mutableStateOf(false) }
 

@@ -88,3 +88,14 @@ val hypopharyngealCancerTNM = listOf(
     listOf("N/A", "IVB", "IVB", "IVB", "IVB", "IVB"),//N3b
     listOf("N/A", "IVC", "IVC", "IVC", "IVC", "IVC"),//M1
 )
+
+
+// HPV関連中咽頭癌（臨床病期）。HPV非関連中咽頭癌は hypopharyngealCancerTNM と共通
+val oropharyngealHpvAssociatedCancerTNM = listOf(
+    //      T0,    T1,    T2,    T3,    T4
+    listOf("I", "I", "I", "II", "III"), //N0
+    listOf("I", "I", "I", "II", "III"),//N1
+    listOf("II", "II", "II", "II", "III"),//N2
+    listOf("III", "III", "III", "III", "III"),//N3
+    listOf("IV", "IV", "IV", "IV", "IV"),//M1
+)
