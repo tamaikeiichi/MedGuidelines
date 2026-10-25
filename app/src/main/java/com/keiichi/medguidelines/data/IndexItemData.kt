@@ -229,7 +229,11 @@ val itemsList = listOf(
         keywords = listOf(
             R.string.autoimmuneHepatitis
         )),
-    ListItemData(R.string.icdO3Title, ActionType.NAVIGATE_TO_ICDO3),
+    ListItemData(R.string.icdO3Title, ActionType.NAVIGATE_TO_ICDO3,
+        keywords = listOf(
+            R.string.icdo3,
+            R.string.icdo4
+        )),
     ListItemData(R.string.moaasTitle, ActionType.NAVIGATE_TO_MOAAS,
         keywords = listOf(
             R.string.moaasObserversAssessment,

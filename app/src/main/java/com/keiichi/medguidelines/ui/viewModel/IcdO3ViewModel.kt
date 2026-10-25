@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.keiichi.medguidelines.R
 import com.keiichi.medguidelines.data.AppDatabase
+import com.keiichi.medguidelines.data.ICD_O_EDITION_32
+import com.keiichi.medguidelines.data.ICD_O_EDITION_4
 import com.keiichi.medguidelines.data.IcdO3Repository
 import com.keiichi.medguidelines.data.IcdO3SearchResult
 import com.keiichi.medguidelines.data.IcdO3TopographyRepository
@@ -19,8 +21,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: IcdO3Repository
-    private val topographyRepository: IcdO3TopographyRepository
+    // 版ごとのリポジトリ（ICD-O-3.2 / ICD-O-4）
+    private val repositories: Map<String, IcdO3Repository>
+    private val topographyRepositories: Map<String, IcdO3TopographyRepository>
+
+    private val _edition = MutableStateFlow(ICD_O_EDITION_4)
+    val edition: StateFlow<String> = _edition.asStateFlow()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -43,15 +49,20 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val db = AppDatabase.getDatabase(application)
-        repository = IcdO3Repository(db.icdO3Dao())
-        topographyRepository = IcdO3TopographyRepository(db.icdO3TopographyDao())
+        repositories = listOf(ICD_O_EDITION_32, ICD_O_EDITION_4).associateWith { IcdO3Repository(db.icdO3Dao(), it) }
+        topographyRepositories = listOf(ICD_O_EDITION_32, ICD_O_EDITION_4)
+            .associateWith { IcdO3TopographyRepository(db.icdO3TopographyDao(), it) }
 
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                repository.populateDatabaseFromCsvIfNeeded(
+                repositories.getValue(ICD_O_EDITION_32).populateDatabaseFromCsvIfNeeded(
                     context = application,
                     resourceId = R.raw.icd_o3_morphology
+                )
+                repositories.getValue(ICD_O_EDITION_4).populateDatabaseFromCsvIfNeeded(
+                    context = application,
+                    resourceId = R.raw.icd_o4_morphology
                 )
             } finally {
                 _isLoading.value = false
@@ -61,14 +72,25 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _isTopographyLoading.value = true
             try {
-                topographyRepository.populateDatabaseFromCsvIfNeeded(
+                topographyRepositories.getValue(ICD_O_EDITION_32).populateDatabaseFromCsvIfNeeded(
                     context = application,
                     resourceId = R.raw.icd_o3_topography
+                )
+                topographyRepositories.getValue(ICD_O_EDITION_4).populateDatabaseFromCsvIfNeeded(
+                    context = application,
+                    resourceId = R.raw.icd_o4_topography
                 )
             } finally {
                 _isTopographyLoading.value = false
             }
         }
+    }
+
+    // 版を切り替えたら、検索語はそのままで、カード選択（コード完全一致）だけ解除する
+    fun onEditionChanged(newEdition: String) {
+        _selectedCode.value = null
+        _selectedTopographyCode.value = null
+        _edition.value = newEdition
     }
 
     fun onQueryChanged(newQuery: String) {
@@ -88,7 +110,7 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
 
     fun toggleFavorite(item: IcdO3SearchResult) {
         viewModelScope.launch {
-            repository.updateFavorite(item.id, !item.isFavorite)
+            repositories.getValue(_edition.value).updateFavorite(item.id, !item.isFavorite)
         }
     }
 
@@ -104,16 +126,18 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
 
     fun toggleTopographyFavorite(item: IcdO3TopographySearchResult) {
         viewModelScope.launch {
-            topographyRepository.updateFavorite(item.id, !item.isFavorite)
+            topographyRepositories.getValue(_edition.value).updateFavorite(item.id, !item.isFavorite)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val searchResults: StateFlow<List<IcdO3SearchResult>> = _searchQuery
-        .combine(_selectedCode) { query, selected -> query to (query == selected) }
+    val searchResults: StateFlow<List<IcdO3SearchResult>> = combine(
+        _searchQuery, _selectedCode, _edition
+    ) { query, selected, edition -> Triple(query, query == selected, edition) }
         .debounce(300)
         .distinctUntilChanged()
-        .flatMapLatest { (query, isExactCode) ->
+        .flatMapLatest { (query, isExactCode, edition) ->
+            val repository = repositories.getValue(edition)
             if (query.isBlank()) {
                 // クエリが空の場合はお気に入りリストを表示
                 repository.getFavorites()
@@ -133,11 +157,13 @@ class IcdO3ViewModel(application: Application) : AndroidViewModel(application) {
         )
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val topographySearchResults: StateFlow<List<IcdO3TopographySearchResult>> = _topographySearchQuery
-        .combine(_selectedTopographyCode) { query, selected -> query to (query == selected) }
+    val topographySearchResults: StateFlow<List<IcdO3TopographySearchResult>> = combine(
+        _topographySearchQuery, _selectedTopographyCode, _edition
+    ) { query, selected, edition -> Triple(query, query == selected, edition) }
         .debounce(300)
         .distinctUntilChanged()
-        .flatMapLatest { (query, isExactCode) ->
+        .flatMapLatest { (query, isExactCode, edition) ->
+            val topographyRepository = topographyRepositories.getValue(edition)
             if (query.isBlank()) {
                 // クエリが空の場合はお気に入りリストを表示
                 topographyRepository.getFavorites()

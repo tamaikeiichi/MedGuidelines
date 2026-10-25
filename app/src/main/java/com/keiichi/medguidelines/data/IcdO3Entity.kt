@@ -1,5 +1,6 @@
 package com.keiichi.medguidelines.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -14,7 +15,9 @@ import androidx.room.PrimaryKey
 )
 data class IcdO3Entity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val code: String,                      // ICD-O-3.2コード (例: 8000/0)
+    @ColumnInfo(defaultValue = ICD_O_EDITION_32)
+    val edition: String = ICD_O_EDITION_32, // ICD-Oの版（"3.2" / "4"）
+    val code: String,                      // ICD-O-3.2コード (例: 8000/0)／ICD-O-4コード (例: 80000/0)
     val level: String,                     // Preferred / Synonym / Related / 見出し行(1,2,3)
     val termEn: String,                    // 英語名称
     val termJa: String = "",               // 日本語名称

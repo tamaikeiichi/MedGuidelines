@@ -33,7 +33,12 @@ data class IcdO3TopographySearchResult(
     val alternateTerms: List<IcdO3TopographyAlternateTerm>
 )
 
-class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyDao) {
+class IcdO3TopographyRepository(
+    private val icdO3TopographyDao: IcdO3TopographyDao,
+    private val edition: String = ICD_O_EDITION_32
+) {
+    // 3.2は従来どおりのキーで取り込み状態を記録する（版を足す前に取り込んだ分を再取り込みしないため）
+    private val masterTable = if (edition == ICD_O_EDITION_32) "icd_o3_topography" else "icd_o3_topography_$edition"
 
     /**
      * 複数ワードによるAND検索。
@@ -41,20 +46,20 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
      */
     fun searchMulti(words: List<String>): Flow<List<IcdO3TopographySearchResult>> {
         val flow = when (words.size) {
-            0 -> icdO3TopographyDao.search("%%")
-            1 -> icdO3TopographyDao.search("%${words[0]}%")
-            2 -> icdO3TopographyDao.searchMulti("%${words[0]}%", "%${words[1]}%", "%%")
-            else -> icdO3TopographyDao.searchMulti("%${words[0]}%", "%${words[1]}%", "%${words[2]}%")
+            0 -> icdO3TopographyDao.search(edition, "%%")
+            1 -> icdO3TopographyDao.search(edition, "%${words[0]}%")
+            2 -> icdO3TopographyDao.searchMulti(edition, "%${words[0]}%", "%${words[1]}%", "%%")
+            else -> icdO3TopographyDao.searchMulti(edition, "%${words[0]}%", "%${words[1]}%", "%${words[2]}%")
         }
         return flow.map { resolveRepresentatives(it) }
     }
 
     /** コード完全一致検索（カードタップ時にそのカード1枚だけを表示する） */
     fun searchByCode(code: String): Flow<List<IcdO3TopographySearchResult>> =
-        icdO3TopographyDao.searchByCode(code).map { resolveRepresentatives(it) }
+        icdO3TopographyDao.searchByCode(edition, code).map { resolveRepresentatives(it) }
 
     fun getFavorites(): Flow<List<IcdO3TopographySearchResult>> =
-        icdO3TopographyDao.getFavorites().map { attachAlternateTerms(it) }
+        icdO3TopographyDao.getFavorites(edition).map { attachAlternateTerms(it) }
 
     suspend fun updateFavorite(id: Long, isFavorite: Boolean) {
         withContext(Dispatchers.IO) { icdO3TopographyDao.updateFavorite(id, isFavorite) }
@@ -73,7 +78,7 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
             }
         }
         if (codesNeedingLookup.isNotEmpty()) {
-            val preferredRows = icdO3TopographyDao.getPreferredByCodes(codesNeedingLookup.toList())
+            val preferredRows = icdO3TopographyDao.getPreferredByCodes(edition, codesNeedingLookup.toList())
             for (preferred in preferredRows) {
                 representativeByCode.putIfAbsent(preferred.code, preferred)
             }
@@ -83,7 +88,7 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
 
     private suspend fun attachAlternateTerms(representatives: List<IcdO3TopographyEntity>): List<IcdO3TopographySearchResult> {
         if (representatives.isEmpty()) return emptyList()
-        val alternatesByCode = icdO3TopographyDao.getAlternateTermsByCodes(representatives.map { it.code })
+        val alternatesByCode = icdO3TopographyDao.getAlternateTermsByCodes(edition, representatives.map { it.code })
             .groupBy { it.code }
         return representatives.map { rep ->
             IcdO3TopographySearchResult(
@@ -108,8 +113,8 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
     suspend fun populateDatabaseFromCsvIfNeeded(context: Context, resourceId: Int) {
         withContext(Dispatchers.IO) {
             try {
-                if (needsMasterReload(context, "icd_o3_topography", resourceId, icdO3TopographyDao.getCount())) {
-                    Log.d("IcdO3Topography", "Loading ICD-O-3 topography master data from CSV...")
+                if (needsMasterReload(context, masterTable, resourceId, icdO3TopographyDao.getCount(edition))) {
+                    Log.d("IcdO3Topography", "Loading ICD-O-$edition topography master data from CSV...")
                     val inputStream: InputStream = context.resources.openRawResource(resourceId)
 
                     // CSVの列: 1:code, 2:level, 3:term_type, 4:japanese, 5:english, 6:needs_review
@@ -138,6 +143,7 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
                         val needsReview = !(row[5]?.toString()?.trim().isNullOrBlank())
 
                         IcdO3TopographyEntity(
+                            edition = edition,
                             code = code,
                             level = level,
                             termType = termType,
@@ -149,11 +155,12 @@ class IcdO3TopographyRepository(private val icdO3TopographyDao: IcdO3TopographyD
                         )
                     }
 
-                    val favoriteKeys = icdO3TopographyDao.getFavoriteRows().map { it.code to it.termType }.toSet()
+                    val favoriteKeys = icdO3TopographyDao.getFavoriteRows(edition).map { it.code to it.termType }.toSet()
                     icdO3TopographyDao.replaceAll(
+                        edition,
                         entityList.map { it.copy(isFavorite = (it.code to it.termType) in favoriteKeys) }
                     )
-                    markMasterLoaded(context, "icd_o3_topography", resourceId)
+                    markMasterLoaded(context, masterTable, resourceId)
                     Log.d("IcdO3Topography", "Successfully inserted ${entityList.size} items.")
                 }
             } catch (e: Exception) {

@@ -51,6 +51,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.keiichi.medguidelines.R
+import com.keiichi.medguidelines.data.ICD_O_EDITION_32
+import com.keiichi.medguidelines.data.ICD_O_EDITION_4
 import com.keiichi.medguidelines.data.IcdO3AlternateTerm
 import com.keiichi.medguidelines.data.IcdO3SearchResult
 import com.keiichi.medguidelines.data.IcdO3TopographyAlternateTerm
@@ -102,6 +104,9 @@ fun IcdO3Screen(
     val searchResults by viewModel.searchResults.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val selectedGradeDigit by viewModel.selectedGradeDigit.collectAsState()
+    val edition by viewModel.edition.collectAsState()
+    // ICD-O-4には6桁目（グレード）がないため、3.2のときだけ6桁目を付ける
+    val gradeDigit = if (edition == ICD_O_EDITION_32) selectedGradeDigit else ""
 
     val topographySearchQuery by viewModel.topographySearchQuery.collectAsState()
     val topographySearchResults by viewModel.topographySearchResults.collectAsState()
@@ -122,9 +127,15 @@ fun IcdO3Screen(
     MedGuidelinesScaffold(
         topBar = {
             TitleTopAppBar(
-                title = R.string.icdO3Title,
+                title = R.string.icdOScreenTitle,
                 navController = navController,
-                references = listOf(TextAndUrl(R.string.icdo3, R.string.icdo3url))
+                references = listOf(
+                    TextAndUrl(R.string.icdo4, R.string.icdo4url),
+                    TextAndUrl(R.string.icdo3, R.string.icdo3url)
+                ),
+                titleOptions = icdOEditionOptions.map { it.second },
+                selectedTitleOption = icdOEditionOptions.indexOfFirst { it.first == edition }.coerceAtLeast(0),
+                onTitleOptionSelected = { viewModel.onEditionChanged(icdOEditionOptions[it].first) }
             )
         }
     ) { innerPadding ->
@@ -222,7 +233,7 @@ fun IcdO3Screen(
                             IcdO3ResultCard(
                                 item = item,
                                 showJapanese = showJapanese,
-                                gradeDigit = selectedGradeDigit,
+                                gradeDigit = gradeDigit,
                                 onClick = {
                                     focusManager.clearFocus()
                                     viewModel.onCardSelected(item.code)
@@ -237,7 +248,7 @@ fun IcdO3Screen(
                         IcdO3ResultCard(
                             item = item,
                             showJapanese = showJapanese,
-                            gradeDigit = selectedGradeDigit,
+                            gradeDigit = gradeDigit,
                             showAlternateTerms = false,
                             onClick = {
                                 focusManager.clearFocus()
@@ -249,16 +260,24 @@ fun IcdO3Screen(
                     }
                 }
 
-                // 6桁目（グレード）セレクタは折りたたみ時も常に表示する
-                IcdO3GradeDigitSelector(
-                    selectedDigit = selectedGradeDigit,
-                    showJapanese = showJapanese,
-                    onDigitSelected = { viewModel.onGradeDigitChanged(it) }
-                )
+                // 6桁目（グレード）セレクタは折りたたみ時も常に表示する（ICD-O-4にはグレードがないので3.2のみ）
+                if (edition == ICD_O_EDITION_32) {
+                    IcdO3GradeDigitSelector(
+                        selectedDigit = selectedGradeDigit,
+                        showJapanese = showJapanese,
+                        onDigitSelected = { viewModel.onGradeDigitChanged(it) }
+                    )
+                }
             }
         }
     }
 }
+
+// タイトルのプルダウンで選ぶICD-Oの版（版の値, 表示名）
+private val icdOEditionOptions = listOf(
+    ICD_O_EDITION_4 to R.string.icdOEdition4,
+    ICD_O_EDITION_32 to R.string.icdOEdition32,
+)
 
 private val gradeDigitSelectorShape = RoundedCornerShape(28.dp)
 private val gradeDigitMenuShape = RoundedCornerShape(20.dp)

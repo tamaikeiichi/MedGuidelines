@@ -34,7 +34,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         IkaShinryokoiEntity::class,
         ShikaShinryokoiEntity::class,
     ],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -93,6 +93,14 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // ICD-O-4追加。ICD-Oの2テーブルに版の列を追加し、既存の行（お気に入り含む）はICD-O-3.2とする
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `icd_o3_master` ADD COLUMN `edition` TEXT NOT NULL DEFAULT '3.2'")
+                db.execSQL("ALTER TABLE `icd_o3_topography` ADD COLUMN `edition` TEXT NOT NULL DEFAULT '3.2'")
+            }
+        }
+
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -103,7 +111,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "dpc_database"
                 )
-                    .addMigrations(MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+                    .addMigrations(MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                     .fallbackToDestructiveMigration(true)
                     .build()
                 INSTANCE = instance

@@ -1,5 +1,6 @@
 package com.keiichi.medguidelines.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -14,7 +15,9 @@ import androidx.room.PrimaryKey
 )
 data class IcdO3TopographyEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val code: String,                      // ICD-O-3.2局在コード (例: C00.0)
+    @ColumnInfo(defaultValue = ICD_O_EDITION_32)
+    val edition: String = ICD_O_EDITION_32, // ICD-Oの版（"3.2" / "4"）
+    val code: String,                      // 局在コード (例: C00.0)
     val level: String,                     // category / specific
     val termType: String,                  // 優先用語 / 同義語
     val termEn: String,                    // 英語名称

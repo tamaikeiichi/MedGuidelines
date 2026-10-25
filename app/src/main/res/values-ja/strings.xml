@@ -464,7 +464,7 @@
     <string name="shobyomeiTitle">傷病名マスタ</string>
     <string name="ShobyomeiMasterUrl">https://shinryohoshu.mhlw.go.jp/shinryohoshu/downloadMenu/</string>
     <string name="searchShobyomei">病名／傷病名コード／ICDコード</string>
-    <string name="icdO3Title">ICD-O-3.2検索</string>
+    <string name="icdO3Title">ICD-O検索</string>
     <string name="searchIcdO3">形態・コード（日本語・英語）</string>
     <string name="icdO3Obsolete">obsolete</string>
     <string name="icdO3AlsoKnownAs">別名</string>

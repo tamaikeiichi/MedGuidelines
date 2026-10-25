@@ -40,7 +40,12 @@ data class IcdO3SearchResult(
     val alternateTerms: List<IcdO3AlternateTerm>
 )
 
-class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
+class IcdO3Repository(
+    private val icdO3Dao: IcdO3Dao,
+    private val edition: String = ICD_O_EDITION_32
+) {
+    // 3.2は従来どおりのキーで取り込み状態を記録する（版を足す前に取り込んだ分を再取り込みしないため）
+    private val masterTable = if (edition == ICD_O_EDITION_32) "icd_o3_master" else "icd_o3_master_$edition"
 
     /**
      * 複数ワードによるAND検索。
@@ -48,20 +53,20 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
      */
     fun searchMulti(words: List<String>): Flow<List<IcdO3SearchResult>> {
         val flow = when (words.size) {
-            0 -> icdO3Dao.search("%%")
-            1 -> icdO3Dao.search("%${words[0]}%")
-            2 -> icdO3Dao.searchMulti("%${words[0]}%", "%${words[1]}%", "%%")
-            else -> icdO3Dao.searchMulti("%${words[0]}%", "%${words[1]}%", "%${words[2]}%")
+            0 -> icdO3Dao.search(edition, "%%")
+            1 -> icdO3Dao.search(edition, "%${words[0]}%")
+            2 -> icdO3Dao.searchMulti(edition, "%${words[0]}%", "%${words[1]}%", "%%")
+            else -> icdO3Dao.searchMulti(edition, "%${words[0]}%", "%${words[1]}%", "%${words[2]}%")
         }
         return flow.map { resolveRepresentatives(it) }
     }
 
     /** コード完全一致検索（カードタップ時にそのカード1枚だけを表示する） */
     fun searchByCode(code: String): Flow<List<IcdO3SearchResult>> =
-        icdO3Dao.searchByCode(code).map { resolveRepresentatives(it) }
+        icdO3Dao.searchByCode(edition, code).map { resolveRepresentatives(it) }
 
     fun getFavorites(): Flow<List<IcdO3SearchResult>> =
-        icdO3Dao.getFavorites().map { attachAlternateTerms(it) }
+        icdO3Dao.getFavorites(edition).map { attachAlternateTerms(it) }
 
     suspend fun updateFavorite(id: Long, isFavorite: Boolean) {
         withContext(Dispatchers.IO) { icdO3Dao.updateFavorite(id, isFavorite) }
@@ -80,7 +85,7 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
             }
         }
         if (codesNeedingLookup.isNotEmpty()) {
-            val preferredRows = icdO3Dao.getPreferredByCodes(codesNeedingLookup.toList())
+            val preferredRows = icdO3Dao.getPreferredByCodes(edition, codesNeedingLookup.toList())
             for (preferred in preferredRows) {
                 representativeByCode.putIfAbsent(preferred.code, preferred)
             }
@@ -90,7 +95,7 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
 
     private suspend fun attachAlternateTerms(representatives: List<IcdO3Entity>): List<IcdO3SearchResult> {
         if (representatives.isEmpty()) return emptyList()
-        val alternatesByCode = icdO3Dao.getAlternateTermsByCodes(representatives.map { it.code })
+        val alternatesByCode = icdO3Dao.getAlternateTermsByCodes(edition, representatives.map { it.code })
             .groupBy { it.code }
         return representatives.map { rep ->
             IcdO3SearchResult(
@@ -114,8 +119,8 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
     suspend fun populateDatabaseFromCsvIfNeeded(context: Context, resourceId: Int) {
         withContext(Dispatchers.IO) {
             try {
-                if (needsMasterReload(context, "icd_o3_master", resourceId, icdO3Dao.getCount())) {
-                    Log.d("IcdO3", "Loading ICD-O-3 master data from CSV...")
+                if (needsMasterReload(context, masterTable, resourceId, icdO3Dao.getCount(edition))) {
+                    Log.d("IcdO3", "Loading ICD-O-$edition master data from CSV...")
                     val inputStream: InputStream = context.resources.openRawResource(resourceId)
 
                     // CSVの列: 1:code, 2:level, 3:termEn, 4:termJa, 5:obsolete
@@ -143,6 +148,7 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
                         val obsolete = row[4]?.toString()?.trim() == "1"
 
                         IcdO3Entity(
+                            edition = edition,
                             code = code,
                             level = level,
                             termEn = termEn,
@@ -153,9 +159,9 @@ class IcdO3Repository(private val icdO3Dao: IcdO3Dao) {
                         )
                     }
 
-                    val favoriteKeys = icdO3Dao.getFavoriteRows().map { it.code to it.level }.toSet()
-                    icdO3Dao.replaceAll(entityList.map { it.copy(isFavorite = (it.code to it.level) in favoriteKeys) })
-                    markMasterLoaded(context, "icd_o3_master", resourceId)
+                    val favoriteKeys = icdO3Dao.getFavoriteRows(edition).map { it.code to it.level }.toSet()
+                    icdO3Dao.replaceAll(edition, entityList.map { it.copy(isFavorite = (it.code to it.level) in favoriteKeys) })
+                    markMasterLoaded(context, masterTable, resourceId)
                     Log.d("IcdO3", "Successfully inserted ${entityList.size} items.")
                 }
             } catch (e: Exception) {
